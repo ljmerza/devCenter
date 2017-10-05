@@ -1,0 +1,156 @@
+
+<!-- jira dropdown -->
+<ul id="jiraDropdown" class="dropdown-content">
+	<li><a [routerLink]="['/jira', 'mytickets']">My Tickets</a></li>
+	<li><a [routerLink]="['/jira', 'pcr']">PCR Needed</a></li>
+	<li><a [routerLink]="['/jira', 'qa']">QA Needed</a></li>
+	<li><a [routerLink]="['/jira', 'uctready']">UCT Ready</a></li>
+	<li><a [routerLink]="['/jira', 'cr']">CR Needed</a></li>
+	<li><a [routerLink]="['/jira', 'allmy']">All My Tickets</a></li>
+	<li><a [routerLink]="['/jira', 'allopen']">All Open Tickets</a></li>
+	<li class="divider"></li>
+	<li><a target="_blank" href="{{jiraUrl}}/secure/Dashboard.jspa">Jira</a></li>
+	<li><a target="_blank" href="{{crucibleUrl}}/cru/browse/CR-UD">Crucible</a></li>
+	<li><a target="_blank" href="{{codeCloudUrl}}/projects">Code Cloud</a></li>
+</ul>
+
+<!-- orders dropdown -->
+<ul id='ordersDropdown' class='dropdown-content'>
+		<li><a target="_blank" href="{{emberUrl}}/UD-ember/{{emberLocal}}order/ethernet/GAS544770001">GAS544770001 (EAN Data)</a></li>
+	<li><a target="_blank" href="{{emberUrl}}/UD-ember/{{emberLocal}}order/ethernet/OKS433527001">OKS433527001 (Word Doc)</a></li>
+	<li><a target="_blank" href="{{emberUrl}}/UD-ember/{{emberLocal}}order/ethernet/HOC574865001">HOC574865001 (Juniper)</a></li>
+	<li><a target="_blank" href="{{emberUrl}}/UD-ember/{{emberLocal}}order/ethernet/BAS539606001">BAS539606001 (Inventory Data)</a></li>
+	<li><a target="_blank" href="{{emberUrl}}/UD-ember/{{emberLocal}}order/ethernet/MIS140524001">MIS140524001 (CTH Data)</a></li>
+</ul>
+<!-- ember dropdown -->
+<ul id='emberDropdown' class='dropdown-content'>
+	<li><a target="_blank" href="{{emberUrl}}/UD-ember/{{emberLocal}}asset/history?asset=TEST&UAT=0&usertimezone=America/New_York&usertimeformat=12HR">Asset History</a></li>
+	<li><a target="_blank" href="{{devUrl}}:{{port}}/UD-ember/group-lead?lead_ticket=WTXIV000724">Group Ticket</a></li>
+	<li><a target="_blank" href="{{emberUrl}}/UD-ember/{{emberLocal}}ticket/ethernet/WTXIV000892">WFA Ticket</a></li>
+	<li><a class='dropdownSubmenuTwice' data-activates='ordersDropdown' data-hover="hover" data-alignment="right">Orders<i class="material-icons right">arrow_drop_down</i></a></li>
+	<li><a target="_blank" href="{{emberUrl}}/UD-ember/{{emberLocal}}administration?attuid=lm240n">Admin Panel</a></li>
+	<li><a target="_blank" href="{{emberUrl}}/UD-ember/{{emberLocal}}order/ethernet/BAS539606001">BMP Ticket</a></li>
+	<li><a target="_blank" href="{{emberUrl}}/UD-ember/{{emberLocal}}order/ethernet/BAS539606001">ELD</a></li>
+</ul>
+<!-- dev dropdown -->
+<ul id='devDropdown' class='dropdown-content'>
+	<li><a href="{{devUrl}}:{{port}}/UD/cgi-bin/worklist.pl">UD</a></li>
+	<li><a class="dropdownSubmenu" data-activates="emberDropdown">Ember<i class="material-icons right">arrow_drop_down</i></a></li>
+	<li><a target="_blank" href="{{devUrl}}:{{port}}/aqe/cgi-bin/index.pl">AQE</a></li>
+	<li><a target="_blank" href="{{devUrl}}:{{port}}/teamdb/view.php?ATTuid=lm240n">TeamDB</a></li>
+	<li><a target="_blank" href="{{devUrl}}:{{port}}/wam/cgi-bin/wam.pl">WAM</a></li>
+	<li><a target="_blank" href="{{devUrl}}:{{port}}/upm/app.php">UPM</a></li>
+	<li><a target="_blank" href="{{devUrl}}:{{port}}/Templates/cgi-bin/Template.pl">Template Tool</a></li>
+</ul>
+
+<!-- prod dropdown -->
+<ul id="prodDropdown" class="dropdown-content">
+	<li><a target="_blank" href="http://ud.web.att.com/UD/cgi-bin/worklist.pl">UD</a></li>
+	<li><a target="_blank" href="http://aqe.web.att.com/aqe/cgi-bin/index.pl">AQE</a></li>
+	<li><a target="_blank" href="http://teamdb.web.att.com/teamdb/view.php?ATTuid=lm240n">TeamDB</a></li>
+	<li><a target="_blank" href="http://chrapud09b.gcsc.att.com:63207/wam/cgi-bin/wam.pl">WAM</a></li>
+	<li><a target="_blank" href="http://gcs-upm.web.att.com/upm2/access.php">UPM</a></li>
+	<li><a target="_blank" href="http://gcs-templates.web.att.com/Templates/cgi-bin/Template.pl">Template Tool</a></li>
+	<li><a target="_blank" href="http://chrapud09.gcsc.att.com/tqi3/cgi-bin/index.pl">TQI</a></li>
+</ul>
+
+<!-- beta dropdown -->
+<ul id="betaDropdown" class="dropdown-content">
+	<li><a target="_blank" href="http://ud-beta.web.att.com/UD/cgi-bin/worklist.pl">UD</a></li>
+	<li><a target="_blank" href="{{betaUrl}}/aqe/cgi-bin/index.pl">AQE</a></li>
+	<li><a target="_blank" href="{{betaUrl}}/teamdb/view.php?ATTuid=lm240n">TeamDB</a></li>
+	<li><a target="_blank" href="{{betaUrl}}/wam/cgi-bin/wam.pl">WAM</a></li>
+	<li><a target="_blank" href="{{betaUrl}}/upm2/access.php">UPM</a></li>
+	<li><a target="_blank" href="{{betaUrl}}/Templates/cgi-bin/Template.pl">Template Tool</a></li>
+	<li><a target="_blank" href="{{betaUrl}}/tqi3/cgi-bin/index.pl">TQI</a></li>
+</ul>
+
+<!-- coding standards dropdown -->
+<ul id="codingStandardsDropdown" class="dropdown-content">
+	<li><a target="_blank" href="https://wiki.web.att.com/pages/viewpage.action?pageId=383617008">Perl</a></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/DTI+-+JavaScript+Coding+Standards">JavaScript</a></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/DTI+-+SQL+Coding+Standards">SQL</a></li>
+</ul>
+
+<ul id="wikiBasicsDropdown" class="dropdown-content">
+	<li><a target="_blank" href="http://glossary.web.att.com/">Glossary</a></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/GCS+BizOps">Biz Ops</a></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/pages/viewpage.action?pageId=480723373">Accelerate</a></li>
+	<li class="divider"></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/Ember+Installation+and+Setup">Ember Install</a></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/Git+Process+-+DTI">Git Repos</a></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/Complete+New+Hire+Training+Program">New Hire</a></li>
+	<li class="divider"></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/Crucible+Code+Reviews">Crucible PCR Process</a></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/Developer+Workflow+in+JIRA">Jira Workflow</a></li>
+	
+</ul>
+
+<!-- wiki dropdown -->
+<ul id="wikiDropdown" class="dropdown-content">
+	<li><a class="dropdownSubmenu" data-activates="wikiBasicsDropdown">Basics<i class="material-icons right">arrow_drop_down</i></a></li>
+	
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/Team+Deployments+Walkthrough">Team Deployments</a></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/AQE%3A+How+to+Work+An+AQE+Search+String+Ticket">AQE Queries</a></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/HOWTO%3A+Create+a+SASHA+UA+Ticket">Create SASHA UA Ticket</a></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/pages/viewpage.action?spaceKey=GCSDevOps&title=HOWTO%3A+Report+an+API+Defect">API Defect</a></li>
+	<li><a class="dropdownSubmenu" data-activates="codingStandardsDropdown">Coding<i class="material-icons right">arrow_drop_down</i></a></li>
+	<li class="divider"></li>
+	<li><a target="_blank" href="https://wiki.web.att.com/display/GCSDevOps/Test+Circuits+for+BMP+and+WFA">Test Circuits</a></li>
+</ul>
+
+<!-- user dropdown -->
+<ul id="userDropdown" class="dropdown-content">
+	<li><a target="_blank">Settings</a></li>
+	<li class="divider"></li>
+	<li><a target="_blank">Logout</a></li>
+</ul>
+
+
+<div class="navbar-fixed">
+	<nav>
+		<div class="nav-wrapper grey darken-3">
+			<div class="row">
+				<span class="col s6">
+					<ul class="left hide-on-med-and-down">
+						<li><a href="#!">Dev Center</a></li>
+						<li><a class="dropdown-button navBarDropdown" href="#!" data-activates="jiraDropdown">Jira Links<i class="material-icons right">arrow_drop_down</i></a></li>
+						<li><a class="dropdown-button navBarDropdown" href="#!" data-activates="devDropdown">Dev Links<i class="material-icons right">arrow_drop_down</i></a></li>
+						<li><a class="dropdown-button navBarDropdown" href="#!" data-activates="prodDropdown">Prod Links<i class="material-icons right">arrow_drop_down</i></a></li>
+						<li><a class="dropdown-button navBarDropdown" href="#!" data-activates="betaDropdown">Beta Links<i class="material-icons right">arrow_drop_down</i></a></li>
+						<li><a class="dropdown-button navBarDropdown" href="#!" data-activates="wikiDropdown">Wiki Links<i class="material-icons right">arrow_drop_down</i></a></li>
+					</ul>
+				</span>
+				<div class="col s1 right">
+					<ul class=" hide-on-med-and-down">
+						<li><a class="dropdown-button navBarDropdown" href="#!" data-activates="userDropdown">{{attuid}}<i class="material-icons right">arrow_drop_down</i></a></li>
+					</ul>
+				</div>
+				<div class="col s3 right">
+					<div class="row">
+						<div class="col s6">
+							<div class="input-field">
+								<input 
+									type="text"
+									placeholder="Search Jira Ticket" 
+									[(ngModel)]="ticketValue"
+									(keyup.enter)="ticketValue = $event.target.value; searchTicket()"
+								/>
+							</div>
+						</div>
+						<div class="col s6">
+							<button class="btn waves-effect waves-light" (click)="searchTicket()">
+								Search
+							</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</nav>
+</div>
+
+<span *ngIf='missingUserSettings()'>
+	<app-user-settings></app-user-settings>
+</span>

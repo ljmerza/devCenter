@@ -1,0 +1,78 @@
+
+<div class="container-fuild">
+	<div class="row">
+		<div class="col s12">
+			<span class='refresh-button' 
+				[ngClass]="{'loading': isLoading}"
+				*ngIf='isLoading;'
+			>
+				<i class="material-icons">cached</i>
+			</span>
+
+			<div [hidden]='isLoading'>
+				<table 
+					class="striped" 
+					datatable 
+					[dtOptions]="dtOptions" 
+					[dtTrigger]="dtTrigger"	
+				>
+					<thead>
+						<tr>
+							<th>Key</th>
+							<th>MSRP</th>
+							<th>Summary</th>
+							<th>Status</th>
+							<th>Start Date</th>
+							<th>Due Date</th>
+							<th>Estimate</th>
+							<th>Logged</th>
+							<th>Crucible</th>
+							<th>ATTuid</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr *ngFor='let ticket of openTickets'>
+							<td>{{ticket.id}}</td>
+							<td><a target="_blank" href="{{jiraUrl}}/browse/{{ticket.key}}">{{ticket.key}}</a></td>
+							<td class='summary-format'>{{ticket.fields.summary}}</td>
+							<td>
+								<div>{{ticket.fields.status.name}}</div>
+								<div>{{ticket.fields.components[0]?.name}}</div>
+							</td>
+							<td>{{ticket.fields.customfield_10109 | amDateFormat:'LL'}}</td>
+							<td>{{ticket.fields.duedate | amDateFormat:'LL'}}</td>
+							<td>{{ticket.fields.customfield_10006 | estimate }}</td>
+							<td>{{ticket.fields.timespent | logged}}</td>
+							<td>
+								<span *ngIf='ticket.fields.crucible_id'>
+									<a target="_blank" href="{{ticket.fields.crucible_link}}">{{ticket.fields.crucible_id}}</a>
+									<i class="material-icons" title='PCR Pass' (click)="openPcrModal(ticket.fields.crucible_id, 'Pass')">done</i>
+									<i class="material-icons" title='PCR Complete' (click)="openPcrModal(ticket.fields.crucible_id,'Complete')">done_all</i>
+									
+								</span>
+							</td>
+							<td>{{ticket.fields.assignee?.name}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<!-- PCR Model -->
+<div id="pcrModal" class="modal" materialize="modal" [materializeActions]="pcrModelAction">
+	<div class="modal-content">
+		<h4>Peer Review {{pcrType}}</h4>
+		<p>Are you sure you want to PCR {{pcrType}}?</p>
+	</div>
+	<div class="modal-footer">
+		<a class="modal-action modal-close waves-effect waves-green btn-flat" (click)="confirmPcrModal()">Yes</a>
+		<a class="waves-effect waves-green btn-flat" (click)="closePcrModal()">No</a>
+	</div>
+</div>
+
+
