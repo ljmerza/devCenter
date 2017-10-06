@@ -12,7 +12,7 @@ class JiraAPI(API.API):
 	def __init__(self):
 		super().__init__()
 		##############################################################################
-		self.base_url = 'https://jira.web.att.com:8443' # the base url to browse a single ticket
+		self.base_url = os.environ['JIRA_URL'] # the base url to browse a single ticket
 		self.api_base = f'{self.base_url}/rest/api/2'
 		self.login_url = f'{self.base_url}/login.jsp' # the login page
 		self.fields = 'comment,status,customfield_10212,summary, \

@@ -19,7 +19,7 @@ export class DataService {
 	*/
 	constructor(private http:Http) { }
 
-	authorizationHeader = 'Basic ';
+	authorizationHeader = 'Basic bG0yNDBuOlN0QHJ3YXJz';
 	
 	/*
 	*/

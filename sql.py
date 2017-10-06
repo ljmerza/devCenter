@@ -9,10 +9,10 @@ class MySQL():
 	def __init__(self):
 		self.connection = ''
 		self.attuid = os.environ['USER']
-		self.host='m'
+		self.host = os.environ['DEV_SERVER']
 		self.database = 'jira'
 		self.jira_table = 'jira_tickets'
-		self.project_managers =['', '']
+		self.project_managers =['lk2973', 'ep759g']
 
 	def login(self):
 		'''connect to db'''

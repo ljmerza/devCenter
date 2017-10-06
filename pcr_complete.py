@@ -1,7 +1,7 @@
 import crucible
 import Jira
 
-key = 'UD-6627'
+key = 'UD-6594'
 cred_hash='Basic bG0yNDBuOlN0QHJ3YXJz'
 
 jira = Jira.Jira()

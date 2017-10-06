@@ -1,20 +1,10 @@
 #!/usr/bin/python3
 
 import Jira
-import sql
-import qBot
-import time
 
-
-
-################################################################################
-base_url=''
-filters = {'my_filter':"11502", 'beta':'11004', 'qa':'11019', 'cr':'11007', 'uct':'11014', 'all':'11002', 'pcr':'11128'}
 jira_obj = Jira.Jira()
-################################################################################
-
 jira_obj.login()
-jira_obj.get_jira_data(filters['beta'])
+jira_obj.get_jira_data(11004)
 
 # get jira data
 jira_data = jira_obj.return_jira_data()

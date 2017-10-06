@@ -18,11 +18,11 @@ class Qbot(object):
 		self.bot_name = os.environ['BOT_NAME']
 		self.bot_password = os.environ['BOT_PASSWORD']
 		##########################################################
-		self.APEX = ''
-		self.DTI = ''
-		self.bot_test = ''
-		self.jira_chat = ''
-		self.apex_chat = ''
+		self.APEX = 'q_rooms_ep759g1469815893161'
+		self.DTI = 'q_rooms_mk08171393514273394'
+		self.bot_test = 'q_rooms_lm240n1496153721334'
+		self.jira_chat = 'q_rooms_lm240n1503605564035'
+		self.apex_chat = 'q_rooms_ep759g1469815893161'
 		##########################################################
 		self.qBot_url = 'http://chatbots.q.att.com:19221'
 		self.qBot_api = f'{self.qBot_url}/push'
