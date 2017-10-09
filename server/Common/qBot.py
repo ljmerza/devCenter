@@ -27,12 +27,11 @@ class Qbot(object):
 		self.qBot_url = 'http://chatbots.q.att.com:19221'
 		self.qBot_api = f'{self.qBot_url}/push'
 		##########################################################
-		self.dont_ping = ['lk2973', 'ep759g']
+		self.never_ping_pms = ['lk2973', 'ep759g']
 		##########################################################
 		self.td_style = "border: 1px solid #dddddd;padding: 8px;"
 		self.td_alt_style = "background-color: #dddddd;"
 		self.table_style = "border-collapse: collapse;"
-		# self.trantab = string.maketrans(",!.;:/\\()@#$%^&*[]'<>|~`", "------------------------")
 		self.trantab = "".maketrans(",!.;:/\\()@#$%^&*[]'<>|~`", "------------------------")
 		##########################################################
 
@@ -98,36 +97,19 @@ class Qbot(object):
 		# get branch, pcr estimate, and time estimate
 		branch = self.get_branch_name(attuid=attuid, msrp=msrp, summary=summary)
 		estimate = self._get_estimate_string(story_point=story_point)
-		
-		# create message to send
-		message = f"New Ticket: <br> \
-					<table style='{self.table_style}'> \
-						<tr> \
-							<td style='{self.td_style}'>Jira Link</td> \
-					    	<td style='{self.td_style}'><a href='{self.ticket_base}/{key}'>{self.ticket_base}/{key}</a></td> \
-					  	</tr> \
-					  	<tr> \
-					    	<td style='{self.td_style} {self.td_alt_style}'>MSRP</td> \
-					    	<td style='{self.td_style} {self.td_alt_style}'>{msrp}</td> \
-					  	</tr> \
-					  	<tr> \
-					    	<td style='{self.td_style}'>Summary</td> \
-					    	<td style='{self.td_style}'>{summary}</td> \
-					  	</tr> \
-					  	<tr> \
-					    	<td style='{self.td_style} {self.td_alt_style}'>Branch</td> \
-					    	<td style='{self.td_style} {self.td_alt_style}'>{branch}</td> \
-					  	</tr> \
-					  <tr> \
-					    	<td style='{self.td_style}'>Estimate</td> \
-					    	<td style='{self.td_style}'>{estimate}</td> \
-					  	</tr> \
-					  	<tr> \
-					    	<td style='{self.td_style} {self.td_alt_style}'>Crucible Title</td> \
-					    	<td style='{self.td_style} {self.td_alt_style}'>(PCR-{pcr_estimate}) [{key}] Ticket #{msrp} {summary}</td>\
-					  	</tr> \
-					 </table>"
-		if(attuid not in self.dont_ping):
+		data = {
+			"summary": summary,
+			"msrp": msrp,
+			"sprint": sprint,
+			"branch": branch,
+			"pcr_estimate": pcr_estimate,
+			"key": key,
+			"type_message": 'New Ticket'
+		}
+		message = self.build_message(data=data, msrp_message=True, 
+			jira_message=True, branch_message=True, summary_message=True, estimate_message=True, crucible_title_message=True)
+
+		if(attuid not in self.never_ping_pms):
 			self.send_message(message=message, attuid=attuid)
 			
 	
@@ -139,26 +121,17 @@ class Qbot(object):
 		'''set user to send message, create message and send message for merge code'''
 		branch = self.get_branch_name(attuid=attuid, msrp=msrp, summary=summary)
 		sprint = sprint.replace(" ", "")
-		message = f"Merge needed: <br> \
-					<table style='{self.table_style}'> \
-						<tr> \
-							<td style='{self.td_style}'>Commit Message</td> \
-					    	<td style='{self.td_style}'>[{key}] Ticket #{msrp} {summary}</td> \
-					  	</tr> \
-					  	<tr> \
-					    	<td style='{self.td_style} {self.td_alt_style}'>Jira Link</td> \
-					    	<td style='{self.td_style} {self.td_alt_style}'><a href='{self.ticket_base}/{key}'>{self.ticket_base}/{key}</a></td> \
-					  	</tr> \
-					  	<tr> \
-					    	<td style='{self.td_style}'>Branch</td> \
-					    	<td style='{self.td_style}'>{branch}</td> \
-					  	</tr> \
-					  	<tr> \
-					    	<td style='{self.td_style}'>Sprint</td> \
-					    	<td style='{self.td_style}'>{sprint}</td> \
-					  	</tr> \
-					 </table>"
-		if(attuid not in self.dont_ping):
+
+		type_message='Merge needed'
+		data = {
+			"summary": summary,
+			"msrp": msrp,
+			"sprint": sprint,
+			"branch": branch,
+			"type_message": 'Merge needed'
+		}
+		message = self.build_message(data=data, commit_message=True, jira_message=True, branch_message=True, sprint_message=True)
+		if(attuid not in self.never_ping_pms):
 			self.send_message(message=message, attuid=attuid)
 
 	def send_merge_alert(self, key, msrp, sprint, attuid, repos_merged, crucible_link, summary):
@@ -186,6 +159,7 @@ class Qbot(object):
 		if self.merge_alerts:
 			chatroom = self.apex_chat
 		self.send_meeting_message(message=message, chatroom=chatroom)
+
 	def beta_statistics(self, uct, pcr, qa, cr, beta):
 		'''create html for beta stats'''
 		message = f"<br> \
@@ -193,24 +167,24 @@ class Qbot(object):
 				<table style='{self.table_style}'> \
 					<tr> \
 						<td style='{self.td_style}'>UCT ready</td> \
-				    	<td style='{self.td_style}'>{uct}</td> \
-				  	</tr> \
-				  	<tr> \
-				    	<td style='{self.td_style} {self.td_alt_style}'>PCR needed</td> \
-				    	<td style='{self.td_style} {self.td_alt_style}'>{pcr}</td> \
-				  	</tr> \
-				  	<tr> \
-				    	<td style='{self.td_style}'>QA needed</td> \
-				    	<td style='{self.td_style}'>{qa}</td> \
-				  	</tr> \
-				  	<tr> \
-				    	<td style='{self.td_style} {self.td_alt_style}'>CR Needed/Working</td> \
-				    	<td style='{self.td_style} {self.td_alt_style}'>{cr}</td> \
-				  	</tr> \
-				  	<tr> \
-				    	<td style='{self.td_style}'>Beta Tickets</td> \
-				    	<td style='{self.td_style}'>{beta}</td> \
-				  	</tr> \
+						<td style='{self.td_style}'>{uct}</td> \
+					</tr> \
+					<tr> \
+						<td style='{self.td_style} {self.td_alt_style}'>PCR needed</td> \
+						<td style='{self.td_style} {self.td_alt_style}'>{pcr}</td> \
+					</tr> \
+					<tr> \
+						<td style='{self.td_style}'>QA needed</td> \
+						<td style='{self.td_style}'>{qa}</td> \
+					</tr> \
+					<tr> \
+						<td style='{self.td_style} {self.td_alt_style}'>CR Needed/Working</td> \
+						<td style='{self.td_style} {self.td_alt_style}'>{cr}</td> \
+					</tr> \
+					<tr> \
+						<td style='{self.td_style}'>Beta Tickets</td> \
+						<td style='{self.td_style}'>{beta}</td> \
+					</tr> \
 				 </table>"
 		self.send_meeting_message(message=message)
 
@@ -219,16 +193,16 @@ class Qbot(object):
 		branch = self.get_branch_name(attuid=attuid, msrp=msrp, summary=summary)
 		message = f"{type_comp} <br> \
 					<table style='{self.table_style}'> \
-					  	<tr> \
-					    	<td style='{self.td_style}'>Jira Link</td> \
-					    	<td style='{self.td_style}'><a href='{self.ticket_base}/{key}'>{self.ticket_base}/{key}</a></td> \
-					  	</tr> \
-					  	<tr> \
-					    	<td style='{self.td_style} {self.td_alt_style}'>Branch</td> \
-					    	<td style='{self.td_style} {self.td_alt_style}'>{branch}</td> \
-					  	</tr> \
+						<tr> \
+							<td style='{self.td_style}'>Jira Link</td> \
+							<td style='{self.td_style}'><a href='{self.ticket_base}/{key}'>{self.ticket_base}/{key}</a></td> \
+						</tr> \
+						<tr> \
+							<td style='{self.td_style} {self.td_alt_style}'>Branch</td> \
+							<td style='{self.td_style} {self.td_alt_style}'>{branch}</td> \
+						</tr> \
 					 </table>"
-		if(attuid not in self.dont_ping):
+		if(attuid not in self.never_ping_pms):
 			self.send_message(message=message, attuid=attuid)
 
 	def send_jira_update(self, key, msrp, summary, attuid, ping_message, sprint):
@@ -250,10 +224,95 @@ class Qbot(object):
 		requests.post(f"{self.qBot_api}/meeting:{chatroom}", data=message, auth=HTTPBasicAuth(self.bot_name, self.bot_password))
 
 	def get_branch_name(self, attuid, msrp, summary):
-		'''get the branch name'''
+		'''get the branch name in attuid-msrp-summary format '''
 		branch = summary.translate(self.trantab)
 		branch = branch.replace(" - ",'-')
 		branch = branch.replace(" ",'-')
 		branch = branch.replace("--",'-')
 		branch = branch.replace("---",'-')
+		# if summary starts with a dash then get rid of it
+		if branch.startswith('-'):
+			branch = branch[1:]
+
 		return f"{attuid}-{msrp}-{branch}"
+
+
+	def build_message(self, data, commit_message=False, jira_message=False, branch_message=False, 
+		sprint_message=False, msrp_message=False, summary_message=False, crucible_title_message=False, estimate_message=False):
+
+		# make the type of message string
+		type_message = data['type_message']
+		message = f"{type_message}: <br> <table style='{self.table_style}'>"
+
+		# add commit message
+		if commit_message:
+			msrp = data['msrp']
+			key = data['key']
+			summary = data['summary']
+			message += "\
+			<tr> \
+				<td style='{self.td_style}'>Commit Message</td> \
+				<td style='{self.td_style}'>[{key}] Ticket #{msrp} {summary}</td> \
+			</tr>" 
+		# add Jira link
+		if jira_message:
+			key = data['key']
+			message += "\
+			<tr> \
+				<td style='{self.td_style} {self.td_alt_style}'>Jira Link</td> \
+				<td style='{self.td_style} {self.td_alt_style}'><a href='{self.ticket_base}/{key}'>{self.ticket_base}/{key}</a></td> \
+			</tr>"
+		# add branch name
+		if branch_message:
+			branch = data['branch']
+			message += "\
+			<tr> \
+				<td style='{self.td_style}'>Branch</td> \
+				<td style='{self.td_style}'>{branch}</td> \
+			</tr>"
+		# add sprint
+		if sprint_message: 
+			sprint = data['sprint']
+			message += "\
+			<tr> \
+				<td style='{self.td_style}'>Sprint</td> \
+				<td style='{self.td_style}'>{sprint}</td> \
+			</tr>"
+		# add MSRP number
+		if msrp_message:
+			msrp = data['msrp']	
+			message += "\
+			<tr> \
+				<td style='{self.td_style} {self.td_alt_style}'>MSRP</td> \
+				<td style='{self.td_style} {self.td_alt_style}'>{msrp}</td> \
+			</tr>"
+		# add summary
+		if summary_message:
+			summary = data['summary']
+			message += "\
+			<tr> \
+				<td style='{self.td_style}'>Summary</td> \
+				<td style='{self.td_style}'>{summary}</td> \
+			</tr>"
+		# add estimate
+		if estimate_message:
+			estimate = data['estimate']
+			message += "\
+			<tr> \
+				<td style='{self.td_style}'>Estimate</td> \
+				<td style='{self.td_style}'>{estimate}</td> \
+			</tr>"
+		# add crucible title format
+		if crucible_title_message:
+			pcr_estimate = data['pcr_estimate']
+			key = data['key']
+			msrp = data['msrp']
+			summary = data['summary']
+			message += "\
+			<tr> \
+				<td style='{self.td_style} {self.td_alt_style}'>Crucible Title</td> \
+				<td style='{self.td_style} {self.td_alt_style}'>(PCR-{pcr_estimate}) [{key}] Ticket #{msrp} {summary}</td>\
+			</tr>"
+		# close table and return message string
+		message += "</table>"
+		return message

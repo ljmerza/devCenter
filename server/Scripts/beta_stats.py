@@ -1,6 +1,8 @@
 #!/usr/bin/python3
+import sys
+sys.path.append('..')
 
-import Jira
+from Jira import Jira
 
 jira_obj = Jira.Jira()
 jira_obj.login()

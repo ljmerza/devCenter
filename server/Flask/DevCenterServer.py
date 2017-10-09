@@ -1,16 +1,21 @@
 #!/usr/bin/python3
 
+from flask import Flask, render_template, jsonify, send_from_directory, request, Response, stream_with_context
+from flask_cors import CORS, cross_origin
+
+import os
+import json
+import requests
+
+import sys
+sys.path.append('..')
+
+from Crucible import Crucible
+from Jira import Jira
+from . import CrucibleRequests
+
+
 def start_server(debug):
-
-    from flask import Flask, render_template, jsonify, send_from_directory, request, Response, stream_with_context
-    import crucible
-    import Jira
-    import os
-    import json
-    import requests
-    from flask_cors import CORS, cross_origin
-
-    import crucible_requests
 
     attuid = os.environ['USER']
     password = os.environ['PASSWORD']
@@ -19,10 +24,8 @@ def start_server(debug):
     folder_name = 'iTrack2'
     app_name = 'leo'
 
-    cru = crucible.Crucible()
-    cru.login()
+    crucible = Crucible.Crucible()
     jira = Jira.Jira()
-
 
     app = Flask(__name__)
     cors = CORS(app)
@@ -47,17 +50,17 @@ def start_server(debug):
     @cross_origin()
     def jiraFilter(filter_key):
         jira.login()
-        cru.login()
+        crucible.login()
         jira_data = jira.get_jira_tickets(filter_number=filter_key)
-        jira_data = cru.get_review_links(data=jira_data)
+        jira_data = crucible.get_review_links(data=jira_data)
         return jsonify(jira_data)
 
     @app.route("/crucible/filter/<keys>")
     @cross_origin()
     def crucibleLinks(keys):
         # convert from query string to array here -----------------------
-        cru.login()
-        return_data = cru.get_all_review_links(keys=keys)
+        crucible.login()
+        return_data = crucible.get_all_review_links(keys=keys)
         return jsonify(return_data)
 
 
@@ -79,7 +82,7 @@ def start_server(debug):
     @app.route("/git/repos")
     @cross_origin()
     def repos():
-        repo_names, repo_locations = cru.get_repos()
+        repo_names, repo_locations = crucible.get_repos()
         return jsonify(repo_names)
 
     @app.route("/git/repo/<repo_name>")
@@ -91,7 +94,7 @@ def start_server(debug):
     @app.route("/git/repo/<repo_name>/<msrp>")
     @cross_origin()
     def branch(repo_name, msrp):
-        data = cru.find_branch(repo_name, msrp)
+        data = crucible.find_branch(repo_name, msrp)
         return jsonify({ "branch_name": data})
 
 
@@ -109,7 +112,7 @@ def start_server(debug):
         Returns:
             dict: status boolean and data hash
         '''
-        data = crucible_requests.crucible_create_review( data=request.get_json() )
+        data = CrucibleRequests.crucible_create_review( data=request.get_json() )
         return jsonify(data)
 
 
@@ -122,7 +125,7 @@ def start_server(debug):
             "cred_hash": request.headers['Authorization']
         }
         print(data)
-        data = crucible_requests.crucible_pcr_pass(data=data)
+        data = CrucibleRequests.crucible_pcr_pass(data=data)
         return jsonify(data)
 
     @app.route('/crucible/review/pcr_complete/', methods=['POST'])
@@ -133,7 +136,7 @@ def start_server(debug):
             "attuid": request.form['attuid'],
             "cred_hash": request.headers['Authorization']
         }
-        data = crucible_requests.set_pcr_complete(data=data)
+        data = CrucibleRequests.set_pcr_complete(data=data)
         return jsonify(data)
 
 

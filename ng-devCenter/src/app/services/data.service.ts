@@ -15,6 +15,10 @@ import { Headers, RequestOptions } from '@angular/http';
 @Injectable()
 export class DataService {
 
+	jiraUrl = 'https://jira.web.att.com:8443';
+	crucibleUrl = '';
+	apiUrl = 'http://127.0.0.1:5858';
+
 	/*
 	*/
 	constructor(private http:Http) { }

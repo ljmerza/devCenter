@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import JiraAPI
+from . import JiraAPI
 import re
 
 class Jira(JiraAPI.JiraAPI):

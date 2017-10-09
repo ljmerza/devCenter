@@ -1,9 +1,15 @@
+#!/usr/bin/python3
+import sys
+sys.path.append('..')
+
 import re
-import API
 import math
 
-class CruciblePCR(API.API):
+from Common import DevCenterAPI
+
+class CruciblePCR(DevCenterAPI.DevCenterAPI):
 	def __init__(self):
+		DevCenterAPI.DevCenterAPI.__init__(self)
 		self.pcr_pass = "=#= PCR PASS =#="
 		self.pcr_pass_regex = re.compile(r"=#= PCR PASS =#=")
 

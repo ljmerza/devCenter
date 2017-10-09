@@ -1,12 +1,16 @@
 #!/usr/bin/python3
+import sys
+sys.path.append('..')
 
-import API
-import JiraFields
 import re
 import os
 from time import gmtime, strftime
 
-class JiraAPI(API.API):
+from Common import DevCenterAPI
+from . import JiraFields
+
+
+class JiraAPI(DevCenterAPI.DevCenterAPI):
 	'''jira class using an attuid and password'''
 
 	def __init__(self):

@@ -7,10 +7,6 @@ import { DataService } from './data.service';
 @Injectable()
 export class JiraService extends DataService{
 
-	jiraUrl = 'https://jira.web.att.com:8443';
-	// apiUrl = this.jiraUrl;
-	apiUrl = 'http://127.0.0.1:5858'
-
 	constructor(http: Http) {
 		super(http);
 	}

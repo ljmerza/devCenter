@@ -3,8 +3,8 @@
 import time
 import math
 
-import CrucibleAPI
-import CruciblePCR
+from . import CrucibleAPI
+from . import CruciblePCR
 
 class Crucible(CrucibleAPI.CrucibleAPI, CruciblePCR.CruciblePCR):
 	def __init__(self):
@@ -12,59 +12,96 @@ class Crucible(CrucibleAPI.CrucibleAPI, CruciblePCR.CruciblePCR):
 		CruciblePCR.CruciblePCR.__init__(self)
 
 	def get_review_link(self, key, msrp, full_link=True):
-		'''try to return a crucible link for a particular jira key/msrp'''
-		titles, ids = self.get_14_day_reviews()
+		'''try to return a crucible link for a particular Jira key/msrp
+		Args:
+			key (str)
+			msrp (str)
+			full_link (boolean)
+
+		Returns:
+			dict of status property. If fil then contains data property of error message
+			else has crucible_id
+		'''
+		response = { "status": False }
+		# get last 14 days of crucible reviews and check response
+		reviews = self.get_14_day_reviews()
+		if not reviews['status']:
+			response['data'] = reviews['data']
+			return response
 		# try to find title from key
-		if titles:
-			index = [index for index, title in enumerate(titles) if key in str(title)]
-			# if found by key then return url
-			if len(index):
-				if full_link:
-					return f'{self.review_url}/{ids[index[0]]}'
-				else:
-					return ids[index[0]]
-			else:
-				# else try to find by msrp
-				index = [index for index, title in enumerate(titles) if msrp in str(title)]
-				# if found by msrp then return url
-				if len(index):
-					if full_link:
-						return f'{self.review_url}/{ids[index[0]]}'
-					else:
-						return ids[index[0]]
-				else:
-					# else cant find url so return false
-					return False
+		index = [index for index, title in enumerate(reviews['titles']) if key in str(title)]
+		# if found by key then return URL
+		if len(index):
+			response['status'] = True
+			response['crucible_id'] = reviews['crucible_ids'][index[0]]
+			return response
 		else:
-			False
+			# else try to find by MSRP
+			index = [index for index, title in enumerate(reviews['titles']) if msrp in str(title)]
+			# if found by MSRP then return URL
+			if len(index):
+				response['status'] = True
+				response['crucible_id'] = reviews['crucible_ids'][index[0]]
+				return response
+			else:
+				# else cant find URL so return false status
+				return response
 
 	def get_review_links(self, data):
+
+		# get issue and create response object
 		issues = data['data']
-		titles, ids = self.get_14_day_reviews()
+		response = { "status": False }
+
+		# get all reviews in the last 14 days
+		reviews = self.get_14_day_reviews()
+		# if we couldn't get reviews -> save error and return 
+		if not reviews['status']:
+			response['data'] = reviews['data']
+			return response
+		# if we did get data then loop though each issue to get crucible link
 		for issue in issues:
+			# get MSRP and key of issue
 			msrp = issue['fields']['customfield_10212']
 			key = issue['key']
-			crucible_id, link = self.find_review_link(msrp=msrp, key=key, titles=titles, ids=ids)
-			if crucible_id:
-				issue['fields']['crucible_link'] = link
-				issue['fields']['crucible_id'] = crucible_id
-		data['data'] = issues
-		return data
+			# find crucible data of issue
+			review = self.find_review_data(msrp=msrp, key=key, reviews=reviews)
+			# if found crucible link then add to response
+			if review['status']:
+				issue['fields']['crucible_link'] = review['crucible_link']
+				issue['fields']['crucible_id'] = review['crucible_id']
+		# save  issues with added data
+		response['data'] = issues
+		return response
 
 	def get_all_review_links(self, keys):
-		return_data = []
-		titles, ids = self.get_30_day_reviews()
+
+		# create response object
+		response = { "status": False }
+		# get all reviews in the last 30 days
+		reviews = self.get_30_day_reviews()
+		# if we couldn't get reviews -> save error and return 
+		if not reviews['status']:
+			response['data'] = reviews['data']
+			return response
+		# if we got data then we are okay
+		response['status'] = True
+		# for each key get crucible data
 		for key in keys:
-			crucible_id, link = self.find_review_link(key=key, titles=titles, ids=ids)
-			if crucible_id:
-				return_data.append({"key": key, "crucible_link": link, "crucible_id":crucible_id})
-		return return_data
+			review = self.find_review_data(key=key, reviews=reviews)
+			if review['status']:
+				response['data'].append({ "key": key, "crucible_link": review['crucible_link'], "crucible_id":review['crucible_id'] })
+		return response
 
 	def get_review_id(self, msrp='', key='', cred_hash=''):
-		titles, ids = self.get_14_day_reviews(cred_hash=cred_hash)
-		return self.find_review_link(msrp=msrp, key=key, titles=titles, ids=ids)
 
-	def find_review_link(self, titles, ids, msrp='', key=''):
+		reviews = self.get_14_day_reviews(cred_hash=cred_hash)
+		if not reviews['status']:
+			response['data'] = reviews['data']
+			return response
+		return self.find_review_data(msrp=msrp, key=key, reviews=reviews)
+
+	def find_review_data(self, titles, ids, msrp='', key=''):
 		# try to find by msrp
 		if msrp:
 			index = [index for index, title in enumerate(titles) if msrp in str(title)]
@@ -95,7 +132,6 @@ class Crucible(CrucibleAPI.CrucibleAPI, CruciblePCR.CruciblePCR):
 	def get_30_day_reviews(self):
 		return self.get_reviews(days=30, cred_hash=cred_hash)
 
-
 	def get_14_day_reviews(self, cred_hash=''):
 		return self.get_reviews(days=14, cred_hash=cred_hash)
 
@@ -104,6 +140,9 @@ class Crucible(CrucibleAPI.CrucibleAPI, CruciblePCR.CruciblePCR):
 
 
 	def get_reviews(self, days, cred_hash=''):
+
+		# create response objects
+		response = { "status": False }
 		review_titles = []
 		review_ids = []
 		# calc epoch from 'days' days ago
@@ -111,14 +150,15 @@ class Crucible(CrucibleAPI.CrucibleAPI, CruciblePCR.CruciblePCR):
 		milli_days = milli_24_hours * days
 		millis = int( round(time.time() * 1000) - milli_days)
 		# get crucible data
-		response = self.get_endpoint_data(f'{self.base_url}/rest-service/reviews-v1/filter.json?states=Review,Closed&fromDate={millis}', cred_hash=cred_hash)
+		response = self.get_endpoint_data(url=f'{self.base_url}/rest-service/reviews-v1/filter.json?states=Review,Closed&fromDate={millis}', cred_hash=cred_hash)
 		if not response['status']:
-			return review_titles, review_ids 
+			response['data'] = response
+			return response
 		# save all open review titles and ids
 		for review in response['data']['reviewData']:
 			review_titles.append(review['name'])
 			review_ids.append(review['permaId']['id'])
-		return review_titles, review_ids
+		return { "status": True, "review_titles": review_titles, "review_ids":review_ids }
 
 
 	def get_repos(self):

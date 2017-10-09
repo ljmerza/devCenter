@@ -1,6 +1,13 @@
-import automationBot
+#!/usr/bin/python3
+
+import sys
+sys.path.append('..')
+
 import time
 import threading
+
+import AutomationBot
+from Flask import DevCenterServer
 
 debug = True
 
@@ -12,9 +19,11 @@ def start_bots():
 		autobot.update_jira()
 		time.sleep(30)
 
-# t = threading.Thread(target=start_bots)
-# t.daemon = True
-# t.start()
 
-import server
-server.start_server(debug)
+if not debug:
+	t = threading.Thread(target=start_bots)
+	t.daemon = True
+	t.start()
+
+
+DevCenterServer.start_server(debug)

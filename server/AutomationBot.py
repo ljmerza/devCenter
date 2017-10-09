@@ -1,17 +1,18 @@
 #!/usr/bin/python3
 
-import Jira
-import sql
-import qBot
-import crucible
-import apexReminders
 import os
 import datetime
+
+from Jira import Jira
+from Common import DevCenterSQL
+from Common import qBot
+from Crucible import Crucible
+
 
 
 class AutomationBot(object):
 
-	def __init__(self, is_beta_week, is_qa_pcr, want_time_reminders, beta_stat_ping_now, debug, show_ascii, merge_alerts):
+	def __init__(self, is_beta_week, is_qa_pcr, beta_stat_ping_now, debug, show_ascii, merge_alerts):
 		self.attuid = os.environ['USER']
 		self.password = os.environ['PASSWORD']
 		self.base_url= os.environ['JIRA_URL']
@@ -24,11 +25,10 @@ class AutomationBot(object):
 		self.debug = debug
 		################################################################################
 		# create objects
-		self.sql_obj = sql.MySQL()
+		self.sql_obj = DevCenterSQL.DevCenterSQL()
 		self.jira_obj = Jira.Jira()
-		self.crucible_obj = crucible.Crucible()
+		self.crucible_obj = Crucible.Crucible()
 		self.qbot_obj = qBot.Qbot(ticket_base=self.jira_obj.get_ticket_base(), debug=debug, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
-		self.reminder_obj = apexReminders.ApexReminders(qbot_obj=self.qbot_obj)
 		################################################################################
 		# create connections
 		self.sql_obj.login()
@@ -50,9 +50,6 @@ class AutomationBot(object):
 		self.want_time_reminders = want_time_reminders
 
 	def update_jira(self):
-		# remind time sheets and time logging
-		if self.want_time_reminders:
-			self.reminder_obj.calc_messages()
 
 		# create jira connection
 		response = self.jira_obj.login()

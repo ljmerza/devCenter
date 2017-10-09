@@ -1,10 +1,14 @@
-import API
-import os
+#!/usr/bin/python3
+import sys
+sys.path.append('..')
 
-class CrucibleAPI(API.API):
+import os
+from Common import DevCenterAPI
+
+class CrucibleAPI(DevCenterAPI.DevCenterAPI):
 
 	def __init__(self):
-		API.API.__init__(self)
+		DevCenterAPI.DevCenterAPI.__init__(self)
 		self.base_url = os.environ['CRUCIBLE_URL']
 		self.attuid = os.environ['USER']
 		self.password = os.environ['PASSWORD']
@@ -19,7 +23,7 @@ class CrucibleAPI(API.API):
 			self.password = password
 		# try to login
 		data = dict(username=self.attuid, password=self.password, rememberme='yes', atl_token=self.crucible_token)
-		response = self.login_data(f'{self.base_url}/login', data=data)
+		response = self.login_data(url=f'{self.base_url}/login', data=data)
 		# check login response
 		if response in [200,201]:
 			return { "status": True }

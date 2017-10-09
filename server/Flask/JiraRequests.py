@@ -1,7 +1,11 @@
-import crucible
-import Jira
+#!/usr/bin/python3
+import sys
+sys.path.append('..')
 
-crucible = crucible.Crucible()
+from Crucible import Crucible
+from Jira import Jira
+
+crucible = Crucible.Crucible()
 jira = Jira.Jira()
 
 

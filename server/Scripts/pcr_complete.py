@@ -1,15 +1,28 @@
-import crucible
-import Jira
+import sys
+import base64
+import os
 
-key = 'UD-6594'
-cred_hash='Basic bG0yNDBuOlN0QHJ3YXJz'
+sys.path.append('..')
+from Crucible import Crucible
+from Jira import Jira
+
+key = 'UD-6700'
+
+
+# create auth header
+attuid = os.environ['USER']
+password = os.environ['PASSWORD']
+header_value = f'{attuid}:{password}'
+encoded_header = base64.b64encode( header_value.encode() )
+cred_hash = f'Basic {encoded_header}'
 
 jira = Jira.Jira()
-print('jira login status:', jira.login() )
-
-cru = crucible.Crucible()
+cru = Crucible.Crucible()
 
 crucible_id, crucible_link = cru.get_review_id(key=key, cred_hash=cred_hash)
+print(crucible_id, crucible_link)
+exit()
+
 
 if crucible_id:
 	add_reviewer = cru.add_reviewer(attuid='lm240n', crucible_id=crucible_id, cred_hash=cred_hash)
