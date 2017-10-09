@@ -50,9 +50,9 @@ class DevCenterAPI():
 			filter_data = self.session_obj.get(url=url, headers={ 'Authorization': cred_hash })
 		except ProxyError:
 			return { 'status_code': 407 }
-		return filter_datalm240n-112271-TeamDB-GUI-Build-container-for-new-GUI>>>>
+		return filter_data
 
-	def post(self, url, cred_hash='', data=''):
+	def post(self, url, data='', cred_hash=''):
 		'''makes a POST request with the given URL and optional body data.
 		Returns the raw response.
 
@@ -94,11 +94,11 @@ class DevCenterAPI():
 			return {'status_code': 407}
 		return self._process_json(filter_data=filter_data)
 
-	def _process_json(self, filter_data=''):
+	def _process_json(self, filter_data):
 		'''internal method to parse JSON from responses and return status/data dict format
 
 		Args:
-			json_data (dict) optional JSON data it tries to parse (default '')
+			json_data (dict) JSON data it tries to parse (default '')
 
 		Returns:
 			returns a dict with status and optional data properties
@@ -113,10 +113,10 @@ class DevCenterAPI():
 				return { "status": True }
 		else:
 			# else we don't have an okay status so get error and return false status
-			json_data = { "status": False, "data": '' }
 			if self._is_json(my_json=filter_data.text):
-				json_data['data'] = json.loads(filter_data.text)
-			return json_data
+				return { "status": False, "data": json.loads(filter_data.text) }
+			else:
+				return { "status": False, "data": filter_data.text }
 
 	def _is_json(self, my_json):
 		'''internal method to see if given data is in JSON format

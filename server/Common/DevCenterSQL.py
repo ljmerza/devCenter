@@ -45,19 +45,20 @@ class DevCenterSQL():
 		'''
 		self.connection.close()
 
-	def add_crucible(self, key, crucible_link):
-		'''
+	def add_crucible(self, key, crucible_id):
+		'''adds a cricuble key to a Jira row
 
 		Args:
-			
+			key (str) the Jira key to associate the Crucible review with
+			crucible_id (str) the Crucible ID to to add to the Jira issue
 
 		Returns:
-
+			the SQL execution result
 		'''
 		key = re.escape(key)
-		crucible_link = re.escape(crucible_link)
+		crucible_id = re.escape(crucible_id)
 		# create update sql
-		sql = "UPDATE `{}` SET `crucible`='{}' WHERE `key`='{}'".format(self.jira_table, crucible_link, key)
+		sql = "UPDATE `{}` SET `crucible`='{}' WHERE `key`='{}'".format(self.jira_table, crucible_id, key)
 		# create a cursor and update jira ticket
 		return self._execute_sql(sql=sql)
 
@@ -68,11 +69,10 @@ class DevCenterSQL():
 		Args:
 			key (str) - the key of the Jira ticket
 			attuid (str) - the attuid of the user assigned to the Jira ticket
-			msrp (str) - the MSRP of the Jira ticket (default 0)
+			msrp (str) - optional MSRP of the Jira ticket (default 0)
 
 		Returns:
 			the SQL response from inserting/updating the DB
-		
 		'''
 		# escape everything
 		key = re.escape(key)
@@ -101,21 +101,6 @@ class DevCenterSQL():
 		sql = "UPDATE `{}` SET `{}`={} WHERE `key`='{}'".format(self.jira_table, field, value, key)
 		return self._execute_sql(sql=sql)
 				
-
-	def get_ping(self, field, key):
-		'''see if a field has been pinged for this Jira ticket
-
-		Args:
-			field (str) the field name to get the value of
-			key (str) the key of the Jira ticket
-
-		Returns:
-			the SQL response from the DB
-		'''
-		sql = "SELECT {} FROM `{}` WHERE `key`='{}'".format(field, self.jira_table, key)
-		return self._get_one(sql=sql)
-
-
 	def get_user_settings(self, attuid, field):
 		'''get a user's ping settings for a particular field type
 
@@ -185,6 +170,18 @@ class DevCenterSQL():
 			return self._execute_sql(sql=sql)
 		return False
 
+	def get_ping(self, field, key):
+		'''see if a field has been pinged for this Jira ticket
+
+		Args:
+			field (str) the field name to get the value of
+			key (str) the key of the Jira ticket
+
+		Returns:
+			the SQL response from the DB
+		'''
+		sql = "SELECT {} FROM `{}` WHERE `key`='{}'".format(field, self.jira_table, key)
+		return self._get_one(sql=sql)
 
 	def get_pings(self, key):
 		'''gets a Jira ticket's ping settings
