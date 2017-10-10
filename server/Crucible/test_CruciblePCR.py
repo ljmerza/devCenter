@@ -9,7 +9,7 @@ divider = '-'*40
 username = os.environ['USER']
 password = os.environ['PASSWORD']
 header_value = f'{username}:{password}'
-encoded_header = base64.b64encode( header_value.encode() )
+encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
 cred_hash = f'Basic {encoded_header}'
  
 crucible_id = 'CR-UD-3633'

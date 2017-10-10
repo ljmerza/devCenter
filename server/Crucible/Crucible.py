@@ -3,251 +3,238 @@
 import time
 import math
 
-from . import CrucibleAPI
-from . import CruciblePCR
+import CrucibleAPI
+import CruciblePCR
+import CrucibleRepoBranch
 
-class Crucible(CrucibleAPI.CrucibleAPI, CruciblePCR.CruciblePCR):
+class Crucible(CrucibleRepoBranch.CrucibleRepoBranch, CruciblePCR.CruciblePCR):
 	def __init__(self):
-		CrucibleAPI.CrucibleAPI.__init__(self)
 		CruciblePCR.CruciblePCR.__init__(self)
+		CrucibleRepoBranch.CrucibleRepoBranch.__init__(self)
 
-	def get_review_link(self, key, msrp, full_link=True):
-		'''try to return a crucible link for a particular Jira key/msrp
+	def get_review_id(self, key, msrp):
+		'''try to return a crucible ID for a particular Jira key/MSRP
 		Args:
-			key (str)
-			msrp (str)
-			full_link (boolean)
+			key (str) the Jira key
+			msrp (str) the Jira MSRP
 
 		Returns:
-			dict of status property. If fil then contains data property of error message
+			dict of status property. If fail then contains data property of error message
 			else has crucible_id
 		'''
-		response = { "status": False }
 		# get last 14 days of crucible reviews and check response
-		reviews = self.get_14_day_reviews()
-		if not reviews['status']:
-			response['data'] = reviews['data']
+		response = self.get_14_day_reviews()
+		if not response['status']:
 			return response
+		# get Crucible data
+		review_titles = reviews['data']['review_titles']
+		review_ids = reviews['data']['review_ids']
 		# try to find title from key
-		index = [index for index, title in enumerate(reviews['titles']) if key in str(title)]
-		# if found by key then return URL
-		if len(index):
-			response['status'] = True
-			response['crucible_id'] = reviews['crucible_ids'][index[0]]
-			return response
-		else:
-			# else try to find by MSRP
-			index = [index for index, title in enumerate(reviews['titles']) if msrp in str(title)]
-			# if found by MSRP then return URL
-			if len(index):
-				response['status'] = True
-				response['crucible_id'] = reviews['crucible_ids'][index[0]]
-				return response
-			else:
-				# else cant find URL so return false status
-				return response
+		return self._get_review_id(key=key, msrp=msrp, review_titles=review_titles, review_ids=review_ids)
 
-	def get_review_links(self, data):
+	def get_review_ids(self, issues):
+		'''gets all Crucible IDs for an array of Jira ticket objects
+		Args:
+			issues (Array) an array of Jira ticket objects 
 
-		# get issue and create response object
-		issues = data['data']
-		response = { "status": False }
-
-		# get all reviews in the last 14 days
+		Returns:
+			dict of status/data properties. If fail then contains data property of error message
+			else has issues with added Crucible IDs
+		'''
+		# get all reviews in the last 14 days and check response
 		reviews = self.get_14_day_reviews()
-		# if we couldn't get reviews -> save error and return 
-		if not reviews['status']:
-			response['data'] = reviews['data']
+		if not response['status']:
 			return response
-		# if we did get data then loop though each issue to get crucible link
-		for issue in issues:
+		# get Crucible data
+		review_titles = reviews['data']['review_titles']
+		review_ids = reviews['data']['review_ids']
+		# loop though each issue to get crucible link
+		for issue in issues['data']:
 			# get MSRP and key of issue
 			msrp = issue['fields']['customfield_10212']
 			key = issue['key']
 			# find crucible data of issue
-			review = self.find_review_data(msrp=msrp, key=key, reviews=reviews)
+			response = self._get_review_id(msrp=msrp, key=key, review_titles=review_titles, review_ids=review_ids)
 			# if found crucible link then add to response
-			if review['status']:
-				issue['fields']['crucible_link'] = review['crucible_link']
-				issue['fields']['crucible_id'] = review['crucible_id']
-		# save  issues with added data
-		response['data'] = issues
-		return response
+			if response['status']:
+				issue['fields']['crucible_id'] = response['data']
+		# return issues with added data
+		return {'status': False, 'data': issues}
 
-	def get_all_review_links(self, keys):
+	def get_review_ids_from_keys(self, keys):
+		'''gets all Crucible IDs for a array of Jira ticket keys
+		Args:
+			keys (Array) an array of Jira ticket keys 
 
-		# create response object
-		response = { "status": False }
+		Returns:
+			dict of status/data properties. If fail then contains data property of error message
+			else array of key/crucbile_id objects
+		'''
 		# get all reviews in the last 30 days
-		reviews = self.get_30_day_reviews()
-		# if we couldn't get reviews -> save error and return 
-		if not reviews['status']:
-			response['data'] = reviews['data']
-			return response
-		# if we got data then we are okay
-		response['status'] = True
-		# for each key get crucible data
-		for key in keys:
-			review = self.find_review_data(key=key, reviews=reviews)
-			if review['status']:
-				response['data'].append({ "key": key, "crucible_link": review['crucible_link'], "crucible_id":review['crucible_id'] })
-		return response
-
-	def get_review_id(self, msrp='', key='', cred_hash=''):
-
-		reviews = self.get_14_day_reviews(cred_hash=cred_hash)
-		if not reviews['status']:
-			response['data'] = reviews['data']
-			return response
-		return self.find_review_data(msrp=msrp, key=key, reviews=reviews)
-
-	def find_review_data(self, titles, ids, msrp='', key=''):
-		# try to find by msrp
-		if msrp:
-			index = [index for index, title in enumerate(titles) if msrp in str(title)]
-			if len(index):
-				return ids[index[0]], f"{self.review_url}/{ids[index[0]]}"
-		# try to find title from key
-		elif key:
-			index = [index for index, title in enumerate(titles) if key in str(title)]
-			if len(index):
-				return ids[index[0]], f"{self.review_url}/{ids[index[0]]}"
-		# else cant find url so return false
-		return False, False
-
-
-	def get_repos_of_review(self, crucible_key):
-		# get crucible details
-		response = self.get_endpoint_data(url=f'{self.base_url}/rest-service/reviews-v1/{crucible_key}/reviewitems.json')
+		reviews = self.get_14_day_reviews()
 		if not response['status']:
-			return []
-		repos = []
-		# get all repos for all source files
-		for item in response['data']['reviewItem']:
-			for file in item['expandedRevisions']:
-				repos.append(file['source'])
-		return list(set(repos))
+			return response
+		# get Crucible data
+		review_titles = reviews['data']['review_titles']
+		review_ids = reviews['data']['review_ids']
+		# for each key get crucible data
+		data = []
+		for key in keys:
+			response = self._get_review_id(msrp='', key=key, review_titles=review_titles, review_ids=review_ids)
+			# if found crucible link then add to response
+			if response['status']:
+				data.append({'key': key, 'crucible_id': response['data']})
+		# return issues with added data
+		return {'status': True, 'data': data}
 
 
-	def get_30_day_reviews(self):
+	def _get_review_id(self, key, msrp, review_titles, review_ids):
+		'''matches a Crucible ID from an array of msrps/keys and review_titles/review_ids
+		Args:
+			key (str) the key of the Jira issue
+			msrp (str) the MSRP of the Jira issue
+			review_titles (Array) array of Crucible titles
+			review_ids (Array) array of Crucible IDs
+			
+		Returns:
+			dict of status/data properties. If fail then contains data property of error message
+			else as Crucible ID
+		'''
+		index = [index for index, title in enumerate(review_titles) if key in str(title)]
+		# if found by key then return URL
+		if len(index):
+			return { 'status': True, 'data': review_ids[index[0]] }
+		else:
+			# else try to find by MSRP
+			index = [index for index, title in enumerate(review_titles) if msrp in str(title)]
+			# if found by MSRP then return URL
+			if len(index):
+				return { 'status': True, 'data': review_ids[index[0]] }
+			else:
+				# else cant find URL so return false status
+				return { 'status': False, 'data': 'No crucible ID found' }
+
+	def get_30_day_reviews(self, cred_hash):
+		'''gets all closed and open reviews in the last 30 days
+		Args:
+			days (str) the number of days to look back for Crucible reviews
+
+		Returns:
+			dict with status/data properties. Data property has array of
+			dicts with review_titles/review_ids properties
+		'''
 		return self.get_reviews(days=30, cred_hash=cred_hash)
 
-	def get_14_day_reviews(self, cred_hash=''):
+	def get_14_day_reviews(self, cred_hash):
+		'''gets all closed and open reviews in the last 14 days
+		Args:
+			days (str) the number of days to look back for Crucible reviews
+
+		Returns:
+			dict with status/data properties. Data property has array of
+			dicts with review_titles/review_ids properties
+		'''
 		return self.get_reviews(days=14, cred_hash=cred_hash)
 
-	def get_7_day_reviews(self):
+	def get_7_day_reviews(self, cred_hash):
+		'''gets all closed and open reviews in the last 7 days
+		Args:
+			days (str) the number of days to look back for Crucible reviews
+
+		Returns:
+			dict with status/data properties. Data property has array of
+			dicts with review_titles/review_ids properties
+		'''
 		return self.get_reviews(days=7, cred_hash=cred_hash)
 
+	def get_reviews(self, days, cred_hash):
+		'''gets all closed and open reviews beginning from passed in number of days
+		Args:
+			days (str) the number of days to look back for Crucible reviews
+			cred_hash (string) Authorization header value
 
-	def get_reviews(self, days, cred_hash=''):
-
-		# create response objects
-		response = { "status": False }
-		review_titles = []
-		review_ids = []
+		Returns:
+			dict with status/data properties. Data property has array of
+			dicts with review_titles/review_ids properties
+		'''
 		# calc epoch from 'days' days ago
 		milli_24_hours = 24*60*60*1000
 		milli_days = milli_24_hours * days
 		millis = int( round(time.time() * 1000) - milli_days)
 		# get crucible data
-		response = self.get_endpoint_data(url=f'{self.base_url}/rest-service/reviews-v1/filter.json?states=Review,Closed&fromDate={millis}', cred_hash=cred_hash)
+		response = self.get(url=f'{self.base_url}/rest-service/reviews-v1/filter.json?states=Review,Closed&fromDate={millis}', cred_hash=cred_hash)
+		# check response
 		if not response['status']:
-			response['data'] = response
 			return response
+		# check if review data exists
+		if 'reviewData' not in response['data']:
+			return { 'status': False, 'data': "Review data could not be found" }
 		# save all open review titles and ids
+		data = []
 		for review in response['data']['reviewData']:
-			review_titles.append(review['name'])
-			review_ids.append(review['permaId']['id'])
-		return { "status": True, "review_titles": review_titles, "review_ids":review_ids }
-
-
-	def get_repos(self):
-		repo_names = []
-		repo_locations = []
-		# get data from API
-		response = self.get_endpoint_data(f'{self.base_url}/rest-service/repositories-v1.json')
-		if not response['status']:
-			return repo_names, repo_locations
-		# save all repo names and locations
-		for review in response['data']['repoData']:
-			repo_names.append(review['name'])
-			repo_locations.append(review['location'])
-		return repo_names, repo_locations
-
-
-	def get_branches(self, repo_name):
-		branch_names = []
-		# get data from API
-		response = self.get_endpoint_data(f'{self.base_url}/changelog-ajax/{repo_name}?q=&command=branches&limit=50')
-		if not response['status']:
-			return branch_names
-		for item in response['data']['items']:
-			branch_names.append(item['id'])
-		return branch_names
-
-
-	def find_branch(self, repo_name, msrp):
-		returned_branch = False
-		branch_names = self.get_branches(repo_name=repo_name)
-		for branch_name in branch_names:
-			if msrp in branch_name:
-				returned_branch = branch_name
-		return returned_branch
-
-
-	def create_crucible_title(self, story_points, key, msrp, summary):
-		pcr_estimate = self.get_pcr_estimate(story_points)
-		return f'(PCR-{pcr_estimate}) [{key}] Ticket #{msrp} {summary}'
-
+			data.append({"review_titles": review['name'], "review_ids":review['permaId']['id'] })
+		return { 'status': True, 'data': data }
 
 	def create_crucible(self, data):
-		attuid = data['attuid']
-		title = data['title']
-		repos = data['repos']
+		'''creates a Crucible review with correct title, adds branches to review, then publishes review
 
+		Args:
+			data (dict) contains prperties:
+				username (str) username of user to add
+				title (str) the title of the Crucible (premade to pass less args)
+				repos (Array<str>) array of repo string names to add to new Crucible review
+
+		Returns:
+			dict with status/data properties. Data property has array of
+			dicts with review_titles/review_ids properties
+		'''
+		# create JSON data to send to API
 		json_data = {"reviewData": {
 			"allowReviewersToJoin":"true",
-			"author":{"userName":attuid},
-			"creator":{"userName":attuid},
-			"moderator":{"userName":attuid},
+			"author":{"userName":data['username']},
+			"creator":{"userName":data['username']},
+			"moderator":{"userName":data['username']},
 			"description":'',
 			"name":title,
 			"projectKey":"CR-UD"
 		}}
-		
 		# create a crucible review
-		response = self.json_post_endpoint_data(url=f'{self.base_url}/rest-service/reviews-v1.json', json_data=json_data)
+		response = self.post_json(url=f'{self.base_url}/rest-service/reviews-v1.json', json_data=json_data)
 		if not response['status']:
-			return {"response": 'Could not create crucible review: '+response['data']['message'], "status": response['status']}
-
+			return {'data':  'Could not create crucible review: '+response['data'], 'status': False}
 		# make sure we have valid data
 		if not response['data'].get('permaId'):
-			return {"response":'create_crucible::Could not get permId: '+response['data']['message'], "status": response['status']}
+			return {'data': 'Could not get permId: '+response['data'], 'status': False}
+		# get Crucible ID
 		crucible_id = response['data']['permaId']['id']
-
 		# for each repo add it to review
-		for repo in repos:
+		for repo in data['repos']:
 			json_data = {
 				"autoUpdate": "true",
 				"baseBranch": repo['baseBranch'],
 				"repositoryName": repo['repositoryName'],
 				"reviewedBranch": repo['reviewedBranch']
 			}
-			
-			response = self.json_post_endpoint_data(url=f'{self.base_url}/rest/branchreview/latest/trackedbranch/{crucible_id}.json', json_data=json_data)
+			response = self.post_json(url=f'{self.base_url}/rest/branchreview/latest/trackedbranch/{crucible_id}.json', json_data=json_data)
 			if not response['status']:
 				json_data = str(json_data)
-				return {"response":f'Could not add repo {json_data}: '+response['data'], "status":response['status']}
-
+				return {'data': f'Could not add repo {repo}: '+response['data'], 'status': False}
 		# publish review
-		response = self.post_endpoint_data(url=f'{self.base_url}/rest-service/reviews-v1/{crucible_id}/transition?action=action:approveReview&ignoreWarnings=true.json')
+		response = self.post(url=f'{self.base_url}/rest-service/reviews-v1/{crucible_id}/transition?action=action:approveReview&ignoreWarnings=true.json')
 		if not response['status']:
-			return {"response":f'Could not publish review: '+response['data'], "status": response['status']}
-
+			return {'data': f'Could not publish review: '+response['data'], 'status': False}
 		# return crucible id and status ok
-		return {"response":crucible_id, "status":"OK"}
+		return {'data': crucible_id, 'status': True}
 
 
 	def close_crucible(self, crucible_id):
-		return self.post_endpoint_data(url=f'{self.base_url}/rest-service/reviews-v1/{crucible_id}/transition?action=action:closeReview&ignoreWarnings=true.json')
+		'''closes a Crucible review by ID
+
+		Args:
+			crucible_id (str) the Crucible ID to close
+
+		Returns
+			dict with status/data properties.
+		'''
+		return self.post(url=f'{self.base_url}/rest-service/reviews-v1/{crucible_id}/transition?action=action:closeReview&ignoreWarnings=true.json')
 

@@ -34,6 +34,21 @@ class CruciblePCR(CrucibleAPI.CrucibleAPI):
 			pcr_estimate = int(math.ceil(story_point / 2))
 		return pcr_estimate	
 
+	def create_crucible_title(self, story_points, key, msrp, summary):
+		'''creates the Crucible title format
+
+		Args:
+			story_point (str) the story points of the Jira issue
+			key (str) the key of the Jira issue
+			msrp (str) the MSRP of the Jira issue
+			summary (str) the summary of the Jira issue
+			
+		Returns:
+			the Crucible title string
+		'''
+		pcr_estimate = self.get_pcr_estimate(story_points)
+		return f'(PCR-{pcr_estimate}) [{key}] Ticket #{msrp} {summary}'
+
 	def add_reviewer(self, username, crucible_id, cred_hash):
 		'''adds a user to a Crucible review
 		Args:

@@ -23,7 +23,7 @@ class DevCenterAPI():
 
 		Args:
 			url (str) the URL to make a GET request
-			cred_hash (string) Authorization header value
+			cred_hash (string) optional Authorization header value
 
 		Returns:
 			returns a dict with status property and if success, a data property. 
@@ -40,7 +40,7 @@ class DevCenterAPI():
 
 		Args:
 			url (str) the URL to make a GET request
-			cred_hash (string) Authorization header value
+			cred_hash (string) optional Authorization header value
 
 		Returns:
 			returns the raw text response from the GET request. 
@@ -59,7 +59,7 @@ class DevCenterAPI():
 		Args:
 			url (str) the URL to make a POST request
 			data (str) optional body to send with the POST request (default '')
-			cred_hash (string) Authorization header value
+			cred_hash (string) optional Authorization header value
 
 		Returns:
 			returns a dict with status property and if success, a data property. 
@@ -81,14 +81,13 @@ class DevCenterAPI():
 		Args:
 			url (str) the URL to make a POST request
 			json_data (dict) JSON body to send with the POST request
-			cred_hash (string) Authorization header value
+			cred_hash (string) optional Authorization header value
 
 		Returns:
 			returns a dict with status property and if success, a data property. 
 			If Proxy error returns dict with status 407.
 		'''
 		headers = { 'Content-Type': 'application/json', 'Authorization': cred_hash }
-		print(headers)
 		try:
 			filter_data = self.session_obj.post(url, json=json_data, headers=headers)
 		except ProxyError:
