@@ -23,7 +23,7 @@ class DevCenterAPI():
 
 		Args:
 			url (str) the URL to make a GET request
-			cred_hash (string) optional Authorization header value
+			cred_hash (string) Authorization header value
 
 		Returns:
 			returns a dict with status property and if success, a data property. 
@@ -32,7 +32,7 @@ class DevCenterAPI():
 		try:
 			filter_data = self.session_obj.get(url=url, headers={ 'Authorization': cred_hash })
 		except ProxyError:
-			return { 'status_code': 407 }
+			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
 
 	def get_raw(self, url, cred_hash=''):
@@ -40,7 +40,7 @@ class DevCenterAPI():
 
 		Args:
 			url (str) the URL to make a GET request
-			cred_hash (string) optional Authorization header value
+			cred_hash (string) Authorization header value
 
 		Returns:
 			returns the raw text response from the GET request. 
@@ -49,7 +49,7 @@ class DevCenterAPI():
 		try:
 			filter_data = self.session_obj.get(url=url, headers={ 'Authorization': cred_hash })
 		except ProxyError:
-			return { 'status_code': 407 }
+			return { "status": False, 'data': "Proxy error 407" }
 		return filter_data
 
 	def post(self, url, data='', cred_hash=''):
@@ -59,7 +59,7 @@ class DevCenterAPI():
 		Args:
 			url (str) the URL to make a POST request
 			data (str) optional body to send with the POST request (default '')
-			cred_hash (string) optional Authorization header value
+			cred_hash (string) Authorization header value
 
 		Returns:
 			returns a dict with status property and if success, a data property. 
@@ -71,7 +71,7 @@ class DevCenterAPI():
 			else:
 				filter_data = self.session_obj.post(url=url, headers={ 'Authorization': cred_hash })
 		except ProxyError:
-			return {'status_code': 407}
+			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
 
 	def post_json(self, url, json_data, cred_hash=''):
@@ -81,17 +81,18 @@ class DevCenterAPI():
 		Args:
 			url (str) the URL to make a POST request
 			json_data (dict) JSON body to send with the POST request
-			cred_hash (string) optional Authorization header value
+			cred_hash (string) Authorization header value
 
 		Returns:
 			returns a dict with status property and if success, a data property. 
 			If Proxy error returns dict with status 407.
 		'''
 		headers = { 'Content-Type': 'application/json', 'Authorization': cred_hash }
+		print(headers)
 		try:
 			filter_data = self.session_obj.post(url, json=json_data, headers=headers)
 		except ProxyError:
-			return {'status_code': 407}
+			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
 
 	def _process_json(self, filter_data):
