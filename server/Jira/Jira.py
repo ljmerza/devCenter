@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from . import JiraAPI
-import re
+import JiraAPI
+import JiraFields
 
 class Jira(JiraAPI.JiraAPI):
 	'''jira class using an attuid and password'''
@@ -10,228 +10,361 @@ class Jira(JiraAPI.JiraAPI):
 
 		super().__init__()
 		###############################################################################
+		self.base_url = os.environ['JIRA_URL']
 		self.ticket_base = f'{self.base_url}/browse' # the ticket page
-		self.dividers = 189 # how long are the dividers in the ascii table
-		###############################################################################
-		self.qa_begin = "h2. ============================ QA Steps ============================"
-		self.qa_end = "h2. ================================================================="
-		self.qa_regex_begin = re.compile(r"h2\. ============================ QA Steps ============================")
-		self.qa_regex_end = re.compile(r"h2\. =================================================================")
-		##############################################################################
 
 
-	def get_ticket_base(self):
-		return self.ticket_base
+	def get_filter_url(self, filter_number, cred_hash):
+		'''
+		'''
+		response = self.get(url=f'{self.base_url}/rest/api/2/filter/{filter_number}', cred_hash=cred_hash)
+		if not response['status']:
+			return response
+		return {'status': True, 'data': response['data']['searchUrl'] }
 
 
-	def show_jira_ascii_header(self):
-		# {0:15.15} = use variable 0 ('Key') with 15 preallocated spaces, .15 means slice string after 15 characters
-		print('', '-'* self.dividers)
-		print(" | {0:10} | {1:7} | {2:20} | {3:22} | {4:50} | {5:52} | {6:6} |".format('Key', 'MSRP', 'Status', 'Component', 'Summary', 'URL', 'Attuid'))
-		print('', '-'* self.dividers)
+
+	def get_jira_tickets(self, filter_number, cred_hash, start_at=0, max_results=1000):
+		'''
+		'''
+		# get filter url
+		response = self.get_filter_url(filter_number)
+		if not response['status']:
+			return response
+		# get raw url
+		url = response['data']
+		# get filter data
+		response = self.get(url=f'{url}&startAt={start_at}&maxResults={max_results}&fields={self.fields}', cred_hash=cred_hash)
+		if not response['status']:
+			return response
+		return {'status': True, 'data': response_jira['data']['issues']}
 
 
-	def show_jira_ascii_footer(self):
-		'''print ascii footer'''
-		print('','-'* self.dividers)
-		print(" | TOTAL: {0:3.3} ".format(str(self.total_tickets)), " "*(self.dividers-16), "|")
-		print('','-'* self.dividers, '\n\n\n')
 
+	def get_raw_jira_data(self, filter_number, cred_hash, max_results=1000, start_at=0):
+		'''
+		'''
+		# get jira tickets and check response
+		response = self.get_jira_tickets(filter_number=filter_number, max_results=max_results, start_at=start_at, cred_hash=cred_hash)
+		if not response['status']:
+			return response
 
-	def show_jira_ascii(self):
-		'''print ascii of jira data to console, boolean to print total at bottom or not'''
-		self.show_jira_ascii_header()
-		for idx, val in enumerate(self.keys):
+		# get all issues
+		issues = response['data']['data']['issues']
 
-			# print ticket ascii
-			print( " | {0:10.10} | {1:7.7} | {2:20.20} | {3:22.22} | {4:50.50} | {5}/{6:15.15} | {7:6.6} |".format(self.keys[idx], self.msrps[idx], self.statuses[idx], self.components[idx], self.summaries[idx], self.ticket_base, self.keys[idx], self.attuids[idx]))
-			if(idx % 4 == 0):
-				print('','-'* self.dividers)
-		self.show_jira_ascii_footer()
-
-
-	def get_total_tickets(self):
-		'''returns number of ticket in filter'''
-		return self.total_tickets
-
-
-	def generate_attuid(self, attuid):
-		'''get real attuid if not working'''
-		if(len(attuid) == 6):
-			return attuid
-		else:
-			return attuid[-6:]
-
-
-	def _check_ticket_fields(self):
-		'''makes sure to set some kind of data to field if it does not exist'''
-		for idx, val in enumerate(self.keys):
-			if not self.keys[idx]:
-				self.keys[idx] = ''
-			if not self.msrps[idx]:
-				self.msrps[idx] = ''
-			if not self.statuses[idx]:
-				self.statuses[idx] = ''
-			if not self.components[idx]:
-				self.components[idx] = ''
-			if not self.summaries[idx]:
-				self.summaries[idx] = ''
-			if not self.attuids[idx]:
-				self.attuids[idx] = ''
-			if not self.story_points[idx]:
-				self.story_points[idx] = 0
-
-
-	def sort_data_by(self, filter_key):
-		all_data = []
-		# get all data into dictionary
-		for idx, val in enumerate(self.keys):
-			all_data_dict = {
-				'key': self.keys[idx],
-				'msrp': self.msrps[idx],
-				'status': self.statuses[idx],
-				'component': self.components[idx],
-				'summary': self.summaries[idx],
-				'attuid': self.attuids[idx],
-				'story_points': self.story_points[idx],
-				'sprints': self.sprints[idx],
-				'epic_links': self.epic_links[idx],
-				'labels': self.labels[idx],
-				'qa_steps': self.qa_steps[idx],
-				'comments': self.comments[idx],
-			}
-			all_data.append(all_data_dict)
-
-		# sort data by attuid
-		all_data_sorted = sorted(all_data, key=lambda k: k[filter_key])
-		self.reset_data()
-
-		# set all data back into instance's variables
-		for idx, val in enumerate(all_data_sorted):
-			self.keys.append(all_data_sorted[idx]['key'])
-			self.msrps.append(all_data_sorted[idx]['msrp'])
-			self.statuses.append(all_data_sorted[idx]['status'])
-			self.components.append(all_data_sorted[idx]['component'])
-			self.summaries.append(all_data_sorted[idx]['summary'])
-			self.attuids.append(all_data_sorted[idx]['attuid'])
-			self.story_points.append(all_data_sorted[idx]['story_points'])
-			self.sprints.append(all_data_sorted[idx]['sprints'])
-			self.epic_links.append(all_data_sorted[idx]['epic_links'])
-			self.labels.append(all_data_sorted[idx]['labels'])
-			self.qa_steps.append(all_data_sorted[idx]['qa_steps'])
-			self.comments.append(all_data_sorted[idx]['comments'])
-
-
-	def return_jira_data(self):
-		'''return all data from jira'''
-		data = {
-			'attuids': self.attuids,
-			'keys': self.keys,
-			'msrps': self.msrps,
-			'statuses': self.statuses,
-			'components': self.components,
-			'summaries': self.summaries,
-			'story_points': self.story_points,
-			'sprints': self.sprints,
-			'epic_links': self.epic_links,
-			'labels': self.labels,
-			'qa_steps': self.qa_steps,
-			'comments': self.comments
+		# create response
+		response = {
+				"total_tickets": response_jira['data']['data']['total'],
+				"data": [],
+				'status': True
 		}
-		return data
+
+		# for each ticket get data
+		for issue in issues:
+
+			ticket = {}
+
+			# get key
+			ticket['key'] = JiraFields.get_key(issue)
+			# get msrp
+			ticket['msrp'] = JiraFields.get_msrp(issue)
+
+			# get summary
+			ticket['summary'] = JiraFields.get_summary(issue)
+			# get username
+			ticket['username'] = JiraFields.get_username(issue)
+
+			# get component
+			ticket['component'] = JiraFields.get_component(issue)
+			# get status
+			ticket['status'] = JiraFields.get_status(issue)
+
+			# get story points
+			ticket['story_points'] = JiraFields.get_story_points(issue)
+			# get sprint
+			ticket['sprint']  = JiraFields.get_sprint(issue)
+			
+			# get epic link
+			ticket['epic_link'] = JiraFields.get_epic_link(issue)
+			# get labels
+			ticket['label'] = JiraFields.get_label(issue)
+
+			# get comments and QA steps
+			ticket['comments'] = JiraFields.get_comments(issue)
+			ticket['qa_steps'] = JiraFields.get_qa_steps(issue)
+
+			# add ticket to response
+			response['data'].append(ticket)
+		return response
 
 
-	def create_work_book(self):
-		# create spreadsheet
-		try:
-			wb = Workbook()
-			dest_filename = 'qa_steps.xlsx'
-			ws = wb.active
-			ws.page_setup.fitToHeight = 1
-			ws.page_setup.fitToWidth = 1
-			# create workbook headers
-			ws.cell(column=1, row=1, value='MSRP Number')
-			ws.cell(column=2, row=1, value='Status')
-			ws.cell(column=3, row=1, value='Key')
-			ws.cell(column=4, row=1, value='Summary')
-			ws.cell(column=5, row=1, value='Epic Link')
-			ws.cell(column=6, row=1, value='Sprint')
-			ws.cell(column=7, row=1, value='Test Steps')
-			# format headers
-			for letter in 'ABCDEFG':
-				ws[letter+'1'].font = Font(bold=True)
-			# format cell sizes
-			ws.column_dimensions['B'].width = 35
-			ws.column_dimensions['C'].width = 15
-			ws.column_dimensions['D'].width = 70
-			ws.column_dimensions['E'].width = 15
-			ws.column_dimensions['F'].width = 15
-			ws.column_dimensions['G'].width = 100
-			# for each issue if it has QA steps add to workbook
-			workbook_index = 2
-			for idx, issue in enumerate(self.keys):
-				if(self.qa_steps[idx]):
-					# format qa steps
-					qa_steps = self.format_qa_steps(self.qa_steps[idx])
-					# insert row data
-					ws.cell(column=1, row=workbook_index, value=self.msrps[idx] )
-					ws.cell(column=2, row=workbook_index, value=self.statuses[idx] )
-					ws.cell(column=3, row=workbook_index, value='=HYPERLINK("{}", "{}")'.format(self.ticket_base+'/'+self.keys[idx], self.keys[idx]))
-					ws.cell(column=4, row=workbook_index, value=self.summaries[idx] )
-					ws.cell(column=5, row=workbook_index, value=self.epic_links[idx] )
-					ws.cell(column=6, row=workbook_index, value=self.sprints[idx] )
-					ws.cell(column=7, row=workbook_index, value=qa_steps )
-					# format key links
-					ws['C'+str(workbook_index)].font = Font(underline="single", color='FF0645AD')
-					# got to next row
-					workbook_index = workbook_index + 1    		
-			# save workbook
-			wb.save(filename = dest_filename)
-			print('Workbook saved.')
-		except Exception as e:
-			print('Could not save workbook:',e)
+	def find_key_by_msrp(self, msrp, cred_hash):
+		'''
+		'''
+		response = self.get(url=f'{self.api_base}/search?jql=MSRP_Number~{msrp}', cred_hash=cred_hash)
+		if not response['status']:
+			return response
+		if len(response['data']['issues']):
+			return {'status': True, 'data': response['data']['issues'][0]['key']}
+		else:
+			return {'status': False, 'data': f'Did not find any key matching {msrp}'}
+
+	def find_qa_data(self, msrp, cred_hash):
+		'''
+		'''
+		search_response = self.get(url=f'{self.api_base}/search?jql=MSRP_Number~{msrp}', cred_hash=cred_hash)
+		if not search_response['status']:
+			return search_response
+
+		# get issue found
+		search_response = issue['data']['issues'][0]
+		# create response object
+		response = { 'status': True, 'data':{} }
+		# add 
+		if search_response['fields']['customfield_10006']:
+			response['data']['story_point'] = issue['fields']['customfield_10006']
+		# add key
+		if search_response['key']:
+			response['data']['key'] = issue['key']
+		# add summary
+		if search_response['fields']['summary']:
+			response['data']['summary'] = issue['fields']['summary']
+		# return data
+		return response
+
+	def add_comment(self, key, comment, cred_hash, private_comment=True):
+		'''adds a comment to a jira issue. By default the comment is
+		set to developer view only
+
+		Args:
+			key (str) the jira issue key to update
+			comment (str) the comment to post to the jira issue
+			private_comment (boolean) is the comment developer only or public? (default true)
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		json_data = {"body": comment}
+		if private_comment:
+			json_data['visibility'] = {'type': 'role', 'value': 'Developers'}
+		return self.post_json(url=f'{self.api_base}/issue/{key}/comment', json_data=json_data, cred_hash=cred_hash)
 
 
-	def format_qa_steps(self, qa_steps):
-		cnt = it.count()
-		next(cnt)
-		qa_steps = qa_steps.replace('\=','').replace('\\','')
-		qa_steps = re.sub(r"# ", lambda x: '{}. '.format(next(cnt)), qa_steps)
-		return qa_steps
+	def _set_component(self, component_name, key, cred_hash):
+		'''sets a jira issue to the given component
+
+		Args:
+			component_name (str) the component name to set the jira issue to
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		json_data = {"update":{"components":[{"set":[{"name":component_name}]}]}}
+		return self.put_json(url=f'{self.api_base}/issue/{key}', json_data=json_data, cred_hash=cred_hash)
+
+	def _remove_component(self, component_name, key, cred_hash):
+		'''removes a jira issue to the given component
+
+		Args:
+			component_name (str) the component name to remove the jira issue from
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		json_data={"update":{"components":[{"remove":[{"name":component_name}]}]}}
+		return self.put_json(url=f'{self.api_base}/issue/{key}', json_data=json_data, cred_hash=cred_hash)
+
+	def _set_status(self, transition_id, key, cred_hash):
+		'''sets a jira issue to the given status
+
+		Args:
+			transition_id (int) the status id to set the jira issue to
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self.post_json(url=f'{self.api_base}/issue/{key}/transitions', json_data={"transition":{"id":transition_id}}, cred_hash=cred_hash)
+
+
+	def set_in_dev(self, key, cred_hash):
+		'''sets a jira issue to the In Development status
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_status(key=key, transition_id=0, cred_hash=cred_hash)
+
+	def set_pcr_needed(self, key, cred_hash):
+		'''sets a jira issue to the PCR Needed component
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_component(key=key, component_name='PCR - Needed', cred_hash=cred_hash)
+
+	def set_pcr_complete(self, key, cred_hash):
+		'''sets a jira issue to the PCR complete component
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_component(key=key, component_name='PCR - Completed', cred_hash=cred_hash)
+
+	def set_code_review(self, key, cred_hash):
+		'''sets a jira issue to the Code Review status
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_status(key=key, transition_id=521, cred_hash=cred_hash)
+
+	def set_code_review_working(self, key, cred_hash):
+		'''sets a jira issue to the Code Review - Working component
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_component(key=key, component_name='Code Review - Working', cred_hash=cred_hash)
+
+	def set_ready_for_qa(self, key, cred_hash):
+		'''sets a jira issue to the Ready For QA status
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_status(key=key, transition_id=71, cred_hash=cred_hash)
+
+	def set_in_qa(self, key, cred_hash):
+		'''sets a jira issue to the In QA status
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_status(key=key, transition_id=81, cred_hash=cred_hash)
+
+	# def set_ready_uct(self, key):
+	'''sets a jira issue to the Ready For UCT status
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+	# 	return self._set_status(key=key, transition_id=0)
+
+	def set_merge_code(self, key, cred_hash):
+		'''sets a jira issue to the Merge Code component
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_component(key=key, component_name='Merge Code', cred_hash=cred_hash)
+
+	def set_merge_conflict(self, key, cred_hash):
+		'''sets a jira issue to the Merge Conflict component
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_component(key=key, component_name='Merge Conflict', cred_hash=cred_hash)
+
+	# def set_in_uct(self, key):
+	'''sets a jira issue to the In UCT status
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+	# 	return self._set_status(key=key, transition_id=0)
+
+	def set_uct_fail(self, key, cred_hash):
+		'''sets a jira issue to the UCT Fail component
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_component(key=key, component_name='UCT - Failed', cred_hash=cred_hash)
+
+	def set_ready_release(self, key, cred_hash):
+		'''sets a jira issue to the Ready For Release component
+
+		Args:
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_component(key=key, component_name='Ready for Release', cred_hash=cred_hash)
+
+
+	def add_work_log(self, time, key, cred_hash, private_log=True):
+		'''add worklog time to a Jira issue
+
+		Args:
+			time (str): the time logged in '3d 3h 30m 20s' format
+			key (str) the jira issue key to update
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+
+		json_data = {
+			'comment': '', 
+			'started': strftime("%Y-%m-%dT%H:%M:%S.000+0000", gmtime()), 
+			'timeSpentSeconds': time,
+			'notifyUsers': False
+		}
+
+		if private_log:
+			json_data['visibility'] = {'type': 'role', 'value': 'Developers'}
+
+
+		return self.post_json(url=f'{self.api_base}/issue/{key}/worklog', json_data={"timeSpent":time}, cred_hash=cred_hash)
+		
+	
+
 
 	
-	def generate_qa_template(self, qa_steps, repos, crucible_id):
-			repo_table = self.generate_repo_table(repos)
-			return """
-"""+repo_table+"""
+
+	
+	
+	
+	
 
 
-"""+'[Crucible Review|https://icode3.web.att.com/cru/'+crucible_id+"""]
-
-
-"""+self.qa_begin+"""
-
-"""+qa_steps+"""
-
-"""+self.qa_end+"""
-			"""
-
-
-	def generate_repo_table(self, repos):
-		table_rows = []
-		for repo in repos:
-			baseBranch = repo['baseBranch']
-			repositoryName = repo['repositoryName']
-			reviewedBranch = repo['reviewedBranch']
-			table_rows.append('|'+repositoryName+'|'+reviewedBranch+'|'+baseBranch+'|')
-
-		table_header = "|| Repo || Branch || Branched From ||"
-		table_data = ''
-		for row in table_rows:
-			table_data += """
-"""+row
-		return table_header + table_data
-
-
-	def save_branches(self, branches):
-		pass

@@ -4,9 +4,23 @@ qa_regex_begin = re.compile(r"h2\. ============================ QA Steps =======
 qa_regex_end = re.compile(r"h2\. =================================================================")
 
 def get_key(issue):
+	'''gets an issue's key
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue key
+	'''
 	return issue['key']
 
 def get_msrp(issue):
+	'''gets an issue's msrp
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue msrp or 0
+	'''
 	# if exists then return else return 0
 	if issue['fields']['customfield_10212']:
 		return issue['fields']['customfield_10212']
@@ -14,31 +28,65 @@ def get_msrp(issue):
 		return 0
 
 def get_status(issue):
-	return issue['fields']['status']['name']
+	'''gets an issue's status
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue status or empty string
+	'''
+	if( ('name' in issue['fields']['status']) and issue['fields']['status']['name'] ):
+		return issue['fields']['status']['name']
+	else:
+		return ''
 
 def get_summary(issue):
+	'''gets an issue's summary
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue summary
+	'''
 	return issue['fields']['summary']
 
-def get_attuid(issue):	
-	# get attuid if exists
-	if issue['fields']['assignee']:
-		attuid = issue['fields']['assignee']['name']
-		if attuid:
-			return attuid
-		else:
-			return ''
+def get_username(issue):	
+	'''gets an issue's username 
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue username or empty string
+	'''
+	# get username if exists
+	if ('name' in issue['fields']['assignee']) and issue['fields']['assignee']['name']:
+		return issue['fields']['assignee']['name']
 	else:
 		return ''
 
 def get_component(issue):
+	'''gets an issue's components in a space delimited string
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue's components or empty string
+	'''
 	all_components = []
-	if issue['fields']['components']:
+	if 'components' in issue['fields']:
 		# for each component add to list to join then on return
 		for component in issue['fields']['components']:
 			all_components.append(component['name'])
 	return ' '.join(all_components)
 
 def get_story_points(issue):
+	'''gets an issue's story points
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue's story points or 0
+	'''
 	# if exists then return else return 0
 	if issue['fields']['customfield_10006']:
 		return issue['fields']['customfield_10006']
@@ -46,6 +94,13 @@ def get_story_points(issue):
 		return 0
 
 def get_sprint(issue):
+	'''gets an issue's sprint
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue's sprint or empty string
+	'''
 	# get sprint
 	sprint = ''
 	if issue['fields']['customfield_10001']:
@@ -57,6 +112,13 @@ def get_sprint(issue):
 	return sprint
 
 def get_epic_link(issue):
+	'''gets an issue's epic link in readable format
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue's epic link in readable format or empty string
+	'''
 	# get epic link
 	epic_link = issue['fields']['customfield_10002']
 	if epic_link == 'UD-2421':
@@ -77,6 +139,13 @@ def get_epic_link(issue):
 	return epic_link
 
 def get_label(issue):
+	'''gets an issue's label
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue's label or empty string
+	'''
 	# if exists then return else return empty string
 	if issue['fields']['labels']:
 		return issue['fields']['labels']
@@ -84,11 +153,15 @@ def get_label(issue):
 		return ''
 
 def get_comments(issue):
-	# get comments and QA steps
+	'''gets an issue's comments array
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		an array of the issue's comments or empty array
+	'''
 	comments = []
 	if issue['fields']['comment']:
-		missing_qa_step = ''
-		found_qa = False
 		# for each comment save it and see if QA steps
 		for comment in issue['fields']['comment']['comments']:
 			# save comment
@@ -96,6 +169,13 @@ def get_comments(issue):
 	return comments
 
 def get_qa_steps(issue):
+	'''finds an issue's QA steps in the comments if they exist
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue's QA steps or empty string
+	'''
 	issue_qa_step = ''
 	# get all comments
 	comments = get_comments(issue)
