@@ -1,0 +1,20 @@
+.branchDropdownParent {
+	visibility:hidden
+}
+
+.repoDropdownParent {
+	margin-top: 10px;
+}
+
+#createReview {
+	margin-top: 20px;
+}
+
+.checkbox-area {
+	display:block;
+	padding-top: 10px;
+}
+
+.checkbox-area .checkbox {
+	padding-right: 50px;
+}

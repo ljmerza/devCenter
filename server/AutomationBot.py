@@ -5,7 +5,7 @@ import datetime
 
 from Jira import Jira
 from Common import DevCenterSQL
-from Common import qBot
+from Common import Qbot
 from Crucible import Crucible
 
 
@@ -28,7 +28,7 @@ class AutomationBot(object):
 		self.sql_obj = DevCenterSQL.DevCenterSQL()
 		self.jira_obj = Jira.Jira()
 		self.crucible_obj = Crucible.Crucible()
-		self.qbot_obj = qBot.Qbot(ticket_base=self.jira_obj.get_ticket_base(), debug=debug, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
+		self.qbot_obj = Qbot.Qbot(ticket_base=self.jira_obj.get_ticket_base(), debug=debug, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
 		################################################################################
 		# create connections
 		self.sql_obj.login()
