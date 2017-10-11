@@ -17,7 +17,7 @@ from . import CrucibleRequests
 
 def start_server(debug):
 
-    attuid = os.environ['USER']
+    username = os.environ['USER']
     password = os.environ['PASSWORD']
 
     root_dir = os.path.dirname(os.getcwd())
@@ -121,10 +121,9 @@ def start_server(debug):
     def crucible_pcr_pass():
         data = {
             "crucible_id": request.form['crucible_id'],
-            "attuid": request.form['attuid'],
+            "username": request.form['username'],
             "cred_hash": request.headers['Authorization']
         }
-        print(data)
         data = CrucibleRequests.crucible_pcr_pass(data=data)
         return jsonify(data)
 
@@ -133,7 +132,7 @@ def start_server(debug):
     def crucible_pcr_complete():
         data = {
             "crucible_id": request.form['crucible_id'],
-            "attuid": request.form['attuid'],
+            "username": request.form['username'],
             "cred_hash": request.headers['Authorization']
         }
         data = CrucibleRequests.set_pcr_complete(data=data)

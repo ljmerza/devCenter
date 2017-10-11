@@ -13,7 +13,7 @@ key = 'UD-6700'
 attuid = os.environ['USER']
 password = os.environ['PASSWORD']
 header_value = f'{attuid}:{password}'
-encoded_header = base64.b64encode( header_value.encode() )
+encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
 cred_hash = f'Basic {encoded_header}'
 
 jira = Jira.Jira()

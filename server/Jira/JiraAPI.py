@@ -7,9 +7,12 @@ sys.path.append('..')
 from Common import DevCenterAPI
 
 class JiraAPI(DevCenterAPI.DevCenterAPI):
+	'''used as an adapter for Jira API requests'''
 
 	def __init__(self):
-		'''creates a JiraAPI interface - used as an adapter for Jira API requests
+		'''creates a JiraAPI interface
+		and sets all Jira API endpoints
+
 		Args:
 			None
 
@@ -17,9 +20,15 @@ class JiraAPI(DevCenterAPI.DevCenterAPI):
 			An instance of JiraAPI
 		'''
 		DevCenterAPI.DevCenterAPI.__init__(self)
+		self.jira_url = os.environ['JIRA_URL']
+		self.jira_ticket = f'{self.jira_url}/browse'
+		self.crucible_url = os.environ['CRUCIBLE_URL']
+		self.crcible_review = f'{self.crucible_url}/cru/'
+		self.api_base = f'{self.jira_url}/rest/api/2'
 
 	def post(self, url, cred_hash, data=''):
 		'''sends a POST request
+
 		Args:
 			url (str) the URL to make a POST request
 			data (dict) optional body to send with the POST request
@@ -33,6 +42,7 @@ class JiraAPI(DevCenterAPI.DevCenterAPI):
 
 	def get(self, url, cred_hash):
 		'''sends a GET request
+
 		Args:
 			url (str) the URL to make a POST request
 			cred_hash (string) Authorization header value
@@ -45,6 +55,7 @@ class JiraAPI(DevCenterAPI.DevCenterAPI):
 
 	def post_json(self, url, json_data, cred_hash):
 		'''sends a POST request with JSON data
+
 		Args:
 			url (str) the URL to make a POST request
 			json_data (dict) optional JSON body to send with the POST request
@@ -58,6 +69,7 @@ class JiraAPI(DevCenterAPI.DevCenterAPI):
 
 	def _process_response(self, response):
 		'''internal method that processes the response from Jira API
+
 		Args:
 			response (dict) the response from Jira API
 

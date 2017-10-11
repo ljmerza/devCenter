@@ -16,8 +16,6 @@ class CruciblePCR(CrucibleAPI.CrucibleAPI):
 			a CruciblePCR instance
 		'''
 		CrucibleAPI.CrucibleAPI.__init__(self)
-		self.crucible_url = os.environ['CRUCIBLE_URL']
-		self.crucible_api_review = f'{self.crucible_url}/rest-service/reviews-v1'
 		self.pcr_pass = "=#= PCR PASS =#="
 		self.pcr_pass_regex = re.compile(r"=#= PCR PASS =#=")
 
@@ -34,7 +32,7 @@ class CruciblePCR(CrucibleAPI.CrucibleAPI):
 			pcr_estimate = int(math.ceil(story_point / 2))
 		return pcr_estimate	
 
-	def create_crucible_title(self, story_points, key, msrp, summary):
+	def create_crucible_title(self, story_point, key, msrp, summary):
 		'''creates the Crucible title format
 
 		Args:
@@ -46,7 +44,7 @@ class CruciblePCR(CrucibleAPI.CrucibleAPI):
 		Returns:
 			the Crucible title string
 		'''
-		pcr_estimate = self.get_pcr_estimate(story_points)
+		pcr_estimate = self.get_pcr_estimate(story_point=story_point)
 		return f'(PCR-{pcr_estimate}) [{key}] Ticket #{msrp} {summary}'
 
 	def add_reviewer(self, username, crucible_id, cred_hash):

@@ -1,41 +1,60 @@
 #!/usr/bin/python3
 import sys
-sys.path.append('..')
+import base64
+import os
+import datetime
 
-from Jira import Jira
+sys.path.append('../Jira')
+sys.path.append('../Common')
+sys.path.append('../Crucible')
 
+import Jira
 jira_obj = Jira.Jira()
-jira_obj.login()
-jira_obj.get_jira_data(11004)
+
+# create auth header
+attuid = os.environ['USER']
+password = os.environ['PASSWORD']
+header_value = f'{attuid}:{password}'
+encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
+cred_hash = f'Basic {encoded_header}'
 
 # get jira data
-jira_data = jira_obj.return_jira_data()
+jira_tickets = jira_obj.get_jira_tickets(filter_number=11004, cred_hash=cred_hash)
 
-attuid = jira_data['attuids']
-key = jira_data['keys']
-msrp = jira_data['msrps']
-status = jira_data['statuses']
-component = jira_data['components']
-summary = jira_data['summaries']
-story_point = jira_data['story_points']
-sprint = jira_data['sprints']
-qa_steps = jira_data['qa_steps']
-comments = jira_data['comments']
+
+date_now = datetime.datetime.now().strftime('%m/%d %H:%M')
+print('Reported issues (', date_now,'EST )')
+print('------------------------------------------------')
 
 # print table data
-for i in range(len(key)):
-	if component[i] == 'BETA':
-		print(" {0:20}  {1:30} {2}".format(msrp[i],  status[i], summary[i]))
-	elif component[i]:
-		if component[i] == 'PCR - Completed':
-			print(" {0:20} {1:27} {2}".format(msrp[i], component[i], summary[i]))
+for jira_ticket in jira_tickets['data']:
+
+	# get ticket data
+	component = jira_ticket['component']
+	status = jira_ticket['status']
+	summary = jira_ticket['summary']
+	msrp = jira_ticket['msrp']
+
+	# print table
+	if component == 'BETA':
+		print(" {0:20}  {1:30} {2}".format(msrp,  status, summary))
+	elif component:
+		if component == 'PCR - Completed':
+			print(" {0:20} {1:28} {2}".format(msrp, component, summary))
 		else:
-			print(" {0:20} {1:30} {2}".format(msrp[i], component[i], summary[i]))
-	elif status[i] == 'Backlog':
-		print(" {0:20} {1:35} {2}".format(msrp[i], status[i], summary[i]))
-	elif status[i] == 'Triage':
-		print(" {0:20} {1:40} {2}".format(msrp[i], status[i], summary[i]))
-	elif status[i] == 'In Sprint':
-		print(" {0:20} {1:37} {2}".format(msrp[i], status[i], summary[i]))
+			print(" {0:20} {1:30} {2}".format(msrp, component, summary))
+	elif status == 'Backlog':
+		print(" {0:20} {1:34} {2}".format(msrp, status, summary))
+	elif status == 'Triage':
+		print(" {0:20} {1:36} {2}".format(msrp, status, summary))
+	elif status == 'In Sprint':
+		print(" {0:20} {1:37} {2}".format(msrp, status, summary))
+	elif status == 'In QA':
+		print(" {0:20} {1:36} {2}".format(msrp, status, summary))
+	elif status == 'In Development':
+		print(" {0:20} {1:30} {2}".format(msrp, status, summary))
 	else:
-		print(" {0:20} {1:30} {2}".format(msrp[i], status[i], summary[i]))
+		print(" {0:20} {1:30} {2}".format(msrp, status, summary))
+
+print('------------------------------------------------')
+print('Total:', len(jira_tickets['data']) )

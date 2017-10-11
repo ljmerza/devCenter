@@ -52,20 +52,23 @@ def crucible_create_review(data):
 	branch = repo['reviewedBranch']
 	msrp = branch.split('-')[1]
 	
-	# create crucible title
+	# get issue data from Crucible title
 	title_data = jira.find_qa_data(msrp=msrp)
-	if( title_data['status'] and not 'story_point' in title_data or not 'key' in title_data or not 'summary' in title_data ):
-		return {"response": "Could not find matching msrp in Jira", "status": "ERROR", "jira_link": ''}
+	# make sure we have Crucible title data
+	if not title_data['status']:
+		return response
+	if( ('story_point' not in title_data) or ('key' not in title_data) or ('summary' not in title_data) ):
+		return {"data": "Could not get all data required to cerate Crucible title", "status": False}
 	
 	# get key and save crucible title
 	key = title_data["key"]
-	data['title'] = crucible.create_crucible_title(story_points=title_data['story_point'], key=key, msrp=msrp, summary=title_data['summary'])
+	data['title'] = crucible.create_crucible_title(story_point=title_data['story_point'], key=key, msrp=msrp, summary=title_data['summary'])
 	# create crucible
 	crucible_data = crucible.create_crucible(data=data)
 	# if error on create crucible close crucible and return error
 	if not crucible_data['status']:
 		response = crucible_data['response']
-		return {"response": f"Could not create crucible: {response}", "status": "ERROR", "jira_link": jira.ticket_base+'/'+key}
+		return {"data": f"Could not create crucible: {response}", "status": "ERROR", "jira_link": jira.ticket_base+'/'+key}
 	
 	# generate qa step template and add comment to jira
 	if 'qa_steps' in data and data['qa_steps']:
@@ -73,7 +76,7 @@ def crucible_create_review(data):
 		response = jira.add_comment(key=title_data['key'], comment=qa_steps)
 		# check if jira comment created
 		if not response['status']:
-			return {"response": response, "status": "ERROR", "jira_link": jira.ticket_base+'/'+key}
+			return response
 
 		# set PCR if needed
 		if 'autoPCR' in data and data['autoPCR']:

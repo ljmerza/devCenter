@@ -6,13 +6,12 @@ import CrucibleAPI
 class CrucibleRepoBranch(CrucibleAPI.CrucibleAPI):
 	def __init__(self):
 		CrucibleAPI.CrucibleAPI.__init__(self)
-		self.crucible_url = os.environ['CRUCIBLE_URL']
 
 	def get_repos_of_review(self, crucible_id, cred_hash):
 		'''get all repos tied to a review
 		'''
 		# get crucible details
-		response = self.get(url=f'{self.crucible_url}/rest-service/reviews-v1/{crucible_id}/reviewitems.json', cred_hash=cred_hash)
+		response = self.get(url=f'{self.crucible_api_review}/{crucible_id}/reviewitems.json', cred_hash=cred_hash)
 		# if status false then return error
 		if not response['status']:
 			return response
@@ -32,7 +31,7 @@ class CrucibleRepoBranch(CrucibleAPI.CrucibleAPI):
 			a dict of status/data properties
 		'''
 		# get data from API
-		response = self.get(url=f'{self.crucible_url}/rest-service/repositories-v1.json', cred_hash=cred_hash)
+		response = self.get(url=f'{self.crucible_api_repo}.json', cred_hash=cred_hash)
 		if not response['status']:
 			return response
 		# save all repo names and locations
@@ -52,7 +51,7 @@ class CrucibleRepoBranch(CrucibleAPI.CrucibleAPI):
 		'''
 		branch_names = []
 		# get data from API
-		response = self.get(url=f'{self.crucible_url}/changelog-ajax/{repo_name}?q=&command=branches&limit=50', cred_hash=cred_hash)
+		response = self.get(url=f'{self.crucible_api_changelog}/{repo_name}?q=&command=branches&limit=50', cred_hash=cred_hash)
 		if not response['status']:
 			return response
 		for item in response['data']['items']:

@@ -1,34 +1,52 @@
 #!/usr/bin/python3
 
-import JiraAPI
+import JiraStatusComponent
 import JiraFields
 
-class Jira(JiraAPI.JiraAPI):
-	'''jira class using an attuid and password'''
+class Jira(JiraStatusComponent.JiraStatusComponent):
+	'''Jira class for getting data from the Jira API'''
 
 	def __init__(self):
+		'''Create Jira class instance
 
-		super().__init__()
-		###############################################################################
-		self.base_url = os.environ['JIRA_URL']
-		self.ticket_base = f'{self.base_url}/browse' # the ticket page
+		Args:
+			None
 
+		Returns:
+			a Jira instance
+		'''
+		JiraStatusComponent.JiraStatusComponent.__init__(self)
+		self.fields = 'comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,labels'
 
 	def get_filter_url(self, filter_number, cred_hash):
+		'''gets the URL of a particular Jira filter
+
+		Args:
+			filter_number (str) the filter number to get Jira tickets from
+			cred_hash (str) Authorization header value
+
+		Returns:
+			dict with status and data property
 		'''
-		'''
-		response = self.get(url=f'{self.base_url}/rest/api/2/filter/{filter_number}', cred_hash=cred_hash)
+		response = self.get(url=f'{self.api_base}/filter/{filter_number}', cred_hash=cred_hash)
 		if not response['status']:
 			return response
 		return {'status': True, 'data': response['data']['searchUrl'] }
 
+	def get_raw_jira_tickets(self, filter_number, cred_hash, start_at=0, max_results=1000):
+		'''returns the raw data from the Jira API of all Jira tickets from a filter number
 
+		Args:
+			filter_number (str) the filter number to get Jira tickets from
+			cred_hash (str) Authorization header value
+			start_at (int) optional what ticket to start at when getting the list of tickets (default 0)
+			max_results (int) optional maximum number of tickets to retrieve (default 1000)
 
-	def get_jira_tickets(self, filter_number, cred_hash, start_at=0, max_results=1000):
-		'''
+		Returns:
+			dict of status and data property with an array of Jira ticket objects
 		'''
 		# get filter url
-		response = self.get_filter_url(filter_number)
+		response = self.get_filter_url(filter_number=filter_number, cred_hash=cred_hash)
 		if not response['status']:
 			return response
 		# get raw url
@@ -37,24 +55,32 @@ class Jira(JiraAPI.JiraAPI):
 		response = self.get(url=f'{url}&startAt={start_at}&maxResults={max_results}&fields={self.fields}', cred_hash=cred_hash)
 		if not response['status']:
 			return response
-		return {'status': True, 'data': response_jira['data']['issues']}
+		return {'status': True, 'data': response['data']['issues']}
 
+	def get_jira_tickets(self, filter_number, cred_hash, max_results=1000, start_at=0):
+		'''returns the formatted data from the Jira API of all Jira tickets from a filter number
 
+		Args:
+			filter_number (str) the filter number to get Jira tickets from
+			cred_hash (str) Authorization header value
+			start_at (int) optional what ticket to start at when getting the list of tickets (default 0)
+			max_results (int) optional maximum number of tickets to retrieve (default 1000)
 
-	def get_raw_jira_data(self, filter_number, cred_hash, max_results=1000, start_at=0):
-		'''
+		Returns:
+			dict of status and data property with an array of formatted Jira ticket objects as well
+			as the totla number of ticket found in total_tickets
 		'''
 		# get jira tickets and check response
-		response = self.get_jira_tickets(filter_number=filter_number, max_results=max_results, start_at=start_at, cred_hash=cred_hash)
+		response = self.get_raw_jira_tickets(filter_number=filter_number, max_results=max_results, start_at=start_at, cred_hash=cred_hash)
 		if not response['status']:
 			return response
 
 		# get all issues
-		issues = response['data']['data']['issues']
+		issues = response['data']
 
 		# create response
 		response = {
-				"total_tickets": response_jira['data']['data']['total'],
+				"total_tickets": len(issues),
 				"data": [],
 				'status': True
 		}
@@ -80,7 +106,7 @@ class Jira(JiraAPI.JiraAPI):
 			ticket['status'] = JiraFields.get_status(issue)
 
 			# get story points
-			ticket['story_points'] = JiraFields.get_story_points(issue)
+			ticket['story_point'] = JiraFields.get_story_point(issue)
 			# get sprint
 			ticket['sprint']  = JiraFields.get_sprint(issue)
 			
@@ -99,7 +125,14 @@ class Jira(JiraAPI.JiraAPI):
 
 
 	def find_key_by_msrp(self, msrp, cred_hash):
-		'''
+		'''find the key of a Jira ticket by it's MSRP value
+
+		Args:
+			msrp (str) the MSRP of the Jira ticket
+			cred_hash (str) Authorization header value
+
+		Returns:
+			dict of status/data properties with the error message or Jira ticket key
 		'''
 		response = self.get(url=f'{self.api_base}/search?jql=MSRP_Number~{msrp}', cred_hash=cred_hash)
 		if not response['status']:
@@ -109,26 +142,33 @@ class Jira(JiraAPI.JiraAPI):
 		else:
 			return {'status': False, 'data': f'Did not find any key matching {msrp}'}
 
-	def find_qa_data(self, msrp, cred_hash):
+	def find_crucible_title_data(self, msrp, cred_hash):
+		'''finds the data needed from Jira to create a Crucible review title
+
+		Args:
+			msrp (str) the MSRP of the Jira ticket
+			cred_hash (str) Authorization header value
+
+		Returns:
+			dict of status/data properties with the error message or object of Jira data needed to create title
 		'''
-		'''
+		# get ticket data based off MSRP and check for status
 		search_response = self.get(url=f'{self.api_base}/search?jql=MSRP_Number~{msrp}', cred_hash=cred_hash)
 		if not search_response['status']:
 			return search_response
-
 		# get issue found
-		search_response = issue['data']['issues'][0]
+		search_response = search_response['data']['issues'][0]
 		# create response object
 		response = { 'status': True, 'data':{} }
-		# add 
+		# add story points
 		if search_response['fields']['customfield_10006']:
-			response['data']['story_point'] = issue['fields']['customfield_10006']
+			response['data']['story_point'] = search_response['fields']['customfield_10006']
 		# add key
 		if search_response['key']:
-			response['data']['key'] = issue['key']
+			response['data']['key'] = search_response['key']
 		# add summary
 		if search_response['fields']['summary']:
-			response['data']['summary'] = issue['fields']['summary']
+			response['data']['summary'] = search_response['fields']['summary']
 		# return data
 		return response
 
@@ -139,6 +179,7 @@ class Jira(JiraAPI.JiraAPI):
 		Args:
 			key (str) the jira issue key to update
 			comment (str) the comment to post to the jira issue
+			cred_hash (str) Authorization header value
 			private_comment (boolean) is the comment developer only or public? (default true)
 
 		Returns:
@@ -149,201 +190,19 @@ class Jira(JiraAPI.JiraAPI):
 			json_data['visibility'] = {'type': 'role', 'value': 'Developers'}
 		return self.post_json(url=f'{self.api_base}/issue/{key}/comment', json_data=json_data, cred_hash=cred_hash)
 
-
-	def _set_component(self, component_name, key, cred_hash):
-		'''sets a jira issue to the given component
-
-		Args:
-			component_name (str) the component name to set the jira issue to
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		json_data = {"update":{"components":[{"set":[{"name":component_name}]}]}}
-		return self.put_json(url=f'{self.api_base}/issue/{key}', json_data=json_data, cred_hash=cred_hash)
-
-	def _remove_component(self, component_name, key, cred_hash):
-		'''removes a jira issue to the given component
-
-		Args:
-			component_name (str) the component name to remove the jira issue from
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		json_data={"update":{"components":[{"remove":[{"name":component_name}]}]}}
-		return self.put_json(url=f'{self.api_base}/issue/{key}', json_data=json_data, cred_hash=cred_hash)
-
-	def _set_status(self, transition_id, key, cred_hash):
-		'''sets a jira issue to the given status
-
-		Args:
-			transition_id (int) the status id to set the jira issue to
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self.post_json(url=f'{self.api_base}/issue/{key}/transitions', json_data={"transition":{"id":transition_id}}, cred_hash=cred_hash)
-
-
-	def set_in_dev(self, key, cred_hash):
-		'''sets a jira issue to the In Development status
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_status(key=key, transition_id=0, cred_hash=cred_hash)
-
-	def set_pcr_needed(self, key, cred_hash):
-		'''sets a jira issue to the PCR Needed component
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_component(key=key, component_name='PCR - Needed', cred_hash=cred_hash)
-
-	def set_pcr_complete(self, key, cred_hash):
-		'''sets a jira issue to the PCR complete component
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_component(key=key, component_name='PCR - Completed', cred_hash=cred_hash)
-
-	def set_code_review(self, key, cred_hash):
-		'''sets a jira issue to the Code Review status
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_status(key=key, transition_id=521, cred_hash=cred_hash)
-
-	def set_code_review_working(self, key, cred_hash):
-		'''sets a jira issue to the Code Review - Working component
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_component(key=key, component_name='Code Review - Working', cred_hash=cred_hash)
-
-	def set_ready_for_qa(self, key, cred_hash):
-		'''sets a jira issue to the Ready For QA status
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_status(key=key, transition_id=71, cred_hash=cred_hash)
-
-	def set_in_qa(self, key, cred_hash):
-		'''sets a jira issue to the In QA status
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_status(key=key, transition_id=81, cred_hash=cred_hash)
-
-	# def set_ready_uct(self, key):
-	'''sets a jira issue to the Ready For UCT status
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-	# 	return self._set_status(key=key, transition_id=0)
-
-	def set_merge_code(self, key, cred_hash):
-		'''sets a jira issue to the Merge Code component
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_component(key=key, component_name='Merge Code', cred_hash=cred_hash)
-
-	def set_merge_conflict(self, key, cred_hash):
-		'''sets a jira issue to the Merge Conflict component
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_component(key=key, component_name='Merge Conflict', cred_hash=cred_hash)
-
-	# def set_in_uct(self, key):
-	'''sets a jira issue to the In UCT status
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-	# 	return self._set_status(key=key, transition_id=0)
-
-	def set_uct_fail(self, key, cred_hash):
-		'''sets a jira issue to the UCT Fail component
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_component(key=key, component_name='UCT - Failed', cred_hash=cred_hash)
-
-	def set_ready_release(self, key, cred_hash):
-		'''sets a jira issue to the Ready For Release component
-
-		Args:
-			key (str) the jira issue key to update
-
-		Returns:
-			dict: status boolean and/or data hash
-		'''
-		return self._set_component(key=key, component_name='Ready for Release', cred_hash=cred_hash)
-
-
 	def add_work_log(self, time, key, cred_hash, private_log=True):
 		'''add worklog time to a Jira issue
 
 		Args:
 			time (str): the time logged in '3d 3h 30m 20s' format
+			cred_hash (str) Authorization header value
 			key (str) the jira issue key to update
+			private_log (boolean) optional if the work log is private or not (default True)
 
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-
+		# create object to send to API
 		json_data = {
 			'comment': '', 
 			'started': strftime("%Y-%m-%dT%H:%M:%S.000+0000", gmtime()), 
@@ -353,8 +212,7 @@ class Jira(JiraAPI.JiraAPI):
 
 		if private_log:
 			json_data['visibility'] = {'type': 'role', 'value': 'Developers'}
-
-
+		# POST work log and return data
 		return self.post_json(url=f'{self.api_base}/issue/{key}/worklog', json_data={"timeSpent":time}, cred_hash=cred_hash)
 		
 	

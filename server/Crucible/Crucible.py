@@ -11,7 +11,6 @@ class Crucible(CrucibleRepoBranch.CrucibleRepoBranch, CruciblePCR.CruciblePCR):
 	def __init__(self):
 		CruciblePCR.CruciblePCR.__init__(self)
 		CrucibleRepoBranch.CrucibleRepoBranch.__init__(self)
-		self.crucible_url = os.environ['CRUCIBLE_URL']
 
 	def get_review_id(self, cred_hash, key='', msrp=''):
 		'''try to return a crucible ID for a particular Jira key/MSRP
@@ -146,7 +145,7 @@ class Crucible(CrucibleRepoBranch.CrucibleRepoBranch, CruciblePCR.CruciblePCR):
 		milli_days = milli_24_hours * days
 		millis = int( round(time.time() * 1000) - milli_days)
 		# get crucible data
-		response = self.get(url=f'{self.crucible_url}/rest-service/reviews-v1/filter.json?states=Review,Closed&fromDate={millis}', cred_hash=cred_hash)
+		response = self.get(url=f'{self.crucible_api_review}/filter.json?states=Review,Closed&fromDate={millis}', cred_hash=cred_hash)
 		# check response
 		if not response['status']:
 			return response
@@ -182,7 +181,7 @@ class Crucible(CrucibleRepoBranch.CrucibleRepoBranch, CruciblePCR.CruciblePCR):
 			"projectKey":"CR-UD"
 		}}
 		# create a crucible review
-		response = self.post_json(url=f'{self.crucible_url}/rest-service/reviews-v1.json', json_data=json_data, cred_hash=cred_hash)
+		response = self.post_json(url=f'{self.crucible_api_review}.json', json_data=json_data, cred_hash=cred_hash)
 		if not response['status']:
 			return {'data':  'Could not create crucible review: '+response['data'], 'status': False}
 		# make sure we have valid data
@@ -198,12 +197,12 @@ class Crucible(CrucibleRepoBranch.CrucibleRepoBranch, CruciblePCR.CruciblePCR):
 				"repositoryName": repo['repositoryName'],
 				"reviewedBranch": repo['reviewedBranch']
 			}
-			response = self.post_json(url=f'{self.crucible_url}/rest/branchreview/latest/trackedbranch/{crucible_id}.json', json_data=json_data, cred_hash=cred_hash)
+			response = self.post_json(url=f'{self.crucible_api_branch}/{crucible_id}.json', json_data=json_data, cred_hash=cred_hash)
 			if not response['status']:
 				json_data = str(json_data)
 				return {'data': f'Could not add repo {repo}: '+response['data'], 'status': False}
 		# publish review
-		response = self.post(url=f'{self.crucible_url}/rest-service/reviews-v1/{crucible_id}/transition?action=action:approveReview&ignoreWarnings=true.json', cred_hash=cred_hash)
+		response = self.post(url=f'{self.crucible_api_review}/{crucible_id}/transition?action=action:approveReview&ignoreWarnings=true.json', cred_hash=cred_hash)
 		if not response['status']:
 			return {'data': f'Could not publish review: '+response['data'], 'status': False}
 		# return crucible id and status ok
@@ -219,5 +218,5 @@ class Crucible(CrucibleRepoBranch.CrucibleRepoBranch, CruciblePCR.CruciblePCR):
 		Returns
 			dict with status/data properties.
 		'''
-		return self.post(url=f'{self.crucible_url}/rest-service/reviews-v1/{crucible_id}/transition?action=action:closeReview&ignoreWarnings=true.json', cred_hash=cred_hash)
+		return self.post(url=f'{self.crucible_api_review}/{crucible_id}/transition?action=action:closeReview&ignoreWarnings=true.json', cred_hash=cred_hash)
 

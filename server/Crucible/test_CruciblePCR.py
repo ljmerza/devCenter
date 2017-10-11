@@ -58,6 +58,6 @@ print(response)
 print(divider)
 
 print('create_crucible_title')
-response = crucible.create_crucible_title(story_points=5, key='QWE-1234', msrp='1212143', summary='this is test summary')
+response = crucible.create_crucible_title(story_point=5, key='QWE-1234', msrp='1212143', summary='this is test summary')
 print(response)
 print(divider)

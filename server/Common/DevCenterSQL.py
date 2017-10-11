@@ -106,7 +106,6 @@ class DevCenterSQL():
 		# key = re.escape( str(key) )
 		value = re.escape( str(value) )
 		sql = "UPDATE tickets SET `{}`={} WHERE `key`='{}'".format(field, value, key)
-		print(sql)
 		return self._execute_sql(sql=sql)
 				
 	def get_user_ping_value(self, username, field):

@@ -10,6 +10,7 @@ class CrucibleAPI(DevCenterAPI.DevCenterAPI):
 
 	def __init__(self):
 		'''creates a CrucibleAPI interface - used as an adapter for Crucible API requests
+		and sets all Crucible API endpoints
 		Args:
 			None
 
@@ -17,6 +18,11 @@ class CrucibleAPI(DevCenterAPI.DevCenterAPI):
 			An instance of CrucibleAPI
 		'''
 		DevCenterAPI.DevCenterAPI.__init__(self)
+		self.crucible_url = os.environ['CRUCIBLE_URL']
+		self.crucible_api_review = f'{self.crucible_url}/rest-service/reviews-v1'
+		self.crucible_api_repo = f'{self.crucible_url}/rest-service/repositories-v1'
+		self.crucible_api_changelog = f'{self.crucible_url}/changelog-ajax'
+		self.crucible_api_branch = f'{self.crucible_url}/rest/branchreview/latest/trackedbranch'
 
 	def post(self, url, cred_hash, data=''):
 		'''sends a POST request
