@@ -1,8 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { AppRoutingModule } from './app-routing.module';
 import { NgModule } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { RouterModule } from '@angular/router';
 import { MomentModule } from 'angular2-moment';
 import { MaterializeModule } from 'angular2-materialize';
 
@@ -38,10 +39,7 @@ import { LoggedPipe } from './logged.pipe';
 		HttpModule,
 		MomentModule,
 		MaterializeModule,
-		RouterModule.forRoot([
-			{path: '', component: OpenTicketsComponent},
-			{path: 'jira/:filter', component: OpenTicketsComponent},
-		])
+		AppRoutingModule
 	],
 	providers: [DataService, JiraService],
 	bootstrap: [AppComponent]
