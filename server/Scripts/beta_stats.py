@@ -58,3 +58,21 @@ for jira_ticket in jira_tickets['data']:
 
 print('------------------------------------------------')
 print('Total:', len(jira_tickets['data']) )
+
+
+print("""
+
+
+Triage - hasn't been looked at
+Backlog - has been looked at but not assigned to a developer
+In Sprint - assigned to a developer but hasn't been started
+In Development - developer is working on it
+PCR - Needed - developer is wait for peer to review code
+PCR - Completed - peer code review complete and waiting for senior developer to look at it
+Code Review - Working - senior developer is looking at code
+QA Needed - waiting for testing
+In QA - currently being tested
+Merge Code - waiting for developer to add code to beta
+Ready for UCT - waiting for next beta update
+Ready for Release - has been tested in beta
+""")
