@@ -82,7 +82,7 @@ class AutomationBot(object):
 			return
 
 		# print number of tickets retrieved
-		print( 'Number of Jira tickets retrieved: ' + str(jira_tickets['total_tickets']) )
+		print( jira_tickets['total_tickets'], 'Jira tickets retrieved.' )
 
 		# for each jira ticket update DB table and make any pings
 		for jira_ticket  in jira_tickets['data']:
@@ -136,9 +136,10 @@ class AutomationBot(object):
 		'''
 		# if user not pinged yet then try
 		if( not self.sql_object.get_ping(field='new_ping', key=jira_ticket['key']) ):
-			check_for_new_ping(jira_ticket=jira_ticket)
+			self.check_for_new_ping(jira_ticket=jira_ticket)
+
 		# check for any other pings based on component and status
-			check_for_pings(jira_ticket=jira_ticket)
+		# self.check_for_status_pings(jira_ticket=jira_ticket)
 
 	def check_for_new_ping(self, jira_ticket):
 		'''checks Jira ticket for any new pings and update DB
@@ -155,9 +156,11 @@ class AutomationBot(object):
 		key = jira_ticket['key']
 		msrp = jira_ticket['msrp']
 		key = jira_ticket['key']
+		summary = jira_ticket['summary']
 
 		# see if user wants ping
-		wants_ping = self.sql_object.get_user_settings(username=username, field='new_ping')
+		wants_ping = self.sql_object.get_user_ping_value(username=username, field='new_ping')
+		print('wants_ping',wants_ping, username)
 
 		# if user wants ping then ping them
 		if(wants_ping == 1):
@@ -186,7 +189,7 @@ class AutomationBot(object):
 			self.sql_object.update_ping(key=key, field='new_ping', value=1)
 
 
-	def check_for_pings(self, jira_ticket):
+	def check_for_status_pings(self, jira_ticket):
 		'''checks Jira ticket component/status for pings needed
 
 		Args:
@@ -202,8 +205,10 @@ class AutomationBot(object):
 		msrp = jira_ticket['msrp']
 		key = jira_ticket['key']
 		sprint = jira_ticket['sprint']
-		labels = jira_ticket['labels']
+		label = jira_ticket['label']
 		summary = jira_ticket['summary']
+		component = jira_ticket['component']
+		status = jira_ticket['status']
 
 		# get jira ticket's ping settings
 		pings = self.sql_object.get_pings(key=key)
@@ -215,7 +220,7 @@ class AutomationBot(object):
 		if( "PCR - Needed" in component and not pings['pcr_ping'] ):
 
 			# get PCR number and check if we have it
-			crucible_id = self.crucible_obj.get_review_id(key=key, msrp=msrp)
+			crucible_id = self.crucible_obj.get_review_id(key=key, msrp=msrp, cred_hash=self.cred_hash)
 			if not crucible_id['status']:
 				print('Could not get crucible review ID: '+crucible_id['data'])
 				return
@@ -223,7 +228,7 @@ class AutomationBot(object):
 			# get PCR estimate
 			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point)
 			# send ping
-			self.qbot_obj.send_pcr_needed(key=key, msrp=msrp, sprint=sprint, labels=labels, crucible_id=crucible_id['data'], pcr_estimate=pcr_estimate)
+			self.qbot_obj.send_pcr_needed(key=key, msrp=msrp, sprint=sprint, label=label, crucible_id=crucible_id['data'], pcr_estimate=pcr_estimate)
 			# reset ping settings if needed
 			self.sql_object.reset_pings(ping_type='pcr_ping', key=key)
 			# update ping
@@ -241,7 +246,7 @@ class AutomationBot(object):
 			# add crucible link to DB
 			self.sql_object.add_crucible(key=key, crucible_id=crucible_id['data'])
 
-			self.qbot_obj.send_qa_needed(key=key, msrp=msrp, sprint=sprint, labels=labels, crucible_id=crucible_id['data'])
+			self.qbot_obj.send_qa_needed(key=key, msrp=msrp, sprint=sprint, label=label, crucible_id=crucible_id['data'])
 			# reset ping settings if needed
 			self.sql_object.reset_pings(ping_type='qa_ping', key=key)
 			# update ping
@@ -273,7 +278,7 @@ class AutomationBot(object):
 
 			repos_merged = self.crucible_obj.get_repos_of_review(crucible_id=crucible_id, cred_hash=self.cred_hash)
 			if repos_merged:
-				self.qbot_obj.send_merge_alert(key=key, msrp=msrp, sprint=sprint, username=username, repos_merged=repos_merged, crucible_link=crucible_link, summary=summary)
+				self.qbot_obj.send_merge_alert(key=key, msrp=msrp, sprint=sprint, username=username, repos_merged=repos_merged, crucible_id=crucible_id, summary=summary)
 			# update DB
 			self.sql_object.update_ping(key=key, field='uct_ping', value=1)
 
@@ -302,7 +307,7 @@ class AutomationBot(object):
 			None
 		'''		
 		# see if user wants ping
-		wants_ping = self.sql_object.get_user_settings(username=username, field=ping_type)
+		wants_ping = self.sql_object.get_user_ping_value(username=username, field=ping_type)
 		# if user wants ping then ping them
 		if(wants_ping):
 			self.qbot_obj.send_jira_update(key=key, msrp=msrp, summary=summary, username=username, ping_message=ping_message, sprint=sprint)

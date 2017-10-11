@@ -16,7 +16,7 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 			a Jira instance
 		'''
 		JiraStatusComponent.JiraStatusComponent.__init__(self)
-		self.fields = 'comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,labels'
+		self.fields = 'comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,label'
 
 	def get_filter_url(self, filter_number, cred_hash):
 		'''gets the URL of a particular Jira filter
@@ -112,7 +112,7 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 			
 			# get epic link
 			ticket['epic_link'] = JiraFields.get_epic_link(issue)
-			# get labels
+			# get label
 			ticket['label'] = JiraFields.get_label(issue)
 
 			# get comments and QA steps

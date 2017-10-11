@@ -24,18 +24,18 @@ print(divider)
 
 
 print('send_pcr_needed')
-qbot.send_pcr_needed(pcr_estimate=3, key='1000', msrp='fake_key', sprint='UDtest', labels='LABEL', crucible_id='CRU_123')
-qbot.send_pcr_needed(pcr_estimate=3, key='1000', msrp='fake_key', sprint='UDtest', labels='BETA', crucible_id='CRU_123')
+qbot.send_pcr_needed(pcr_estimate=3, key='1000', msrp='fake_key', sprint='UDtest', label='LABEL', crucible_id='CRU_123')
+qbot.send_pcr_needed(pcr_estimate=3, key='1000', msrp='fake_key', sprint='UDtest', label='BETA', crucible_id='CRU_123')
 print(divider)
 
 print('send_pcr_needed - should not send')
-qbot.send_pcr_needed(pcr_estimate=3, key='SASHA-2345', msrp='fake_key', sprint='UDtest', labels='BETA', crucible_id='CRU_123')
-qbot.send_pcr_needed(pcr_estimate=3, key='1000', msrp='fake_key', sprint=' sdfFastTrack df', labels='BETA', crucible_id='CRU_123')
+qbot.send_pcr_needed(pcr_estimate=3, key='SASHA-2345', msrp='fake_key', sprint='UDtest', label='BETA', crucible_id='CRU_123')
+qbot.send_pcr_needed(pcr_estimate=3, key='1000', msrp='fake_key', sprint=' sdfFastTrack df', label='BETA', crucible_id='CRU_123')
 print(divider)
 
 print('send_qa_needed')
-qbot.send_qa_needed(key='1000', msrp='fake_key', sprint='UDtest', labels='LABEL', crucible_id='CRU_123')
-qbot.send_qa_needed(key='1000', msrp='fake_key', sprint='UDtest', labels='BETA', crucible_id='CRU_123')
+qbot.send_qa_needed(key='1000', msrp='fake_key', sprint='UDtest', label='LABEL', crucible_id='CRU_123')
+qbot.send_qa_needed(key='1000', msrp='fake_key', sprint='UDtest', label='BETA', crucible_id='CRU_123')
 print(divider)
 
 print('send_me_ticket_info')

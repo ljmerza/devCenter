@@ -30,6 +30,7 @@ class Qbot(object):
 		self.qbot_url = os.environ['QBOT_URL']
 		self.qbot_api = f'{self.qbot_url}/push'
 		self.qbot_api_chatroom = f'{self.qbot_api}/meeting:'
+		self.qbot_api_menu = f'{self.qbot_api}/menu/'
 		##########################################################
 		pm1 = os.environ['PM1']
 		pm2 = os.environ['PM2']
@@ -69,14 +70,14 @@ class Qbot(object):
 				story_point = str(int(story_point)) + ' days'
 		return story_point
 
-	def send_pcr_needed(self, pcr_estimate, key, msrp, sprint, labels, crucible_id=''):
+	def send_pcr_needed(self, pcr_estimate, key, msrp, sprint, label, crucible_id=''):
 		'''send pcr needed to chat room
 		Args:
 			pcr_estimate (str) the PCR estimate number
 			key (str) the Jira key
 			msrp (str) the Jira MSRP
 			sprint (str) the sprint name
-			labels (str) string of labels for Jira issue
+			label (str) string of label for Jira issue
 			crucible_id (str) optional Crucible ID (default '')
 		Returns:
 			None
@@ -84,18 +85,18 @@ class Qbot(object):
 		# create message string
 		message = f'PCR-{pcr_estimate}'
 		# if BETA ticket then add beta string
-		if 'BETA' in labels:
+		if 'BETA' in label:
 			message += ' BETA'
 		# send message
 		self.get_qa_pcr_links(message=message, sprint=sprint, key=key, msrp=msrp, crucible_id=crucible_id)
 		
-	def send_qa_needed(self, key, sprint, msrp, labels, crucible_id):
+	def send_qa_needed(self, key, sprint, msrp, label, crucible_id):
 		'''send qa needed to chat room
 		Args:
 			key (str) the Jira key
 			msrp (str) the Jira MSRP
 			sprint (str) the sprint name
-			labels (str) string of labels for Jira issue
+			label (str) string of label for Jira issue
 			crucible_id (str) optional Crucible ID (default '')
 		Returns:
 			None
@@ -103,7 +104,7 @@ class Qbot(object):
 		# create message string
 		message = ''
 		# if BETA ticket then add beta string
-		if 'BETA' in labels:
+		if 'BETA' in label:
 			message += 'BETA '
 		# add messge type
 		message += 'QA Needed'
@@ -353,9 +354,11 @@ class Qbot(object):
 
 	def send_meeting_message(self, message, chatroom):
 		'''make a post request to the qBot to send a message to a chat room
+
 		Args:
 			message (str) - the message to send to the chatroom
 			chatroom (str) the chatroom ID to send the ping to
+
 		Returns:
 			None
 		'''
@@ -364,6 +367,16 @@ class Qbot(object):
 			chatroom = self.test_chat
 		# make POST request
 		requests.post(f"{self.qbot_api_chatroom}{chatroom}", data=message, auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+
+	def set_z_menu(self, username):
+		'''
+		Args:
+			username - the username of the user to add the menu to
+
+		Returns:
+			None
+		'''
+		requests.post(f"{self.qbot_api_menu}{username}", data='', auth=HTTPBasicAuth(self.bot_name, self.bot_password))
 
 	def get_branch_name(self, username, msrp, summary):
 		'''get the branch name in username-msrp-summary format

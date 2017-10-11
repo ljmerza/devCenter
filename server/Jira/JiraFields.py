@@ -111,7 +111,7 @@ def get_sprint(issue):
 	'''
 	# get sprint
 	sprint = ''
-	if issue['fields']['customfield_10001']:
+	if 'customfield_10001' in issue['fields'] and issue['fields']['customfield_10001']:
 		sprint_split = issue['fields']['customfield_10001'][0].split(',')
 		if len(sprint_split) > 3:
 			sprint_split = sprint_split[3].split('=')
@@ -128,22 +128,22 @@ def get_epic_link(issue):
 	Returns:
 		the issue's epic link in readable format or empty string
 	'''
+	epic_link = ''
 	# get epic link
-	epic_link = issue['fields']['customfield_10002']
-	if epic_link == 'UD-2421':
-		epic_link = 'Apollo'
-	elif epic_link == 'UD-1':
-		epic_link = 'Gamma'
-	elif epic_link == 'UD-3532':
-		epic_link = 'Ember Upgrades'
-	elif epic_link == 'UD-3':
-		epic_link = 'Magellan'
-	elif epic_link == 'UD-4714':
-		epic_link = 'UTM'
-	elif epic_link == 'UD-656':
-		epic_link = 'US GCSC'
-	else:
-		epic_link = ''
+	if 'customfield_10002' in issue['fields'] and issue['fields']['customfield_10002']:
+		epic_link = issue['fields']['customfield_10002']
+		if epic_link == 'UD-2421':
+			epic_link = 'Apollo'
+		elif epic_link == 'UD-1':
+			epic_link = 'Gamma'
+		elif epic_link == 'UD-3532':
+			epic_link = 'Ember Upgrades'
+		elif epic_link == 'UD-3':
+			epic_link = 'Magellan'
+		elif epic_link == 'UD-4714':
+			epic_link = 'UTM'
+		elif epic_link == 'UD-656':
+			epic_link = 'US GCSC'
 	# return epic link found
 	return epic_link
 
@@ -157,7 +157,7 @@ def get_label(issue):
 		the issue's label or empty string
 	'''
 	# if exists then return else return empty string
-	if issue['fields']['labels']:
+	if 'labels' in issue['fields']:
 		return issue['fields']['labels']
 	else:
 		return ''
