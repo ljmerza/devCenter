@@ -16,32 +16,32 @@ class JiraStatusComponent(JiraAPI.JiraAPI):
 		'''
 		JiraAPI.JiraAPI.__init__(self)
 
-	def _set_component(self, component_name, key, cred_hash):
+	def _set_component(self, name, key, cred_hash):
 		'''sets a jira issue to the given component
 
 		Args:
-			component_name (str) the component name to set the jira issue to
+			name (str) the component name to set the jira issue to
 			key (str) the jira issue key to update
 			cred_hash (str) Authorization header value
 
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-		json_data = {"update":{"components":[{"set":[{"name":component_name}]}]}}
+		json_data = {"update":{"components":[{"set":[{"name":name}]}]}}
 		return self.put_json(url=f'{self.api_base}/issue/{key}', json_data=json_data, cred_hash=cred_hash)
 
-	def _remove_component(self, component_name, key, cred_hash):
+	def _remove_component(self, name, key, cred_hash):
 		'''removes a jira issue to the given component
 
 		Args:
-			component_name (str) the component name to remove the jira issue from
+			name (str) the component name to remove the jira issue from
 			key (str) the jira issue key to update
 			cred_hash (str) Authorization header value
 
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-		json_data={"update":{"components":[{"remove":[{"name":component_name}]}]}}
+		json_data={"update":{"components":[{"remove":[{"name":name}]}]}}
 		return self.put_json(url=f'{self.api_base}/issue/{key}', json_data=json_data, cred_hash=cred_hash)
 
 	def _set_status(self, transition_id, key, cred_hash):

@@ -4,7 +4,6 @@ import math
 import requests
 from requests.auth import HTTPBasicAuth
 import re
-import string
 import os
 
 class Qbot(object):	

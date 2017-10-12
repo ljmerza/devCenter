@@ -67,6 +67,20 @@ class JiraAPI(DevCenterAPI.DevCenterAPI):
 		response = super(JiraAPI, self).post_json(url=url, json_data=json_data, cred_hash=cred_hash)
 		return self._process_response(response)
 
+	def put_json(self, url, json_data, cred_hash):
+		'''sends a PUT request with JSON data
+
+		Args:
+			url (str) the URL to make a POST request
+			json_data (dict) optional JSON body to send with the POST request
+			cred_hash (string) Authorization header value
+
+		Returns:
+			returns a dict with status/data property. 
+		'''
+		response = super(JiraAPI, self).put_json(url=url, json_data=json_data, cred_hash=cred_hash)
+		return self._process_response(response)
+
 	def _process_response(self, response):
 		'''internal method that processes the response from Jira API
 

@@ -36,23 +36,26 @@ for jira_ticket in jira_tickets['data']:
 	msrp = jira_ticket['msrp']
 
 	# print table
-	if component == 'BETA':
+	if component in ['BETA']:
 		print(" {0:20}  {1:30} {2}".format(msrp,  status, summary))
 	elif component:
-		if component == 'PCR - Completed':
+		if component in ['PCR - Completed']:
 			print(" {0:20} {1:28} {2}".format(msrp, component, summary))
 		else:
 			print(" {0:20} {1:30} {2}".format(msrp, component, summary))
-	elif status == 'Backlog':
-		print(" {0:20} {1:34} {2}".format(msrp, status, summary))
-	elif status == 'Triage':
-		print(" {0:20} {1:36} {2}".format(msrp, status, summary))
-	elif status == 'In Sprint':
-		print(" {0:20} {1:37} {2}".format(msrp, status, summary))
-	elif status == 'In QA':
-		print(" {0:20} {1:36} {2}".format(msrp, status, summary))
-	elif status == 'In Development':
+
+	elif status in ['Ready for Release']:
+		print(" {0:20} {1:28} {2}".format(msrp, status, summary))
+	elif status in ['In Development']:
 		print(" {0:20} {1:30} {2}".format(msrp, status, summary))
+	elif status in ['Backlog']:
+		print(" {0:20} {1:34} {2}".format(msrp, status, summary))
+	elif status in ['On Hold']:
+		print(" {0:20} {1:35} {2}".format(msrp, status, summary))
+	elif status in ['Triage', 'In QA']:
+		print(" {0:20} {1:36} {2}".format(msrp, status, summary))
+	elif status in ['In Sprint']:
+		print(" {0:20} {1:37} {2}".format(msrp, status, summary))
 	else:
 		print(" {0:20} {1:30} {2}".format(msrp, status, summary))
 
@@ -75,4 +78,6 @@ In QA - currently being tested
 Merge Code - waiting for developer to add code to beta
 Ready for UCT - waiting for next beta update
 Ready for Release - has been tested in beta
+On Hold - ticket is on hold
+
 """)

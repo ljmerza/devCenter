@@ -94,6 +94,26 @@ class DevCenterAPI():
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
 
+	def put_json(self, url, json_data, cred_hash=''):
+		'''makes a PUT request with the given URL and optional JSON body data.
+		Returns the raw response.
+
+		Args:
+			url (str) the URL to make a POST request
+			json_data (dict) JSON body to send with the POST request
+			cred_hash (string) optional Authorization header value
+
+		Returns:
+			returns a dict with status property and if success, a data property. 
+			If Proxy error returns dict with status 407.
+		'''
+		headers = { 'Content-Type': 'application/json', 'Authorization': cred_hash }
+		try:
+			filter_data = self.session_obj.put(url, json=json_data, headers=headers)
+		except ProxyError:
+			return { "status": False, 'data': "Proxy error 407" }
+		return self._process_json(filter_data=filter_data)
+
 	def _process_json(self, filter_data):
 		'''internal method to parse JSON from responses and return status/data dict format
 
