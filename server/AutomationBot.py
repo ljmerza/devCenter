@@ -73,25 +73,32 @@ class AutomationBot(object):
 		Returns:
 
 		'''
-		# get all open Jira tickets
-		jira_tickets = self.jira_obj.get_jira_tickets(filter_number=self.filters['all'], cred_hash=self.cred_hash)
 
-		# make sure we have Jira tickets
-		if not jira_tickets['status']:
-			print('Could not get Jira tickets: '+jira_tickets['data'])
-			return
+		try:
+			# get all open Jira tickets
+			jira_tickets = self.jira_obj.get_jira_tickets(filter_number=self.filters['all'], cred_hash=self.cred_hash)
 
-		# print number of tickets retrieved
-		print( jira_tickets['total_tickets'], 'Jira tickets retrieved.' )
+			# make sure we have Jira tickets
+			if not jira_tickets['status']:
+				self.sql_object.log_error(message='Could not get Jira tickets: '+jira_tickets['data'])
+				return
 
-		# for each jira ticket update DB table and make any pings
-		for jira_ticket  in jira_tickets['data']:
-			self.sql_object.update_ticket(key=jira_ticket['key'], username=jira_ticket['username'], msrp=jira_ticket['msrp'])
-			self.check_for_pings(jira_ticket=jira_ticket)
+			# print number of tickets retrieved
+			print( jira_tickets['total_tickets'], 'Jira tickets retrieved.' )
 
-		# if we want to add beta stuff
-		if(self.is_beta_week):
-			self.beta_week_stats()
+			# for each jira ticket update DB table and make any pings
+			for jira_ticket  in jira_tickets['data']:
+				self.sql_object.update_ticket(key=jira_ticket['key'], username=jira_ticket['username'], msrp=jira_ticket['msrp'])
+				self.check_for_pings(jira_ticket=jira_ticket)
+
+			# if we want to add beta stuff
+			if(self.is_beta_week):
+				self.beta_week_stats()
+
+		except:
+			# catch all errors and log into DB
+			message = sys.exc_info()[0]
+			self.sql_object.log_error(message=message)
 
 	def beta_week_stats(self):
 		'''gets beta week stats and pings them
@@ -139,7 +146,7 @@ class AutomationBot(object):
 			self.check_for_new_ping(jira_ticket=jira_ticket)
 
 		# check for any other pings based on component and status
-		# self.check_for_status_pings(jira_ticket=jira_ticket)
+		self.check_for_status_pings(jira_ticket=jira_ticket)
 
 	def check_for_new_ping(self, jira_ticket):
 		'''checks Jira ticket for any new pings and update DB
@@ -160,12 +167,11 @@ class AutomationBot(object):
 
 		# see if user wants ping
 		wants_ping = self.sql_object.get_user_ping_value(username=username, field='new_ping')
-		print('wants_ping',wants_ping, username)
 
 		# if user wants ping then ping them
 		if(wants_ping == 1):
 			# get pcr estimate
-			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point, cred_hash=self.cred_hash)
+			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point)
 			# send new ticket ping to user
 			self.qbot_obj.send_new_ticket(key=key, msrp=msrp, summary=summary, username=username, story_point=story_point, pcr_estimate=pcr_estimate)
 			# send me new ticket if it's not my ticket
@@ -222,7 +228,7 @@ class AutomationBot(object):
 			# get PCR number and check if we have it
 			crucible_id = self.crucible_obj.get_review_id(key=key, msrp=msrp, cred_hash=self.cred_hash)
 			if not crucible_id['status']:
-				print('Could not get crucible review ID: '+crucible_id['data'])
+				self.sql_object.log_error(message='Could not get Crucible review ID for: '+crucible_id['data']+f' with status {status} and component {component}')
 				return
 
 			# get PCR estimate
@@ -240,7 +246,7 @@ class AutomationBot(object):
 			# get Crucible ID and check if we have it
 			crucible_id = self.crucible_obj.get_review_id(key=key, msrp=msrp, cred_hash=self.cred_hash)
 			if not crucible_id['status']:
-				print('Could not get crucible review ID: '+crucible_id['data'])
+				self.sql_object.log_error(message='Could not get Crucible review ID for: '+crucible_id['data']+f' with status {status} and component {component}')
 				return
 
 			# add crucible link to DB
@@ -273,7 +279,7 @@ class AutomationBot(object):
 			# get Crucible ID and check if we have it
 			crucible_id = self.crucible_obj.get_review_id(key=key, msrp=msrp, cred_hash=self.cred_hash)
 			if not crucible_id['status']:
-				print('Could not get crucible review ID: '+crucible_id['data'])
+				self.sql_object.log_error(message='Could not get Crucible review ID for: '+crucible_id['data']+f' with status {status} and component {component}')
 				return
 
 			repos_merged = self.crucible_obj.get_repos_of_review(crucible_id=crucible_id, cred_hash=self.cred_hash)

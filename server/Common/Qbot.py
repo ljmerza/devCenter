@@ -9,9 +9,9 @@ import os
 class Qbot(object):	
 	def __init__(self, debug, is_qa_pcr, merge_alerts):
 		self.crucible_url = os.environ['CRUCIBLE_URL']
-		self.crucible_ticket_base = f'{self.crucible_url}/cru/'
+		self.crucible_ticket_base = f'{self.crucible_url}/cru'
 		self.jira_url = os.environ['JIRA_URL']
-		self.jira_ticket_base = f'{self.jira_url}/browse/'
+		self.jira_ticket_base = f'{self.jira_url}/browse'
 		##########################################################
 		self.username = os.environ['USER']
 		self.debug = debug
@@ -129,9 +129,9 @@ class Qbot(object):
 		message += f" [{key}] Ticket #{msrp}:"
 		# if we have crucible link -> add crucible
 		if crucible_id:
-			message += f" <a href='{self.crucible_ticket_base}{crucible_id}'>Crucible</a>"
+			message += f" <a href='{self.crucible_ticket_base}/{crucible_id}'>Crucible</a>"
 		# add jira link
-		message += f" <a href='{self.jira_ticket_base}{key}'>Jira</a>"
+		message += f" <a href='{self.jira_ticket_base}/{key}'>Jira</a>"
 		# add sprint if exists
 		if sprint:
 			message += f" Sprint: {sprint}"
@@ -454,7 +454,7 @@ class Qbot(object):
 			message += f"\
 			<tr> \
 				<td style='{self.td_style} {color}'>Jira Link</td> \
-				<td style='{self.td_style} {color}'><a href='{self.jira_ticket_base}/{key}'>{self.jira_ticket_base}{key}</a></td> \
+				<td style='{self.td_style} {color}'><a href='{self.jira_ticket_base}/{key}'>{self.jira_ticket_base}/{key}</a></td> \
 			</tr>"
 		# add crucible link
 		if crucible_message:
@@ -469,7 +469,7 @@ class Qbot(object):
 			message += f"\
 			<tr> \
 				<td style='{self.td_style} {color}'>Crucible Link</td> \
-				<td style='{self.td_style} {color}'><a href='{self.crucible_ticket_base}{crucible_id}'>{self.crucible_ticket_base}{crucible_id}</a></td> \
+				<td style='{self.td_style} {color}'><a href='{self.crucible_ticket_base}/{crucible_id}'>{self.crucible_ticket_base}/{crucible_id}</a></td> \
 			</tr>"
 		# add branch name
 		if branch_message:

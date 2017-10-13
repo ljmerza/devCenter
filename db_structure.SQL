@@ -33,3 +33,10 @@ CREATE TABLE `users` (
   `never_ping` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `logs` (
+  `message` varchar(150) NOT NULL,
+  `timestamp` datetime NOT NULL,
+  PRIMARY KEY (`message`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

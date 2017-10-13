@@ -95,7 +95,7 @@ class Crucible(CrucibleRepoBranch.CrucibleRepoBranch, CruciblePCR.CruciblePCR):
 			if( (str(key) and str(key) in review['review_title']) or (str(msrp) and str(msrp) in review['review_title']) ):
 				return { 'status': True, 'data': review['review_id'] }
 		#  cant find URL so return false status
-		return { 'status': False, 'data': 'No Crucible ID found' }
+		return { 'status': False, 'data': f'MSRP {msrp} : key {key}' }
 
 	def get_30_day_reviews(self, cred_hash):
 		'''gets all closed and open reviews in the last 30 days

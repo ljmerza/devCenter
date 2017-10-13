@@ -81,9 +81,6 @@ class DevCenterSQL():
 		key = re.escape( str(key) )
 		username = re.escape( str(username) )
 		msrp = re.escape( str(msrp) )
-		# if msrp does not exist then set to 0 by default
-		if not msrp:
-			msrp = 0
 		# create update SQL
 		sql = "INSERT INTO tickets (`key`, `username`, `msrp`) VALUES ('{}','{}', '{}') ON DUPLICATE KEY UPDATE `key`='{}', `username`='{}', `msrp`='{}'".format(key, username, msrp, key, username, msrp)
 		# create a cursor and update Jira ticket
@@ -211,7 +208,7 @@ class DevCenterSQL():
 				cursor.execute(sql)
 				return cursor.fetchone()
 		except Exception as e:
-			print(str(e))
+			self.sql_object.log_error(message=str(e))
 			return False
 
 
@@ -232,5 +229,19 @@ class DevCenterSQL():
 				self.connection.commit()
 				return True
 		except Exception as e: 
-			print(str(e))
+			self.sql_object.log_error(message=str(e))
 			return False
+
+	def log_error(self, message):
+		'''logs an error message in the DB. If message already exist then just replaces it
+			to avoid duplicate entries
+
+		Args:
+			message (str) the message to add to the log
+
+		Returns:
+			The response from the SQL query execution
+		'''
+		message = re.escape( str(message) )
+		sql = "INSERT INTO logs (`message`, `timestamp`) VALUES ('{}',NOW()) ON DUPLICATE KEY UPDATE `message`=`message`".format(message)
+		return self._execute_sql(sql=sql)
