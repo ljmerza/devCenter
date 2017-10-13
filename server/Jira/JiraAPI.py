@@ -79,31 +79,23 @@ class JiraAPI(DevCenterAPI.DevCenterAPI):
 			returns a dict with status/data property. 
 		'''
 		response = super(JiraAPI, self).put_json(url=url, json_data=json_data, cred_hash=cred_hash)
+		print(response)
 		return self._process_response(response)
 
 	def _process_response(self, response):
-		'''internal method that processes the response from Jira API
-
+		'''internal method that processes the response from the Jira API
 		Args:
-			response (dict) the response from Jira API
+			response (dict) the response from the Jira API
 
 		Returns:
 			returns a dict with status/data property. 
 		'''
-		# if no status
-		if 'status' not in response:
-			return { "status": False, "data": 'There was no status given' }
-		# if status False
-		elif not response['status']:
-			# if not data then unknown error
-			if 'data' not in response:
-				return { "status": False, "data":  'Unknown error' }
-			# if message in data then return error message
-			elif 'message' in response['data']:
-				return { "status": False, "data":  response['data']['message'] }
-			# else just return data as error
-			else:
-				return { "status": False, "data":  response['data'] }
-		# else return response
-		else:
-			return response
+		response = super(JiraAPI, self)._process_response(response=response)
+		# if we have errorMessages then pull them out
+		if 'data' in response:
+			if 'errorMessages' in response['data']:
+				response['data'] = response['data']['errorMessages']
+				# if only one error message then dont leave in array
+				if len(response['data']) == 1:
+					response['data'] = response['data'][0]
+		return response

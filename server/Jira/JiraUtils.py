@@ -57,7 +57,7 @@ def generate_qa_template(self, qa_steps, repos, crucible_id, crucible_url):
 		crucible_url (str) the bse URL for a Crucible review
 		
 	Returns:
-		None
+		The formatted QA table string
 	'''
 	qa_begin = "h2. ============================ QA Steps ============================"
 	qa_end = "h2. ================================================================="
@@ -88,7 +88,7 @@ def generate_repo_table(self, repos):
 			reviewedBranch (str) the branch to review
 
 	Returns:
-		string of a Jita comment table of repos
+		string of a Jira comment table of repos
 	'''
 	# create table header
 	table_data = "|| Repo || Branch || Branched From ||"

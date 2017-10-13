@@ -1,98 +1,115 @@
 #!/usr/bin/python3
-import sys
-sys.path.append('..')
 
+import sys
+sys.path.append('../Jira')
+sys.path.append('../Common')
+sys.path.append('../Crucible')
+
+import FlaskUtils
 from Crucible import Crucible
 from Jira import Jira
 
-crucible = Crucible.Crucible()
-jira = Jira.Jira()
+crucible = Crucible()
+jira = Jira()
+
+
 
 def crucible_pcr_pass(data):
+
 	# check for required data
-	if(not 'cred_hash' in data or not 'crucible_id' in data or not 'attuid' in data):
-		return {"response": "Missing required parameters: "+ data, "status": "ERROR"}
+	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
+	if missing_params:
+		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+
 	# add self as reviewer
 	response = crucible.add_reviewer(attuid=data['attuid'], crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
 	if not response['status']:
-		return {"response": "Could not add "+data['attuid']+" as a reviewer", "status": "ERROR"}
+		return {"data": "Could not add "+data['username']+" as a reviewer", "status": False}
+
 	# complete review
 	response = crucible.complete_review(crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
 	if not response['status']:
-		return {"response": "Could not complete review", "status": "ERROR"}
+		return {"data": "Could not complete review", "status": False}
+
 	# add PCR pass comment
 	response = crucible.add_pcr_pass(crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
 	if not response['status']:
-		return {"response": "Could not add PCR pass comment", "status": "ERROR"}
+		return {"data": "Could not add PCR pass comment", "status": False}
+
 	# get number of PCR passes
 	number_of_passes = crucible.get_pcr_pass(crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
 	if not response['status']:
-		return {"response": "Could not get number of PCR passes", "status": "ERROR"}
+		return {"data": "Could not get number of PCR passes", "status": False}
+
 	# return ok
-	return {"status": "OK", "number": number_of_passes}
+	return {"status": True, "number": number_of_passes}
 
 
 
 
 def crucible_create_review(data):
-	# check param data
-	if(not 'attuid' in data or not 'password' in data or not 'repos' in data or not 'qa_steps' in data or not 'autoPCR' in data or not 'autoCR' in data):
-		return {"response": "Missing required parameters: "+data, "status": "ERROR", "jira_link": 'ERROR'}
-	
-	# login
-	crucible_login = crucible.login(attuid=data['attuid'], password=data['password'])
-	if not crucible_login['status']:
-		return {"response": "Invalid credsentials", "status": "ERROR", "jira_link": 'ERROR'}
-	response = jira.login(attuid=data['attuid'], password=data['password'])
-	if not response['status']:
-		return {"response": "Could not log into Jira: invalid password", "status": "ERROR", "jira_link": ''}
-	
+
+	# check for required data
+	missing_params = FlaskUtils.check_args(params=data, required=['username','repos','qa_steps','autoPCR','autoCR','cred_hash'])
+	if missing_params:
+		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+
 	# get msrp of ticket from first branch
 	repo = data['repos'][0]
 	branch = repo['reviewedBranch']
 	msrp = branch.split('-')[1]
 	
 	# get issue data from Crucible title
-	title_data = jira.find_qa_data(msrp=msrp)
-	# make sure we have Crucible title data
-	if not title_data['status']:
-		return response
-	if( ('story_point' not in title_data) or ('key' not in title_data) or ('summary' not in title_data) ):
-		return {"data": "Could not get all data required to cerate Crucible title", "status": False}
-	
-	# get key and save crucible title
-	key = title_data["key"]
-	data['title'] = crucible.create_crucible_title(story_point=title_data['story_point'], key=key, msrp=msrp, summary=title_data['summary'])
+	qa_response = jira.find_crucible_title_data(msrp=msrp, cred_hash=data['cred_hash'])
+	if not qa_response['status']:
+		return {"status": False, "data": 'Could not get Crucible data to make title: '+qa_response['data']}
+
+	# save crucible title
+	data['title'] = crucible.create_crucible_title(story_point=qa_response['story_point'], key=qa_response["key"], msrp=msrp, summary=qa_response['summary'])
+
 	# create crucible
-	crucible_data = crucible.create_crucible(data=data)
+	crucible_data = crucible.create_crucible(data=data, cred_hash=data['cred_hash'])
 	# if error on create crucible close crucible and return error
 	if not crucible_data['status']:
-		response = crucible_data['response']
-		return {"data": f"Could not create crucible: {response}", "status": "ERROR", "jira_link": jira.ticket_base+'/'+key}
+		return {"status": False, "data": 'Could not create Crucible review: '+crucible_data['data']}
 	
-	# generate qa step template and add comment to jira
+	# if QA step exist then modify Jira data
 	if 'qa_steps' in data and data['qa_steps']:
-		qa_steps = jira.generate_qa_template(qa_steps=data['qa_steps'], repos=data['repos'], crucible_id=crucible_data['response'])
-		response = jira.add_comment(key=title_data['key'], comment=qa_steps)
-		# check if jira comment created
-		if not response['status']:
-			return response
+
+		# generate QA steps
+		qa_steps = jira.generate_qa_template(qa_steps=data['qa_steps'], repos=data['repos'], crucible_id=crucible_data['data'])
+		comment_response = jira.add_comment(key=qa_response["key"], comment=qa_steps, cred_hash=data['cred_hash'])
+		# check if Jira comment created
+		if not comment_response['status']:
+			return {"status": False, "data": 'Could not add comment to Jira: '+comment_response['data']}
 
 		# set PCR if needed
 		if 'autoPCR' in data and data['autoPCR']:
-			response = jira.set_pcr_needed(key=key)
-			if not response['status']:
-				return {"response": f"Could not transition Jira component to PCR needed: {response}", "status": "ERROR", "jira_link": jira.ticket_base+'/'+key}
+			pcr_response = jira.set_pcr_needed(key=key, cred_hash=data['cred_hash'])
+			if not pcr_response['status']:
+				return {"status": False, "data": 'Could not set Jira to PCR Needed: '+pcr_response['data']}
+
 		# set CR if needed
 		if 'autoCR' in data and data['autoCR']:
-			response = jira.set_code_review(key=key)
-			if not response['status']:
-				return {"response": f"Could not transition Jira status to Code Review: {response}", "status": "ERROR", "jira_link": jira.ticket_base+'/'+key}
-		
+			cr_response = jira.set_code_review(key=key, cred_hash=data['cred_hash'])
+			if not cr_response['status']:
+				return {"status": False, "data": 'Could not set Jira ticket to Code Review: '+cr_response['data']}
+
 		if 'log_time' in data and data['log_time']:
-			response = jira.add_work_log(key=key, time=data['log_time'])
-			if not response['status']:
-				return {"response": f"Could not add work log to Jira: {response}", "status": "ERROR", "jira_link": jira.ticket_base+'/'+key}
+			log_response = jira.add_work_log(key=key, time=data['log_time'], cred_hash=data['cred_hash'])
+			if not log_response['status']:
+				return {"status": False, "data": 'Could not log time to Jira: '+log_response['data']}
 
 	# return data
-	return {"response": crucible_data['response'], "status": "OK", "jira_link": jira.ticket_base+'/'+key}
+	return {"status": True, "data": {'jira': key, ', crucible':crucible_data['data']}}
+
+
+def repos(data):
+	'''
+	'''
+	# check for required data
+	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash'])
+	if missing_params:
+		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+	# return data
+	return crucible.get_repos(cred_hash=data['cred_hash'])

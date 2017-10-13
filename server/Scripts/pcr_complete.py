@@ -8,7 +8,7 @@ sys.path.append('../Crucible')
 from Crucible import Crucible
 from Jira import Jira
 
-key = 'UD-6768'
+key = 'UD-6804'
 
 
 # create auth header

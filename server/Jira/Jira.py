@@ -150,7 +150,7 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 			cred_hash (str) Authorization header value
 
 		Returns:
-			dict of status/data properties with the error message or object of Jira data needed to create title
+			dict of status/data properties with the error message or a dict with keys: summary', 'key', 'story_point'
 		'''
 		# get ticket data based off MSRP and check for status
 		search_response = self.get(url=f'{self.api_base}/search?jql=MSRP_Number~{msrp}', cred_hash=cred_hash)
@@ -158,19 +158,23 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 			return search_response
 		# get issue found
 		search_response = search_response['data']['issues'][0]
-		# create response object
-		response = { 'status': True, 'data':{} }
-		# add story points
-		if search_response['fields']['customfield_10006']:
-			response['data']['story_point'] = search_response['fields']['customfield_10006']
-		# add key
+		
+		# check story points
+		if 'customfield_10006' not in search_response['fields']:
+			return {'status': False, 'data': 'Missing story point'}
+		# check key
 		if search_response['key']:
-			response['data']['key'] = search_response['key']
-		# add summary
-		if search_response['fields']['summary']:
-			response['data']['summary'] = search_response['fields']['summary']
+			return {'status': False, 'data': 'Missing key'}
+		# check summary
+		if 'summary' not in search_response['fields']:
+			return {'status': False, 'data': 'Missing summary'}
+
 		# return data
-		return response
+		return { 'status': True, 'data':{
+			'summary': search_response['fields']['summary'],
+			'key': search_response['key'],
+			'story_point': search_response['fields']['customfield_10006']
+		}}
 
 	def add_comment(self, key, comment, cred_hash, private_comment=True):
 		'''adds a comment to a jira issue. By default the comment is

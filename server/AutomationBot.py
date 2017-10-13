@@ -3,6 +3,7 @@
 import os
 import datetime
 import base64
+import logging
 
 import sys
 sys.path.append('Common')
@@ -38,6 +39,7 @@ class AutomationBot(object):
 		self.filters = {'my_filter':"11502", 'beta':'11004', 'qa':'11019', 'cr':'11007', 'uct':'11014', 'all':'11002', 'pcr':'11128'}
 		self.bot_name = os.environ['BOT_NAME']
 		self.bot_password = os.environ['BOT_PASSWORD']
+		self.debug = debug
 		################################################################################
 		# create DB object and connect
 		self.sql_object = DevCenterSQL.DevCenterSQL()
@@ -88,7 +90,7 @@ class AutomationBot(object):
 
 			# for each jira ticket update DB table and make any pings
 			for jira_ticket  in jira_tickets['data']:
-				self.sql_object.update_ticket(key=jira_ticket['key'], username=jira_ticket['username'], msrp=jira_ticket['msrp'])
+				self.sql_object.update_ticket(jira_ticket=jira_ticket)
 				self.check_for_pings(jira_ticket=jira_ticket)
 
 			# if we want to add beta stuff
@@ -96,9 +98,16 @@ class AutomationBot(object):
 				self.beta_week_stats()
 
 		except:
-			# catch all errors and log into DB
+			# log error and stack trace
 			message = sys.exc_info()[0]
-			self.sql_object.log_error(message=message)
+			logging.exception(message)
+
+			# if debug mode then just die else log error and continue
+			if self.debug:
+				exit(1)
+			else:
+				self.sql_object.log_error(message=message)
+				return
 
 	def beta_week_stats(self):
 		'''gets beta week stats and pings them
@@ -282,9 +291,13 @@ class AutomationBot(object):
 				self.sql_object.log_error(message='Could not get Crucible review ID for: '+crucible_id['data']+f' with status {status} and component {component}')
 				return
 
+			# notify of repo update
 			repos_merged = self.crucible_obj.get_repos_of_review(crucible_id=crucible_id, cred_hash=self.cred_hash)
-			if repos_merged:
-				self.qbot_obj.send_merge_alert(key=key, msrp=msrp, sprint=sprint, username=username, repos_merged=repos_merged, crucible_id=crucible_id, summary=summary)
+			if repos_merged['status']:
+				self.qbot_obj.send_merge_alert(key=key, msrp=msrp, sprint=sprint, username=username, repos_merged=repos_merged['data'], crucible_id=crucible_id, summary=summary)
+			else:
+				self.sql_object.log_error(message='Could not retrieve repos for repo update ping: '+repos_merged['data'])
+				
 			# update DB
 			self.sql_object.update_ping(key=key, field='uct_ping', value=1)
 

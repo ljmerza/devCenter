@@ -8,7 +8,7 @@ import AutomationBot
 
 # DevCenterServer.start_server(debug=0)
 
-automationBot = AutomationBot.AutomationBot(is_beta_week=0, is_qa_pcr=0, beta_stat_ping_now=0, debug=0, merge_alerts=0)
+automationBot = AutomationBot.AutomationBot(is_beta_week=0, is_qa_pcr=0, beta_stat_ping_now=0, debug=1, merge_alerts=0)
 
 while(1):
 	automationBot.update_jira()

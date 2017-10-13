@@ -1,8 +1,17 @@
 #!/usr/bin/python3
 
-import pymysql
 import re
 import os
+
+import SQLModels
+
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.sql.expression import Insert
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.engine.url import URL
+from sqlalchemy import inspect, create_engine
+
 
 
 class DevCenterSQL():
@@ -15,17 +24,12 @@ class DevCenterSQL():
 		Returns:
 			MySQL object
 		'''
-		self.username = os.environ['USER']
-		self.host = os.environ['DEV_SERVER']
-		self.database ='dev_center'
-		self.sql_password = os.environ['SQL_PASSWORD']
-		############################################
 		pm1 = os.environ['PM1']
 		pm2 = os.environ['PM2']
 		self.project_managers = [pm1, pm2]
 
 	def login(self):
-		'''logs into DevCenter the SQL DB and creates a connection property on the instance
+		'''logs into the SQL DB and creates a connection property on the instance
 
 		Args:
 			None
@@ -33,7 +37,22 @@ class DevCenterSQL():
 		Returns:
 			None
 		'''
-		self.connection = pymysql.connect( host=self.host, user=self.username, password=self.sql_password, db=self.database, cursorclass=pymysql.cursors.DictCursor )
+
+		connect_options = {'drivername': 'mysql+pymysql',
+			'username': os.environ['USER'],
+			'password': os.environ['SQL_PASSWORD'],
+			'host': os.environ['DEV_SERVER'],
+			'port': 3306,
+			'database': 'dev_center'
+		}
+
+		# create SQL engine and inspector
+		engine = create_engine(URL(**connect_options))
+		self.inspector = inspect(engine)
+		# create DB session
+		Session = sessionmaker()
+		Session.configure(bind=engine)
+		self.session = Session()	
 
 	def logout(self):
 		'''closes the DB connection
@@ -44,8 +63,8 @@ class DevCenterSQL():
 		Returns:
 			None
 		'''
-		if self.connection:
-			self.connection.close()
+		if self.session:
+			self.session.close()
 
 	def add_crucible(self, key, crucible_id):
 		'''adds a cricuble key to a Jira row
@@ -57,35 +76,52 @@ class DevCenterSQL():
 		Returns:
 			the SQL execution result
 		'''
-		# escape everything
-		key = re.escape( str(key) )
-		crucible_id = re.escape( str(crucible_id) )
-		# create update sql
-		sql = "UPDATE tickets SET `crucible`='{}' WHERE `key`='{}'".format(crucible_id, key)
-		# create a cursor and update jira ticket
-		return self._execute_sql(sql=sql)
+		try:
+			row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
+			row.crucible_id = crucible_id
+			return self.session.commit()
+		except SQLAlchemyError as e:
+			return self.log_error(message=e)
 
-	def update_ticket(self, key, username, msrp=0):
+	def update_ticket(self, jira_ticket):
 		'''inserts a Jira ticket's key, username, and MSRP values in the DB 
 		unless it already exist then updates these values.
 
 		Args:
-			key (str) - the key of the Jira ticket
-			username (str) - the username of the user assigned to the Jira ticket
-			msrp (str) - optional MSRP of the Jira ticket (default 0)
+			jira_ticket (dict) a formatted Jira ticket object
 
 		Returns:
 			the SQL response from inserting/updating the DB
 		'''
-		# escape everything
-		key = re.escape( str(key) )
-		username = re.escape( str(username) )
-		msrp = re.escape( str(msrp) )
-		# create update SQL
-		sql = "INSERT INTO tickets (`key`, `username`, `msrp`) VALUES ('{}','{}', '{}') ON DUPLICATE KEY UPDATE `key`='{}', `username`='{}', `msrp`='{}'".format(key, username, msrp, key, username, msrp)
-		# create a cursor and update Jira ticket
-		return self._execute_sql(sql=sql)
+		try:
+			row = SQLModels.Tickets(**jira_ticket)
+			self.session.add(row)
+			return self.session.commit()
+		except SQLAlchemyError as e:
+		    return self.log_error(message=e)
 
+	def add_jira_comments(self, key, comments):
+		'''add a Jira ticket's comments to the DB
+
+		Args:
+			key (dict) a formatted Jira ticket object
+			comments (list) list of comment object with properties:
+				text (str) the comment text
+				id (str) the unique comment id
+
+		Returns:
+			the SQL response from inserting/updating the DB
+		'''
+
+		# for each comment in a Jira ticket add to DB
+		for comment in comments:
+			comment_obj = {'comment':comment['text'], 'id':comment['id'], 'key':key}
+			try:
+				row = SQLModels.Comments(**comment_obj)
+				self.session.add(row)
+				return self.session.commit()
+			except SQLAlchemyError as e:
+			    return self.log_error(message=e)
 
 	def update_ping(self, field, key, value=0):
 		'''updates a ping field for a Jira ticket
@@ -98,12 +134,12 @@ class DevCenterSQL():
 		Returns:
 			the SQL response from updating the DB
 		'''
-		# escape everything
-		field = re.escape( str(field) )
-		# key = re.escape( str(key) )
-		value = re.escape( str(value) )
-		sql = "UPDATE tickets SET `{}`={} WHERE `key`='{}'".format(field, value, key)
-		return self._execute_sql(sql=sql)
+		try:
+			row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
+			row[field] = value
+			return self.session.commit()
+		except SQLAlchemyError as e:
+			return self.log_error(message=e)
 				
 	def get_user_ping_value(self, username, field):
 		'''get a user's ping value for a particular field type
@@ -121,17 +157,10 @@ class DevCenterSQL():
 		# if a pm or not assigned yet return 2
 		if(username in self.project_managers or not username):
 			return 2
-		# escape everything
-		field = re.escape( str(field) )
-		username = re.escape( str(username) )
-		# get user settings
-		sql = "SELECT * FROM users WHERE `username`='{}'".format(username)
-		data = self._get_one(sql=sql)
-		# if user wants ping then return 1 else return 0
-		if (data is not None) and field in data:
-			return 1
 		else:
-			return 0
+			# else get user setting and return it
+			row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.username == username).first()
+			return row[field]
 
 	def reset_pings(self, ping_type, key):
 		'''resets all pings of any kind of failed status
@@ -141,38 +170,35 @@ class DevCenterSQL():
 			key (str) the key of the Jira ticket
 
 		Returns:
-			False if failed or the SQL response
-		'''
+			The response from the SQL query execution
+		''' 
 		if ping_type in ['conflict_ping','cr_fail_ping','uct_fail_ping','qa_fail_ping']:
-			# escape everything
-			ping_type = re.escape( str(ping_type) )
-			key = re.escape( str(key) )
-			# execute SQL
-			sql = "UPDATE tickets SET `pcr_ping`=0,`merge_ping`=0,`conflict_ping`=0,`qa_ping`=0,`uct_fail_ping`=0,`cr_fail_ping`=0,`uct_ping`=0,`qa_fail_ping`=0 WHERE `key`='{}'".format(key)
-			return self._execute_sql(sql=sql)
-		return False
+			try:
+				row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
+				row.pcr_ping = 0
+				row.merge_ping = 0
+				row.conflict_ping = 0
+				row.qa_ping = 0
+				row.uct_fail_ping = 0
+				row.cr_fail_ping = 0
+				row.uct_ping = 0
+				row.qa_fail_ping = 0
+				return self.session.commit()
+			except SQLAlchemyError as e:
+				self.log_error(message=e)
 
 	def get_ping(self, field, key):
-		'''see if a field has been pinged for this Jira ticket
+		'''gets a Jira ticket's ping settings
 
 		Args:
-			field (str) the field name to get the value of
+			field (str) the field name in the DB
 			key (str) the key of the Jira ticket
 
 		Returns:
-			the SQL response from the DB
+			None
 		'''
-		# escape everything
-		field = re.escape( str(field) )
-		key = re.escape( str(key) )
-		# run SQL
-		sql = "SELECT {} FROM tickets WHERE `key`='{}'".format(field, key)
-		data = self._get_one(sql=sql)
-		# if data came back then get field value
-		if (data and field in data):
-			return data[field]
-		else: 
-			return False
+		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
+		return row[field]
 
 	def get_pings(self, key):
 		'''gets a Jira ticket's ping settings
@@ -181,56 +207,10 @@ class DevCenterSQL():
 			key (str) the key of the Jira ticket
 
 		Returns:
-			False if failed or the SQL response in dict form
+			None
 		'''
-		key = re.escape( str(key) )
-		sql = "SELECT * FROM `tickets` WHERE `key`='{}'".format(key)
-		data = self._get_one(sql=sql)
-		if data is not None:
-			return data
-		else:
-			return False
+		return self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
 
-
-	def _get_one(self, sql):
-		'''internal method to get one row result from the SQL response
-
-		Args:
-			sql (str) the SQL query to run to get a response from
-
-		Returns:
-			False if failed or the single row response from the SQL query
-		'''
-		try:
-			# create sql cursor
-			with self.connection.cursor() as cursor:
-				# execute sql and get one result
-				cursor.execute(sql)
-				return cursor.fetchone()
-		except Exception as e:
-			self.sql_object.log_error(message=str(e))
-			return False
-
-
-	def _execute_sql(self, sql):
-		'''internal method to execute a SQL query
-
-		Args:
-			sql (str) the SQL query to run to get a response from
-
-		Returns:
-			False if failed or the response from the SQL query execution
-		'''
-		try:
-			# create sql cursor
-			with self.connection.cursor() as cursor:
-				# update pcr_pinged because now we've pinged the users
-				cursor.execute(sql)
-				self.connection.commit()
-				return True
-		except Exception as e: 
-			self.sql_object.log_error(message=str(e))
-			return False
 
 	def log_error(self, message):
 		'''logs an error message in the DB. If message already exist then just replaces it
@@ -242,6 +222,8 @@ class DevCenterSQL():
 		Returns:
 			The response from the SQL query execution
 		'''
-		message = re.escape( str(message) )
-		sql = "INSERT INTO logs (`message`, `timestamp`) VALUES ('{}',NOW()) ON DUPLICATE KEY UPDATE `message`=`message`".format(message)
-		return self._execute_sql(sql=sql)
+
+		# if error logging dies then we just die
+		row = SQLModels.ErrorLog({'message':message})
+		self.session.add(row)
+		return self.session.commit()

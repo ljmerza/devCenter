@@ -47,7 +47,7 @@ for jira_ticket in jira_tickets['data']:
 		print(" {0:20} {1:30} {2}".format(msrp, status, summary))
 	elif status in ['On Hold', 'Backlog']:
 		print(" {0:20} {1:35} {2}".format(msrp, status, summary))
-	elif status in ['Triage', 'In QA']:
+	elif status in ['Triage', 'In QA', 'In UCT']:
 		print(" {0:20} {1:36} {2}".format(msrp, status, summary))
 	elif status in ['In Sprint']:
 		print(" {0:20} {1:37} {2}".format(msrp, status, summary))

@@ -7,25 +7,23 @@ import os
 import json
 import requests
 
-import sys
-sys.path.append('..')
+sys.path.append('../Jira')
+sys.path.append('../Common')
+sys.path.append('../Crucible')
 
 from Crucible import Crucible
 from Jira import Jira
-from . import CrucibleRequests
 
 
 def start_server(debug):
 
-    username = os.environ['USER']
-    password = os.environ['PASSWORD']
-
     root_dir = os.path.dirname(os.getcwd())
-    folder_name = 'iTrack2'
-    app_name = 'leo'
+    app_name = 'dev_center'
+    port = '5858'
+    host = '0.0.0.0'
 
-    crucible = Crucible.Crucible()
-    jira = Jira.Jira()
+    crucible = Crucible()
+    jira = Jira()
 
     app = Flask(__name__)
     cors = CORS(app)
@@ -37,63 +35,68 @@ def start_server(debug):
 
 
 
-    @app.route(f'/{app_name}/node_modules/<path:path>')
-    def node_modules(path):
-        return send_from_directory(os.path.join(root_dir, f'{folder_name}/node_modules'), path)
 
-    @app.route(f'/{app_name}/static/<path:path>')
-    def static_files(path):
-        return send_from_directory(os.path.join(root_dir, f'{folder_name}/static'), path)
-
-
-    @app.route("/jira/filter/<filter_key>")
+    @app.route("/jira/filter/<filter_number>")
     @cross_origin()
-    def jiraFilter(filter_key):
-        jira.login()
-        crucible.login()
-        jira_data = jira.get_jira_tickets(filter_number=filter_key)
-        jira_data = crucible.get_review_links(data=jira_data)
-        return jsonify(jira_data)
+    def jiraFilterTickets(filter_number):
+        '''gets a list of formatted Jira tickets given a filter number (adds the Crucible IDs if it can)
 
-    @app.route("/crucible/filter/<keys>")
-    @cross_origin()
-    def crucibleLinks(keys):
-        # convert from query string to array here -----------------------
-        crucible.login()
-        return_data = crucible.get_all_review_links(keys=keys)
-        return jsonify(return_data)
+        Args:
+            filter_number (str) the filter number to get tickets from
+
+        Returns:
+            the server response JSON object with status/data properties
+        '''
+        data = {
+            "filter_number": request.form['filter_number'],
+            "cred_hash": request.headers['Authorization']
+        }
+        data = JiraRequests.set_pcr_complete(data=data)
+        return jsonify(data)
 
 
-
-    @app.route("/jira/openTickets/<start_at>/<max_results>")
-    @cross_origin()
-    def openTickets(start_at, max_results): 
-        jira.login()
-        jira_data = jira.get_raw_jira_data(filter_number=11002, max_results=max_results, start_at=start_at)
-        return jsonify(jira_data)
-
-    @app.route(f'/{app_name}/jira/get_key/<msrp>')
+    @app.route(f'/{app_name}/jira/getkey/<msrp>')
     @cross_origin()
     def getKey(msrp): 
-        jira.login()
-        jira_data = jira.find_key_by_msrp(msrp=msrp)
-        return jsonify({'key': jira_data})
+        '''gets a Jira key from a MSRP number
+
+        Args:
+            msrp (str) the MSRP number of the Jira ticket
+
+        Returns:
+            the server response JSON object with status/data properties
+        '''
+        data = {
+            "msrp": request.form['msrp'],
+            "cred_hash": request.headers['Authorization']
+        }
+        data = JiraRequests.find_key_by_msrp(data=data)
+        return jsonify(data)
+
 
     @app.route("/git/repos")
     @cross_origin()
     def repos():
-        repo_names, repo_locations = crucible.get_repos()
-        return jsonify(repo_names)
+        '''
+        '''
+        data = CrucibleRequests.get_repos({"cred_hash": request.headers['Authorization']})
+        return jsonify(data)
+
 
     @app.route("/git/repo/<repo_name>")
     @cross_origin()
     def branches(repo_name):
+        '''
+        '''
         data = cru.get_branches(repo_name)
         return jsonify(data)
+
 
     @app.route("/git/repo/<repo_name>/<msrp>")
     @cross_origin()
     def branch(repo_name, msrp):
+        '''
+        '''
         data = crucible.find_branch(repo_name, msrp)
         return jsonify({ "branch_name": data})
 
@@ -101,8 +104,11 @@ def start_server(debug):
     @app.route(f"/{app_name}/<template_name>")
     @cross_origin()
     def qa_step_gen(template_name):
+        '''
+        '''
         repo_names = ['AQE','aqe_api', 'Modules','Selenium_tests','Taskmaster','TeamDB','teamdbapi','teamdb_ember','Templates','Tools','TQI','UD','UD_api','UD_ember','UPM','upm_api','WAM','wam_api']
         return render_template(template_name+'.html', repo_names=repo_names)
+
 
     @app.route("/crucible/review/create/", methods=['POST'])
     @cross_origin()
@@ -119,6 +125,8 @@ def start_server(debug):
     @app.route('/crucible/review/pcr_pass/', methods=['POST'])
     @cross_origin()
     def crucible_pcr_pass():
+        '''
+        '''
         data = {
             "crucible_id": request.form['crucible_id'],
             "username": request.form['username'],
@@ -127,9 +135,12 @@ def start_server(debug):
         data = CrucibleRequests.crucible_pcr_pass(data=data)
         return jsonify(data)
 
+
     @app.route('/crucible/review/pcr_complete/', methods=['POST'])
     @cross_origin()
     def crucible_pcr_complete():
+        '''
+        '''
         data = {
             "crucible_id": request.form['crucible_id'],
             "username": request.form['username'],
@@ -140,4 +151,5 @@ def start_server(debug):
 
 
 
-    app.run(host='0.0.0.0', port=5858)
+    # start server
+    app.run(host=host, port=host)
