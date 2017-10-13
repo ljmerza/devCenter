@@ -1,7 +1,6 @@
 from sqlalchemy import inspect, Column, String, Integer, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-import datetime
-import os
+import datetime 
 
 Modal = declarative_base()
 
@@ -40,8 +39,8 @@ class Comments(Modal):
 	key = Column(String, ForeignKey('ticket.key'))
 
 
-class ErrorLog(Modal):
-	__tablename__ = 'error_log'
+class ErrorLogs(Modal):
+	__tablename__ = 'error_logs'
 	message = Column(String, primary_key=True)
 	timestamp = Column(DateTime, default=datetime.datetime.now)
 

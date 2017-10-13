@@ -37,7 +37,6 @@ class DevCenterSQL():
 		Returns:
 			None
 		'''
-
 		connect_options = {'drivername': 'mysql+pymysql',
 			'username': os.environ['USER'],
 			'password': os.environ['SQL_PASSWORD'],
@@ -224,6 +223,6 @@ class DevCenterSQL():
 		'''
 
 		# if error logging dies then we just die
-		row = SQLModels.ErrorLog({'message':message})
+		row = SQLModels.ErrorLogs({'message':message})
 		self.session.add(row)
 		return self.session.commit()
