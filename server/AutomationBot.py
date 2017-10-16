@@ -181,7 +181,7 @@ class AutomationBot(object):
 		if(wants_ping == 1):
 			# get pcr estimate
 			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point)
-			# send new ticket ping to user
+			# send new ticket ping to userogout
 			self.qbot_obj.send_new_ticket(key=key, msrp=msrp, summary=summary, username=username, story_point=story_point, pcr_estimate=pcr_estimate)
 			# send me new ticket if it's not my ticket
 			if(username != self.username):
@@ -198,7 +198,7 @@ class AutomationBot(object):
 			self.sql_object.update_ping(key=key, field='me_ping', value=1)
 
 		# else user doesn't want ping so update me ping and send me ticket
-		else:	
+		else:
 			if(username != self.username):
 				self.qbot_obj.send_me_ticket_info(key=key, summary=summary, username=username, ping_message='New Ticket')
 			self.sql_object.update_ping(key=key, field='new_ping', value=1)
@@ -232,7 +232,7 @@ class AutomationBot(object):
 			return False
 		
 		# if pcr needed and has not been pinged - update db and send ping
-		if( "PCR - Needed" in component and not pings['pcr_ping'] ):
+		if("PCR - Needed" in component and not pings.pcr_ping):
 
 			# get PCR number and check if we have it
 			crucible_id = self.crucible_obj.get_review_id(key=key, msrp=msrp, cred_hash=self.cred_hash)
@@ -250,7 +250,7 @@ class AutomationBot(object):
 			self.sql_object.update_ping(key=key, field='pcr_ping', value=1)
 
 		# if qa needed and has not been pinged - update db and send ping
-		elif( "Ready for QA" in status and not pings['qa_ping'] ):
+		elif("Ready for QA" in status and not pings.qa_ping):
 
 			# get Crucible ID and check if we have it
 			crucible_id = self.crucible_obj.get_review_id(key=key, msrp=msrp, cred_hash=self.cred_hash)
@@ -268,23 +268,23 @@ class AutomationBot(object):
 			self.sql_object.update_ping(key=key, field='qa_ping', value=1)
 		
 		# if merge needed and has not been pinged - update db and send ping
-		elif( "Merge Code" in component and not pings['merge_ping'] ):
+		elif("Merge Code" in component and not pings.merge_ping):
 			self.ping_jira_status(msrp=msrp, ping_type='merge_ping', username=username, key=key, summary=summary, ping_message='Merge Code', sprint=sprint)
 			
 		# if merge conflict and has not been pinged - update db and send ping
-		elif( "Merge Conflict" in component and not pings['conflict_ping'] ):
+		elif("Merge Conflict" in component and not pings.conflict_ping):
 			self.ping_jira_status(msrp=msrp, ping_type='conflict_ping', username=username, key=key, summary=summary, ping_message='Merge Conflict')
 		
 		# if uct fail and has not been pinged - update db and send ping	
-		elif( "UCT - Failed" in component and not pings['uct_fail_ping'] ):
+		elif("UCT - Failed" in component and not pings.uct_fail_ping):
 			self.ping_jira_status(msrp=msrp, ping_type='uct_fail_ping', username=username, key=key, summary=summary, ping_message='UCT - Failed')
 		
 		# if cr fail and has not been pinged - update db and send ping
-		elif( "Code Review - Failed" in component and not pings['cr_fail_ping'] ):
+		elif("Code Review - Failed" in component and not pings.cr_fail_ping):
 			self.ping_jira_status(msrp=msrp, ping_type='cr_fail_ping', username=username, key=key, summary=summary, ping_message='Code Review - Failed')
 		
 		# if ready in uct, has no merge code component, ticket has already been pinged for merge code and hasnt been pinged for code merged then ping
-		elif( "Ready for UCT" in status and "Merge Code" not in component and pings['merge_ping'] and not pings['uct_ping'] ):
+		elif("Ready for UCT" in status and "Merge Code" not in component and pings.merge_ping and not pings.uct_ping):
 			# get Crucible ID and check if we have it
 			crucible_id = self.crucible_obj.get_review_id(key=key, msrp=msrp, cred_hash=self.cred_hash)
 			if not crucible_id['status']:
@@ -302,11 +302,11 @@ class AutomationBot(object):
 			self.sql_object.update_ping(key=key, field='uct_ping', value=1)
 
 		# if in dev and already uct pinged then it's a uct fail
-		elif( "In Development" in status and pings['uct_ping']):
+		elif( "In Development" in status and pings.uct_ping):
 			self.ping_jira_status(msrp=msrp, ping_type='uct_fail_ping', username=username, key=key, summary=summary, ping_message='UCT - Failed')
 
 		# if in dev but QA pinged then then it's a QA fail
-		elif( "In Development" in status and pings['qa_ping']):
+		elif( "In Development" in status and pings.qa_ping):
 			self.ping_jira_status(msrp=msrp, ping_type='qa_fail_ping', username=username, key=key, summary=summary, ping_message='QA - Failed')
 
 
@@ -328,7 +328,7 @@ class AutomationBot(object):
 		# see if user wants ping
 		wants_ping = self.sql_object.get_user_ping_value(username=username, field=ping_type)
 		# if user wants ping then ping them
-		if(wants_ping):
+		if(wants_ping == 1):
 			self.qbot_obj.send_jira_update(key=key, msrp=msrp, summary=summary, username=username, ping_message=ping_message, sprint=sprint)
 		# send me Merge Conflict
 		if(username != self.username):

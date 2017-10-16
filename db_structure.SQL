@@ -18,9 +18,9 @@ CREATE TABLE `tickets` (
   `cr_fail_ping` tinyint(1) DEFAULT '0',
   `uct_ping` tinyint(1) DEFAULT '0',
   `qa_fail_ping` tinyint(1) DEFAULT '0',
-  `summary` varchar(100),
+  `summary` varchar(150),
   `status` varchar(100),
-  `component` varchar(100),
+  `component` varchar(150),
   `story_point` varchar(5),
   `sprint` varchar(20),
   `epic_link` varchar(20),
@@ -55,7 +55,7 @@ CREATE TABLE `error_logs` (
 CREATE TABLE `comments` (
   `key` VARCHAR(15) NOT NULL,
   `comment` TEXT NOT NULL,
-  `comment_id` VARCHAR(30) NOT NULL,
+  `id` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`comment_id`),
   FOREIGN KEY (`key`) REFERENCES tickets(`key`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;

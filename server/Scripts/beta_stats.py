@@ -40,6 +40,8 @@ for jira_ticket in jira_tickets['data']:
 		print(" {0:20} {1:28} {2}".format(msrp, 'Code Review - Working', summary))
 	elif component in ['PCR - Completed']:
 		print(" {0:20} {1:28} {2}".format(msrp, 'PCR - Completed', summary))
+	elif component in ['Merge Code']:
+		print(" {0:20} {1:32} {2}".format(msrp, 'PCR - Completed', summary))
 
 	elif status in ['Ready for Release']:
 		print(" {0:20} {1:28} {2}".format(msrp, status, summary))

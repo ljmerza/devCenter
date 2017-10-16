@@ -176,7 +176,11 @@ def get_comments(issue):
 		# for each comment save it and see if QA steps
 		for comment in issue['fields']['comment']['comments']:
 			# save comment
-			comments.append(comment['body'])
+			comments.append({
+				'comment': comment['body'],
+				'id': comment['id'],
+				'key': issue['key']
+			})
 	return comments
 
 def get_qa_steps(issue):
@@ -194,7 +198,7 @@ def get_qa_steps(issue):
 	# for each comment see if is qa step
 	for comment in comments:
 		# test if qa step begin exists
-		result = re.split(qa_regex_begin, comment)
+		result = re.split(qa_regex_begin, comment['comment'])
 		# if we found beginning of QA then let's find end
 		if len(result) > 1:
 			result = re.split(qa_regex_end, str(result[1]))

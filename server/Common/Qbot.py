@@ -31,9 +31,7 @@ class Qbot(object):
 		self.qbot_api_chatroom = f'{self.qbot_api}/meeting:'
 		self.qbot_api_menu = f'{self.qbot_api}/menu/'
 		##########################################################
-		pm1 = os.environ['PM1']
-		pm2 = os.environ['PM2']
-		self.never_ping_pms = [pm1, pm2]
+		self.project_managers = os.environ['PM'].split(',')
 		##########################################################
 		self.td_style = "border: 1px solid #dddddd;padding: 8px;"
 		self.td_alt_style = "background-color: #dddddd;"
@@ -173,7 +171,7 @@ class Qbot(object):
 		message = self.build_message(data=data, msrp_message=True, 
 			jira_message=True, branch_message=True, summary_message=True, estimate_message=True, crucible_title_message=True)
 		# if username is not a PM then ping
-		if(username not in self.never_ping_pms):
+		if(username not in self.project_managers):
 			self.send_message(message=message, username=username)
 			
 	
@@ -215,7 +213,7 @@ class Qbot(object):
 		# create message
 		message = self.build_message(data=data, commit_message=True, jira_message=True, branch_message=True, sprint_message=True)
 		# if username is not a PM then ping
-		if(username not in self.never_ping_pms):
+		if(username not in self.project_managers):
 			self.send_message(message=message, username=username)
 
 	def send_merge_alert(self, key, msrp, sprint, username, repos_merged, crucible_id, summary):
@@ -315,7 +313,7 @@ class Qbot(object):
 		# create message
 		message = self.build_message(data=data, jira_message=True, branch_message=True)
 		# if username is not a PM then ping
-		if(username not in self.never_ping_pms):
+		if(username not in self.project_managers):
 			self.send_message(message=message, username=username)
 
 	def send_jira_update(self, key, msrp, summary, username, ping_message, sprint):
