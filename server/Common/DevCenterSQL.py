@@ -123,7 +123,6 @@ class DevCenterSQL():
 
 		# for each comment in a Jira ticket add to DB
 		for comment in jira_ticket['comments']:
-			print(comment,'-------------')
 			try:
 				row = self.session.query(SQLModels.Comments).filter(SQLModels.Comments.id == comment['id']).first()
 				# if doesn't exsit then add
