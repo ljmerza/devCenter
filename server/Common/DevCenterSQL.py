@@ -7,7 +7,6 @@ import SQLModels
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.engine.url import URL
 from sqlalchemy import inspect, create_engine
 
 
@@ -33,16 +32,17 @@ class DevCenterSQL():
 		Returns:
 			None
 		'''
-		connect_options = {'drivername': 'mysql+pymysql',
-			'username': os.environ['USER'],
-			'password': os.environ['SQL_PASSWORD'],
-			'host': os.environ['DEV_SERVER'],
-			'port': 3306,
-			'database': 'dev_center'
-		}
+		# gather URL params
+		drivername = 'mysql+pymysql'
+		username = os.environ['USER']
+		password = os.environ['SQL_PASSWORD']
+		host = os.environ['DEV_SERVER']
+		port = 3306
+		database = 'dev_center'
+		charset = 'utf8'
 
 		# create SQL engine and inspector
-		engine = create_engine(URL(**connect_options))
+		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}')
 		self.inspector = inspect(engine)
 		# create DB session
 		Session = sessionmaker(bind=engine)
@@ -87,12 +87,14 @@ class DevCenterSQL():
 		Returns:
 			the SQL response from inserting/updating the DB
 		'''
+		# first add comments
+		self.update_comments(jira_ticket=jira_ticket)
+		# now delete comments since we dont need them anymore
+		del jira_ticket['comments']
 		try:
 			# try to get existing Jira ticket
 			row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == jira_ticket['key']).first()
-			# for now just delete these
-			del jira_ticket['comments']
-			del jira_ticket['qa_steps']
+			
 			# if existing ticket doesn't exist then add to DB
 			if row is None:
 				row = SQLModels.Tickets(**jira_ticket)
@@ -121,6 +123,7 @@ class DevCenterSQL():
 
 		# for each comment in a Jira ticket add to DB
 		for comment in jira_ticket['comments']:
+			print(comment,'-------------')
 			try:
 				row = self.session.query(SQLModels.Comments).filter(SQLModels.Comments.id == comment['id']).first()
 				# if doesn't exsit then add

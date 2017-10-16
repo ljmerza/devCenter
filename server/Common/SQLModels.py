@@ -36,7 +36,7 @@ class Tickets(Modal):
 
 class Comments(Modal):
 	__tablename__ = 'comments'
-	key = Column(VARCHAR(6), ForeignKey('ticket.key'))
+	key = Column(VARCHAR(15), ForeignKey('tickets.key'))
 	id = Column(VARCHAR(15), primary_key=True)
 	comment = Column(TEXT(charset='utf8'))
 
