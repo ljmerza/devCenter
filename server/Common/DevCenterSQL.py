@@ -87,9 +87,9 @@ class DevCenterSQL():
 		Returns:
 			the SQL response from inserting/updating the DB
 		'''
-		# first add comments
-		self.update_comments(jira_ticket=jira_ticket)
-		# now delete comments since we dont need them anymore
+		# copy comments to sue them later
+		comments=jira_ticket['comments'][:]
+		# now delete comments to be able to add to Tickets object
 		del jira_ticket['comments']
 		try:
 			# try to get existing Jira ticket
@@ -107,6 +107,9 @@ class DevCenterSQL():
 			return self.session.commit()
 		except SQLAlchemyError as e:
 		    return self.log_error(message=e)
+
+		# add comments of ticket
+		self.update_comments(comments=comments)
 
 	def update_comments(self, jira_ticket):
 		'''add a Jira ticket's comments to the DB

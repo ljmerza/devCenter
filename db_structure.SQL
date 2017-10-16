@@ -25,7 +25,6 @@ CREATE TABLE `tickets` (
   `sprint` varchar(20),
   `epic_link` varchar(20),
   `label` varchar(30),
-  `comments` text,
   `qa_steps` text,
   `crucible_id` varchar(15),
   PRIMARY KEY (`key`)

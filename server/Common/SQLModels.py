@@ -20,6 +20,7 @@ class Tickets(Modal):
 	epic_link = Column(VARCHAR(20))
 	label = Column(VARCHAR(30))
 	crucible_id = Column(VARCHAR(15))
+	qa_steps = Column(TEXT(charset='utf8'))
 
 	pcr_ping = Column(SMALLINT, default=0)
 	merge_ping = Column(SMALLINT, default=0)
