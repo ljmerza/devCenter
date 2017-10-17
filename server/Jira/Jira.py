@@ -33,38 +33,49 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 			return response
 		return {'status': True, 'data': response['data']['searchUrl'] }
 
-	def get_raw_jira_tickets(self, filter_number, cred_hash, start_at=0, max_results=1000):
+	def get_raw_jira_tickets(self, cred_hash, start_at=0, max_results=1000, fields='', url='', filter_number=''):
 		'''returns the raw data from the Jira API of all Jira tickets from a filter number
 
 		Args:
-			filter_number (str) the filter number to get Jira tickets from
 			cred_hash (str) Authorization header value
 			start_at (int) optional what ticket to start at when getting the list of tickets (default 0)
 			max_results (int) optional maximum number of tickets to retrieve (default 1000)
+			fields (str) optional comma delimited list of fields to get from the Jira tickets
+			url (str) optional url to get the tickets from (will retrieve from filter_number if not given)
+			filter_number (str) optional filter number to get Jira tickets from (need URL if not given)
 
 		Returns:
 			dict of status and data property with an array of Jira ticket objects
 		'''
-		# get filter url
-		response = self.get_filter_url(filter_number=filter_number, cred_hash=cred_hash)
-		if not response['status']:
-			return response
-		# get raw url
-		url = response['data']
+		# make sure we have a way to get Jira tickets
+		if not url and not filter_number:
+			return {'status': False, 'data': 'Please provide a filter number or URL to get Jira tickets.'}
+		# get filter url if URL not given
+		if not url:
+			response = self.get_filter_url(filter_number=filter_number, cred_hash=cred_hash)
+			if not response['status']:
+				return response
+			# get raw url
+			url = response['data']
+		# if fields not passed use default
+		if not fields:
+			fields = self.fields
 		# get filter data
-		response = self.get(url=f'{url}&startAt={start_at}&maxResults={max_results}&fields={self.fields}', cred_hash=cred_hash)
+		response = self.get(url=f'{url}&startAt={start_at}&maxResults={max_results}&fields={fields}', cred_hash=cred_hash)
 		if not response['status']:
 			return response
 		return {'status': True, 'data': response['data']['issues']}
 
-	def get_jira_tickets(self, filter_number, cred_hash, max_results=1000, start_at=0):
+	def get_jira_tickets(self, cred_hash, max_results=1000, start_at=0, fields='', url='', filter_number=''):
 		'''returns the formatted data from the Jira API of all Jira tickets from a filter number
 
 		Args:
-			filter_number (str) the filter number to get Jira tickets from
 			cred_hash (str) Authorization header value
 			start_at (int) optional what ticket to start at when getting the list of tickets (default 0)
 			max_results (int) optional maximum number of tickets to retrieve (default 1000)
+			fields (string) optional comma delimited list of fields to get from the Jira tickets
+			url (str) optional url to get the tickets from (will retrieve from filter_number if not given)
+			filter_number (str) optional filter number to get Jira tickets from (need URL if not given)
 
 		Returns:
 			dict of status and data property with an array of formatted Jira ticket objects as well
