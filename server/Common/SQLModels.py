@@ -16,7 +16,7 @@ class Tickets(Modal):
 	status = Column(VARCHAR(100))
 	component = Column(VARCHAR(255))
 	story_point = Column(VARCHAR(5))
-	sprint = Column(VARCHAR(20))
+	sprint = Column(VARCHAR(30))
 	epic_link = Column(VARCHAR(20))
 	label = Column(VARCHAR(30))
 	crucible_id = Column(VARCHAR(15))

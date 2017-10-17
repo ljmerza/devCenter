@@ -2,6 +2,7 @@
 
 import re
 import os
+import logging
 
 import SQLModels
 
@@ -70,12 +71,9 @@ class DevCenterSQL():
 		Returns:
 			the SQL execution result
 		'''
-		try:
-			row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
-			row.crucible_id = crucible_id
-			return self.session.commit()
-		except SQLAlchemyError as e:
-			return self.log_error(message=e)
+		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
+		row.crucible_id = crucible_id
+		return self.session.commit()
 
 	def update_ticket(self, jira_ticket):
 		'''inserts a Jira ticket's key, username, and MSRP values in the DB 
@@ -91,22 +89,19 @@ class DevCenterSQL():
 		comments=jira_ticket['comments'][:]
 		# now delete comments to be able to add to Tickets object
 		del jira_ticket['comments']
-		try:
-			# try to get existing Jira ticket
-			row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == jira_ticket['key']).first()
-			
-			# if existing ticket doesn't exist then add to DB
-			if row is None:
-				row = SQLModels.Tickets(**jira_ticket)
-				self.session.add(row)
-			else:
-				# else existing ticket exist so update all fields we have
-				for key, val in jira_ticket.items():
-					setattr(row, key, val)
-			# commit the changes and return result
-			return self.session.commit()
-		except SQLAlchemyError as e:
-		    return self.log_error(message=e)
+		# try to get existing Jira ticket
+		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == jira_ticket['key']).first()
+		
+		# if existing ticket doesn't exist then add to DB
+		if row is None:
+			row = SQLModels.Tickets(**jira_ticket)
+			self.session.add(row)
+		else:
+			# else existing ticket exist so update all fields we have
+			for key, val in jira_ticket.items():
+				setattr(row, key, val)
+		# commit the changes and return result
+		return self.session.commit()
 
 		# add comments of ticket
 		self.update_comments(comments=comments)
@@ -126,19 +121,16 @@ class DevCenterSQL():
 
 		# for each comment in a Jira ticket add to DB
 		for comment in jira_ticket['comments']:
-			try:
-				row = self.session.query(SQLModels.Comments).filter(SQLModels.Comments.id == comment['id']).first()
-				# if doesn't exsit then add
-				if row is None:
-					row = SQLModels.Comments(**comment)
-					self.session.add(row)
-				else:
-					# else comment exists so update
-					for key, val in comment.items():
-						setattr(row, key, val)
-				return self.session.commit()
-			except SQLAlchemyError as e:
-			    return self.log_error(message=e)
+			row = self.session.query(SQLModels.Comments).filter(SQLModels.Comments.id == comment['id']).first()
+			# if doesn't exsit then add
+			if row is None:
+				row = SQLModels.Comments(**comment)
+				self.session.add(row)
+			else:
+				# else comment exists so update
+				for key, val in comment.items():
+					setattr(row, key, val)
+			return self.session.commit()
 
 	def update_ping(self, field, key, value=0):
 		'''updates a ping field for a Jira ticket
@@ -151,12 +143,9 @@ class DevCenterSQL():
 		Returns:
 			the SQL response from updating the DB
 		'''
-		try:
-			row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
-			setattr(row, field, value)
-			return self.session.commit()
-		except SQLAlchemyError as e:
-			return self.log_error(message=e)
+		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
+		setattr(row, field, value)
+		return self.session.commit()
 				
 	def get_user_ping_value(self, username, field):
 		'''get a user's ping value for a particular field type
@@ -177,9 +166,15 @@ class DevCenterSQL():
 		else:
 			# else get user setting and return it
 			row = self.session.query(SQLModels.Users).filter(SQLModels.Users.username == username).first()
-			if (row is not None) and (getattr(row, field) or row.all_ping):
-				return 1
+			if row is not None:
+				if(getattr(row, field) or row.all_ping):
+					return 1
+				else:
+					return 0
 			else:
+				row = SQLModels.Users(username=username)
+				self.session.add(row)
+				self.session.commit()
 				return 0
 
 	def reset_pings(self, ping_type, key):
@@ -193,19 +188,16 @@ class DevCenterSQL():
 			The response from the SQL query execution
 		''' 
 		if ping_type in ['conflict_ping','cr_fail_ping','uct_fail_ping','qa_fail_ping']:
-			try:
-				row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
-				row.pcr_ping = 0
-				row.merge_ping = 0
-				row.conflict_ping = 0
-				row.qa_ping = 0
-				row.uct_fail_ping = 0
-				row.cr_fail_ping = 0
-				row.uct_ping = 0
-				row.qa_fail_ping = 0
-				return self.session.commit()
-			except SQLAlchemyError as e:
-				self.log_error(message=e)
+			row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
+			row.pcr_ping = 0
+			row.merge_ping = 0
+			row.conflict_ping = 0
+			row.qa_ping = 0
+			row.uct_fail_ping = 0
+			row.cr_fail_ping = 0
+			row.uct_ping = 0
+			row.qa_fail_ping = 0
+			return self.session.commit()
 
 	def get_ping(self, field, key):
 		'''gets a Jira ticket's ping settings
@@ -243,8 +235,14 @@ class DevCenterSQL():
 			The response from the SQL query execution
 		'''
 		# try to get existing Jira ticket
-		row = self.session.query(SQLModels.ErrorLogs).filter(SQLModels.ErrorLogs.message == message).first()
-		# if existing error doesn't exist then add to DB
-		if row is None:
-			row = SQLModels.ErrorLogs(message=message)
-		return self.session.commit()
+		try:
+			row = self.session.query(SQLModels.ErrorLogs).filter(SQLModels.ErrorLogs.message == message).first()
+			# if existing error doesn't exist then add to DB
+			if row is None:
+				row = SQLModels.ErrorLogs(message=message)
+			return self.session.commit()
+		except SQLAlchemyError as e:
+			# if log error causes an exception then just die
+			message = sys.exc_info()[0]
+			logging.exception(message)
+			exit(1)

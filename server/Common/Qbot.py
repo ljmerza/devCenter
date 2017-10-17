@@ -185,7 +185,7 @@ class Qbot(object):
 		Returns:
 			None
 		'''
-		self.send_message(message=f"{ping_message} <a href='{self.jira_ticket_base}{key}'>{key}</a> {summary} {username}", username=self.username)
+		self.send_message(message=f"{ping_message} <a href='{self.jira_ticket_base}/{key}'>{key}</a> {summary} {username}", username=self.username)
 
 	def send_merge_needed(self, key, msrp, summary, username, sprint):
 		'''set user to send message, create message and send message for merge code
