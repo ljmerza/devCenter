@@ -1,11 +1,7 @@
 #!/usr/bin/python3
 
-import sys
-sys.path.append('../Jira')
-sys.path.append('../Common')
-sys.path.append('../Crucible')
 
-from . import FlaskUtils
+import FlaskUtils
 from Crucible import Crucible
 from Jira import Jira
 

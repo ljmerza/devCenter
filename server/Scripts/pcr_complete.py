@@ -2,9 +2,11 @@ import sys
 import base64
 import os
 
+sys.path.append('..')
 sys.path.append('../Jira')
 sys.path.append('../Common')
 sys.path.append('../Crucible')
+
 from Crucible import Crucible
 from Jira import Jira
 

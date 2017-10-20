@@ -4,6 +4,7 @@ import base64
 import os
 import datetime
 
+sys.path.append('..')
 sys.path.append('../Jira')
 sys.path.append('../Common')
 sys.path.append('../Crucible')

@@ -9,8 +9,8 @@ import requests
 import sys
 import base64
 
-from . import JiraRequests
-from . import CrucibleRequests
+import JiraRequests
+import CrucibleRequests
 
 sys.path.append('../Jira')
 sys.path.append('../Common')

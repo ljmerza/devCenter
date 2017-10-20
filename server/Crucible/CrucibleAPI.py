@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 
 import os
-
-import sys
-sys.path.append('..')
 from Common import DevCenterAPI
 
 class CrucibleAPI(DevCenterAPI.DevCenterAPI):
