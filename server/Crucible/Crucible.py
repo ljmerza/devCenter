@@ -42,16 +42,17 @@ class Crucible(CrucibleRepoBranch.CrucibleRepoBranch, CruciblePCR.CruciblePCR):
 		response_reviews = self.get_14_day_reviews(cred_hash=cred_hash)
 		if not response_reviews['status']:
 			return response_reviews
+
 		# loop though each issue to get crucible link
-		for issue in issues['data']:
+		for issue in issues:
 			# get MSRP and key of issue
-			msrp = issue['fields']['customfield_10212']
+			msrp = issue['msrp']
 			key = issue['key']
 			# find crucible data of issue
 			response = self._get_review_id(msrp=msrp, key=key, reviews=response_reviews['data'])
 			# if found crucible link then add to response
 			if response['status']:
-				issue['fields']['crucible_id'] = response['data']
+				issue['crucible_id'] = response['data']
 		# return issues with added data
 		return {'status': True, 'data': issues}
 

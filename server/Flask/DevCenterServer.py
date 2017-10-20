@@ -6,6 +6,11 @@ from flask_cors import CORS, cross_origin
 import os
 import json
 import requests
+import sys
+import base64
+
+from . import JiraRequests
+from . import CrucibleRequests
 
 sys.path.append('../Jira')
 sys.path.append('../Common')
@@ -19,8 +24,14 @@ def start_server(debug):
 
     root_dir = os.path.dirname(os.getcwd())
     app_name = 'dev_center'
-    port = '5858'
-    host = '0.0.0.0'
+    port = 5858
+
+
+    attuid = os.environ['USER']
+    password = os.environ['PASSWORD']
+    header_value = f'{attuid}:{password}'
+    encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
+    my_cred_hash = f'Basic {encoded_header}'
 
     crucible = Crucible()
     jira = Jira()
@@ -34,9 +45,14 @@ def start_server(debug):
         app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
+    def get_cred_hash(request):
+        if 'Authorization' in request.headers:
+            return request.headers['Authorization']
+        else:
+            return my_cred_hash
 
 
-    @app.route("/jira/filter/<filter_number>")
+    @app.route(f"/{app_name}/jira/filter/<filter_number>")
     @cross_origin()
     def jiraFilterTickets(filter_number):
         '''gets a list of formatted Jira tickets given a filter number (adds the Crucible IDs if it can)
@@ -47,11 +63,10 @@ def start_server(debug):
         Returns:
             the server response JSON object with status/data properties
         '''
-        data = {
-            "filter_number": request.form['filter_number'],
-            "cred_hash": request.headers['Authorization']
-        }
-        data = JiraRequests.set_pcr_complete(data=data)
+        data = JiraRequests.get_jira_tickets_from_filter(data={
+            "filter_number": filter_number,
+            "cred_hash": get_cred_hash(request)
+        })
         return jsonify(data)
 
 
@@ -66,57 +81,79 @@ def start_server(debug):
         Returns:
             the server response JSON object with status/data properties
         '''
-        data = {
-            "msrp": request.form['msrp'],
-            "cred_hash": request.headers['Authorization']
-        }
-        data = JiraRequests.find_key_by_msrp(data=data)
+        data = JiraRequests.find_key_by_msrp(data={
+            "msrp": msrp,
+            "cred_hash": get_cred_hash(request)
+        })
         return jsonify(data)
 
 
-    @app.route("/git/repos")
+    @app.route(f'/{app_name}/git/repos')
     @cross_origin()
     def repos():
+        '''Gets all repos a user can access in fisheye
+
+        Args:
+            None
+
+        Returns:
+            All repos a user can access
         '''
-        '''
-        data = CrucibleRequests.get_repos({"cred_hash": request.headers['Authorization']})
+        data = CrucibleRequests.get_repos(data={
+            "cred_hash":get_cred_hash(request)
+        })
         return jsonify(data)
 
 
-    @app.route("/git/repo/<repo_name>")
+    @app.route(f'/{app_name}/git/repo/<repo_name>')
     @cross_origin()
     def branches(repo_name):
+        '''gets all branches of a repo
+
+        Args:
+            repo_name (str) the name if the repo to get all the branches from
+
+        Returns:
+            a list of bracnhes names
         '''
-        '''
-        data = cru.get_branches(repo_name)
+        data = CrucibleRequests.get_branches(data={
+            "repo_name": repo_name, 
+            "cred_hash": get_cred_hash(request)
+        })
         return jsonify(data)
 
 
-    @app.route("/git/repo/<repo_name>/<msrp>")
+
+    @app.route(f'/{app_name}/git/repo/<repo_name>/<msrp>')
     @cross_origin()
     def branch(repo_name, msrp):
-        '''
-        '''
-        data = crucible.find_branch(repo_name, msrp)
-        return jsonify({ "branch_name": data})
+        '''returns all branches from a repo that have a MSRP number in the branch name
 
+        Args:
+            repo_name (str) the name if the repo to get all the branches from
+            msrp (str) the MSRP to search for in the branch names
 
-    @app.route(f"/{app_name}/<template_name>")
-    @cross_origin()
-    def qa_step_gen(template_name):
+        Returns:
+            
         '''
-        '''
-        repo_names = ['AQE','aqe_api', 'Modules','Selenium_tests','Taskmaster','TeamDB','teamdbapi','teamdb_ember','Templates','Tools','TQI','UD','UD_api','UD_ember','UPM','upm_api','WAM','wam_api']
-        return render_template(template_name+'.html', repo_names=repo_names)
+        data = CrucibleRequests.find_branch(data={
+            "msrp": msrp,
+            "repo_name": repo_name, 
+            "cred_hash": get_cred_hash(request)
+        })
+        return jsonify(data)
 
 
     @app.route("/crucible/review/create/", methods=['POST'])
     @cross_origin()
     def crucible_create_review():
-        '''create a crucible review, add QA steps on Jira and log time on Jira
+        '''creates a Crucible review with the proper header and branches passed in the body of the request
+
+        Args:
+            
 
         Returns:
-            dict: status boolean and data hash
+            the Crucible ID number if successful else error
         '''
         data = CrucibleRequests.crucible_create_review( data=request.get_json() )
         return jsonify(data)
@@ -125,12 +162,19 @@ def start_server(debug):
     @app.route('/crucible/review/pcr_pass/', methods=['POST'])
     @cross_origin()
     def crucible_pcr_pass():
-        '''
+        '''Joins user to a review, completes review, and adds a PCR Pass comment
+
+        Args:
+            crucible_id (str) the Crucible ID to PCR pass
+            username (str) the user to add to the review
+
+        Returns:
+            status ok or fail reason
         '''
         data = {
             "crucible_id": request.form['crucible_id'],
             "username": request.form['username'],
-            "cred_hash": request.headers['Authorization']
+            "cred_hash": get_cred_hash(request)
         }
         data = CrucibleRequests.crucible_pcr_pass(data=data)
         return jsonify(data)
@@ -139,17 +183,24 @@ def start_server(debug):
     @app.route('/crucible/review/pcr_complete/', methods=['POST'])
     @cross_origin()
     def crucible_pcr_complete():
+        '''Joins user to a review, completes review, adds a PCR Pass comment, 
+            and sets the Jira status as PCR - Complete
+
+        Args:
+            crucible_id (str) the Crucible ID to PCR pass
+            username (str) the user to add to the review
+
+        Returns:
+            status ok or fail reason
         '''
-        '''
-        data = {
+        data = CrucibleRequests.set_pcr_complete(data={
             "crucible_id": request.form['crucible_id'],
             "username": request.form['username'],
-            "cred_hash": request.headers['Authorization']
-        }
-        data = CrucibleRequests.set_pcr_complete(data=data)
+            "cred_hash": get_cred_hash(request)
+        })
         return jsonify(data)
 
 
 
     # start server
-    app.run(host=host, port=host)
+    app.run(host='localhost', port=port)

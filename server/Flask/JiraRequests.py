@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
 import sys
+
 sys.path.append('../Jira')
 sys.path.append('../Common')
 sys.path.append('../Crucible')
 
-import FlaskUtils
+from . import FlaskUtils
 from Crucible import Crucible
 from Jira import Jira
 
@@ -22,7 +23,7 @@ def set_pcr_complete(data):
 	return jira.set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
 
 
- def get_jira_tickets_from_filter(data):
+def get_jira_tickets_from_filter(data):
 	'''gets a list of formatted Jira tickets given a filter (adds the Crucible id if it can)
 
 	Args:
@@ -38,19 +39,18 @@ def set_pcr_complete(data):
 	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','filter_number'])
 	if missing_params:
 		return {"data": "Missing required parameters: "+ missing_params, "status": False}
-
-	cred_hash = request.headers['Authorization']
+		
 	filter_number = data['filter_number']
 
 	# get jira tickets
 	jira_data = jira.get_jira_tickets(filter_number=filter_number, cred_hash=data['cred_hash'])
-	if not jira_data['status']
-		return { 'status' False, 'data': f'Could not get Jira tickets for filter number {filter_number}: '+jira_data['data']}
+	if not jira_data['status']:
+		return {'status': False, 'data': f'Could not get Jira tickets for filter number {filter_number}: '+jira_data['data'] }
 
 	# add crucible links
-	crucible_data = crucible.get_review_links(data=jira_data['data'], cred_hash=data['cred_hash'])
-	if not crucible_data['status']
-		return { 'status' False, 'data': f'Could not get Crucible data for filter number {filter_number}: '+crucible_data['data']}
+	crucible_data = crucible.get_review_ids(issues=jira_data['data'], cred_hash=data['cred_hash'])
+	if not crucible_data['status']:
+		return {'status': False, 'data': f'Could not get Crucible data for filter number {filter_number}: '+crucible_data['data']}
 
 	# return results
 	return crucible_data
@@ -64,4 +64,4 @@ def find_key_by_msrp(data):
 	if missing_params:
 		return {"data": "Missing required parameters: "+ missing_params, "status": False}
 	# get key from MSRP
-	return jira.find_key_by_msrp(key=data['msrp'], cred_hash=data['cred_hash'])
+	return jira.find_key_by_msrp(msrp=data['msrp'], cred_hash=data['cred_hash'])

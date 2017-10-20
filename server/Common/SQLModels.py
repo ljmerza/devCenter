@@ -57,4 +57,5 @@ class Users(Modal):
 	cr_fail_ping = Column(SMALLINT, default=0)
 	merge_ping = Column(SMALLINT, default=0)
 	never_ping = Column(SMALLINT, default=0)
+	qa_fail_ping = Column(SMALLINT, default=0)
 	

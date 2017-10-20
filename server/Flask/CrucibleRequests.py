@@ -5,7 +5,7 @@ sys.path.append('../Jira')
 sys.path.append('../Common')
 sys.path.append('../Crucible')
 
-import FlaskUtils
+from . import FlaskUtils
 from Crucible import Crucible
 from Jira import Jira
 
@@ -104,7 +104,7 @@ def crucible_create_review(data):
 	return {"status": True, "data": {'jira': key, ', crucible':crucible_data['data']}}
 
 
-def repos(data):
+def get_repos(data):
 	'''
 	'''
 	# check for required data
@@ -113,3 +113,25 @@ def repos(data):
 		return {"data": "Missing required parameters: "+ missing_params, "status": False}
 	# return data
 	return crucible.get_repos(cred_hash=data['cred_hash'])
+
+
+def get_branches(data):
+	'''
+	'''
+	# check for required data
+	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'repo_name'])
+	if missing_params:
+		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+	# return data
+	return crucible.get_branches(cred_hash=data['cred_hash'], repo_name=data['repo_name'])
+
+
+def find_branch(data):
+	'''
+	'''
+	# check for required data
+	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'repo_name', 'msrp'])
+	if missing_params:
+		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+	# return data
+	return crucible.find_branch(repo_name=data['repo_name'], cred_hash=data['cred_hash'], msrp=data['msrp'])

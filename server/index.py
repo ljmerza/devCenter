@@ -1,17 +1,23 @@
 #!/usr/bin/python3
 
+import AutomationBot
 import time
 import threading
 
-import AutomationBot
-# from Flask import DevCenterServer
 
-# DevCenterServer.start_server(debug=0)
+def start_bots():
+	automationBot = AutomationBot.AutomationBot(is_beta_week=0, is_qa_pcr=0, beta_stat_ping_now=0, debug=0, merge_alerts=0)
+	
+	print('starting bots...')
+	while(1):
+		automationBot.update_jira()
+		time.sleep(30)
 
-automationBot = AutomationBot.AutomationBot(is_beta_week=0, is_qa_pcr=0, beta_stat_ping_now=0, debug=0, merge_alerts=0)
+t = threading.Thread(target=start_bots)
+t.daemon = True
+t.start()
 
-while(1):
-	automationBot.update_jira()
-	time.sleep(30)
 
+from Flask import DevCenterServer
+DevCenterServer.start_server(debug=1)
 

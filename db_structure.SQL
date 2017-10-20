@@ -40,6 +40,7 @@ CREATE TABLE `users` (
   `uct_fail_ping` tinyint(1) DEFAULT '0',
   `merge_ping` tinyint(1) DEFAULT '0',
   `never_ping` tinyint(1) DEFAULT '0',
+  `qa_fail_ping` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
