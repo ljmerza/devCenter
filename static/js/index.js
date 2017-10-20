@@ -5,10 +5,6 @@ $(document).ready(function(){
   $(".repositoryName").change(getRepoBranches);
   $("#createReview").click(createNewCrucible);
 
-   // $(document).ready(function() {
-   //    $("#qaSteps").markItUp();
-   // });
-
 });
 
 function getRepoBranches() {
@@ -20,8 +16,16 @@ function getRepoBranches() {
 
   let repo = $(this).val().toLowerCase().replace(' ', '_');
 
-  $.get(`/git/repo/${repo}`)
+  $.get(`http://localhost:5858/dev_center/git/repo/${repo}`)
   .then( branches => {
+
+    console.log('branches: ', branches);
+
+    if(!branches.status){
+      createNotification(branches.data);
+    }
+
+    branches = branches.data;
 
     let count = 0
 
@@ -88,7 +92,7 @@ function createNewCrucible() {
   });
 
   // add data
-  data.attuid = $('#attuid').val();
+  data.username = $('#username').val();
   data.password = $('#password').val();
   data.qa_steps = $('#qaSteps').val();
   data.autoPCR = $('#autoPCR').is(':checked');
@@ -129,34 +133,35 @@ function createNewCrucible() {
   
 
   // check for missing data
-  if(!data.attuid) { createNotification('Missing attuid.'); return;}
+  if(!data.username) { createNotification('Missing attuid.'); return;}
   if(!data.password) { createNotification('Missing password.'); return;}
   if(data.repos.length < 1) { createNotification('Need to include at least one repo.'); return;}  
   if(!data.qa_steps) { createNotification('Missing QA steps. Will not post any information to Jira.');}
 
   $.ajax({
     type: 'POST',
-    url: `/crucible/review/create/`,
+    url: `http://localhost:5858/dev_center/crucible/review/create/`,
     data: JSON.stringify(data),
     contentType: 'application/json;charset=UTF-8',
 
   })
-  .then( data => {
-    if( data.status.match(/ERROR/) ) createNotification(data.response);
-    else {
+  .then( response => {
+    if(response.status) {
 
       createNotification(`Success! 
-        <a href='https://icode3.web.att.com/cru/${data.response}'>Crucible</a> 
-        <a href='${data.jira_link}'>Jira</a>`
-      ,'success', 0);
+        <a href='https://icode3.web.att.com/cru/${response.data.crucible}'>Crucible</a> 
+        <a href='https://jira.web.att.com:8443/browse/${response.data.jira}'>Jira</a>`
+      ,'success', 50000);
 
-      $('#attuid').val('');
+      $('#username').val('');
       $('#password').val('');
       $('#qaSteps').val('');
 
       $(this).find('repoDropdownParent .reviewedBranch').val('');
       $(this).find('repoDropdownParent .repositoryName').val('');
 
+    } else {
+      createNotification(response.data);
     }
    
   });

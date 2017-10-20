@@ -2,6 +2,7 @@
 
 import JiraStatusComponent
 import JiraFields
+import JiraUtils
 
 class Jira(JiraStatusComponent.JiraStatusComponent):
 	'''Jira class for getting data from the Jira API'''
@@ -169,12 +170,12 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 			return search_response
 		# get issue found
 		search_response = search_response['data']['issues'][0]
-		
+
 		# check story points
 		if 'customfield_10006' not in search_response['fields']:
 			return {'status': False, 'data': 'Missing story point'}
 		# check key
-		if search_response['key']:
+		if not search_response['key']:
 			return {'status': False, 'data': 'Missing key'}
 		# check summary
 		if 'summary' not in search_response['fields']:
@@ -229,6 +230,9 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 			json_data['visibility'] = {'type': 'role', 'value': 'Developers'}
 		# POST work log and return data
 		return self.post_json(url=f'{self.api_base}/issue/{key}/worklog', json_data={"timeSpent":time}, cred_hash=cred_hash)
+
+	def generate_qa_template(self, qa_steps, repos, crucible_id):
+		return JiraUtils.generate_qa_template(qa_steps, repos, crucible_id)
 		
 	
 

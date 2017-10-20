@@ -65,6 +65,7 @@ def crucible_create_review(data):
 		return {"status": False, "data": 'Could not get Crucible data to make title: '+qa_response['data']}
 
 	# save crucible title
+	qa_response = qa_response['data']
 	data['title'] = crucible.create_crucible_title(story_point=qa_response['story_point'], key=qa_response["key"], msrp=msrp, summary=qa_response['summary'])
 
 	# create crucible
@@ -79,29 +80,30 @@ def crucible_create_review(data):
 		# generate QA steps
 		qa_steps = jira.generate_qa_template(qa_steps=data['qa_steps'], repos=data['repos'], crucible_id=crucible_data['data'])
 		comment_response = jira.add_comment(key=qa_response["key"], comment=qa_steps, cred_hash=data['cred_hash'])
+
 		# check if Jira comment created
 		if not comment_response['status']:
 			return {"status": False, "data": 'Could not add comment to Jira: '+comment_response['data']}
 
 		# set PCR if needed
 		if 'autoPCR' in data and data['autoPCR']:
-			pcr_response = jira.set_pcr_needed(key=key, cred_hash=data['cred_hash'])
+			pcr_response = jira.set_pcr_needed(key=qa_response["key"], cred_hash=data['cred_hash'])
 			if not pcr_response['status']:
 				return {"status": False, "data": 'Could not set Jira to PCR Needed: '+pcr_response['data']}
 
 		# set CR if needed
 		if 'autoCR' in data and data['autoCR']:
-			cr_response = jira.set_code_review(key=key, cred_hash=data['cred_hash'])
+			cr_response = jira.set_code_review(key=qa_response["key"], cred_hash=data['cred_hash'])
 			if not cr_response['status']:
 				return {"status": False, "data": 'Could not set Jira ticket to Code Review: '+cr_response['data']}
 
 		if 'log_time' in data and data['log_time']:
-			log_response = jira.add_work_log(key=key, time=data['log_time'], cred_hash=data['cred_hash'])
+			log_response = jira.add_work_log(key=qa_response["key"], time=data['log_time'], cred_hash=data['cred_hash'])
 			if not log_response['status']:
 				return {"status": False, "data": 'Could not log time to Jira: '+log_response['data']}
 
 	# return data
-	return {"status": True, "data": {'jira': key, ', crucible':crucible_data['data']}}
+	return {"status": True, "data": {'jira': qa_response["key"], 'crucible': crucible_data['data']}}
 
 
 def get_repos(data):

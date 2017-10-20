@@ -12,9 +12,9 @@ key = 'WAM-943'
 
 
 # create auth header
-attuid = os.environ['USER']
+username = os.environ['USER']
 password = os.environ['PASSWORD']
-header_value = f'{attuid}:{password}'
+header_value = f'{username}:{password}'
 encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
 cred_hash = f'Basic {encoded_header}'
 

@@ -1,7 +1,7 @@
 import os
 import re
 
-def generate_username(self, username):
+def generate_username(username):
 	'''gets real username if not working
 
 	Args:
@@ -15,7 +15,7 @@ def generate_username(self, username):
 	else:
 		return username[-6:]
 
-def sort_data_by(self, issues, filter_key):
+def sort_data_by(issues, filter_key):
 	'''sort formatted Jira tickets by a key
 
 	Args:
@@ -28,7 +28,7 @@ def sort_data_by(self, issues, filter_key):
 	return sorted(issues, key=lambda k: k['filter_key']) 
 	
 
-def format_qa_steps(self, qa_steps):
+def format_qa_steps(qa_steps):
 	'''convert QA steps from encoded to regular ASCII
 
 	Args:
@@ -44,7 +44,7 @@ def format_qa_steps(self, qa_steps):
 	return qa_steps
 
 
-def generate_qa_template(self, qa_steps, repos, crucible_id, crucible_url):
+def generate_qa_template(qa_steps, repos, crucible_id):
 	'''generates the QA steps in proper format
 
 	Args:
@@ -54,20 +54,21 @@ def generate_qa_template(self, qa_steps, repos, crucible_id, crucible_url):
 			repositoryName (str) the repo name
 			reviewedBranch (str) the branch to review
 		crucible_id (str) the Crucible ID of the review created
-		crucible_url (str) the bse URL for a Crucible review
 		
 	Returns:
 		The formatted QA table string
 	'''
+	crucible_url = os.environ['CRUCIBLE_URL']
+
 	qa_begin = "h2. ============================ QA Steps ============================"
 	qa_end = "h2. ================================================================="
 
 	repo_table = generate_repo_table(repos)
-		return """
+	return """
 """+repo_table+"""
 
 
-"""+'[Crucible Review|'+crucible_url+'/'+crucible_id+"""]
+"""+'[Crucible Review|'+crucible_url+'/cru/'+crucible_id+"""]
 
 
 """+qa_begin+"""
@@ -78,7 +79,7 @@ def generate_qa_template(self, qa_steps, repos, crucible_id, crucible_url):
 """
 
 
-def generate_repo_table(self, repos):
+def generate_repo_table(repos):
 	'''generates the repos table for a Jira comment geiven an array of repos
 
 	Args:

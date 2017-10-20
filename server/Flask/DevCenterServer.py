@@ -26,17 +26,16 @@ def start_server(debug):
     app_name = 'dev_center'
     port = 5858
 
-
-    attuid = os.environ['USER']
+    username = os.environ['USER']
     password = os.environ['PASSWORD']
-    header_value = f'{attuid}:{password}'
+    header_value = f'{username}:{password}'
     encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
     my_cred_hash = f'Basic {encoded_header}'
 
     crucible = Crucible()
     jira = Jira()
 
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder=os.path.abspath('../templates'), static_folder=os.path.abspath('../'))
     cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -50,6 +49,27 @@ def start_server(debug):
             return request.headers['Authorization']
         else:
             return my_cred_hash
+
+    @app.route(f'/node_modules/<path:path>')
+    def node_modules(path):
+        return send_from_directory(f'{app.static_folder}/node_modules/', path)
+
+    @app.route(f'/static/<path:path>')
+    def static_files(path):
+        return send_from_directory(f'{app.static_folder}/static/', path)
+
+    @app.route(f"/{app_name}/qagen")
+    @cross_origin()
+    def qa_step_gen():
+        repo_names = ['AQE','aqe_api', 'Modules','Selenium_tests','Taskmaster','TeamDB','teamdbapi','teamdb_ember','Templates','Tools','TQI','UD','UD_api','UD_ember','UPM','upm_api','WAM','wam_api']
+        return render_template('qagen.html', repo_names=repo_names)
+
+
+    @app.route(f"/leo/qagen")
+    @cross_origin()
+    def qa_step_gen_old():
+        repo_names = ['AQE','aqe_api', 'Modules','Selenium_tests','Taskmaster','TeamDB','teamdbapi','teamdb_ember','Templates','Tools','TQI','UD','UD_api','UD_ember','UPM','upm_api','WAM','wam_api']
+        return render_template('qagen.html', repo_names=repo_names)
 
 
     @app.route(f"/{app_name}/jira/filter/<filter_number>")
@@ -144,7 +164,7 @@ def start_server(debug):
         return jsonify(data)
 
 
-    @app.route("/crucible/review/create/", methods=['POST'])
+    @app.route(f'/{app_name}/crucible/review/create/', methods=['POST'])
     @cross_origin()
     def crucible_create_review():
         '''creates a Crucible review with the proper header and branches passed in the body of the request
@@ -155,11 +175,13 @@ def start_server(debug):
         Returns:
             the Crucible ID number if successful else error
         '''
-        data = CrucibleRequests.crucible_create_review( data=request.get_json() )
+        data=request.get_json()
+        data["cred_hash"] = get_cred_hash(request)
+        data = CrucibleRequests.crucible_create_review(data=data)
         return jsonify(data)
 
 
-    @app.route('/crucible/review/pcr_pass/', methods=['POST'])
+    @app.route(f'/{app_name}/crucible/review/pcr_pass/', methods=['POST'])
     @cross_origin()
     def crucible_pcr_pass():
         '''Joins user to a review, completes review, and adds a PCR Pass comment
@@ -180,7 +202,7 @@ def start_server(debug):
         return jsonify(data)
 
 
-    @app.route('/crucible/review/pcr_complete/', methods=['POST'])
+    @app.route(f'/{app_name}/crucible/review/pcr_complete/', methods=['POST'])
     @cross_origin()
     def crucible_pcr_complete():
         '''Joins user to a review, completes review, adds a PCR Pass comment, 
