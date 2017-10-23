@@ -16,8 +16,8 @@ import { Headers, RequestOptions } from '@angular/http';
 export class DataService {
 
 	jiraUrl = 'https://jira.web.att.com:8443';
-	crucibleUrl = '';
-	apiUrl = 'http://127.0.0.1:5858';
+	crucibleUrl = 'https://icode3.web.att.com';
+	apiUrl = 'http://localhost:5858/dev_center';
 
 	/*
 	*/

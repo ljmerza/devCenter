@@ -4,10 +4,10 @@ import { Subject } from 'rxjs/Rx';
 import { ActivatedRoute } from '@angular/router';
 
 import { JiraService } from './../services/jira.service'
-import { EstimatePipe } from './../estimate.pipe'
+import { WorkTimePipe } from './../work-time.pipe'
 
 import { DataTableDirective } from 'angular-datatables';
-import { MaterializeDirective, MaterializeAction } from "angular2-materialize";
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 import * as $ from 'jquery';
 
@@ -18,13 +18,14 @@ import * as $ from 'jquery';
 })
 export class OpenTicketsComponent implements OnInit, AfterViewInit {
 
-	constructor(private jira: JiraService, private route:ActivatedRoute) { }
+	constructor(private jira: JiraService, private route:ActivatedRoute, private modalService: NgbModal) { }
 
 	@ViewChild(DataTableDirective)
 	private dtElement: DataTableDirective;
 	dtTrigger:Subject<any> = new Subject();
 	dtOptions: DataTables.Settings = {
-		order:[4, 'asc']
+		order: [4, 'desc'],
+		columnDefs: [{targets: [4,5], type: 'date'}]
 	};
 	
 	openTickets:Array<any>;
@@ -32,10 +33,10 @@ export class OpenTicketsComponent implements OnInit, AfterViewInit {
 	isLoading:boolean = true;
 
 	jiraUrl = this.jira.jiraUrl;
+	crucibleUrl = this.jira.crucibleUrl;
 
-	pcrType;
-	crucibleId;
-	pcrModelAction = new EventEmitter<string|MaterializeAction>();
+	// status modal message var
+	statusModelMessage;
 
 	/*
 	*/
@@ -47,44 +48,7 @@ export class OpenTicketsComponent implements OnInit, AfterViewInit {
 			this.isLoading = true;
 			this.jiraListType = params.get('filter');
 
-			let filterNumber:number;
-
-			switch(this.jiraListType) {
-
-				case 'pcr':
-					filterNumber = 11128;
-					break;
-
-				case 'beta':
-					filterNumber = 11004;
-					break;
-
-				case 'cr':
-					filterNumber = 11007;
-					break;
-
-				case 'qa':
-					filterNumber = 11019;
-					break;
-
-				case 'uctready':
-					filterNumber = 11014;
-					break;
-
-				case 'allmy':
-					filterNumber = 11418;
-					break;
-
-				case 'allopen':
-					filterNumber = 12523;
-					break;
-
-				default:
-					filterNumber = 12513;
-					break;
-			}
-
-			this.setFilterData(filterNumber);
+			this.setFilterData(this.jiraListType);
 		});
 	}
 
@@ -96,12 +60,12 @@ export class OpenTicketsComponent implements OnInit, AfterViewInit {
 
 	/*
 	*/
-	setFilterData(filterNumber): void {
+	setFilterData(jiraListType): void {
 
-		this.jira.getFilter(filterNumber)
+		this.jira.getFilterData(jiraListType)
 		.subscribe( issues => {
 			if(issues.data) {
-				// save tickets, set loading to false, and rerender datatables
+				// save tickets, set loading to false, and rerender data tables
 				this.openTickets = issues.data;
 				this.isLoading = false;
 				this.rerender();
@@ -128,32 +92,46 @@ export class OpenTicketsComponent implements OnInit, AfterViewInit {
 
 	/*
 	*/
-	openPcrModal(crucibleId, pcrType) {
-		this.pcrType = pcrType;
-		this.crucibleId = crucibleId;
-		this.pcrModelAction.emit({action:"modal",params:['open']});
-	}
+	openModal(id, modalType, content) {
 
-	/*
-	*/
-	closePcrModal() {
-		this.pcrModelAction.emit({action:"modal",params:['close']});
-	}
-
-	/*
-	*/
-	confirmPcrModal() {
-		this.closePcrModal();
-		let obs;
-
-		if( this.pcrType.match(/^pass$/i) ){
-			obs = this.jira.pcrPass(this.crucibleId, 'lm240n')
-		} else {
-			obs = this.jira.pcrComplete(this.crucibleId, 'lm240n');
+		// change messages on modal based on status change type
+		if(modalType === 'complete'){
+			this.statusModelMessage = 'PCR Complete';
+		} else if(modalType === 'pass'){
+			this.statusModelMessage = 'PCR Pass';
 		}
 
-		obs.subscribe( response => {
-			console.log('response',response);
+
+		this.modalService.open(content).result.then( confirm => {
+
+			// if confirm is true then change status
+			if(confirm){
+				let obs;
+
+				// create observable based on status change type
+				if(modalType === 'pass'){
+					obs = this.jira.pcrPass(id, 'lm240n')
+				} else if(modalType === 'complete'){
+					obs = this.jira.pcrComplete(id, 'lm240n');
+				}
+
+				// on success do events based on status change type
+				obs.subscribe( response => {
+
+					// if PCR complete then remove row from data table
+					if(modalType === 'complete'){
+						this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+							// Destroy the table first
+							dtInstance.row( $(`#${id}`)[0] ).remove();
+							// Destroy the table first
+							dtInstance.destroy();
+							// Call the dtTrigger to rerender again
+							this.dtTrigger.next();
+						});
+					}
+
+				});
+			}
 		});
 	}
 }

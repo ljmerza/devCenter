@@ -22,6 +22,10 @@ class Tickets(Modal):
 	crucible_id = Column(VARCHAR(15))
 	qa_steps = Column(TEXT(charset='utf8'))
 
+	customer_details = Column(TEXT(charset='utf8'))
+	severity = Column(VARCHAR(30))
+	dates = Column(TEXT(charset='utf8'))
+
 	pcr_ping = Column(SMALLINT, default=0)
 	merge_ping = Column(SMALLINT, default=0)
 	conflict_ping = Column(SMALLINT, default=0)
@@ -40,6 +44,9 @@ class Comments(Modal):
 	key = Column(VARCHAR(15), ForeignKey('tickets.key'))
 	id = Column(VARCHAR(15), primary_key=True)
 	comment = Column(TEXT(charset='utf8'))
+	username = Column(CHAR(6))
+	email = Column(VARCHAR(30))
+	display_name = Column(VARCHAR(50))
 
 
 class ErrorLogs(Modal):

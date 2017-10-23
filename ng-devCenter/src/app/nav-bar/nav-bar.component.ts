@@ -13,23 +13,16 @@ export class NavBarComponent implements AfterContentInit {
 	ticketValue:string = '';
 
 	ngAfterContentInit() {
-		$('.navBarDropdown').dropdown({
-			belowOrigin: true,
-			constrain_width: false
-		});
 
-		$('.dropdownSubmenu').dropdown({
-			constrain_width: false,
-			hover: true,
-			gutter: $('.navBarDropdown').width(),
-			belowOrigin: false
-		});
-
-		$('.dropdownSubmenuTwice').dropdown({
-			constrain_width: false,
-			hover: true,
-			gutter: $('.dropdownSubmenu').width(),
-			belowOrigin: false
+		// add mouse events to show/hide submenus
+		$('.dropdown-submenu').on('mouseenter mouseleave','.dropdown',function(e){
+			const $elem = $(e.target).closest('.dropdown');
+			$elem.addClass('show');
+			
+			// after 300 ms then toggle class
+			setTimeout(function(){
+				$elem[$elem.is(':hover')?'addClass':'removeClass']('show');
+			},300);
 		});
 	}
 
@@ -43,6 +36,7 @@ export class NavBarComponent implements AfterContentInit {
 	codeCloudUrl = 'https://codecloud.web.att.com';
 	emberLocal = '#/';
 	emberUrl = `http://m5devacoe01.gcsc.att.com${this.port}`;
+	wikiUrl = 'https://wiki.web.att.com';
 
 	
 

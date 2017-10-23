@@ -76,7 +76,6 @@ class JiraAPI(DevCenterAPI):
 			returns a dict with status/data property. 
 		'''
 		response = super(JiraAPI, self).put_json(url=url, json_data=json_data, cred_hash=cred_hash)
-		print(response)
 		return self._process_response(response)
 
 	def _process_response(self, response):

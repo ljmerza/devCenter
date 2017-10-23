@@ -27,6 +27,9 @@ CREATE TABLE `tickets` (
   `label` varchar(30),
   `qa_steps` text,
   `crucible_id` varchar(15),
+  `customer_details` text,
+  `severity` varchar(30),
+  `dates` text,
   PRIMARY KEY (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -55,6 +58,9 @@ CREATE TABLE `error_logs` (
 CREATE TABLE `comments` (
   `key` VARCHAR(15) NOT NULL,
   `comment` TEXT NOT NULL,
+  `username` VARCHAR(6) NOT NULL,
+  `email` varchar(30) NOT NULL,
+  `display_name` varchar(50) NOT NULL,
   `id` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`comment_id`),
   FOREIGN KEY (`key`) REFERENCES tickets(`key`)

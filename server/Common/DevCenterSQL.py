@@ -2,6 +2,7 @@
 
 import os
 import logging
+import sys
 
 from . import SQLModels
 
@@ -22,6 +23,7 @@ class DevCenterSQL():
 			MySQL object
 		'''
 		self.project_managers = os.environ['PM'].split(',')
+		self.debug = False
 
 	def login(self):
 		'''logs into the SQL DB and creates a connection property on the instance
@@ -42,7 +44,7 @@ class DevCenterSQL():
 		charset = 'utf8'
 
 		# create SQL engine and inspector
-		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}')
+		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}', echo=self.debug)
 		self.inspector = inspect(engine)
 		# create DB session
 		Session = sessionmaker(bind=engine)
@@ -88,6 +90,11 @@ class DevCenterSQL():
 		comments=jira_ticket['comments'][:]
 		# now delete comments to be able to add to Tickets object
 		del jira_ticket['comments']
+
+		# temp delete extra fields
+		del jira_ticket['customer_details']
+		del jira_ticket['dates']
+
 		# try to get existing Jira ticket
 		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == jira_ticket['key']).first()
 		

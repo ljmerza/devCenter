@@ -2,10 +2,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { NgModule } from '@angular/core';
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { MomentModule } from 'angular2-moment';
-import { MaterializeModule } from 'angular2-materialize';
 
 import { DataTablesModule } from 'angular-datatables';
 
@@ -19,8 +20,7 @@ import { OpenTicketsComponent } from './open-tickets/open-tickets.component';
 import { JiraService } from './services/jira.service';
 import { DataService } from './services/data.service';
 
-import { EstimatePipe } from './estimate.pipe';
-import { LoggedPipe } from './logged.pipe';
+import { WorkTimePipe } from './work-time.pipe';
 
 @NgModule({
 	declarations: [
@@ -29,8 +29,7 @@ import { LoggedPipe } from './logged.pipe';
 		UserSettingsComponent,
 		OpenTicketsComponent,
 		NotFoundComponent,
-		EstimatePipe,
-		LoggedPipe
+		WorkTimePipe
 	],
 	imports: [
 		BrowserModule,
@@ -38,8 +37,8 @@ import { LoggedPipe } from './logged.pipe';
 		DataTablesModule,
 		HttpModule,
 		MomentModule,
-		MaterializeModule,
-		AppRoutingModule
+		AppRoutingModule,
+		NgbModule.forRoot()
 	],
 	providers: [DataService, JiraService],
 	bootstrap: [AppComponent]

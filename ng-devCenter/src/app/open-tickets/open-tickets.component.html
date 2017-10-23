@@ -1,21 +1,13 @@
 
-<div class="container-fuild">
+<div class="container-fluid">
 	<div class="row">
-		<div class="col s12">
-			<span class='refresh-button' 
-				[ngClass]="{'loading': isLoading}"
-				*ngIf='isLoading;'
-			>
+		<div class="col-12">
+			<span class='refresh-button' [ngClass]="{'loading': isLoading}" *ngIf='isLoading;'>
 				<i class="material-icons">cached</i>
 			</span>
 
 			<div [hidden]='isLoading'>
-				<table 
-					class="striped" 
-					datatable 
-					[dtOptions]="dtOptions" 
-					[dtTrigger]="dtTrigger"	
-				>
+				<table class='table-striped'datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
 					<thead>
 						<tr>
 							<th>Key</th>
@@ -32,27 +24,27 @@
 					</thead>
 
 					<tbody>
-						<tr *ngFor='let ticket of openTickets'>
-							<td>{{ticket.id}}</td>
-							<td><a target="_blank" href="{{jiraUrl}}/browse/{{ticket.key}}">{{ticket.key}}</a></td>
-							<td class='summary-format'>{{ticket.fields.summary}}</td>
+						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}}'>
+							<td>{{ticket.key}}</td>
+							<td><a target="_blank" href="{{jiraUrl}}/browse/{{ticket.key}}">{{ticket.msrp}}</a></td>
+							<td class='summary-format'>{{ticket.summary}}</td>
 							<td>
-								<div>{{ticket.fields.status.name}}</div>
-								<div>{{ticket.fields.components[0]?.name}}</div>
+								<div>{{ticket.status}}</div>
+								<div>{{ticket.component}}</div>
 							</td>
-							<td>{{ticket.fields.customfield_10109 | amDateFormat:'LL'}}</td>
-							<td>{{ticket.fields.duedate | amDateFormat:'LL'}}</td>
-							<td>{{ticket.fields.customfield_10006 | estimate }}</td>
-							<td>{{ticket.fields.timespent | logged}}</td>
+							<td>{{ticket.dates.started | amDateFormat:'LL'}}</td>
+							<td>{{ticket.dates.duedate | amDateFormat:'LL'}}</td>
+							<td>{{ticket.dates.estimate | worktime }}</td>
+							<td>{{ticket.dates.logged | worktime}}</td>
 							<td>
-								<span *ngIf='ticket.fields.crucible_id'>
-									<a target="_blank" href="{{ticket.fields.crucible_link}}">{{ticket.fields.crucible_id}}</a>
-									<i class="material-icons" title='PCR Pass' (click)="openPcrModal(ticket.fields.crucible_id, 'Pass')">done</i>
-									<i class="material-icons" title='PCR Complete' (click)="openPcrModal(ticket.fields.crucible_id,'Complete')">done_all</i>
+								<span *ngIf='ticket.crucible_id'>
+									<a target="_blank" href="{{crucibleUrl}}/cru/{{ticket.crucible_id}}">{{ticket.crucible_id}}</a>
+									<i class="material-icons" title='PCR Pass' (click)="openModal(ticket.crucible_id, 'pass', statusModal)">done</i>
+									<i class="material-icons" title='PCR Complete' (click)="openModal(ticket.key,'complete', statusModal)">done_all</i>
 									
 								</span>
 							</td>
-							<td>{{ticket.fields.assignee?.name}}</td>
+							<td>{{ticket.username}}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -63,16 +55,21 @@
 
 
 
-<!-- PCR Model -->
-<div id="pcrModal" class="modal" materialize="modal" [materializeActions]="pcrModelAction">
-	<div class="modal-content">
-		<h4>Peer Review {{pcrType}}</h4>
-		<p>Are you sure you want to PCR {{pcrType}}?</p>
-	</div>
-	<div class="modal-footer">
-		<a class="modal-action modal-close waves-effect waves-green btn-flat" (click)="confirmPcrModal()">Yes</a>
-		<a class="waves-effect waves-green btn-flat" (click)="closePcrModal()">No</a>
-	</div>
-</div>
+<!-- Status Model -->
+<ng-template #statusModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">{{statusModelMessage}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="c()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to change the status to {{statusModelMessage}}?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="c('confirm')">Yes</button>
+    <button type="button" class="btn btn-outline-dark" (click)="c()">No</button>
+  </div>
+</ng-template>
 
 

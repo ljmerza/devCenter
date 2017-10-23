@@ -3,14 +3,11 @@ import base64
 import os
 
 sys.path.append('..')
-sys.path.append('../Jira')
-sys.path.append('../Common')
-sys.path.append('../Crucible')
 
-from Crucible import Crucible
-from Jira import Jira
+from Crucible.Crucible import Crucible
+from Jira.Jira import Jira
 
-key = 'WAM-943'
+key = 'UD-6201'
 
 
 # create auth header
@@ -34,7 +31,7 @@ if crucible_id['status']:
 	print('number_of_passes:', number_of_passes)
 
 	
-	# jira.set_pcr_complete(key=key, cred_hash=cred_hash)
+	jira.set_pcr_complete(key=key, cred_hash=cred_hash)
 else:
 	print('no crucible id found')
 

@@ -17,7 +17,7 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 			a Jira instance
 		'''
 		JiraStatusComponent.JiraStatusComponent.__init__(self)
-		self.fields = 'comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,label'
+		self.fields = 'customfield_10109,comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,label,fixVersions,aggregatetimeestimate,aggregatetimeoriginalestimate,duedate,created,updated,customfield_10108,customfield_10102,customfield_10175,customfield_10103,customfield_10602'
 
 	def get_filter_url(self, filter_number, cred_hash):
 		'''gets the URL of a particular Jira filter
@@ -83,7 +83,7 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 			as the totla number of ticket found in total_tickets
 		'''
 		# get jira tickets and check response
-		response = self.get_raw_jira_tickets(filter_number=filter_number, max_results=max_results, start_at=start_at, cred_hash=cred_hash)
+		response = self.get_raw_jira_tickets(filter_number=filter_number, max_results=max_results, start_at=start_at, cred_hash=cred_hash, fields=fields)
 		if not response['status']:
 			return response
 
@@ -130,6 +130,10 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 			# get comments and QA steps
 			ticket['comments'] = JiraFields.get_comments(issue)
 			ticket['qa_steps'] = JiraFields.get_qa_steps(issue)
+
+			ticket['customer_details'] = JiraFields.get_customer_details(issue)
+			ticket['severity'] = JiraFields.get_severity(issue)
+			ticket['dates'] = JiraFields.get_dates(issue)
 
 			# add ticket to response
 			response['data'].append(ticket)

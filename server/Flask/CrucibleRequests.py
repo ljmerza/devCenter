@@ -10,7 +10,7 @@ jira = Jira()
 
 
 
-def crucible_pcr_pass(data):
+def set_pcr_pass(data):
 
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
@@ -18,7 +18,7 @@ def crucible_pcr_pass(data):
 		return {"data": "Missing required parameters: "+ missing_params, "status": False}
 
 	# add self as reviewer
-	response = crucible.add_reviewer(attuid=data['attuid'], crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
+	response = crucible.add_reviewer(username=data['username'], crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
 	if not response['status']:
 		return {"data": "Could not add "+data['username']+" as a reviewer", "status": False}
 

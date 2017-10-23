@@ -24,5 +24,5 @@ t.start()
 
 
 from Flask import DevCenterServer
-DevCenterServer.start_server(debug=1)
+DevCenterServer.start_server(debug=0)
 

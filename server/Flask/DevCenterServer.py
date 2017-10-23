@@ -28,9 +28,6 @@ def start_server(debug):
     encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
     my_cred_hash = f'Basic {encoded_header}'
 
-    crucible = Crucible()
-    jira = Jira()
-
     app = Flask(__name__, template_folder=os.path.abspath('../templates'), static_folder=os.path.abspath('../'))
     cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
@@ -46,6 +43,10 @@ def start_server(debug):
         else:
             return my_cred_hash
 
+
+
+
+    
     @app.route(f'/node_modules/<path:path>')
     def node_modules(path):
         return send_from_directory(f'{app.static_folder}/node_modules/', path)
@@ -68,19 +69,21 @@ def start_server(debug):
         return render_template('qagen.html', repo_names=repo_names)
 
 
-    @app.route(f"/{app_name}/jira/filter/<filter_number>")
+    @app.route(f"/{app_name}/jira/filter/<filter_number>/")
     @cross_origin()
     def jiraFilterTickets(filter_number):
         '''gets a list of formatted Jira tickets given a filter number (adds the Crucible IDs if it can)
 
         Args:
             filter_number (str) the filter number to get tickets from
+            fields (str) the fields to get from the Jira ticket ( query string param)
 
         Returns:
             the server response JSON object with status/data properties
         '''
         data = JiraRequests.get_jira_tickets_from_filter(data={
             "filter_number": filter_number,
+            "fields": request.args.get('fields'),
             "cred_hash": get_cred_hash(request)
         })
         return jsonify(data)
@@ -189,33 +192,43 @@ def start_server(debug):
         Returns:
             status ok or fail reason
         '''
+        # get POST data
+        post_data = request.get_json()
         data = {
-            "crucible_id": request.form['crucible_id'],
-            "username": request.form['username'],
             "cred_hash": get_cred_hash(request)
         }
-        data = CrucibleRequests.crucible_pcr_pass(data=data)
+        if 'crucible_id' in post_data:
+            data["crucible_id"] = post_data['crucible_id']
+        if 'username' in post_data:
+            data["username"] = post_data['username']
+        # make POST call and return result
+        data = CrucibleRequests.set_pcr_pass(data=data)
         return jsonify(data)
 
 
     @app.route(f'/{app_name}/crucible/review/pcr_complete/', methods=['POST'])
     @cross_origin()
     def crucible_pcr_complete():
-        '''Joins user to a review, completes review, adds a PCR Pass comment, 
-            and sets the Jira status as PCR - Complete
+        '''Sets the Jira component as PCR - Complete
 
         Args:
-            crucible_id (str) the Crucible ID to PCR pass
+            key (str) the Jira ticket key to PCR Complete
             username (str) the user to add to the review
 
         Returns:
             status ok or fail reason
         '''
-        data = CrucibleRequests.set_pcr_complete(data={
-            "crucible_id": request.form['crucible_id'],
-            "username": request.form['username'],
+        # get POST data
+        post_data = request.get_json()
+        data = {
             "cred_hash": get_cred_hash(request)
-        })
+        }
+        if 'key' in post_data:
+            data["key"] = post_data['key']
+        if 'username' in post_data:
+            data["username"] = post_data['username']
+        # make POST call and return result
+        data = JiraRequests.set_pcr_complete(data=data)
         return jsonify(data)
 
 

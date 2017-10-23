@@ -24,7 +24,7 @@ def get_msrp(issue):
 		the issue msrp or 0
 	'''
 	# if exists then return else return 0
-	if issue['fields']['customfield_10212']:
+	if 'customfield_10212' in issue['fields']:
 		return issue['fields']['customfield_10212']
 	else:
 		return 0
@@ -38,8 +38,9 @@ def get_status(issue):
 	Returns:
 		the issue status or empty string
 	'''
-	if( ('name' in issue['fields']['status']) and issue['fields']['status']['name'] ):
-		return issue['fields']['status']['name']
+	if 'status' in issue['fields']:
+		if( ('name' in issue['fields']['status']) and issue['fields']['status']['name'] ):
+			return issue['fields']['status']['name']
 	else:
 		return ''
 
@@ -52,7 +53,10 @@ def get_summary(issue):
 	Returns:
 		the issue summary
 	'''
-	return issue['fields']['summary']
+	if 'summary' in issue['fields']:
+		return issue['fields']['summary']
+	else:
+		return ''
 
 def get_username(issue):	
 	'''gets an issue's username 
@@ -64,10 +68,48 @@ def get_username(issue):
 		the issue username or empty string
 	'''
 	# get username if exists
-	if issue['fields']['assignee'] and issue['fields']['assignee']['name']:
-		return issue['fields']['assignee']['name']
+	if 'assignee' in issue['fields']:
+		if issue['fields']['assignee'] and issue['fields']['assignee']['name']:
+			return issue['fields']['assignee']['name']
 	else:
 		return ''
+
+def get_user_details(issue):	
+	'''gets a user's details
+
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the username, email, and display name of the user assigned to the Jira ticket
+	'''
+	user = {}
+	if 'assignee' in issue['fields']:
+		if issue['fields']['assignee'] and issue['fields']['assignee']['name']:
+			user['name'] = issue['fields']['assignee']['name']
+		if issue['fields']['assignee'] and issue['fields']['assignee']['emailAddress']:
+			user['emailAddress'] = issue['fields']['assignee']['emailAddress']
+		if issue['fields']['assignee'] and issue['fields']['assignee']['displayName']:
+			user['displayName'] = issue['fields']['assignee']['displayName']
+	return user
+
+def get_linked_issues(issue):
+	'''gets an issue's linked issues details
+
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		a list of linked issues with their key, summary, and status
+	'''
+	link = []
+	if 'issuelinks' in issue['fields']:
+		for link in issue['fields']['issuelinks']:
+			link.append({
+				'key': link['inwardIssue']['key'],
+				'summary': link['inwardIssue']['fields']['summary'],
+				'status': link['inwardIssue']['fields']['status']['name']
+			})
 
 def get_component(issue):
 	'''gets an issue's components in a space delimited string
@@ -95,7 +137,7 @@ def get_story_point(issue):
 		the issue's story points or 0
 	'''
 	# if exists then return else return 0
-	if issue['fields']['customfield_10006']:
+	if 'customfield_10006' in issue['fields']:
 		return issue['fields']['customfield_10006']
 	else:
 		return 0
@@ -111,12 +153,9 @@ def get_sprint(issue):
 	'''
 	# get sprint
 	sprint = ''
-	if 'customfield_10001' in issue['fields'] and issue['fields']['customfield_10001']:
-		sprint_split = issue['fields']['customfield_10001'][0].split(',')
-		if len(sprint_split) > 3:
-			sprint_split = sprint_split[3].split('=')
-			if len(sprint_split) > 1:
-				sprint = sprint_split[1]
+	if 'fixVersions' in issue['fields'] and len(issue['fields']['fixVersions']):
+		if 'name' in issue['fields']['fixVersions'][0]:
+			sprint = issue['fields']['fixVersions'][0]['name']
 	return sprint
 
 def get_epic_link(issue):
@@ -172,14 +211,17 @@ def get_comments(issue):
 		an array of the issue's comments or empty array
 	'''
 	comments = []
-	if issue['fields']['comment']:
+	if 'comment' in issue['fields']:
 		# for each comment save it and see if QA steps
 		for comment in issue['fields']['comment']['comments']:
 			# save comment
 			comments.append({
 				'comment': comment['body'],
 				'id': comment['id'],
-				'key': issue['key']
+				'key': issue['key'],
+				'username': comment['author']['name'],
+				'email': comment['author']['emailAddress'],
+				'display_name': comment['author']['displayName']
 			})
 	return comments
 
@@ -206,3 +248,37 @@ def get_qa_steps(issue):
 			if len(result) > 1:
 				issue_qa_step = result[0]
 	return issue_qa_step
+
+def get_customer_details(issue):
+	customer = {}
+	if 'customfield_10102' in issue['fields']:
+		customer['username'] = issue['fields']['customfield_10102']
+	if 'customfield_10175' in issue['fields']:
+		customer['email'] = issue['fields']['customfield_10175']
+	if 'customfield_10103' in issue['fields']:
+		customer['display_name'] = issue['fields']['customfield_10103']
+	if 'customfield_10602' in issue['fields']:
+		customer['phone_number'] = issue['fields']['customfield_10602']
+	return customer
+
+def get_severity(issue):
+	if 'customfield_10108' in issue['fields']:
+		return issue['fields']['customfield_10108']['value']
+	else:
+		return ''
+
+def get_dates(issue):
+	dates = {}
+	if 'aggregatetimeestimate' in issue['fields']:
+		dates['logged'] = issue['fields']['aggregatetimeestimate']
+	if 'aggregatetimeoriginalestimate' in issue['fields']:
+		dates['estimate'] = issue['fields']['aggregatetimeoriginalestimate']
+	if 'duedate' in issue['fields']:
+		dates['duedate'] = issue['fields']['duedate']
+	if 'created' in issue['fields']:
+		dates['created'] = issue['fields']['created']
+	if 'updated' in issue['fields']:
+		dates['updated'] = issue['fields']['updated']
+	if 'customfield_10109' in issue['fields']:
+		dates['started'] = issue['fields']['customfield_10109']
+	return dates
