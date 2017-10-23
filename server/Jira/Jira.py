@@ -4,6 +4,8 @@ from . import JiraStatusComponent
 from . import JiraFields
 from . import JiraUtils
 
+from time import gmtime, strftime
+
 class Jira(JiraStatusComponent.JiraStatusComponent):
 	'''Jira class for getting data from the Jira API'''
 

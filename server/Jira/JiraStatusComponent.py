@@ -104,7 +104,7 @@ class JiraStatusComponent(JiraAPI):
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-		return self._set_status(key=key, name='Code Review', cred_hash=cred_hash)
+		return self._set_status(key=key, transition_id=521, cred_hash=cred_hash)
 
 	def set_code_review_working(self, key, cred_hash):
 		'''sets a jira issue to the Code Review - Working component
