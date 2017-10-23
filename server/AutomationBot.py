@@ -5,15 +5,10 @@ import datetime
 import base64
 import logging
 
-import sys
-sys.path.append('Common')
-sys.path.append('Crucible')
-sys.path.append('Jira')
-
-import Jira
-import Crucible
-import DevCenterSQL
-import Qbot
+from Jira.Jira import Jira
+from Crucible.Crucible import Crucible
+from Common import DevCenterSQL
+from Common.Qbot import Qbot
 
 
 
@@ -46,9 +41,9 @@ class AutomationBot(object):
 		self.sql_object.login()
 		################################################################################
 		# create objects
-		self.jira_obj = Jira.Jira()
-		self.crucible_obj = Crucible.Crucible()
-		self.qbot_obj = Qbot.Qbot(debug=debug, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
+		self.jira_obj = Jira()
+		self.crucible_obj = Crucible()
+		self.qbot_obj = Qbot(debug=debug, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
 		################################################################################
 		self.add_beta_message = True
 		self.beta_wait_time = 300 # how many times to wait for beta message

@@ -3,7 +3,7 @@
 import os
 import logging
 
-import SQLModels
+from . import SQLModels
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError

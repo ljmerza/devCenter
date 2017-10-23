@@ -3,9 +3,9 @@
 import re
 import math
 
-import CrucibleAPI
+from .CrucibleAPI import CrucibleAPI
 
-class CruciblePCR(CrucibleAPI.CrucibleAPI):
+class CruciblePCR(CrucibleAPI):
 	def __init__(self):
 		''' creates a CruciblePCR instance
 		Args:
@@ -14,7 +14,7 @@ class CruciblePCR(CrucibleAPI.CrucibleAPI):
 		Returns:
 			a CruciblePCR instance
 		'''
-		CrucibleAPI.CrucibleAPI.__init__(self)
+		CrucibleAPI.__init__(self)
 		self.pcr_pass = "=#= PCR PASS =#="
 		self.pcr_pass_regex = re.compile(r"=#= PCR PASS =#=")
 

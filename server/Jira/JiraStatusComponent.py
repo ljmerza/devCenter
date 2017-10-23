@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-import JiraAPI
+from .JiraAPI import JiraAPI
 
-class JiraStatusComponent(JiraAPI.JiraAPI):
+class JiraStatusComponent(JiraAPI):
 	'''Jira class for setting statuses and components for Jira tickets'''
 
 	def __init__(self):
@@ -14,7 +14,7 @@ class JiraStatusComponent(JiraAPI.JiraAPI):
 		Returns:
 			a JiraStatusComponent instance
 		'''
-		JiraAPI.JiraAPI.__init__(self)
+		JiraAPI.__init__(self)
 
 	def _set_component(self, name, key, cred_hash):
 		'''sets a jira issue to the given component

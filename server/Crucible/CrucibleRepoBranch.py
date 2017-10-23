@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-import CrucibleAPI
+from .CrucibleAPI import CrucibleAPI
 
-class CrucibleRepoBranch(CrucibleAPI.CrucibleAPI):
+class CrucibleRepoBranch(CrucibleAPI):
 	def __init__(self):
-		CrucibleAPI.CrucibleAPI.__init__(self)
+		CrucibleAPI.__init__(self)
 
 	def get_repos_of_review(self, crucible_id, cred_hash):
 		'''get all repos tied to a review

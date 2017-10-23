@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 import os
-from Common import DevCenterAPI
+from Common.DevCenterAPI import DevCenterAPI
 
-class JiraAPI(DevCenterAPI.DevCenterAPI):
+class JiraAPI(DevCenterAPI):
 	'''used as an adapter for Jira API requests'''
 
 	def __init__(self):
@@ -16,7 +16,7 @@ class JiraAPI(DevCenterAPI.DevCenterAPI):
 		Returns:
 			An instance of JiraAPI
 		'''
-		DevCenterAPI.DevCenterAPI.__init__(self)
+		DevCenterAPI.__init__(self)
 		self.jira_url = os.environ['JIRA_URL']
 		self.jira_ticket = f'{self.jira_url}/browse'
 		self.crucible_url = os.environ['CRUCIBLE_URL']

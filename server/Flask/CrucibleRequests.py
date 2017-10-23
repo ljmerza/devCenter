@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 
-import FlaskUtils
-from Crucible import Crucible
-from Jira import Jira
+from Flask import FlaskUtils
+from Crucible.Crucible import Crucible
+from Jira.Jira import Jira
 
 crucible = Crucible()
 jira = Jira()

@@ -2,13 +2,13 @@
 
 import time
 
-import CruciblePCR
-import CrucibleRepoBranch
+from .CruciblePCR import CruciblePCR
+from .CrucibleRepoBranch import CrucibleRepoBranch
 
-class Crucible(CrucibleRepoBranch.CrucibleRepoBranch, CruciblePCR.CruciblePCR):
+class Crucible(CrucibleRepoBranch, CruciblePCR):
 	def __init__(self):
-		CruciblePCR.CruciblePCR.__init__(self)
-		CrucibleRepoBranch.CrucibleRepoBranch.__init__(self)
+		CruciblePCR.__init__(self)
+		CrucibleRepoBranch.__init__(self)
 
 	def get_review_id(self, cred_hash, key='', msrp=''):
 		'''try to return a crucible ID for a particular Jira key/MSRP

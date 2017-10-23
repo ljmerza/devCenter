@@ -9,15 +9,11 @@ import requests
 import sys
 import base64
 
-import JiraRequests
-import CrucibleRequests
+from . import JiraRequests
+from . import CrucibleRequests
 
-sys.path.append('../Jira')
-sys.path.append('../Common')
-sys.path.append('../Crucible')
-
-from Crucible import Crucible
-from Jira import Jira
+from Crucible.Crucible import Crucible
+from Jira.Jira import Jira
 
 
 def start_server(debug):

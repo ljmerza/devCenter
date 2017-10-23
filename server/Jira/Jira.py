@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-import JiraStatusComponent
-import JiraFields
-import JiraUtils
+from . import JiraStatusComponent
+from . import JiraFields
+from . import JiraUtils
 
 class Jira(JiraStatusComponent.JiraStatusComponent):
 	'''Jira class for getting data from the Jira API'''

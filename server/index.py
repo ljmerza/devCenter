@@ -4,6 +4,11 @@ import AutomationBot
 import time
 import threading
 
+import sys
+sys.path.append('Common')
+sys.path.append('Crucible')
+sys.path.append('Jira')
+
 
 def start_bots():
 	automationBot = AutomationBot.AutomationBot(is_beta_week=0, is_qa_pcr=0, beta_stat_ping_now=0, debug=0, merge_alerts=0)

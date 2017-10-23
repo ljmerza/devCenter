@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 import os
-from Common import DevCenterAPI
+from Common.DevCenterAPI import DevCenterAPI
 
-class CrucibleAPI(DevCenterAPI.DevCenterAPI):
+class CrucibleAPI(DevCenterAPI):
 
 	def __init__(self):
 		'''creates a CrucibleAPI interface - used as an adapter for Crucible API requests
@@ -14,7 +14,7 @@ class CrucibleAPI(DevCenterAPI.DevCenterAPI):
 		Returns:
 			An instance of CrucibleAPI
 		'''
-		DevCenterAPI.DevCenterAPI.__init__(self)
+		DevCenterAPI.__init__(self)
 		self.crucible_url = os.environ['CRUCIBLE_URL']
 		self.crucible_api_review = f'{self.crucible_url}/rest-service/reviews-v1'
 		self.crucible_api_repo = f'{self.crucible_url}/rest-service/repositories-v1'
