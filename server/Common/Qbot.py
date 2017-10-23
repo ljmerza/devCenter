@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import math
 import requests
 from requests.auth import HTTPBasicAuth
 import re

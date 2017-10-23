@@ -1,4 +1,4 @@
-from sqlalchemy import inspect, Column, Integer, ForeignKey, DateTime, SMALLINT
+from sqlalchemy import Column, ForeignKey, DateTime, SMALLINT
 from sqlalchemy.dialects.mysql import VARCHAR, TEXT, CHAR
 
 from sqlalchemy.ext.declarative import declarative_base

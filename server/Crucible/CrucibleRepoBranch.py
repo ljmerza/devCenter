@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import os
 import CrucibleAPI
 
 class CrucibleRepoBranch(CrucibleAPI.CrucibleAPI):

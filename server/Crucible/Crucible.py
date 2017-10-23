@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 
 import time
-import math
-import os
 
 import CruciblePCR
 import CrucibleRepoBranch
