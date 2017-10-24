@@ -43,19 +43,39 @@ export class OpenTicketsComponent implements OnInit, AfterViewInit {
 	}
 
 	@ViewChild(DataTableDirective)
+
 	private dtElement: DataTableDirective;
 	dtTrigger:Subject<any> = new Subject();
-	dtOptions: DataTables.Settings = {
+
+	dtOptions = {
 		order: [4, 'desc'],
-		columnDefs: [{targets: [4,5], type: 'date'}]
+		columnDefs: [{targets: [4,5], type: 'date'}],
+		// Declare the use of the extension in the dom parameter
+		dom: 'Bfrtip',
+		// Configure the buttons
+		buttons: [
+			'columnsToggle',
+			'colvis',
+			'copy',
+			'print',
+			'excel',
+			{
+				text: 'Some button',
+				key: '1',
+				action: function (e, dt, node, config) {
+				alert('Button activated');
+			}
+		}]
 	};
 	
 	openTickets:Array<any>;
+	isLoading:boolean = false;
 	jiraListType:string;
-	isLoading:boolean = true;
 
 	jiraUrl = this.jira.jiraUrl;
 	crucibleUrl = this.jira.crucibleUrl;
+
+	intervalId;
 
 	// status modal message var
 	statusModelMessage;
@@ -66,11 +86,15 @@ export class OpenTicketsComponent implements OnInit, AfterViewInit {
 
 		this.route.paramMap
 		.subscribe( params => {
-
-			this.isLoading = true;
 			this.jiraListType = params.get('filter');
 
-			this.setFilterData(this.jiraListType);
+			// start
+			this.intervalId = setInterval( () =>{
+				if(!this.isLoading && !this.modalOpen){
+					this.setFilterData();
+					clearInterval(this.intervalId);
+				}
+			}, 2000);
 		});
 	}
 
@@ -82,13 +106,15 @@ export class OpenTicketsComponent implements OnInit, AfterViewInit {
 
 	/*
 	*/
-	setFilterData(jiraListType): void {
+	setFilterData(): void {
 
 		if(!this.userSettingsNeeded){
-			this.jira.getFilterData(jiraListType)
+			this.isLoading = true;
+
+			this.jira.getFilterData(this.jiraListType)
 			.subscribe( issues => {
 				if(issues.data) {
-					// save tickets, set loading to false, and rerender data tables
+					// save tickets, set loading to false, and re-render data tables
 					this.openTickets = issues.data;
 					this.isLoading = false;
 					this.rerender();
@@ -101,6 +127,7 @@ export class OpenTicketsComponent implements OnInit, AfterViewInit {
 	/*
 	*/
 	rerender(): void {
+		console.log('render');
 
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
@@ -147,7 +174,7 @@ export class OpenTicketsComponent implements OnInit, AfterViewInit {
 				// on success do events based on status change type
 				obs.subscribe( () => {
 
-					// if PCR complete then  call PCR complete API and remove row from data table
+					// if PCR complete then	call PCR complete API and remove row from data table
 					if(confirm === 'complete'){
 						obs = this.jira.pcrComplete(key, 'lm240n');
 
