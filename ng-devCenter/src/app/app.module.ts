@@ -19,6 +19,7 @@ import { OpenTicketsComponent } from './open-tickets/open-tickets.component';
 
 import { JiraService } from './services/jira.service';
 import { DataService } from './services/data.service';
+import { UserService } from './services/user.service';
 
 import { WorkTimePipe } from './work-time.pipe';
 
@@ -40,7 +41,7 @@ import { WorkTimePipe } from './work-time.pipe';
 		AppRoutingModule,
 		NgbModule.forRoot()
 	],
-	providers: [DataService, JiraService],
+	providers: [DataService, JiraService, UserService],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

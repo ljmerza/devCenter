@@ -1,4 +1,7 @@
 import { Component, AfterContentInit } from '@angular/core';
+import { UserService } from './../services/user.service'
+import { DataService } from './../services/data.service'
+
 declare var $ :any;
 
 @Component({
@@ -8,10 +11,38 @@ declare var $ :any;
 })
 export class NavBarComponent implements AfterContentInit {
 
-	constructor() { }
+	username:string;
+	port:string;
+	emberUrl:string;
+	emberLocal:string;
 
-	ticketValue:string = '';
+	ticketValue:string;
 
+	devUrl:string = this.data.devUrl;
+	betaUrl:string = this.data.betaUrl;
+	jiraUrl:string = this.data.jiraUrl;
+	crucibleUrl:string = this.data.crucibleUrl;
+	codeCloudUrl:string = this.data.codeCloudUrl;
+	wikiUrl:string = this.data.wikiUrl;
+
+	/*
+	*/
+	constructor(private user: UserService, private data:DataService) {
+		this.username = user.username;
+		this.port = user.port;
+
+		// set emberUrl based on if localhost or not
+		if(user.emberUrl && user.emberUrl.match(/localhost/)){
+			this.emberLocal = '/#';
+			this.emberUrl = `${user.emberUrl}:4200`;
+		} else {
+			this.emberLocal = '';
+			this.emberUrl = `${user.emberUrl}:${this.port}`;
+		}
+	}	
+
+	/*
+	*/
 	ngAfterContentInit() {
 
 		// add mouse events to show/hide submenus
@@ -26,42 +57,26 @@ export class NavBarComponent implements AfterContentInit {
 		});
 	}
 
-	attuid:string = 'lm240n';
-	port:number = 8173;
 
-	devUrl = 'http://m5devacoe01.gcsc.att.com';
-	betaUrl = 'http://chrapud16b.gcsc.att.com';
-	jiraUrl = 'https://jira.web.att.com:8443';
-	crucibleUrl = 'https://icode3.web.att.com';
-	codeCloudUrl = 'https://codecloud.web.att.com';
-	emberLocal = '#/';
-	emberUrl = `http://m5devacoe01.gcsc.att.com${this.port}`;
-	wikiUrl = 'https://wiki.web.att.com';
-
-	
-
-	missingUserSettings() {
-		return true;
-	}
-
+	/*
+	*/
 	searchTicket() {
-
-		// get search value and reset it
-		const ticketValue = this.ticketValue;
-		this.ticketValue = '';
-
 		// if NaN then is key and go to jira else need key fro msrp
-		if( isNaN(parseInt(ticketValue)) ){
-			window.open(`${this.jiraUrl}/browse/${ticketValue}`);
+		if( isNaN(parseInt(this.ticketValue)) ){
+			window.open(`${this.jiraUrl}/browse/${this.ticketValue}`);
+			this.ticketValue = '';
+			
 		} else {
 			$.ajax({
 				type: 'GET',
-				url: `http://m5devacoe01.gcsc.att.com:5858/devCenter/jira/get_key/${ticketValue}`
+				url: `http://m5devacoe01.gcsc.att.com:5858/devCenter/jira/get_key/${this.ticketValue}`
 			})
 			.then( data => {
 				if(data.key){
 					window.open(`${this.jiraUrl}/browse/${data.key}`);
 				}
+
+				this.ticketValue = '';
 			})
 		}
 	}

@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 
-from . import JiraStatusComponent
+from .JiraStatusComponent import JiraStatusComponent
 from . import JiraFields
 from . import JiraUtils
 
 from time import gmtime, strftime
 
-class Jira(JiraStatusComponent.JiraStatusComponent):
+class Jira(JiraStatusComponent):
 	'''Jira class for getting data from the Jira API'''
 
 	def __init__(self):
@@ -18,7 +18,7 @@ class Jira(JiraStatusComponent.JiraStatusComponent):
 		Returns:
 			a Jira instance
 		'''
-		JiraStatusComponent.JiraStatusComponent.__init__(self)
+		JiraStatusComponent.__init__(self)
 		self.fields = 'customfield_10109,comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,label,fixVersions,aggregatetimeestimate,aggregatetimeoriginalestimate,duedate,created,updated,customfield_10108,customfield_10102,customfield_10175,customfield_10103,customfield_10602'
 
 	def get_filter_url(self, filter_number, cred_hash):

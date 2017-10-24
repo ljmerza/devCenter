@@ -37,11 +37,13 @@ def start_server(debug):
         app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
-    def get_cred_hash(request):
+    def get_cred_hash(request, required=False):
         if 'Authorization' in request.headers:
             return request.headers['Authorization']
-        else:
+        elif not required:
             return my_cred_hash
+        else :
+            return ''
 
 
 
@@ -59,17 +61,17 @@ def start_server(debug):
     @cross_origin()
     def qa_step_gen():
         repo_names = ['AQE','aqe_api', 'Modules','Selenium_tests','Taskmaster','TeamDB','teamdbapi','teamdb_ember','Templates','Tools','TQI','UD','UD_api','UD_ember','UPM','upm_api','WAM','wam_api']
-        return render_template('qagen.html', repo_names=repo_names)
+        return render_template('qagen.html', repo_names=request=request)
 
 
     @app.route(f"/leo/qagen")
     @cross_origin()
     def qa_step_gen_old():
         repo_names = ['AQE','aqe_api', 'Modules','Selenium_tests','Taskmaster','TeamDB','teamdbapi','teamdb_ember','Templates','Tools','TQI','UD','UD_api','UD_ember','UPM','upm_api','WAM','wam_api']
-        return render_template('qagen.html', repo_names=repo_names)
+        return render_template('qagen.html', repo_names=request=request)
 
 
-    @app.route(f"/{app_name}/jira/filter/<filter_number>/")
+    @app.route(f"/{app_name}/jira/filter/<filter_number>")
     @cross_origin()
     def jiraFilterTickets(filter_number):
         '''gets a list of formatted Jira tickets given a filter number (adds the Crucible IDs if it can)
@@ -84,7 +86,7 @@ def start_server(debug):
         data = JiraRequests.get_jira_tickets_from_filter(data={
             "filter_number": filter_number,
             "fields": request.args.get('fields'),
-            "cred_hash": get_cred_hash(request)
+            "cred_hash": get_cred_hash(request=request)
         })
         return jsonify(data)
 
@@ -102,7 +104,7 @@ def start_server(debug):
         '''
         data = JiraRequests.find_key_by_msrp(data={
             "msrp": msrp,
-            "cred_hash": get_cred_hash(request)
+            "cred_hash": get_cred_hash(request=request)
         })
         return jsonify(data)
 
@@ -119,7 +121,7 @@ def start_server(debug):
             All repos a user can access
         '''
         data = CrucibleRequests.get_repos(data={
-            "cred_hash":get_cred_hash(request)
+            "cred_hash":get_cred_hash(request=request)
         })
         return jsonify(data)
 
@@ -137,7 +139,7 @@ def start_server(debug):
         '''
         data = CrucibleRequests.get_branches(data={
             "repo_name": repo_name, 
-            "cred_hash": get_cred_hash(request)
+            "cred_hash": get_cred_hash(request=request)
         })
         return jsonify(data)
 
@@ -158,12 +160,12 @@ def start_server(debug):
         data = CrucibleRequests.find_branch(data={
             "msrp": msrp,
             "repo_name": repo_name, 
-            "cred_hash": get_cred_hash(request)
+            "cred_hash": get_cred_hash(request=request)
         })
         return jsonify(data)
 
 
-    @app.route(f'/{app_name}/crucible/review/create/', methods=['POST'])
+    @app.route(f'/{app_name}/crucible/review/create', methods=['POST'])
     @cross_origin()
     def crucible_create_review():
         '''creates a Crucible review with the proper header and branches passed in the body of the request
@@ -180,7 +182,7 @@ def start_server(debug):
         return jsonify(data)
 
 
-    @app.route(f'/{app_name}/crucible/review/pcr_pass/', methods=['POST'])
+    @app.route(f'/{app_name}/crucible/review/pcr_pass', methods=['POST'])
     @cross_origin()
     def crucible_pcr_pass():
         '''Joins user to a review, completes review, and adds a PCR Pass comment
@@ -195,7 +197,7 @@ def start_server(debug):
         # get POST data
         post_data = request.get_json()
         data = {
-            "cred_hash": get_cred_hash(request)
+            "cred_hash": get_cred_hash(request=request, required=True)
         }
         if 'crucible_id' in post_data:
             data["crucible_id"] = post_data['crucible_id']
@@ -206,7 +208,7 @@ def start_server(debug):
         return jsonify(data)
 
 
-    @app.route(f'/{app_name}/crucible/review/pcr_complete/', methods=['POST'])
+    @app.route(f'/{app_name}/crucible/review/pcr_complete', methods=['POST'])
     @cross_origin()
     def crucible_pcr_complete():
         '''Sets the Jira component as PCR - Complete
@@ -221,7 +223,7 @@ def start_server(debug):
         # get POST data
         post_data = request.get_json()
         data = {
-            "cred_hash": get_cred_hash(request)
+            "cred_hash": get_cred_hash(request=request, required=True)
         }
         if 'key' in post_data:
             data["key"] = post_data['key']

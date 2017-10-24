@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
+import { UserService } from './user.service'
+
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/retry';
@@ -15,15 +17,31 @@ import { Headers, RequestOptions } from '@angular/http';
 @Injectable()
 export class DataService {
 
-	jiraUrl = 'https://jira.web.att.com:8443';
-	crucibleUrl = 'https://icode3.web.att.com';
-	apiUrl = 'http://localhost:5858/dev_center';
+	jiraUrl:string = 'https://jira.web.att.com:8443';
+	crucibleUrl:string = 'https://icode3.web.att.com';
+	codeCloudUrl:string = 'https://codecloud.web.att.com';
+
+	apiUrl:string = 'http://localhost:5858/dev_center';
+
+	devUrl:string = 'http://m5devacoe01.gcsc.att.com';
+	betaUrl:string = 'http://chrapud16b.gcsc.att.com';
+	wikiUrl:string = 'https://wiki.web.att.com';
+
 
 	/*
 	*/
-	constructor(private http:Http) { }
+	constructor(private http:Http, private user:UserService) { }
 
-	authorizationHeader = 'Basic bG0yNDBuOlN0QHJ3YXJz';
+	/*
+	*/
+	authorizationHeader() {
+		if(this.user.username && this.user.password){
+			return "Basic " + btoa(`${this.user.username}:${this.user.password}`);
+		} else {
+			return '';
+		}
+		
+	} 
 	
 	/*
 	*/
@@ -37,36 +55,40 @@ export class DataService {
 	/*
 	*/
 	getAPI(url:string) {
-		return this.http.get(url)
+		return this.http.get( url, this.createHeaders() )
 			.map(response => response.json())
-			.retry(3)
+			// .retry(3)
 			.catch(this.handleError);
-	}
-
-
-	/*
-	*/
-	getApiInterval(url:string, intervalSeconds:number) {
-		return Observable
-			.interval(intervalSeconds*1000)
-			.flatMap(() => this.getAPI(url));
 	}
 
 	/*
 	*/
 	postAPI(options) {
-
-		let headers = new Headers();
-		headers.append('Authorization', this.authorizationHeader);
-		headers.append('Content-Type', 'application/json');
-
-		const requestOptionsObject = new RequestOptions({
-	        headers: headers
-	    });
-
-		return this.http.post(options.url, options.body, requestOptionsObject)
+		return this.http.post( options.url, options.body, this.createHeaders() )
 		.map(response => response.json())
 		// .retry(3)
 		.catch(this.handleError);
+	}
+
+	/*
+	*/
+	createHeaders(){
+		let headers = new Headers();
+
+		// try to get Auth header and set it
+		const authHeader = this.authorizationHeader();
+
+		if(authHeader){
+			headers.append('Authorization', authHeader);	
+		}
+
+		// add content type header
+		headers.append('Content-Type', 'application/json');
+
+		// create header object and return it
+		return new RequestOptions({
+	        headers: headers
+	    });
+
 	}
 }

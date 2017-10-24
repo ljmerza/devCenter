@@ -3,12 +3,13 @@ import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { DataService } from './data.service';
+import { UserService } from './user.service';
 
 @Injectable()
-export class JiraService extends DataService{
+export class JiraService extends DataService {
 
-	constructor(http: Http) {
-		super(http);
+	constructor(http: Http, user:UserService) {
+		super(http, user);
 	}
 
 	/*
@@ -57,7 +58,7 @@ export class JiraService extends DataService{
 
 	pcrPass(id, attuid) {
 		return super.postAPI({
-			url: `${this.apiUrl}/crucible/review/pcr_pass/`,
+			url: `${this.apiUrl}/crucible/review/pcr_pass`,
 			body: JSON.stringify({
 		        crucible_id: id,
 				username: attuid
@@ -67,7 +68,7 @@ export class JiraService extends DataService{
 
 	pcrComplete(id, attuid) {
 		return super.postAPI({
-			url: `${this.apiUrl}/crucible/review/pcr_complete/`,
+			url: `${this.apiUrl}/crucible/review/pcr_complete`,
 			body: JSON.stringify({
 		        key: id,
 				username: attuid
