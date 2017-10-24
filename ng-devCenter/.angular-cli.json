@@ -24,8 +24,6 @@
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
-        "../node_modules/hammerjs/hammer.js",
-        "../node_modules/materialize-css/dist/js/materialize.min.js",
         "../node_modules/datatables.net/js/jquery.dataTables.js",
         "../node_modules/datatables.net-buttons/js/dataTables.buttons.js",
         "../node_modules/datatables.net-buttons/js/buttons.colVis.js",
