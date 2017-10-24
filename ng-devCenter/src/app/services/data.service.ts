@@ -38,9 +38,18 @@ export class DataService {
 	*/
 	getAPI(url:string) {
 		return this.http.get(url)
-		.map(response => response.json())
-		.retry(3)
-		.catch(this.handleError);
+			.map(response => response.json())
+			.retry(3)
+			.catch(this.handleError);
+	}
+
+
+	/*
+	*/
+	getApiInterval(url:string, intervalSeconds:number) {
+		return Observable
+			.interval(intervalSeconds*1000)
+			.flatMap(() => this.getAPI(url));
 	}
 
 	/*
