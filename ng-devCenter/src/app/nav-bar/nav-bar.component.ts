@@ -11,11 +11,6 @@ declare var $ :any;
 })
 export class NavBarComponent implements AfterContentInit {
 
-	username:string;
-	port:string;
-	emberUrl:string;
-	emberLocal:string;
-
 	ticketValue:string;
 
 	devUrl:string = this.data.devUrl;
@@ -29,19 +24,7 @@ export class NavBarComponent implements AfterContentInit {
 
 	/*
 	*/
-	constructor(private user: UserService, private data:DataService) {
-		this.username = user.username;
-		this.port = user.port;
-
-		// set emberUrl based on if localhost or not
-		if(user.emberUrl && user.emberUrl.match(/localhost/)){
-			this.emberLocal = '/#';
-			this.emberUrl = `${user.emberUrl}:4200`;
-		} else {
-			this.emberLocal = '';
-			this.emberUrl = `${user.emberUrl}:${this.port}`;
-		}
-	}	
+	constructor(private user: UserService, private data:DataService) {	}
 
 	/*
 	*/
@@ -63,7 +46,7 @@ export class NavBarComponent implements AfterContentInit {
 	/*
 	*/
 	searchTicket() {
-		// if NaN then is key and go to jira else need key fro msrp
+		// if NaN then is key and go to Jira else need key from MSRP
 		if( isNaN(parseInt(this.ticketValue)) ){
 			window.open(`${this.jiraUrl}/browse/${this.ticketValue}`);
 			this.ticketValue = '';

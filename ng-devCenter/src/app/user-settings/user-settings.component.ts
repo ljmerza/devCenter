@@ -8,36 +8,36 @@ import { UserService } from './../services/user.service'
 	styleUrls: ['./user-settings.component.css']
 })
 export class UserSettingsComponent implements AfterContentInit {
-	closeResult:string;
-	username:string;
-	password:string;
-	port:string;
-	emberUrl:string;
-	emberBuilds;
-
 	forcedSettings = false;
+
+	username;
+	password;
+	port;
+	emberUrl;
 
 	@ViewChild('content') private content;
 
 	constructor(private modalService: NgbModal, private user: UserService) {
-		this.username = user.username;
-		this.password = user.password;
-		this.port = user.port;
-		this.emberUrl = user.emberUrl;
-		this.emberBuilds = user.emberBuilds;
-
+		this.username = user.username
+		this.password = user.password
+		this.port = user.port
+		this.emberUrl = user.emberUrl
 	}
 
 	ngAfterContentInit() {
-		if(!this.username || !this.port || !this.emberUrl){
+		if(!this.user.username || !this.user.port || !this.user.emberUrl){
 			this.openUserSettings();
 			this.forcedSettings = true;
 		}
 	}
 
 	openUserSettings() {
+		this.username = this.user.username
+		this.password = this.user.password
+		this.port = this.user.port
+		this.emberUrl = this.user.emberUrl
+
 		this.modalService.open(this.content, {keyboard:false,backdrop:false}).result.then((result) => {
-			console.log(result)
 
 			if(result === 'save'){
 				this.user.setUserData('username', this.username);

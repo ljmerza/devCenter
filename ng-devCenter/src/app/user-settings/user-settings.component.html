@@ -23,7 +23,7 @@
 					class="form-control" 
 					id="attuidSetting" 
 					aria-describedby="emailHelp" 
-					placeholder="Enter email"
+					placeholder="Enter ATTuid"
 					[ngModelOptions]="{standalone: true}"
 					[(ngModel)]="username"
 				>
@@ -59,12 +59,12 @@
 					name="emberSetting"
 					class='form-control'
 				>
-					<option [ngValue]="null" disabled>Please choose...</option>
-					<option *ngFor="let sel of emberBuilds"
-						[ngValue]="sel.value"
-						[attr.selected]="emberBuilds.value === emberUrl ? true : null"
+					<option disabled>Please choose...</option>
+					<option *ngFor="let emberBuild of user.emberBuilds"
+						[ngValue]="emberBuild.value"
+						[attr.selected]="emberBuild.value === emberUrl ? true : null"
 					>
-						{{sel.label}}
+						{{emberBuild.label}}
 					</option>
 				</select>
 			</div>
