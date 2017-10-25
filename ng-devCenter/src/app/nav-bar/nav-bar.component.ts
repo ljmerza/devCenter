@@ -1,4 +1,4 @@
-import { Component, AfterContentInit } from '@angular/core';
+import { Component, AfterContentInit, ViewChild } from '@angular/core';
 import { UserService } from './../services/user.service'
 import { DataService } from './../services/data.service'
 
@@ -24,6 +24,8 @@ export class NavBarComponent implements AfterContentInit {
 	crucibleUrl:string = this.data.crucibleUrl;
 	codeCloudUrl:string = this.data.codeCloudUrl;
 	wikiUrl:string = this.data.wikiUrl;
+
+	@ViewChild('userSetting') private userSetting;
 
 	/*
 	*/
@@ -79,6 +81,12 @@ export class NavBarComponent implements AfterContentInit {
 				this.ticketValue = '';
 			})
 		}
+	}
+
+	/*
+	*/
+	openUserSettings(){
+		this.userSetting.openUserSettings();
 	}
 
 }

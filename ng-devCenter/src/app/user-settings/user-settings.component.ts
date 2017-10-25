@@ -8,11 +8,11 @@ import { UserService } from './../services/user.service'
 	styleUrls: ['./user-settings.component.css']
 })
 export class UserSettingsComponent implements AfterContentInit {
-	closeResult: string;
-	username;
-	password;
-	port;
-	emberUrl;
+	closeResult:string;
+	username:string;
+	password:string;
+	port:string;
+	emberUrl:string;
 	emberBuilds;
 
 	forcedSettings = false;
@@ -37,6 +37,7 @@ export class UserSettingsComponent implements AfterContentInit {
 
 	openUserSettings() {
 		this.modalService.open(this.content, {keyboard:false,backdrop:false}).result.then((result) => {
+			console.log(result)
 
 			if(result === 'save'){
 				this.user.setUserData('username', this.username);

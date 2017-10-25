@@ -91,7 +91,7 @@ class Crucible(CrucibleRepoBranch, CruciblePCR):
 		'''
 		# for each review see if there is a MSRP or key match
 		for review in reviews:
-			print('------key',msrp, key)
+			# print('------key',msrp, key)
 			if( (key and str(key) in review['review_title']) or (msrp and str(msrp) in review['review_title']) ):
 				return { 'status': True, 'data': review['review_id'] }
 		#  cant find URL so return false status

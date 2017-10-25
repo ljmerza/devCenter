@@ -7,55 +7,63 @@ import { UserService } from './user.service';
 
 @Injectable()
 export class JiraService extends DataService {
+	fields:string = 'customfield_10109,status,customfield_10212,summary,assignee,components,aggregatetimeestimate,aggregatetimeoriginalestimate,duedate'
 
+
+	/*
+	*/
 	constructor(http: Http, user:UserService) {
 		super(http, user);
 	}
 
+
 	/*
 	*/
 	getFilterData(jiraListType:string) {
-		let filterNumber;
+		let filterNumber:string = '';
+		let jql:string = '';
 
 		switch(jiraListType) {
 			case 'pcr':
-				filterNumber = 11128;
+				filterNumber = '11128';
 				break;
 
 			case 'beta':
-				filterNumber = 11004;
+				filterNumber = '11004';
 				break;
 
 			case 'cr':
-				filterNumber = 11007;
+				filterNumber = '11007';
 				break;
 
 			case 'qa':
-				filterNumber = 11019;
+				filterNumber = '11019';
 				break;
 
 			case 'uctready':
-				filterNumber = 11014;
+				filterNumber = '11014';
 				break;
 
 			case 'allmy':
-				filterNumber = 11418;
+				filterNumber = '11418';
 				break;
 
 			case 'allopen':
-				filterNumber = 12523;
+				filterNumber = '12523';
 				break;
 
 			default:
-				filterNumber = 12513;
+				jql = `assignee%20%3D%20${this.user.username}%20AND%20resolution%20%3D%20unresolved%20ORDER%20BY%20priority%20DESC%2C%20created%20ASC`;
+
 				break;
 		}
 
-		const fields = 'customfield_10109,status,customfield_10212,summary,assignee,components,aggregatetimeestimate,aggregatetimeoriginalestimate,duedate'
 
-		return super.getAPI(`${this.apiUrl}/jira/filter/${filterNumber}?fields=${fields}`);
+		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${this.fields}&filter=${filterNumber}`);
 	}
 
+	/*
+	*/
 	pcrPass(id, attuid) {
 		return super.postAPI({
 			url: `${this.apiUrl}/crucible/review/pcr_pass`,
@@ -66,6 +74,8 @@ export class JiraService extends DataService {
 		})
 	}
 
+	/*
+	*/
 	pcrComplete(id, attuid) {
 		return super.postAPI({
 			url: `${this.apiUrl}/crucible/review/pcr_complete`,

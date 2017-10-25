@@ -124,14 +124,16 @@
 					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/Test+Circuits+for+BMP+and+WFA">Test Circuits</a></li>
 					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/Crucible+Code+Reviews">Crucible PCR Process</a></li>
 					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/Developer+Workflow+in+JIRA">Jira Workflow</a></li>
+					<div class="dropdown-divider"></div>
+					<li><a class="dropdown-item" target="_blank" href="http://moose.web.att.com/">Moose</a></li>
 
 				</ul>
 			</li>
 		</ul>
 
 		<!-- jira ticket search -->
-		<form class="form-inline my-2 my-lg-0" id='JiraSearchform'>
-			<!-- <input 
+		<form class="form-inline mr-30" id='JiraSearchform'>
+			<input 
 				class="form-control mr-sm-2" 
 				id='searchJiraInput' 
 				type="text" 
@@ -140,23 +142,23 @@
 				[ngModelOptions]="{standalone: true}"
 				[(ngModel)]="ticketValue"
 				(keyup.enter)="ticketValue = $event.target.value; searchTicket()"
-			> -->
+			>
 			<button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="searchTicket()">Search</button>
 		</form>
 
-		<!-- <ul class="navbar-nav">
-			<li ngbDropdown class="d-inline-block" *ngIf='attuid; else login'>
-				<a class="nav-link dropdown-toggle" id="userDropdown" ngbDropdownToggle>{{attuid}}</a>
+		<ul class="navbar-nav position-relative mr-30">
+			<li ngbDropdown placement="bottom-right" class="d-inline-block" *ngIf='username'>
+				<a class="nav-link dropdown-toggle" id="userDropdown" ngbDropdownToggle>{{username}}</a>
 				<div ngbDropdownMenu aria-labelledby="userDropdown">
-					<li><a class="dropdown-item">User Settings</a></li>
+					<li><a class="dropdown-item" (click)='openUserSettings()'>User Settings</a></li>
 					<li><div class="dropdown-divider"></div></li>
 					<li><a class="dropdown-item">Logout</a></li>
 				</div>
 			</li>
-			<li class="nav-item" #login>
+			<li class="nav-item" *ngIf='!username'>
 				<a class="nav-link">Login</a>
 			</li>
-		</ul> -->
+		</ul>
 	</div>
 </nav>
 
@@ -164,4 +166,4 @@
 
 
 
-<app-user-settings></app-user-settings>
+<app-user-settings #userSetting></app-user-settings>

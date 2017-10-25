@@ -4,7 +4,7 @@
 		<button 
 			type="button"
 			[attr.title]='(!emberUrl || !port || !username) ? "ATTuid, Port, and Ember Url are required." : "Cancel Changes"'
-			[attr.disabled]='!emberUrl || !port || !username' 
+			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
 			class="close" 
 			aria-label="Close" 
 			(click)="d()"
@@ -56,8 +56,10 @@
 				<span class='text-danger'>*</span>
 				<select 
 					[(ngModel)]="emberUrl" 
-					name="emberSetting">
-					<option [ngValue]="null">Please choose...</option>
+					name="emberSetting"
+					class='form-control'
+				>
+					<option [ngValue]="null" disabled>Please choose...</option>
 					<option *ngFor="let sel of emberBuilds"
 						[ngValue]="sel.value"
 						[attr.selected]="emberBuilds.value === emberUrl ? true : null"

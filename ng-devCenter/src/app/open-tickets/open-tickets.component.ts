@@ -54,18 +54,21 @@ export class OpenTicketsComponent implements OnInit, AfterViewInit {
 		dom: 'Bfrtip',
 		// Configure the buttons
 		buttons: [
-			'columnsToggle',
-			'colvis',
-			'copy',
-			'print',
-			'excel',
 			{
-				text: 'Some button',
-				key: '1',
-				action: function (e, dt, node, config) {
-				alert('Button activated');
+				extend: 'colvis',
+				columns: ':gt(0)'
+			},
+			'copy',
+			{
+				extend: 'excel',
+				text: 'Save current page',
+				exportOptions: {
+					modifier: {
+						page: 'current'
+					}
+				}
 			}
-		}]
+		]
 	};
 	
 	openTickets:Array<any>;

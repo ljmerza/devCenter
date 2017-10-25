@@ -30,7 +30,7 @@ export class DataService {
 
 	/*
 	*/
-	constructor(private http:Http, private user:UserService) { }
+	constructor(private http:Http, public user:UserService) { }
 
 	/*
 	*/

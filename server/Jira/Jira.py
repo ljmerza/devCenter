@@ -20,6 +20,7 @@ class Jira(JiraStatusComponent):
 		'''
 		JiraStatusComponent.__init__(self)
 		self.fields = 'customfield_10109,comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,label,fixVersions,aggregatetimeestimate,aggregatetimeoriginalestimate,duedate,created,updated,customfield_10108,customfield_10102,customfield_10175,customfield_10103,customfield_10602'
+		self.jira_search_url = f'{self.jira_url}/rest/api/2/search'
 
 	def get_filter_url(self, filter_number, cred_hash):
 		'''gets the URL of a particular Jira filter
@@ -36,7 +37,7 @@ class Jira(JiraStatusComponent):
 			return response
 		return {'status': True, 'data': response['data']['searchUrl'] }
 
-	def get_raw_jira_tickets(self, cred_hash, start_at=0, max_results=1000, fields='', url='', filter_number=''):
+	def get_raw_jira_tickets(self, cred_hash, start_at=0, max_results=1000, fields='', jql='', filter_number=''):
 		'''returns the raw data from the Jira API of all Jira tickets from a filter number
 
 		Args:
@@ -44,22 +45,25 @@ class Jira(JiraStatusComponent):
 			start_at (int) optional what ticket to start at when getting the list of tickets (default 0)
 			max_results (int) optional maximum number of tickets to retrieve (default 1000)
 			fields (str) optional comma delimited list of fields to get from the Jira tickets
-			url (str) optional url to get the tickets from (will retrieve from filter_number if not given)
+			jql (str) optional JQL to get the tickets from (will retrieve from filter_number if not given)
 			filter_number (str) optional filter number to get Jira tickets from (need URL if not given)
 
 		Returns:
 			dict of status and data property with an array of Jira ticket objects
 		'''
 		# make sure we have a way to get Jira tickets
-		if not url and not filter_number:
+		if not jql and not filter_number:
 			return {'status': False, 'data': 'Please provide a filter number or URL to get Jira tickets.'}
+
 		# get filter url if URL not given
-		if not url:
+		if not jql:
 			response = self.get_filter_url(filter_number=filter_number, cred_hash=cred_hash)
 			if not response['status']:
 				return response
 			# get raw url
 			url = response['data']
+		else:
+			url = f'{self.jira_search_url}?jql={jql}'
 		# if fields not passed use default
 		if not fields:
 			fields = self.fields
@@ -69,7 +73,7 @@ class Jira(JiraStatusComponent):
 			return response
 		return {'status': True, 'data': response['data']['issues']}
 
-	def get_jira_tickets(self, cred_hash, max_results=1000, start_at=0, fields='', url='', filter_number=''):
+	def get_jira_tickets(self, cred_hash, max_results=1000, start_at=0, fields='', jql='', filter_number=''):
 		'''returns the formatted data from the Jira API of all Jira tickets from a filter number
 
 		Args:
@@ -77,7 +81,7 @@ class Jira(JiraStatusComponent):
 			start_at (int) optional what ticket to start at when getting the list of tickets (default 0)
 			max_results (int) optional maximum number of tickets to retrieve (default 1000)
 			fields (string) optional comma delimited list of fields to get from the Jira tickets
-			url (str) optional url to get the tickets from (will retrieve from filter_number if not given)
+			jql (str) optional JQL to get the tickets from (will retrieve from filter_number if not given)
 			filter_number (str) optional filter number to get Jira tickets from (need URL if not given)
 
 		Returns:
@@ -85,7 +89,7 @@ class Jira(JiraStatusComponent):
 			as the totla number of ticket found in total_tickets
 		'''
 		# get jira tickets and check response
-		response = self.get_raw_jira_tickets(filter_number=filter_number, max_results=max_results, start_at=start_at, cred_hash=cred_hash, fields=fields)
+		response = self.get_raw_jira_tickets(filter_number=filter_number, max_results=max_results, start_at=start_at, cred_hash=cred_hash, fields=fields, jql=jql)
 		if not response['status']:
 			return response
 
