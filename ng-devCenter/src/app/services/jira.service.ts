@@ -7,7 +7,7 @@ import { UserService } from './user.service';
 
 @Injectable()
 export class JiraService extends DataService {
-	fields:string = 'customfield_10109,status,customfield_10212,summary,assignee,components,aggregatetimeestimate,aggregatetimeoriginalestimate,duedate'
+	fields:string = 'customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate'
 
 
 	/*

@@ -4,43 +4,41 @@ import { Pipe, PipeTransform } from '@angular/core';
 	name: 'worktime'
 })
 export class WorkTimePipe implements PipeTransform {
-	transform(seconds: number): any {
-		let convertedTime = '';
-		let subtractedTime;
-		let timeWord;
+	transform(worktime): string {
 
-		while(seconds > 0){
-			if(seconds < 60){
-				convertedTime += seconds + ' seconds ';
-				seconds -= seconds;
+		if(worktime == 0) return '';
 
-			} else if(seconds < 60*60){ // smaller than 1 hour
-				subtractedTime = Math.floor(seconds/60);
-				timeWord = (subtractedTime === 1) ? ' minute ' : ' minutes ';
-				convertedTime += subtractedTime + timeWord;
-				seconds -= subtractedTime*60;
+		let day:string = '';
 
-			} else if(seconds < 60*60*8) { // smaller than one 8 hour day
-				subtractedTime = Math.floor(seconds/60/60);
-				timeWord = (subtractedTime === 1) ? ' hour ' : ' hours ';
-				convertedTime += subtractedTime + timeWord;
-				seconds -= subtractedTime*60*60;
+		return worktime.split(' ').map( time => {
 
-			} else if(seconds < 60*60*8*5) { // smaller than one week with 8 hour days
-				subtractedTime = Math.floor(seconds/60/60/8);
-				timeWord = (subtractedTime === 1) ? ' day ' : ' days ';
-				convertedTime += subtractedTime + timeWord;
-				seconds -= subtractedTime*60*60*8;
+			switch( time.substr(-1) ){
 
-			} else { 
-				subtractedTime = Math.floor(seconds/60/60/8/5);
-				timeWord = (subtractedTime === 1) ? ' week ' : ' weeks ';
-				convertedTime += subtractedTime + timeWord;
-				seconds -= subtractedTime*60*60*8*5;
+				case 'w':
+					day = ' week';
+					break;
+
+				case 'd':
+					day = ' day';
+					break;
+
+				case 'h':
+					day = ' hour';
+					break;
+
+				case 'm':
+					day = ' minute';
+					break;
+
+				case 's':
+					day = ' second';
+					break;
 			}
-		}
 
-		return convertedTime;
+			if(time[0] !== '1') day += 's';
+
+			return time.substring(0, time.length - 1) + day;	
+		}).join(' ')
 	}
 
 }

@@ -269,16 +269,28 @@ def get_severity(issue):
 
 def get_dates(issue):
 	dates = {}
-	if 'aggregatetimeestimate' in issue['fields']:
-		dates['logged'] = issue['fields']['aggregatetimeestimate']
-	if 'aggregatetimeoriginalestimate' in issue['fields']:
-		dates['estimate'] = issue['fields']['aggregatetimeoriginalestimate']
+
+	# get time tracking values
+	if 'timetracking' in issue['fields']:
+		# get estimate
+		if 'originalEstimate' in issue['fields']['timetracking']:
+			dates['estimate'] = issue['fields']['timetracking']['originalEstimate']
+		# get time logged
+		if 'timeSpent' in issue['fields']['timetracking']:
+			dates['logged'] = issue['fields']['timetracking']['timeSpent']
+		else:
+			dates['logged'] = 0
+	# due date
 	if 'duedate' in issue['fields']:
 		dates['duedate'] = issue['fields']['duedate']
+	# create
 	if 'created' in issue['fields']:
 		dates['created'] = issue['fields']['created']
+	# last updated
 	if 'updated' in issue['fields']:
 		dates['updated'] = issue['fields']['updated']
+	# start date
 	if 'customfield_10109' in issue['fields']:
 		dates['started'] = issue['fields']['customfield_10109']
+
 	return dates
