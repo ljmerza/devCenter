@@ -7,11 +7,11 @@
 	</div>
 	<div class="row">
 		<div class="col-12">
-			<span class='refresh-button' [ngClass]="{'loading': isLoading}" *ngIf='isLoading;'>
+			<span class='refresh-button' [ngClass]="{'loading': isLoadingTickets}" *ngIf='isLoadingTickets'>
 				<i class="material-icons">cached</i>
 			</span>
 
-			<div [hidden]='isLoading'>
+			<div [hidden]='isLoadingTickets'>
 				<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
 					<thead>
 						<tr>
@@ -31,7 +31,7 @@
 					<tbody>
 						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}}'>
 							<td>{{ticket.key}}</td>
-							<td><a target="_blank" href="{{jiraUrl}}/browse/{{ticket.key}}">{{ticket.msrp}}</a></td>
+							<td><a target="_blank" href="{{jira.jiraUrl}}/browse/{{ticket.key}}">{{ticket.msrp}}</a></td>
 							<td class='summary-format'>{{ticket.summary}}</td>
 							<td>
 								<div>{{ticket.status}}</div>
@@ -43,7 +43,7 @@
 							<td>{{ticket.dates.logged | worktime}}</td>
 							<td>
 								<span *ngIf='ticket.crucible_id'>
-									<a target="_blank" href="{{crucibleUrl}}/cru/{{ticket.crucible_id}}">{{ticket.crucible_id}}</a>
+									<a target="_blank" href="{{jira.crucibleUrl}}/cru/{{ticket.crucible_id}}">{{ticket.crucible_id}}</a>
 									<i class="material-icons" title='PCR Pass/Complete' (click)="openModal(ticket.crucible_id, ticket.key, 'pass', statusModal)">done</i>
 								</span>
 							</td>
@@ -61,15 +61,15 @@
 <!-- Status Model -->
 <ng-template #statusModal let-c="close" let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">{{statusModelTitle}}</h4>
+    <h4 class="modal-title">PCR Pass/Complete</h4>
     <button type="button" class="close" aria-label="Close" (click)="c()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <p>{{statusModelMessage}}</p>
+    <p>Would you like to PCR Pass or Complete?</p>
   </div>
-  <div class="modal-footer" *ngIf='modalType == "pass"'>
+  <div class="modal-footer">
     <button type="button" class="btn btn-outline-dark" (click)="c('pass')">PCR Pass</button>
     <button type="button" class="btn btn-outline-dark" (click)="c('complete')">PCR Complete</button>
     <button type="button" class="btn btn-outline-dark" (click)="c()">Cancel</button>

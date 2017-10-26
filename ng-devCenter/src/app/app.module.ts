@@ -15,7 +15,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
-import { OpenTicketsComponent } from './open-tickets/open-tickets.component';
+import { TicketsComponent } from './tickets/tickets.component';
 
 import { JiraService } from './services/jira.service';
 import { DataService } from './services/data.service';
@@ -28,7 +28,7 @@ import { WorkTimePipe } from './work-time.pipe';
 		AppComponent,
 		NavBarComponent,
 		UserSettingsComponent,
-		OpenTicketsComponent,
+		TicketsComponent,
 		NotFoundComponent,
 		WorkTimePipe
 	],

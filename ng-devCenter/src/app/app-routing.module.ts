@@ -6,12 +6,12 @@ import { NotFoundComponent } from './not-found/not-found.component';
 
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
-import { OpenTicketsComponent } from './open-tickets/open-tickets.component';
+import { TicketsComponent } from './tickets/tickets.component';
 
 
 const appRoutes: Routes = [
-	{path: '', component: OpenTicketsComponent},
-	{path: 'jira/:filter', component: OpenTicketsComponent},
+	{path: '', component: TicketsComponent},
+	{path: 'jira/:filter', component: TicketsComponent},
 	{path: '', redirectTo: '/jira/mytickets', pathMatch: 'full'},
 	{path: '**', redirectTo: '/jira/mytickets'}
 ]
