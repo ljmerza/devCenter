@@ -20,12 +20,12 @@ class Chat(object):
 		self.bot_name = os.environ['BOT_NAME']
 		self.bot_password = os.environ['BOT_PASSWORD']
 		##########################################################
-		self.apex_chat = os.environ['QCHAT_APEX']
-		self.dti_chat = os.environ['QCHAT_DTI']
-		self.test_chat = os.environ['QCHAT_TEST']
-		self.jira_chat = os.environ['QCHAT_JIRA']
+		self.apex_chat = os.environ['CHAT_APEX']
+		self.dti_chat = os.environ['CHAT_DTI']
+		self.test_chat = os.environ['CHAT_TEST']
+		self.jira_chat = os.environ['CHAT_JIRA']
 		##########################################################
-		self.chat_url = os.environ['chat_URL']
+		self.chat_url = os.environ['CHAT_URL']
 		self.chat_api = f'{self.chat_url}/push'
 		self.chat_api_chatroom = f'{self.chat_api}/meeting:'
 		self.chat_api_menu = f'{self.chat_api}/menu/'
