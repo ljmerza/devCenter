@@ -9,6 +9,7 @@ import { WorkTimePipe } from './../work-time.pipe'
 
 import { DataTableDirective } from 'angular-datatables';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgProgress } from 'ngx-progressbar';
 
 import * as $ from 'jquery';
 
@@ -20,7 +21,6 @@ import * as $ from 'jquery';
 export class TicketsComponent implements OnInit {
 
 	openTickets:Array<any>;
-	isLoadingTickets:boolean = true;
 
 	@ViewChild(DataTableDirective)
 	private dtElement: DataTableDirective;
@@ -40,31 +40,44 @@ export class TicketsComponent implements OnInit {
 
 	/*
 	*/
-	constructor(private jira:JiraService, private route:ActivatedRoute, private modalService:NgbModal, private user:UserService) {}
+	constructor(
+		public ngProgress: NgProgress, 
+		private jira:JiraService, 
+		private route:ActivatedRoute, 
+		private modalService:NgbModal, 
+		private user:UserService
+	) {}
 	
 	/*
 	*/
+
+	searchTicket$;
 	ngOnInit():void {
 		this.route.paramMap
 		.subscribe( params => {
 
+			// if an ajax request is already being made then cancel it
+			if (this.searchTicket$) {
+	   			this.searchTicket$.unsubscribe();
+			}
+
 			// if required user info exists then get tickets
 			if(this.user.username && this.user.port && this.user.emberUrl){
-				this.setFilterData( params.get('filter') );
+				this.searchTicket$ = this.setFilterData( params.get('filter') );
 			}
 		});
 	}
 
 	/*
 	*/
-	setFilterData(jiraListType:string):void {
-		this.isLoadingTickets = true;
+	setFilterData(jiraListType:string) {
+		this.ngProgress.start();
 
-		this.jira.getFilterData(jiraListType)
+		return this.jira.getFilterData(jiraListType)
 		.subscribe( issues => {
-			// save tickets, set loading to false, and re-render data tables
+			// save tickets and re-render data tables
 			this.openTickets = issues.data;
-			this.isLoadingTickets = false;
+			this.ngProgress.done();
 			this.rerender();
 		});	
 	}
@@ -73,7 +86,7 @@ export class TicketsComponent implements OnInit {
 	*/
 	rerender():void {
 
-		// if dagtatable already exists then destrory then render else just render
+		// if datatable already exists then destroy then render else just render
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
 				dtInstance.destroy();

@@ -2,16 +2,13 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-12">
-			<h1>TEST</h1>
+			<h1 class='text-center title-spacing'>{{jira.title}} Tickets</h1>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-12">
-			<span class='refresh-button' [ngClass]="{'loading': isLoadingTickets}" *ngIf='isLoadingTickets'>
-				<i class="material-icons">cached</i>
-			</span>
-
-			<div [hidden]='isLoadingTickets'>
+			<ng-progress [showSpinner]="false" [color]="'blue'"></ng-progress>
+			<div [hidden]='!openTickets'>
 				<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
 					<thead>
 						<tr>

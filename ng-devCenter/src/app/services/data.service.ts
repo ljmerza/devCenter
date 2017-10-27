@@ -55,7 +55,7 @@ export class DataService {
 	/*
 	*/
 	getAPI(url:string) {
-		return this.http.get( url, this.createHeaders() )
+		return this.http.get(url, this.createHeaders() )
 			.map(response => response.json())
 			// .retry(3)
 			.catch(this.handleError);

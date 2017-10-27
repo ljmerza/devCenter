@@ -4,27 +4,9 @@
 	max-width: 300px;
 }
 
-
-/*loading icon animation and editing*/
-.loading {
-		-webkit-animation: rotation 2s infinite linear;
-}
-@-webkit-keyframes rotation {
-	from {
-		-webkit-transform: rotate(0deg);
-	}
-	to {
-		-webkit-transform: rotate(359deg);
-	}
-}
-
-.refresh-button i {
-	font-size: 3em !important;
-	-moz-transform: scaleX(-1);
-	-o-transform: scaleX(-1);
-	-webkit-transform: scaleX(-1);
-	transform: scaleX(-1);
-	filter: FlipH;
-	-ms-filter: "FlipH";
-
+.title-spacing {
+	margin-top: 50px;
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #D3D3D3;
 }

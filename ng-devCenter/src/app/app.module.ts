@@ -9,6 +9,7 @@ import { HttpModule } from '@angular/http';
 import { MomentModule } from 'angular2-moment';
 
 import { DataTablesModule } from 'angular-datatables';
+import { NgProgressModule } from 'ngx-progressbar';
 
 import { AppComponent } from './app.component';
 import { NotFoundComponent } from './not-found/not-found.component';
@@ -39,6 +40,7 @@ import { WorkTimePipe } from './work-time.pipe';
 		HttpModule,
 		MomentModule,
 		AppRoutingModule,
+		NgProgressModule,
 		NgbModule.forRoot()
 	],
 	providers: [DataService, JiraService, UserService],

@@ -8,7 +8,7 @@ import { UserService } from './user.service';
 @Injectable()
 export class JiraService extends DataService {
 	fields:string = 'customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate'
-
+	title:string = '';
 
 	/*
 	*/
@@ -26,30 +26,37 @@ export class JiraService extends DataService {
 		switch(jiraListType) {
 			case 'pcr':
 				filterNumber = '11128';
+				this.title = 'Peer Code Review';
 				break;
 
 			case 'beta':
 				filterNumber = '11004';
+				this.title = 'Beta';
 				break;
 
 			case 'cr':
 				filterNumber = '11007';
+				this.title = 'Code Review';
 				break;
 
 			case 'qa':
 				filterNumber = '11019';
+				this.title = 'QA';
 				break;
 
 			case 'uctready':
 				filterNumber = '11014';
+				this.title = 'UCT Ready';
 				break;
 
 			case 'allmy':
 				filterNumber = '11418';
+				this.title = 'All My';
 				break;
 
 			case 'allopen':
 				filterNumber = '12523';
+				this.title = 'All Open';
 				break;
 
 			default:
@@ -89,9 +96,7 @@ export class JiraService extends DataService {
 	/*
 	*/
 	searchTicket(msrp:string){
-		return super.getAPI({
-			url: `${this.apiUrl}/jira/get_key/${msrp}`
-		})
+		return super.getAPI(`${this.apiUrl}/jira/get_key/${msrp}`)
 	}
 
 }
