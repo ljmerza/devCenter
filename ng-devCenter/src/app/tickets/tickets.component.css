@@ -1,0 +1,12 @@
+
+.summary-format {
+	word-break: break-all;
+	max-width: 300px;
+}
+
+.title-spacing {
+	margin-top: 50px;
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #D3D3D3;
+}

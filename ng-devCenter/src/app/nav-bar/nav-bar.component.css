@@ -1,0 +1,36 @@
+.dropdown-submenu{
+	position: relative;
+}
+
+.dropdown-submenu:hover > .dropdown-submenu-items {
+	display: block;
+	position: absolute;
+	top: -10px;
+	left: 100%;
+}
+
+.dropdown-submenu-icon {
+	position: absolute;
+	top: 8px;
+	right: 0;
+	font-size: 17px;
+}
+
+/* label underline focus color */
+.input-field input[type=text] {
+	border: 1px solid #333;
+	box-shadow: 0 1px 0 0 #333;
+	padding-left: 10px;
+}
+
+.mr-30 {
+	margin-right: 30px;
+}
+
+.mr-75 {
+	margin-right: 75px;
+}
+
+.pointer-cursor {
+	cursor: pointer;
+}

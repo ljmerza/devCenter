@@ -1,0 +1,97 @@
+<ng-template #content let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">User Settings</h4>
+		<button 
+			type="button"
+			[attr.title]='(!emberUrl || !port || !username) ? "ATTuid, Port, and Ember Url are required." : "Cancel Changes"'
+			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
+			class="close" 
+			aria-label="Close" 
+			(click)="d()"
+		>
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+
+		<form>
+			<div class="form-group">
+				<label for="attuidSetting">ATTuid</label>
+				<span class='text-danger'>*</span>
+				<input 
+					type="text" 
+					class="form-control" 
+					id="attuidSetting" 
+					aria-describedby="emailHelp" 
+					placeholder="Enter ATTuid"
+					[ngModelOptions]="{standalone: true}"
+					[(ngModel)]="username"
+				>
+			</div>
+			<div class="form-group">
+				<label for="passwordSetting">Password</label> (Not required but app will be READ ONLY)
+				<input 
+					type="password" 
+					class="form-control" 
+					id="passwordSetting" 
+					placeholder="Password"
+					[ngModelOptions]="{standalone: true}"
+					[(ngModel)]="password"
+				>
+			</div>
+			<div class="form-group">
+				<label for="portSetting">Port</label>
+				<span class='text-danger'>*</span>
+				<input 
+					type="text" 
+					class="form-control" 
+					id="portSetting" 
+					placeholder="Port"
+					[ngModelOptions]="{standalone: true}"
+					[(ngModel)]="port"
+				>
+			</div>
+			<div class="form-group">
+				<label for="emberSetting">Ember Url</label>
+				<span class='text-danger'>*</span>
+				<select 
+					[(ngModel)]="emberUrl" 
+					name="emberSetting"
+					class='form-control'
+				>
+					<option disabled>Please choose...</option>
+					<option *ngFor="let emberBuild of user.emberBuilds"
+						[ngValue]="emberBuild.value"
+						[attr.selected]="emberBuild.value === emberUrl ? true : null"
+					>
+						{{emberBuild.label}}
+					</option>
+				</select>
+			</div>
+
+			<div class="form-group text-danger text-center" *ngIf='!emberUrl || !port || !username'>
+				ATTuid, Port, and Ember Url are required to continue.
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button 
+			type="button" 
+			[attr.title]='(!emberUrl || !port || !username) ? "ATTuid, Port, and Ember Url are required." : "Save Changes"'
+			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
+			class="btn btn-outline-dark" 
+			(click)="c('save')"
+		>
+			Save
+		</button>
+		<button 
+			type="button"
+			[attr.title]='(!emberUrl || !port || !username) ? "ATTuid, Port, and Ember Url are required." : "Cancel Changes"'
+			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
+			class="btn btn-outline-dark" 
+			(click)="c()"
+		>
+			Cancel
+		</button>
+	</div>
+</ng-template>
