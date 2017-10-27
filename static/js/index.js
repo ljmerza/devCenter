@@ -6,8 +6,12 @@ $(document).ready(function(){
   $("#createReview").click(createNewCrucible);
 
 });
+const host_url = 'http://localhost:5858';
+
 
 function getRepoBranches() {
+  
+
   // hide branch dropdowns and get new repo
   // 
   let branchParent = $(this).parent().parent().children('.branchDropdownParent');
@@ -16,7 +20,7 @@ function getRepoBranches() {
 
   let repo = $(this).val().toLowerCase().replace(' ', '_');
 
-  $.get(`http://localhost:5858/dev_center/git/repo/${repo}`)
+  $.get(`${host_url}/dev_center/git/repo/${repo}`)
   .then( branches => {
 
     console.log('branches: ', branches);
@@ -108,17 +112,17 @@ function createNewCrucible() {
     // for each section of logged time add it up to seconds
     log_time.split(' ').forEach( time_section => {
 
-    	const time = parseInt( time_section.slice(0, time_section.length) );
+      const time = parseInt( time_section.slice(0, time_section.length) );
 
-      	if( /[0-9]d/.test(time_section) ){
-        	time_logged_minutes += 24*60*time;
+        if( /[0-9]d/.test(time_section) ){
+          time_logged_minutes += 24*60*time;
 
-      	} else if( /[0-9]h/.test(time_section) ){
-        	time_logged_minutes += 60*time;
+        } else if( /[0-9]h/.test(time_section) ){
+          time_logged_minutes += 60*time;
 
-      	} else if( /[0-9]m/.test(time_section) ){
-        	time_logged_minutes += time;
-      	}
+        } else if( /[0-9]m/.test(time_section) ){
+          time_logged_minutes += time;
+        }
 
     });
 
@@ -140,7 +144,7 @@ function createNewCrucible() {
 
   $.ajax({
     type: 'POST',
-    url: `http://localhost:5858/dev_center/crucible/review/create/`,
+    url: `${host_url}/dev_center/crucible/review/create`,
     data: JSON.stringify(data),
     contentType: 'application/json;charset=UTF-8',
 

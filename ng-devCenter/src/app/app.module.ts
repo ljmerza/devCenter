@@ -1,19 +1,18 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { NgModule } from '@angular/core';
-
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+
 import { MomentModule } from 'angular2-moment';
 
 import { DataTablesModule } from 'angular-datatables';
 import { NgProgressModule } from 'ngx-progressbar';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
-import { NotFoundComponent } from './not-found/not-found.component';
 
+import { NotFoundComponent } from './not-found/not-found.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { TicketsComponent } from './tickets/tickets.component';

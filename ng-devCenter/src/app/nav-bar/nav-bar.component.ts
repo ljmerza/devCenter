@@ -17,7 +17,7 @@ export class NavBarComponent implements AfterContentInit {
 
 	/*
 	*/
-	constructor(private user: UserService, private data:DataService, private jira:JiraService) { }
+	constructor(public user: UserService, public data:DataService,  private jira:JiraService) { }
 
 	/*
 	*/

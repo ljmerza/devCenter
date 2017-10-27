@@ -42,7 +42,7 @@ export class TicketsComponent implements OnInit {
 	*/
 	constructor(
 		public ngProgress: NgProgress, 
-		private jira:JiraService, 
+		public jira:JiraService, 
 		private route:ActivatedRoute, 
 		private modalService:NgbModal, 
 		private user:UserService

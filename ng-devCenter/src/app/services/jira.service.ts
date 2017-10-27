@@ -12,7 +12,7 @@ export class JiraService extends DataService {
 
 	/*
 	*/
-	constructor(http: Http, user:UserService) {
+	constructor(public http: Http, public user:UserService) {
 		super(http, user);
 	}
 

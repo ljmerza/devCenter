@@ -21,7 +21,7 @@ export class DataService {
 	crucibleUrl:string = 'https://icode3.web.att.com';
 	codeCloudUrl:string = 'https://codecloud.web.att.com';
 
-	apiUrl:string = 'http://localhost:5858/dev_center';
+	apiUrl:string = 'http://m5devacoe01.gcsc.att.com:5858/dev_center';
 
 	devUrl:string = 'http://m5devacoe01.gcsc.att.com';
 	betaUrl:string = 'http://chrapud16b.gcsc.att.com';
@@ -30,7 +30,7 @@ export class DataService {
 
 	/*
 	*/
-	constructor(private http:Http, public user:UserService) { }
+	constructor(public http:Http, public user:UserService) { }
 
 	/*
 	*/
