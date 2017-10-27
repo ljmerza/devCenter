@@ -20,9 +20,9 @@
 					<a class="dropdown-item" [routerLink]="['/jira', 'allmy']">All My Tickets</a>
 					<a class="dropdown-item" [routerLink]="['/jira', 'allopen']">All Open Tickets</a>
 					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" target="_blank" href="https://jira.web.att.com:8443/secure/Dashboard.jspa">Jira</a>
-					<a class="dropdown-item" target="_blank" href="https://icode3.web.att.com/cru/browse/CR-UD">Crucible</a>
-					<a class="dropdown-item" target="_blank" href="https://codecloud.web.att.com/projects">Code Cloud</a>
+					<a class="dropdown-item" target="_blank" href="{{data.jiraUrl}}/secure/Dashboard.jspa">Jira</a>
+					<a class="dropdown-item" target="_blank" href="{{data.crucibleUrl}}/cru/browse/CR-UD">Crucible</a>
+					<a class="dropdown-item" target="_blank" href="{{data.codeCloudUrl}}/projects">Code Cloud</a>
 				</div>
 			</li>
 
@@ -32,7 +32,7 @@
 				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Dev Links</a>
 				<ul ngbDropdownMenu aria-labelledby="devDropdown">
 
-					<li><a class="dropdown-item" target="_blank" href="{{devUrl}}:{{user.port}}/UD/cgi-bin/worklist.pl">UD</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/UD/cgi-bin/worklist.pl">UD</a></li>
 	
 					<li class="dropdown-submenu">
 						<a class="dropdown-item">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
@@ -58,11 +58,11 @@
 						</ul>
 					</li>
 
-					<li><a class="dropdown-item" target="_blank" href="{{devUrl}}:{{user.port}}/aqe/cgi-bin/index.pl">AQE</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{devUrl}}:{{user.port}}/teamdb/view.php?ATTuid=lm240n">TeamDB</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{devUrl}}:{{user.port}}/wam/cgi-bin/wam.pl">WAM</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{devUrl}}:{{user.port}}/upm/app.php">UPM</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{devUrl}}:{{user.port}}/Templates/cgi-bin/Template.pl">Template Tool</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/aqe/cgi-bin/index.pl">AQE</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/teamdb/view.php?ATTuid=lm240n">TeamDB</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/wam/cgi-bin/wam.pl">WAM</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/upm/app.php">UPM</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/Templates/cgi-bin/Template.pl">Template Tool</a></li>
 
 				</ul>
 			</li>
@@ -86,12 +86,12 @@
 				<a class="nav-link dropdown-toggle" id="betaDropdown" ngbDropdownToggle>Beta Links</a>
 				<div ngbDropdownMenu aria-labelledby="betaDropdown">
 					<a class="dropdown-item" target="_blank" href="http://ud-beta.web.att.com/UD/cgi-bin/worklist.pl">UD</a>
-					<a class="dropdown-item" target="_blank" href="{{betaUrl}}/aqe/cgi-bin/index.pl">AQE</a>
-					<a class="dropdown-item" target="_blank" href="{{betaUrl}}/teamdb/view.php?ATTuid=lm240n">TeamDB</a>
-					<a class="dropdown-item" target="_blank" href="{{betaUrl}}/wam/cgi-bin/wam.pl">WAM</a>
-					<a class="dropdown-item" target="_blank" href="{{betaUrl}}/upm2/access.php">UPM</a>
-					<a class="dropdown-item" target="_blank" href="{{betaUrl}}/Templates/cgi-bin/Template.pl">Template Tool</a>
-					<a class="dropdown-item" target="_blank" href="{{betaUrl}}/tqi3/cgi-bin/index.pl">TQI</a>
+					<a class="dropdown-item" target="_blank" href="{{data.betaUrl}}/aqe/cgi-bin/index.pl">AQE</a>
+					<a class="dropdown-item" target="_blank" href="{{data.betaUrl}}/teamdb/teams.php">TeamDB</a>
+					<a class="dropdown-item" target="_blank" href="{{data.betaUrl}}/wam/cgi-bin/wam.pl">WAM</a>
+					<a class="dropdown-item" target="_blank" href="{{data.betaUrl}}/upm2/access.php">UPM</a>
+					<a class="dropdown-item" target="_blank" href="{{data.betaUrl}}/Templates/cgi-bin/Template.pl">Template Tool</a>
+					<a class="dropdown-item" target="_blank" href="{{data.betaUrl}}/tqi3/cgi-bin/index.pl">TQI</a>
 				</div>
 			</li>
 
@@ -100,30 +100,30 @@
 				<a class="nav-link dropdown-toggle" id="betaDropdown" ngbDropdownToggle>Wiki Links</a>
 				<ul ngbDropdownMenu aria-labelledby="betaDropdown">
 					<li><a class="dropdown-item" target="_blank" href="http://glossary.web.att.com/">Glossary</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/GCS+BizOps">Biz Ops</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/pages/viewpage.action?pageId=480723373">Accelerate</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/GCS+BizOps">Biz Ops</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/pages/viewpage.action?pageId=480723373">Accelerate</a></li>
 					<div class="dropdown-divider"></div>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/Ember+Installation+and+Setup">Ember Install</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/Complete+New+Hire+Training+Program">New Hire</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/HOWTO%3A+Create+a+SASHA+UA+Ticket">Create SASHA UA Ticket</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/AQE%3A+How+to+Work+An+AQE+Search+String+Ticket">AQE Basics</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/pages/viewpage.action?spaceKey=GCSDevOps&title=HOWTO%3A+Report+an+API+Defect">API Defect</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/Team+Deployments+Walkthrough">Team Deployments</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/Ember+Installation+and+Setup">Ember Install</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/Complete+New+Hire+Training+Program">New Hire</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/HOWTO%3A+Create+a+SASHA+UA+Ticket">Create SASHA UA Ticket</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/AQE%3A+How+to+Work+An+AQE+Search+String+Ticket">AQE Basics</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/pages/viewpage.action?spaceKey=GCSDevOps&title=HOWTO%3A+Report+an+API+Defect">API Defect</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/Team+Deployments+Walkthrough">Team Deployments</a></li>
 
 					<li class="dropdown-submenu">
 						<a class="dropdown-item" data-toggle="dropdown" href="#">Coding Standards<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
-							<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/pages/viewpage.action?pageId=383617008">Perl</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/DTI+-+JavaScript+Coding+Standards">JavaScript</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/DTI+-+SQL+Coding+Standards">SQL</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/pages/viewpage.action?pageId=383617008">Perl</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/DTI+-+JavaScript+Coding+Standards">JavaScript</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/DTI+-+SQL+Coding+Standards">SQL</a></li>
 						</ul>
 					</li>
 
 					<div class="dropdown-divider"></div>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/Git+Process+-+DTI">Git Repos</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/Test+Circuits+for+BMP+and+WFA">Test Circuits</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/Crucible+Code+Reviews">Crucible PCR Process</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{wikiUrl}}/display/GCSDevOps/Developer+Workflow+in+JIRA">Jira Workflow</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/Git+Process+-+DTI">Git Repos</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/Test+Circuits+for+BMP+and+WFA">Test Circuits</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/Crucible+Code+Reviews">Crucible PCR Process</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/Developer+Workflow+in+JIRA">Jira Workflow</a></li>
 					<div class="dropdown-divider"></div>
 					<li><a class="dropdown-item" target="_blank" href="http://moose.web.att.com/">Moose</a></li>
 
