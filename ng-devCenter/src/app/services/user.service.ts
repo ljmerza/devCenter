@@ -44,7 +44,6 @@ export class UserService {
 		} else {
 			this.emberLocal = '';
 			this.emberPort = this.port;
-			console.log(this.emberPort)
 		}
 	}
 
