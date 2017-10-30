@@ -11,23 +11,24 @@
 	border-bottom: 1px solid #D3D3D3;
 }
 
-@import '~@swimlane/ngx-datatable/release/themes/dark.css';
 /*
 bootstrap table theme
 */
 .ngx-datatable.bootstrap {
 	box-shadow: none;
-	font-size: 13px; 
+	font-size: 13px;
 }
 
 .ngx-datatable.bootstrap .datatable-header {
-	height: unset !important;
-}.ngx-datatable .datatable-header
+	font-size: 20px !important;
+	color: blue;
+	background-color: red; 
+}
 
 .ngx-datatable.bootstrap .datatable-header .datatable-header-cell {
 	vertical-align: bottom;
 	padding: 0.75rem;
-	border-bottom: 1px solid #d1d4d1;
+	border-bottom: 1px solid #d1d4d1 !important;
 }
 
 .ngx-datatable.bootstrap .datatable-header .datatable-header-cell .datatable-header-cell-label {

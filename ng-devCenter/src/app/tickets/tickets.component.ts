@@ -25,8 +25,8 @@ export class TicketsComponent implements OnInit {
 	tableColumns = [
 		{prop: 'key'},
 		{prop: 'msrp'},
-		{name: 'Summary', prop: 'summary'},
-		{name: 'Status', prop: 'status'},
+		{prop: 'summary'},
+		{prop: 'status'},
 		{name: 'Start Date', prop: 'dates.started'},
 		{name: 'Due Date', prop: 'dates.duedate'},
 		{name: 'Estimate', prop: 'dates.estimate'},
