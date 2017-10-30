@@ -3,6 +3,7 @@
 import os
 import logging
 import sys
+import time
 
 from . import SQLModels
 
@@ -96,8 +97,9 @@ class DevCenterSQL():
 		del jira_ticket['dates']
 
 		# try to get existing Jira ticket
+		start = time.time()
 		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == jira_ticket['key']).first()
-		
+
 		# if existing ticket doesn't exist then add to DB
 		if row is None:
 			row = SQLModels.Tickets(**jira_ticket)
@@ -106,6 +108,7 @@ class DevCenterSQL():
 			# else existing ticket exist so update all fields we have
 			for key, val in jira_ticket.items():
 				setattr(row, key, val)
+
 		# commit the changes and return result
 		return self.session.commit()
 

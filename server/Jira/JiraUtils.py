@@ -104,3 +104,17 @@ def generate_repo_table(repos):
 |"""+repositoryName+'|'+reviewedBranch+'|'+baseBranch+'|'
 	# return table data
 	return table_data
+
+def diff_ticket(self, jira_ticket, sql_ticket):
+
+	jira_ticket['key'] == sql_ticket.key
+	jira_ticket['msrp'] == sql_ticket.msrp
+	jira_ticket['summary'] == sql_ticket.summary
+	jira_ticket['username'] == sql_ticket.username
+	jira_ticket['component'] == sql_ticket.component
+	jira_ticket['status'] == sql_ticket.status
+	jira_ticket['story_point'] == sql_ticket.story_point
+	jira_ticket['sprint'] == sql_ticket.sprint
+	jira_ticket['label'] == sql_ticket.label
+	jira_ticket['qa_steps'] == sql_ticket.qa_steps
+	jira_ticket['severity'] == sql_ticket.severity

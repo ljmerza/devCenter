@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class WorkTimePipe implements PipeTransform {
 	transform(worktime): string {
 
-		if(worktime == 0) return '';
+		if(!worktime || worktime == 0) return '';
 
 		let day:string = '';
 

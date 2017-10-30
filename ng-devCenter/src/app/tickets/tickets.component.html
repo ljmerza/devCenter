@@ -45,7 +45,7 @@
 								</span>
 							</td>
 							<td>
-								<a href="qto://talk/{{ticket.username}}" title="Open Q chat window with {{ticket.username}}">{{ticket.username}}</a>
+								<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open Q chat window with {{ticket.username}}">{{ticket.username}}</a>
 								<img src="http://presence.q.att.com/presence/{{ticket.username}}.gif">
 
 							</td>

@@ -3,7 +3,7 @@
 import re
 import math
 
-from .CrucibleAPI import CrucibleAPI
+from CrucibleAPI import CrucibleAPI
 
 class CruciblePCR(CrucibleAPI):
 	def __init__(self):

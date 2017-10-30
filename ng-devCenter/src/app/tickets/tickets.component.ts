@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, Input, EventEmitter } from '@angular/core';
+
 import { Subject } from 'rxjs/Subject';
 
 import { ActivatedRoute } from '@angular/router';
@@ -106,6 +107,7 @@ export class TicketsComponent implements OnInit {
 		// open modal then on close process result
 		this.modalService.open(content).result.then( confirm => {
 
+
 			// if confirm is true then do a PCR pass
 			if(confirm){
 				this.jira.pcrPass(cru_id, 'lm240n').subscribe( () => {
@@ -114,9 +116,10 @@ export class TicketsComponent implements OnInit {
 					if(confirm === 'complete'){						
 						this.jira.pcrComplete(key, 'lm240n').subscribe( () => {
 
-							// get datatable instance and remove row
+							// get datatable instance, remove row, redraw table
 							this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
 								dtInstance.row( $(`#${key}`)[0] ).remove();
+								dtInstance.draw();
 							});
 						});
 					}

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from .CrucibleAPI import CrucibleAPI
+from CrucibleAPI import CrucibleAPI
 
 class CrucibleRepoBranch(CrucibleAPI):
 	def __init__(self):

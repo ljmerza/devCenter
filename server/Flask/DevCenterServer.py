@@ -9,14 +9,11 @@ import requests
 import sys
 import base64
 
-from . import JiraRequests
-from . import CrucibleRequests
-
-from Crucible.Crucible import Crucible
-from Jira.Jira import Jira
+import JiraRequests
+import CrucibleRequests
 
 
-def start_server(debug):
+def start_server(debug, jira_obj, crucible_obj):
 
 	root_dir = os.path.dirname(os.getcwd())
 	app_name = 'dev_center'
@@ -89,7 +86,7 @@ def start_server(debug):
 			"jql": request.args.get('jql'),
 			"fields": request.args.get('fields'),
 			"cred_hash": get_cred_hash(request=request)
-		})
+		}, jira_obj=jira_obj, crucible_obj=crucible_obj)
 		return jsonify(data)
 
 
@@ -107,7 +104,7 @@ def start_server(debug):
 		data = JiraRequests.find_key_by_msrp(data={
 			"msrp": msrp,
 			"cred_hash": get_cred_hash(request=request)
-		})
+		}, jira_obj=jira_obj)
 		return jsonify(data)
 
 
@@ -124,7 +121,7 @@ def start_server(debug):
 		'''
 		data = CrucibleRequests.get_repos(data={
 			"cred_hash":get_cred_hash(request=request)
-		})
+		}, crucible_obj=crucible_obj)
 		return jsonify(data)
 
 
@@ -142,7 +139,7 @@ def start_server(debug):
 		data = CrucibleRequests.get_branches(data={
 			"repo_name": repo_name, 
 			"cred_hash": get_cred_hash(request=request)
-		})
+		}, crucible_obj=crucible_obj)
 		return jsonify(data)
 
 
@@ -163,7 +160,7 @@ def start_server(debug):
 			"msrp": msrp,
 			"repo_name": repo_name, 
 			"cred_hash": get_cred_hash(request=request)
-		})
+		}, crucible_obj=crucible_obj)
 		return jsonify(data)
 
 
@@ -180,7 +177,7 @@ def start_server(debug):
 		'''
 		data=request.get_json()
 		data["cred_hash"] = get_cred_hash(request)
-		data = CrucibleRequests.crucible_create_review(data=data)
+		data = CrucibleRequests.crucible_create_review(data=data, crucible_obj=crucible_obj, jira_obj=jira_obj)
 		return jsonify(data)
 
 
@@ -206,7 +203,7 @@ def start_server(debug):
 		if 'username' in post_data:
 			data["username"] = post_data['username']
 		# make POST call and return result
-		data = CrucibleRequests.set_pcr_pass(data=data)
+		data = CrucibleRequests.set_pcr_pass(data=data, crucible_obj=crucible_obj)
 		return jsonify(data)
 
 
@@ -232,7 +229,7 @@ def start_server(debug):
 		if 'username' in post_data:
 			data["username"] = post_data['username']
 		# make POST call and return result
-		data = JiraRequests.set_pcr_complete(data=data)
+		data = JiraRequests.set_pcr_complete(data=data, jira_obj=jira_obj)
 		return jsonify(data)
 
 

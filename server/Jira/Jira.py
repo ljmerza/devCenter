@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from .JiraStatusComponent import JiraStatusComponent
-from . import JiraFields
-from . import JiraUtils
+from JiraStatusComponent import JiraStatusComponent
+import JiraFields
+import JiraUtils
 
 from time import gmtime, strftime
 
@@ -35,6 +35,7 @@ class Jira(JiraStatusComponent):
 		response = self.get(url=f'{self.api_base}/filter/{filter_number}', cred_hash=cred_hash)
 		if not response['status']:
 			return response
+		print(response)
 		return {'status': True, 'data': response['data']['searchUrl'] }
 
 	def get_raw_jira_tickets(self, cred_hash, start_at=0, max_results=1000, fields='', jql='', filter_number=''):

@@ -2,8 +2,8 @@
 
 import time
 
-from .CruciblePCR import CruciblePCR
-from .CrucibleRepoBranch import CrucibleRepoBranch
+from CruciblePCR import CruciblePCR
+from CrucibleRepoBranch import CrucibleRepoBranch
 
 class Crucible(CrucibleRepoBranch, CruciblePCR):
 	def __init__(self):

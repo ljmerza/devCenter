@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
 
 import { UserService } from './user.service'
@@ -27,10 +28,16 @@ export class DataService {
 	betaUrl:string = 'http://chrapud16b.gcsc.att.com';
 	wikiUrl:string = 'https://wiki.web.att.com';
 
+	chatUrl = 'qto://talk';
+
+	chatUrlSanitize(username:string){
+		return this.sanitizer.bypassSecurityTrustUrl(`${this.chatUrl}/${username}`)
+	}
+
 
 	/*
 	*/
-	constructor(public http:Http, public user:UserService) { }
+	constructor(public http:Http, public user:UserService, public sanitizer: DomSanitizer) { }
 
 	/*
 	*/

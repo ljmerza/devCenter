@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
@@ -12,8 +13,8 @@ export class JiraService extends DataService {
 
 	/*
 	*/
-	constructor(public http: Http, public user:UserService) {
-		super(http, user);
+	constructor(public http: Http, public user:UserService, public sanitizer: DomSanitizer) {
+		super(http, user, sanitizer);
 	}
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from .JiraAPI import JiraAPI
+from JiraAPI import JiraAPI
 
 class JiraStatusComponent(JiraAPI):
 	'''Jira class for setting statuses and components for Jira tickets'''
