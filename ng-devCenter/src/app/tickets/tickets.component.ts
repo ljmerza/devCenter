@@ -7,7 +7,6 @@ import { UserService } from './../services/user.service'
 import { JiraService } from './../services/jira.service'
 import { WorkTimePipe } from './../work-time.pipe'
 
-import { DataTableDirective } from 'angular-datatables';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgProgress } from 'ngx-progressbar';
 
@@ -21,24 +20,20 @@ import * as $ from 'jquery';
 export class TicketsComponent implements OnInit {
 
 	@Input() reloadTicketsEvent = new EventEmitter();
+	jiraTickets:Array<any>;
 
-	openTickets:Array<any>;
-
-	@ViewChild(DataTableDirective)
-	private dtElement: DataTableDirective;
-	dtTrigger:Subject<any> = new Subject();
-
-	dtOptions = {
-		order: [4, 'desc'],
-		columnDefs: [{targets: [4,5], type: 'date'}],
-		dom: 'Bfrtip',
-		buttons: [
-			{
-				extend: 'colvis',
-				columns: ':gt(0)'
-			}
-		]
-	};
+	tableColumns = [
+		{prop: 'key'},
+		{prop: 'msrp'},
+		{name: 'Summary', prop: 'summary'},
+		{name: 'Status', prop: 'status'},
+		{name: 'Start Date', prop: 'dates.started'},
+		{name: 'Due Date', prop: 'dates.duedate'},
+		{name: 'Estimate', prop: 'dates.estimate'},
+		{name: 'Logged', prop: 'dates.logged'},
+		{name: 'Crucible', prop: 'crucible_id'},
+		{name: 'ATTuid', prop: 'username'}
+	];
 
 	/*
 	*/
@@ -78,8 +73,9 @@ export class TicketsComponent implements OnInit {
 		return this.jira.getFilterData(jiraListType)
 		.subscribe( issues => {
 			// save tickets and re-render data tables
-			this.openTickets = issues.data;
+			this.jiraTickets = issues.data;
 			this.ngProgress.done();
+			console.log('jirat', this.jiraTickets)
 			this.rerender();
 		});	
 	}
@@ -89,14 +85,14 @@ export class TicketsComponent implements OnInit {
 	rerender():void {
 
 		// if datatable already exists then destroy then render else just render
-		if(this.dtElement && this.dtElement.dtInstance){
-			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-				dtInstance.destroy();
-				this.dtTrigger.next();
-			});
-		} else {
-			this.dtTrigger.next();
-		}
+		// if(this.dtElement && this.dtElement.dtInstance){
+		// 	this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+		// 		dtInstance.destroy();
+		// 		this.dtTrigger.next();
+		// 	});
+		// } else {
+		// 	this.dtTrigger.next();
+		// }
 	}
 
 	/*
@@ -115,9 +111,9 @@ export class TicketsComponent implements OnInit {
 						this.jira.pcrComplete(key, 'lm240n').subscribe( () => {
 
 							// get datatable instance and remove row
-							this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-								dtInstance.row( $(`#${key}`)[0] ).remove();
-							});
+							// this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+							// 	dtInstance.row( $(`#${key}`)[0] ).remove();
+							// });
 						});
 					}
 				});

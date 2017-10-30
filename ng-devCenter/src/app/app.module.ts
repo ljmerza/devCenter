@@ -6,9 +6,9 @@ import { HttpModule } from '@angular/http';
 
 import { MomentModule } from 'angular2-moment';
 
-import { DataTablesModule } from 'angular-datatables';
 import { NgProgressModule } from 'ngx-progressbar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import { AppComponent } from './app.component';
 
@@ -35,7 +35,7 @@ import { WorkTimePipe } from './work-time.pipe';
 	imports: [
 		BrowserModule,
 		FormsModule,
-		DataTablesModule,
+		NgxDatatableModule,
 		HttpModule,
 		MomentModule,
 		AppRoutingModule,

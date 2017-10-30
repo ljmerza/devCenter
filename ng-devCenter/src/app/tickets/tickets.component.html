@@ -8,8 +8,15 @@
 	<div class="row">
 		<div class="col-12">
 			<ng-progress [showSpinner]="false" [color]="'blue'"></ng-progress>
-			<div [hidden]='!openTickets'>
-				<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+			<div [hidden]='!jiraTickets'>
+				
+				<ngx-datatable
+					class="dark"
+					[rows]="jiraTickets"
+					[columns]="tableColumns"
+				>
+				</ngx-datatable>
+				<!-- <table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
 					<thead>
 						<tr>
 							<th>Key</th>
@@ -51,7 +58,7 @@
 							</td>
 						</tr>
 					</tbody>
-				</table>
+				</table> -->
 			</div>
 		</div>
 	</div>

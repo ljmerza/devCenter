@@ -5,8 +5,6 @@ import { Observable } from 'rxjs/Observable';
 import { DataService } from './data.service';
 import { UserService } from './user.service';
 
-import 'rxjs/add/observable/of';
-
 @Injectable()
 export class JiraService extends DataService {
 	fields:string = 'customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate'
@@ -68,12 +66,10 @@ export class JiraService extends DataService {
 		}
 
 
-		// return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${this.fields}&filter=${filterNumber}`);
-		return Observable.of({
+		return Observable.create({
 			data: [
 				{
 					key: 'test',
-					msrp: '123456',
 					summary: 'summary',
 					status: 'status',
 					component: 'comp',
@@ -89,7 +85,6 @@ export class JiraService extends DataService {
 				},
 				{
 					key: 'test2',
-					msrp: '1234',
 					summary: 'summary',
 					status: 'status',
 					component: 'comp',
@@ -105,7 +100,6 @@ export class JiraService extends DataService {
 				},
 				{
 					key: 'test3',
-					msrp: '12345',
 					summary: 'summary',
 					status: 'status',
 					component: 'comp',
