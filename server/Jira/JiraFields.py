@@ -3,6 +3,7 @@ import re
 qa_regex_begin = re.compile(r"h2\. ============================ QA Steps ============================")
 qa_regex_end = re.compile(r"h2\. =================================================================")
 
+
 def get_key(issue):
 	'''gets an issue's key
 
@@ -220,6 +221,31 @@ def get_qa_steps(issue):
 			if len(result) > 1:
 				issue_qa_step = result[0]
 	return issue_qa_step
+
+def get_crucible_id(issue):
+	'''finds an issue's crucible id through the comments
+	
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue's crucible ID or an empty string
+	'''
+	crucible_id = ''
+	# get all comments
+	comments = get_comments(issue)
+	# for each comment see if has crucible id
+	for comment in comments:
+		# split by url and see if we have a match
+		initial_reg = re.split('/cru/',comment['comment'])
+		if len(initial_reg) > 1:
+			# if match then split at end of crucible id
+			initial_reg = re.split(']| |)|\'|"',initial_reg[1])
+			# if we were able to split at end of crucible id then save it
+			if len(initial_reg) > 1
+				crucible_id = initial_reg[0]
+	# return our results
+	return crucible_id
 
 def get_customer_details(issue):
 	'''gets an issue's customer info
