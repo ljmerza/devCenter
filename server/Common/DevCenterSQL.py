@@ -9,7 +9,7 @@ from . import SQLModels
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import inspect, create_engine, or_
+from sqlalchemy import inspect, create_engine, or_, and_
 
 
 
@@ -256,7 +256,7 @@ class DevCenterSQL():
 			logging.exception(message)
 			exit(1)
 
-	def get_tickets(self, type_of_tickets):
+	def get_tickets(self, type_of_tickets, args=[]):
 		'''
 
 		Args:
@@ -272,9 +272,11 @@ class DevCenterSQL():
 		if(type_of_tickets == 'pcr_needed'):
 			sql = SQLModels.Tickets.status.like('%PCR - Needed%')
 		elif(type_of_tickets == 'cr_needed'):
-			sql = SQLModels.Tickets.status.like('%PCR - Complete%')
+			sql = SQLModels.Tickets.status.like('%PCR - Completed%')
 		elif(type_of_tickets == 'qa_needed'):
 			sql = or_( SQLModels.Tickets.status.like('%Ready for QA%'), SQLModels.Tickets.component.like('%\In QA%') )
+		elif(type_of_tickets == 'all_my_tickets'):
+			sql = SQLModels.Tickets.username.like('%'+args[1]+'%')
 
 		# if sql exists then do LIKE comparison else return false
 		if sql:

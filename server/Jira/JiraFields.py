@@ -12,7 +12,7 @@ def get_key(issue):
 	Returns:
 		the issue key
 	'''
-	return issue['key']
+	return issue.get('key', '')
 
 def get_msrp(issue):
 	'''gets an issue's msrp
@@ -24,10 +24,7 @@ def get_msrp(issue):
 		the issue msrp or 0
 	'''
 	# if exists then return else return 0
-	if 'customfield_10212' in issue['fields']:
-		return issue['fields']['customfield_10212']
-	else:
-		return 0
+	return issue.get('fields', {}).get('customfield_10212', 0)
 
 def get_status(issue):
 	'''gets an issue's status
@@ -38,11 +35,7 @@ def get_status(issue):
 	Returns:
 		the issue status or empty string
 	'''
-	if 'status' in issue['fields']:
-		if( ('name' in issue['fields']['status']) and issue['fields']['status']['name'] ):
-			return issue['fields']['status']['name']
-	else:
-		return ''
+	return issue.get('fields', {}).get('status', {}).get('name', '')
 
 def get_summary(issue):
 	'''gets an issue's summary
@@ -53,10 +46,7 @@ def get_summary(issue):
 	Returns:
 		the issue summary
 	'''
-	if 'summary' in issue['fields']:
-		return issue['fields']['summary']
-	else:
-		return ''
+	return issue.get('fields', {}).get('summary', '')
 
 def get_username(issue):	
 	'''gets an issue's username 
@@ -68,11 +58,7 @@ def get_username(issue):
 		the issue username or empty string
 	'''
 	# get username if exists
-	if 'assignee' in issue['fields']:
-		if issue['fields']['assignee'] and issue['fields']['assignee']['name']:
-			return issue['fields']['assignee']['name']
-	else:
-		return ''
+	return issue.get('fields', {}).get('assignee', {}).get('name', '')
 
 def get_user_details(issue):	
 	'''gets a user's details
@@ -83,15 +69,11 @@ def get_user_details(issue):
 	Returns:
 		the username, email, and display name of the user assigned to the Jira ticket
 	'''
-	user = {}
-	if 'assignee' in issue['fields']:
-		if issue['fields']['assignee'] and issue['fields']['assignee']['name']:
-			user['name'] = issue['fields']['assignee']['name']
-		if issue['fields']['assignee'] and issue['fields']['assignee']['emailAddress']:
-			user['emailAddress'] = issue['fields']['assignee']['emailAddress']
-		if issue['fields']['assignee'] and issue['fields']['assignee']['displayName']:
-			user['displayName'] = issue['fields']['assignee']['displayName']
-	return user
+	return {
+		'username': issue.get('fields', {}).get('assignee', {}).get('name', ''),
+		'emailAddress': issue.get('fields', {}).get('assignee', {}).get('emailAddress', ''),
+		'displayName': issue.get('fields', {}).get('assignee', {}).get('displayName', '')
+	}
 
 def get_linked_issues(issue):
 	'''gets an issue's linked issues details
@@ -103,13 +85,13 @@ def get_linked_issues(issue):
 		a list of linked issues with their key, summary, and status
 	'''
 	link = []
-	if 'issuelinks' in issue['fields']:
-		for link in issue['fields']['issuelinks']:
-			link.append({
-				'key': link['inwardIssue']['key'],
-				'summary': link['inwardIssue']['fields']['summary'],
-				'status': link['inwardIssue']['fields']['status']['name']
-			})
+	for link in issue.get('fields', {}).get('issuelinks', []):
+		link.append({
+			'key': link.get('inwardIssue', {}).get('key', ''),
+			'summary': link.get('inwardIssue', {}).get('fields', {}).get('summary', ''),
+			'status': link.get('inwardIssue', {}).get('fields', {}).get('status', {}).get('name', '')
+		})
+	return link
 
 def get_component(issue):
 	'''gets an issue's components in a space delimited string
@@ -121,10 +103,9 @@ def get_component(issue):
 		the issue's components or empty string
 	'''
 	all_components = []
-	if 'components' in issue['fields']:
-		# for each component add to list to join then on return
-		for component in issue['fields']['components']:
-			all_components.append(component['name'])
+	# for each component add to list to join then on return
+	for component in issue.get('fields', {}).get('components', []):
+		all_components.append(component['name'])
 	return ' '.join(all_components)
 
 def get_story_point(issue):
@@ -137,10 +118,7 @@ def get_story_point(issue):
 		the issue's story points or 0
 	'''
 	# if exists then return else return 0
-	if 'customfield_10006' in issue['fields']:
-		return issue['fields']['customfield_10006']
-	else:
-		return 0
+	return issue.get('fields', {}).get('customfield_10006', 0)
 
 def get_sprint(issue):
 	'''gets an issue's sprint
@@ -153,9 +131,8 @@ def get_sprint(issue):
 	'''
 	# get sprint
 	sprint = ''
-	if 'fixVersions' in issue['fields'] and len(issue['fields']['fixVersions']):
-		if 'name' in issue['fields']['fixVersions'][0]:
-			sprint = issue['fields']['fixVersions'][0]['name']
+	if len( issue.get('fields', {}).get('fixVersions', []) ):
+			sprint = issue.get('fields', {}).get('fixVersions')[0].get('name', '')
 	return sprint
 
 def get_epic_link(issue):
@@ -169,20 +146,19 @@ def get_epic_link(issue):
 	'''
 	epic_link = ''
 	# get epic link
-	if 'customfield_10002' in issue['fields'] and issue['fields']['customfield_10002']:
-		epic_link = issue['fields']['customfield_10002']
-		if epic_link == 'UD-2421':
-			epic_link = 'Apollo'
-		elif epic_link == 'UD-1':
-			epic_link = 'Gamma'
-		elif epic_link == 'UD-3532':
-			epic_link = 'Ember Upgrades'
-		elif epic_link == 'UD-3':
-			epic_link = 'Magellan'
-		elif epic_link == 'UD-4714':
-			epic_link = 'UTM'
-		elif epic_link == 'UD-656':
-			epic_link = 'US GCSC'
+	epic_link = issue.get('fields', {}).get('customfield_10002', '')
+	if epic_link == 'UD-2421':
+		epic_link = 'Apollo'
+	elif epic_link == 'UD-1':
+		epic_link = 'Gamma'
+	elif epic_link == 'UD-3532':
+		epic_link = 'Ember Upgrades'
+	elif epic_link == 'UD-3':
+		epic_link = 'Magellan'
+	elif epic_link == 'UD-4714':
+		epic_link = 'UTM'
+	elif epic_link == 'UD-656':
+		epic_link = 'US GCSC'
 	# return epic link found
 	return epic_link
 
@@ -196,10 +172,7 @@ def get_label(issue):
 		the issue's label or empty string
 	'''
 	# if exists then return else return empty string
-	if 'labels' in issue['fields']:
-		return issue['fields']['labels']
-	else:
-		return ''
+	return issue.get('fields', {}).get('labels', '')
 
 def get_comments(issue):
 	'''gets an issue's comments array
@@ -211,18 +184,17 @@ def get_comments(issue):
 		an array of the issue's comments or empty array
 	'''
 	comments = []
-	if 'comment' in issue['fields']:
-		# for each comment save it and see if QA steps
-		for comment in issue['fields']['comment']['comments']:
-			# save comment
-			comments.append({
-				'comment': comment['body'],
-				'id': comment['id'],
-				'key': issue['key'],
-				'username': comment['author']['name'],
-				'email': comment['author']['emailAddress'],
-				'display_name': comment['author']['displayName']
-			})
+	# for each comment save it and see if QA steps
+	for comment in issue.get('fields', {}).get('comment', {}).get('comments', []):
+		# save comment
+		comments.append({
+			'comment': comment.get('body', ''),
+			'id': comment.get('id', ''),
+			'key': issue.get('key', ''),
+			'username': comment.get('author', {}).get('name', ''),
+			'email': comment.get('author', {}).get('emailAddress', ''),
+			'display_name': comment.get('author', {}).get('displayName', '')
+		})
 	return comments
 
 def get_qa_steps(issue):
@@ -250,47 +222,22 @@ def get_qa_steps(issue):
 	return issue_qa_step
 
 def get_customer_details(issue):
-	customer = {}
-	if 'customfield_10102' in issue['fields']:
-		customer['username'] = issue['fields']['customfield_10102']
-	if 'customfield_10175' in issue['fields']:
-		customer['email'] = issue['fields']['customfield_10175']
-	if 'customfield_10103' in issue['fields']:
-		customer['display_name'] = issue['fields']['customfield_10103']
-	if 'customfield_10602' in issue['fields']:
-		customer['phone_number'] = issue['fields']['customfield_10602']
-	return customer
+	return {
+		'username': issue.get('fields', {}).get('customfield_10102', ''),
+		'email': issue.get('fields', {}).get('customfield_10175', ''),
+		'display_name': issue.get('fields', {}).get('customfield_10103', ''),
+		'phone_number': issue.get('fields', {}).get('customfield_10602', '')
+	}
 
 def get_severity(issue):
-	if 'customfield_10108' in issue['fields']:
-		return issue['fields']['customfield_10108']['value']
-	else:
-		return ''
+	return issue.get('fields', {}).get('customfield_10108', {}).get('value', '')
 
 def get_dates(issue):
-	dates = {}
-
-	# get time tracking values
-	if 'timetracking' in issue['fields']:
-		# get estimate
-		if 'originalEstimate' in issue['fields']['timetracking']:
-			dates['estimate'] = issue['fields']['timetracking']['originalEstimate']
-		# get time logged
-		if 'timeSpent' in issue['fields']['timetracking']:
-			dates['logged'] = issue['fields']['timetracking']['timeSpent']
-		else:
-			dates['logged'] = 0
-	# due date
-	if 'duedate' in issue['fields']:
-		dates['duedate'] = issue['fields']['duedate']
-	# create
-	if 'created' in issue['fields']:
-		dates['created'] = issue['fields']['created']
-	# last updated
-	if 'updated' in issue['fields']:
-		dates['updated'] = issue['fields']['updated']
-	# start date
-	if 'customfield_10109' in issue['fields']:
-		dates['started'] = issue['fields']['customfield_10109']
-
-	return dates
+	return {
+		'estimate': issue.get('fields', {}).get('timetracking', {}).get('originalEstimate', ''),
+		'logged': issue.get('fields', {}).get('timetracking', {}).get('timeSpent', ''),
+		'duedate': issue.get('fields', {}).get('duedate', ''),
+		'created': issue.get('fields', {}).get('created', ''),
+		'updated': issue.get('fields', {}).get('updated', ''),
+		'started': issue.get('fields', {}).get('customfield_10109', '')
+	}

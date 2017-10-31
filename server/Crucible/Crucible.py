@@ -44,8 +44,8 @@ class Crucible(CrucibleRepoBranch, CruciblePCR):
 		# loop though each issue to get crucible link
 		for issue in issues:
 			# get MSRP and key of issue
-			msrp = issue['msrp']
-			key = issue['key']
+			msrp = issue.get('msrp', '')
+			key = issue.get('key', '')
 			# find crucible data of issue
 			response = self._get_review_id(msrp=msrp, key=key, reviews=response_reviews['data'])
 			# if found crucible link then add to response

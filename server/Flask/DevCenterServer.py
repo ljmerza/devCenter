@@ -35,15 +35,10 @@ def start_server(debug, jira_obj, crucible_obj):
 
 
 	def get_cred_hash(request, required=False):
-		if 'Authorization' in request.headers:
-			return request.headers['Authorization']
-		elif not required:
-			return my_cred_hash
-		else :
-			return ''
-
-
-
+		cred_hash = my_cred_hash
+		if required:
+			cred_hash = ''
+		return request.headers.get('Authorization', cred_hash)
 
 	
 	@app.route(f'/node_modules/<path:path>')
