@@ -1,7 +1,8 @@
 from sqlalchemy import Column, ForeignKey, DateTime, SMALLINT
 from sqlalchemy.dialects.mysql import VARCHAR, TEXT, CHAR
-
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+
 import datetime 
 
 Modal = declarative_base()
@@ -38,6 +39,7 @@ class Tickets(Modal):
 	qa_fail_ping = Column(SMALLINT, default=0)
 
 	is_active = Column(SMALLINT, default=0)
+	comments = relationship("Comments", back_populates="tickets")
 
 
 
@@ -49,6 +51,7 @@ class Comments(Modal):
 	username = Column(CHAR(6))
 	email = Column(VARCHAR(30))
 	display_name = Column(VARCHAR(50))
+	tickets = relationship("Tickets", back_populates="comments")
 
 
 class ErrorLogs(Modal):
