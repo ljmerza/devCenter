@@ -234,16 +234,13 @@ def get_crucible_id(issue):
 	crucible_id = ''
 	# get all comments
 	comments = get_comments(issue)
+	# print(comments)
 	# for each comment see if has crucible id
 	for comment in comments:
-		# split by url and see if we have a match
-		initial_reg = re.split('/cru/',comment['comment'])
-		if len(initial_reg) > 1:
-			# if match then split at end of crucible id
-			initial_reg = re.split(']| |)|\'|"',initial_reg[1])
-			# if we were able to split at end of crucible id then save it
-			if len(initial_reg) > 1
-				crucible_id = initial_reg[0]
+		# try to pull out Crucible ID and if we have a match then save it
+		match = re.search(r'CR-UD-[0-9]{4}', comment['comment'])
+		if match:
+			crucible_id = match.group(0)
 	# return our results
 	return crucible_id
 

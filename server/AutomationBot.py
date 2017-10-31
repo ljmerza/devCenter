@@ -76,35 +76,41 @@ class AutomationBot(object):
 		'''
 
 		try:
+			start = time.time()
+
 			# get all open Jira tickets
-			jql = f'{self.jira_url}/rest/api/2/search?jql=project+in+(AQE,+%22Auto+QM%22,+%22Customer+DB%22,+%22Manager+DB%22,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM,+SASHA)+AND+status+in+(%22IN+DEVELOPMENT%22,+%22IN+SPRINT%22,+%22Ready+for+Release%22,+%22Code+Review%22,+%22Ready+For+QA%22,+%22IN+QA%22,+%22READY+FOR+UCT%22)+OR+assignee+%3D+ep759g+ORDER+BY+assignee+ASC,+status+ASC'
-			jira_tickets = self.jira_obj.get_jira_tickets(
-				jql=jql, cred_hash=self.cred_hash)
+			jql = 'project+in+(AQE,+%22Auto+QM%22,+%22Customer+DB%22,+%22Manager+DB%22,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM,+SASHA)+AND+status+in+(%22IN+DEVELOPMENT%22,+%22IN+SPRINT%22,+%22Ready+for+Release%22,+%22Code+Review%22,+%22Ready+For+QA%22,+%22IN+QA%22,+%22READY+FOR+UCT%22)+OR+assignee+%3D+ep759g+ORDER+BY+assignee+ASC,+status+ASC'
+			jira_tickets = self.jira_obj.get_jira_tickets(jql=jql, cred_hash=self.cred_hash, get_crucible_ids=(not self.is_cron) )
+
+			print('Processing '+str(len(jira_tickets['data']))+' Jira tickets.')
 
 			# make sure we have Jira tickets
 			if not jira_tickets['status']:
 				self.sql_object.log_error(message='Could not get Jira tickets: '+jira_tickets['data'])
 				return {'status': False}
 
-			# if we are cron then update jira tickets else worry about chats and beta
+			# if we are cron then update jira tickets else worry about chats/inactive tickets
 			if self.is_cron:
+
 				# for each jira ticket update DB table
 				for jira_ticket  in jira_tickets['data']:
 					self.sql_object.update_ticket(jira_ticket=jira_ticket)
-
-				# now let's set all inactive ticket we found
-				self.sql_object.set_inactive_tickets()
-				# finally let's commit the changes
-				self.sql_object.commit_changes()
-
+				end = time.time()
+				print('Cron end time:', end-start)
 			else:
 				# now we make any pings - do this after updating tickets so we have fresh ticket data ASAP
 				for jira_ticket  in jira_tickets['data']:	
 					self.check_for_pings(jira_ticket=jira_ticket)
+					# self.sql_object.update_ticket(jira_ticket=jira_ticket)
+
+				# now let's set all inactive tickets
+				# self.sql_object.set_inactive_tickets(jira_tickets=jira_tickets)
 
 				# if we want to add beta stuff
 				if(self.is_beta_week):
 					self.beta_week_stats()
+				end = time.time()
+				print('Bot end time:', end-start)
 
 		except:
 			# log error and stack trace

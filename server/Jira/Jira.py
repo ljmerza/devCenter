@@ -35,7 +35,6 @@ class Jira(JiraStatusComponent):
 		response = self.get(url=f'{self.api_base}/filter/{filter_number}', cred_hash=cred_hash)
 		if not response['status']:
 			return response
-		print(response)
 		return {'status': True, 'data': response['data']['searchUrl'] }
 
 	def get_raw_jira_tickets(self, cred_hash, start_at=0, max_results=1000, fields='', jql='', filter_number=''):
@@ -74,7 +73,7 @@ class Jira(JiraStatusComponent):
 			return response
 		return {'status': True, 'data': response['data']['issues']}
 
-	def get_jira_tickets(self, cred_hash, max_results=1000, start_at=0, fields='', jql='', filter_number=''):
+	def get_jira_tickets(self, cred_hash, max_results=1000, start_at=0, fields='', jql='', filter_number='', get_crucible_ids=False):
 		'''returns the formatted data from the Jira API of all Jira tickets from a filter number
 
 		Args:
@@ -141,6 +140,9 @@ class Jira(JiraStatusComponent):
 			ticket['customer_details'] = JiraFields.get_customer_details(issue)
 			ticket['severity'] = JiraFields.get_severity(issue)
 			ticket['dates'] = JiraFields.get_dates(issue)
+
+			# if get_crucible_ids then get them - this takes a while so we dont always want to do it
+			ticket['crucible_id'] = JiraFields.get_crucible_id(issue)
 
 			# add ticket to response
 			response['data'].append(ticket)

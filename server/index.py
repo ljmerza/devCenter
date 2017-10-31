@@ -21,8 +21,10 @@ jira_obj = Jira()
 crucible_obj = Crucible()
 
 # how many seconds between queries to Jira
-cron_delay = 5
+cron_delay = 1
 bot_delay = 20
+
+
 
 def start_bots(is_cron, delay_time):
 	automationBot = AutomationBot.AutomationBot(
@@ -41,23 +43,25 @@ def start_bots(is_cron, delay_time):
 			time.sleep(60)
 
 
+
+
 # if not windows then use fork
 if os.name != 'nt':
 	# create cron
 	newpid = os.fork()
 	if newpid == 0:
-		start_bots(is_cron=1, delay_time=cron_delay)
+		start_bots(is_cron=True, delay_time=cron_delay)
 	# create bots
 	newpid = os.fork()
 	if newpid == 0:
-		start_bots(is_cron=0, delay_time=bot_delay)
+		start_bots(is_cron=False, delay_time=bot_delay)
 	else:
 		DevCenterServer.start_server(debug=0, jira_obj=jira_obj, crucible_obj=crucible_obj)
 
 else:
 	# else use threading
-	t = threading.Thread(target=start_bots, args=[1, cron_delay])
+	t = threading.Thread(target=start_bots, args=[True, cron_delay])
 	t.start()
-	t = threading.Thread(target=start_bots, args=[0, bot_delay])
+	t = threading.Thread(target=start_bots, args=[False, bot_delay])
 	t.start()
 	DevCenterServer.start_server(debug=0, jira_obj=jira_obj, crucible_obj=crucible_obj)

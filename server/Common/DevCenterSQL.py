@@ -75,20 +75,19 @@ class DevCenterSQL():
 		'''
 		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
 		row.crucible_id = crucible_id
-		return self.session.commit()
+		return self.session.commit()	
 
-	def get_all_inactive_tickets(self):
-		''' gets all active ticket in table and sets on instance
-
-		Args:
-			None
-
-		Returns:
-			None - sets on instance list of all Jira tickets with is_active set to 1
-			
+	def set_inactive_tickets(self, jira_tickets):
 		'''
-		self.all_inactive_tickets = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.is_active == 1).all()
+		'''
+		all_inactive_tickets = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.is_active == 1).all()
+		for jira_ticket in jira_tickets['data']:
+			# remove current ticket from inactive tickets because we know it's still active
+			all_inactive_tickets = [ x for x in all_inactive_tickets if x.key != jira_ticket['key'] ]
 
+		for jira_ticket in all_inactive_tickets:
+			jira_ticket.is_active = 0
+		self.session.commit()
 
 	def update_ticket(self, jira_ticket):
 		'''inserts a Jira ticket's key, username, and MSRP values in the DB 
@@ -112,40 +111,29 @@ class DevCenterSQL():
 		# set active marker
 		jira_ticket['set_active'] = 1
 
-		# see if current ticket exists in all active tickets
-		row = [ x for x in self.all_inactive_tickets if x.key == jira_ticket['key'] ]
+		# try to get existing Jira ticket
+		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == jira_ticket['key']).first()
 
-		# if ticket exist then update it and remove from inactive tickets list
-		if row:
-			for key, val in jira_ticket.items():
-				setattr(row[0], key, val)
-			# remove current ticket from inactive tickets because we know it's still active
-			self.all_inactive_tickets = [ x for x in self.all_inactive_tickets if x.key != jira_ticket['key'] ]
-
-		else:
-			# else its a new ticket so add it
+		# if existing ticket doesn't exist then add to DB
+		if row is None:
 			row = SQLModels.Tickets(**jira_ticket)
 			self.session.add(row)
+		else:
+			# else existing ticket exist so update all fields we have
+			for key, val in jira_ticket.items():
+				setattr(row, key, val)
 
 		# add comments of ticket
 		self._update_comments(comments=comments)
-		
-	def set_inactive_tickets(self):
-		'''sets any tickets left over to inactive
-		'''
-		for jira_ticket in self.all_inactive_tickets:
-			jira_ticket.is_active = 0
 
-	def commit_changes(self):
-		'''commit the changes and return result
-		'''
+		# commit the changes and return result
 		return self.session.commit()
+		
 
-	def _update_comments(self, jira_ticket):
+	def _update_comments(self, comments):
 		'''add a Jira ticket's comments to the DB
 
 		Args:
-			key (dict) a formatted Jira ticket object
 			comments (list) list of comment object with properties:
 				text (str) the comment text
 				id (str) the unique comment id
@@ -155,8 +143,9 @@ class DevCenterSQL():
 		'''
 
 		# for each comment in a Jira ticket add to DB
-		for comment in jira_ticket['comments']:
+		for comment in comments:
 			row = self.session.query(SQLModels.Comments).filter(SQLModels.Comments.id == comment['id']).first()
+
 			# if doesn't exsit then add
 			if row is None:
 				row = SQLModels.Comments(**comment)

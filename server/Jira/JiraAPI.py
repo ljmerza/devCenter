@@ -88,8 +88,9 @@ class JiraAPI(DevCenterAPI):
 		'''
 		response = super(JiraAPI, self)._process_response(response=response)
 		# get error messages
-		response['data'] = response.get('data', {}).get('errorMessages', '')
-		# if only one error message then dont leave in array
-		if len(response['data']) == 1:
-			response['data'] = response['data'][0]
+		if not response['status']:
+			response['data'] = response.get('data', {}).get('errorMessages', '')
+			# if only one error message then dont leave in array
+			if len(response['data']) == 1:
+				response['data'] = response['data'][0]
 		return response
