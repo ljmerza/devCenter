@@ -37,6 +37,8 @@ class Tickets(Modal):
 	uct_ping = Column(SMALLINT, default=0)
 	qa_fail_ping = Column(SMALLINT, default=0)
 
+	is_active = Column(SMALLINT, default=0)
+
 
 
 class Comments(Modal):

@@ -222,6 +222,18 @@ def get_qa_steps(issue):
 	return issue_qa_step
 
 def get_customer_details(issue):
+	'''gets an issue's customer info
+
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		dict with the following properties (with a value or empty string):
+			username (str) the username of the customer
+			email (str) the email of the customer
+			display_name (str) the full name of the customer
+			phone_number (str) the phone number of the customer
+	'''
 	return {
 		'username': issue.get('fields', {}).get('customfield_10102', ''),
 		'email': issue.get('fields', {}).get('customfield_10175', ''),
@@ -230,9 +242,31 @@ def get_customer_details(issue):
 	}
 
 def get_severity(issue):
+	'''gets an issue's severity
+
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the severity or an empty string
+	'''
 	return issue.get('fields', {}).get('customfield_10108', {}).get('value', '')
 
 def get_dates(issue):
+	'''gets an issue's dates
+
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		dict with the following properties (with a value or empty string):
+			estimate (str) the time given to finish the ticket
+			logged (str) time logged on the ticket
+			duedate (str) epoch due date of ticket 
+			created (str) epoch when ticket created
+			updated (str) epoch last when ticket was updated
+			started (str) epoch when ticket was started
+	'''
 	return {
 		'estimate': issue.get('fields', {}).get('timetracking', {}).get('originalEstimate', ''),
 		'logged': issue.get('fields', {}).get('timetracking', {}).get('timeSpent', ''),

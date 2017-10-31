@@ -18,6 +18,7 @@ CREATE TABLE `tickets` (
   `cr_fail_ping` tinyint(1) DEFAULT '0',
   `uct_ping` tinyint(1) DEFAULT '0',
   `qa_fail_ping` tinyint(1) DEFAULT '0',
+  `is_active` tinyint(1) DEFAULT '0',
   `summary` varchar(150),
   `status` varchar(100),
   `component` varchar(150),

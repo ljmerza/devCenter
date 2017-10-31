@@ -77,7 +77,7 @@ class AutomationBot(object):
 
 		try:
 			# get all open Jira tickets
-			jql = 'https://jira.web.att.com:8443/rest/api/2/search?jql=project+in+(AQE,+%22Auto+QM%22,+%22Customer+DB%22,+%22Manager+DB%22,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM,+SASHA)+AND+status+in+(%22IN+DEVELOPMENT%22,+%22IN+SPRINT%22,+%22Ready+for+Release%22,+%22Code+Review%22,+%22Ready+For+QA%22,+%22IN+QA%22,+%22READY+FOR+UCT%22)+OR+assignee+%3D+ep759g+ORDER+BY+assignee+ASC,+status+ASC'
+			jql = f'{self.jira_url}/rest/api/2/search?jql=project+in+(AQE,+%22Auto+QM%22,+%22Customer+DB%22,+%22Manager+DB%22,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM,+SASHA)+AND+status+in+(%22IN+DEVELOPMENT%22,+%22IN+SPRINT%22,+%22Ready+for+Release%22,+%22Code+Review%22,+%22Ready+For+QA%22,+%22IN+QA%22,+%22READY+FOR+UCT%22)+OR+assignee+%3D+ep759g+ORDER+BY+assignee+ASC,+status+ASC'
 			jira_tickets = self.jira_obj.get_jira_tickets(
 				jql=jql, cred_hash=self.cred_hash)
 
@@ -91,6 +91,12 @@ class AutomationBot(object):
 				# for each jira ticket update DB table
 				for jira_ticket  in jira_tickets['data']:
 					self.sql_object.update_ticket(jira_ticket=jira_ticket)
+
+				# now let's set all inactive ticket we found
+				self.sql_object.set_inactive_tickets()
+				# finally let's commit the changes
+				self.sql_object.commit_changes()
+
 			else:
 				# now we make any pings - do this after updating tickets so we have fresh ticket data ASAP
 				for jira_ticket  in jira_tickets['data']:	

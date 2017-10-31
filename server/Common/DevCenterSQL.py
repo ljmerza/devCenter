@@ -77,6 +77,19 @@ class DevCenterSQL():
 		row.crucible_id = crucible_id
 		return self.session.commit()
 
+	def get_all_inactive_tickets(self):
+		''' gets all active ticket in table and sets on instance
+
+		Args:
+			None
+
+		Returns:
+			None - sets on instance list of all Jira tickets with is_active set to 1
+			
+		'''
+		self.all_inactive_tickets = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.is_active == 1).all()
+
+
 	def update_ticket(self, jira_ticket):
 		'''inserts a Jira ticket's key, username, and MSRP values in the DB 
 		unless it already exist then updates these values.
@@ -88,7 +101,7 @@ class DevCenterSQL():
 			the SQL response from inserting/updating the DB
 		'''
 		# copy comments to sue them later
-		comments=jira_ticket['comments'][:]
+		comments = jira_ticket['comments'][:]
 		# now delete comments to be able to add to Tickets object
 		del jira_ticket['comments']
 
@@ -96,26 +109,39 @@ class DevCenterSQL():
 		del jira_ticket['customer_details']
 		del jira_ticket['dates']
 
-		# try to get existing Jira ticket
-		start = time.time()
-		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == jira_ticket['key']).first()
+		# set active marker
+		jira_ticket['set_active'] = 1
 
-		# if existing ticket doesn't exist then add to DB
-		if row is None:
+		# see if current ticket exists in all active tickets
+		row = [ x for x in self.all_inactive_tickets if x.key == jira_ticket['key'] ]
+
+		# if ticket exist then update it and remove from inactive tickets list
+		if row:
+			for key, val in jira_ticket.items():
+				setattr(row[0], key, val)
+			# remove current ticket from inactive tickets because we know it's still active
+			self.all_inactive_tickets = [ x for x in self.all_inactive_tickets if x.key != jira_ticket['key'] ]
+
+		else:
+			# else its a new ticket so add it
 			row = SQLModels.Tickets(**jira_ticket)
 			self.session.add(row)
-		else:
-			# else existing ticket exist so update all fields we have
-			for key, val in jira_ticket.items():
-				setattr(row, key, val)
-
-		# commit the changes and return result
-		return self.session.commit()
 
 		# add comments of ticket
-		self.update_comments(comments=comments)
+		self._update_comments(comments=comments)
+		
+	def set_inactive_tickets(self):
+		'''sets any tickets left over to inactive
+		'''
+		for jira_ticket in self.all_inactive_tickets:
+			jira_ticket.is_active = 0
 
-	def update_comments(self, jira_ticket):
+	def commit_changes(self):
+		'''commit the changes and return result
+		'''
+		return self.session.commit()
+
+	def _update_comments(self, jira_ticket):
 		'''add a Jira ticket's comments to the DB
 
 		Args:
@@ -139,7 +165,6 @@ class DevCenterSQL():
 				# else comment exists so update
 				for key, val in comment.items():
 					setattr(row, key, val)
-			return self.session.commit()
 
 	def update_ping(self, field, key, value=0):
 		'''updates a ping field for a Jira ticket
@@ -256,19 +281,18 @@ class DevCenterSQL():
 			logging.exception(message)
 			exit(1)
 
-	def get_tickets(self, type_of_tickets, args=[]):
-		'''
+	def get_tickets(self, type_of_tickets, username=''):
+		'''gets all tickets of a certain type
 
 		Args:
-			type_of_tickets (str)
+			type_of_tickets (str) the  type of tickets to get
+				pcr_needed, cr_needed, qa_needed, all_my_tickets, my_tickets
+			username (str) - if getting all_my_tickets or my_tickets then need username
 
 		Returns:
-			
+			hash with status and a data property of list of ticket objects or error message
 		'''
-		sql=''
-		rows=''
-
-		# get SQL type
+		# get SQLAlchemy search object
 		if(type_of_tickets == 'pcr_needed'):
 			sql = SQLModels.Tickets.status.like('%PCR - Needed%')
 		elif(type_of_tickets == 'cr_needed'):
@@ -276,12 +300,15 @@ class DevCenterSQL():
 		elif(type_of_tickets == 'qa_needed'):
 			sql = or_( SQLModels.Tickets.status.like('%Ready for QA%'), SQLModels.Tickets.component.like('%\In QA%') )
 		elif(type_of_tickets == 'all_my_tickets'):
-			sql = SQLModels.Tickets.username.like('%'+args[1]+'%')
+			sql = SQLModels.Tickets.username.like('%'+username+'%')
+		elif(type_of_tickets == 'my_tickets'):
+			sql = and_( SQLModels.Tickets.username.like('%'+username+'%'), SQLModels.Tickets.is_active == 1 )
+		else:
+			sql=''
 
-		# if sql exists then do LIKE comparison else return false
+		# if sql object exists then filter and return results else return false
 		if sql:
 			rows = self.session.query(SQLModels.Tickets).filter(sql).all()
 			return {'status': True, 'data': rows}
 		else:
-			return {'status': False, 'data': 'Do not find any tickets in the database'}
-		
+			return {'status': False, 'data': 'Did not find any tickets in the database'}
