@@ -15,7 +15,7 @@ from Common.Chat import Chat
 class AutomationBot(object):
 	'''Handles Scraping data from Jira and Crucible to Store in DB and handle any ping notifications'''
 
-	def __init__(self, is_beta_week, is_qa_pcr, beta_stat_ping_now, debug, merge_alerts, crucible_obj, jira_obj, is_cron):
+	def __init__(self, is_beta_week, is_qa_pcr, beta_stat_ping_now, debug, merge_alerts, crucible_obj, jira_obj):
 		'''
 
 		Args:
@@ -36,7 +36,6 @@ class AutomationBot(object):
 		self.bot_name = os.environ['BOT_NAME']
 		self.bot_password = os.environ['BOT_PASSWORD']
 		self.debug = debug
-		self.is_cron = is_cron
 		################################################################################
 		# create DB object and connect
 		self.sql_object = DevCenterSQL.DevCenterSQL()
@@ -45,8 +44,7 @@ class AutomationBot(object):
 		# create objects
 		self.jira_obj = jira_obj
 		self.crucible_obj = crucible_obj
-		if not is_cron:
-			self.chat_obj = Chat(debug=debug, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
+		self.chat_obj = Chat(debug=debug, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
 		################################################################################
 		self.add_beta_message = True
 		self.beta_wait_time = 300 # how many times to wait for beta message
@@ -76,43 +74,62 @@ class AutomationBot(object):
 		'''
 
 		try:
-			start = time.time()
+			start_get = time.time()
 
 			# get all open Jira tickets
 			jql = 'project+in+(AQE,+%22Auto+QM%22,+%22Customer+DB%22,+%22Manager+DB%22,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM,+SASHA)+AND+status+in+(%22IN+DEVELOPMENT%22,+%22IN+SPRINT%22,+%22Ready+for+Release%22,+%22Code+Review%22,+%22Ready+For+QA%22,+%22IN+QA%22,+%22READY+FOR+UCT%22)+OR+assignee+%3D+ep759g+ORDER+BY+assignee+ASC,+status+ASC'
-			jira_tickets = self.jira_obj.get_jira_tickets(jql=jql, cred_hash=self.cred_hash, get_crucible_ids=(not self.is_cron) )
-
-			print('Processing '+str(len(jira_tickets['data']))+' Jira tickets.')
+			jira_tickets = self.jira_obj.get_jira_tickets(jql=jql, cred_hash=self.cred_hash)			
+			
+			end_get = time.time()
+			start_update = time.time()
 
 			# make sure we have Jira tickets
 			if not jira_tickets['status']:
 				self.sql_object.log_error(message='Could not get Jira tickets: '+jira_tickets['data'])
-				return {'status': False}
+				return {'status': False, 'data': 'Could not get Jira tickets: '+jira_tickets['data']}
 
-			# if we are cron then update jira tickets else worry about chats/inactive tickets
-			if self.is_cron:
+			# for each jira ticket update DB table
+			for jira_ticket  in jira_tickets['data']:
+				self.sql_object.update_ticket(jira_ticket=jira_ticket)
 
-				# for each jira ticket update DB table
-				for jira_ticket  in jira_tickets['data']:
-					self.sql_object.update_ticket(jira_ticket=jira_ticket)
-				end = time.time()
-				print('Cron end time:', end-start)
-			else:
-				# now we make any pings - do this after updating tickets so we have fresh ticket data ASAP
-				for jira_ticket  in jira_tickets['data']:	
-					self.check_for_pings(jira_ticket=jira_ticket)
-					# self.sql_object.update_ticket(jira_ticket=jira_ticket)
+			end_update = time.time()
+			start_inactive = time.time()
 
-				# now let's set all inactive tickets
-				# self.sql_object.set_inactive_tickets(jira_tickets=jira_tickets)
+			# now let's set all inactive tickets
+			self.sql_object.set_inactive_tickets(jira_tickets=jira_tickets)
 
-				# if we want to add beta stuff
-				if(self.is_beta_week):
-					self.beta_week_stats()
-				end = time.time()
-				print('Bot end time:', end-start)
+			end_inactive = time.time()
+			start_pings = time.time()
 
-		except:
+			# now we make any pings
+			# do this after updating tickets so we have fresh ticket data ASAP
+			for jira_ticket  in jira_tickets['data']:	
+				self.check_for_pings(jira_ticket=jira_ticket)
+			end_ping = time.time()
+			
+		
+			# if we want to add beta stuff
+			if self.is_beta_week:
+				start_beta = time.time()
+				self.beta_week_stats()
+				end_beta = time.time()
+
+			end_cron = time.time()
+
+			print('Processed '+str(len(jira_tickets['data']))+' Jira tickets')
+			print('-'*20)
+			print('Retrieved Tickets:        ', end_get-start_get)
+			print('Updated Tickets:          ', end_update-start_update)
+			print('Set Inactive Tickets:     ', end_inactive-start_inactive)
+			print('Checked For Pings:        ', end_ping-start_pings)
+			if self.is_beta_week:
+				print('CRON processing end time: ', end_beta-start_beta)
+			print('CRON processing end time: ', end_cron-start_get)
+			print('-'*20)
+
+			return {'status':True}
+
+		except Exception as err:
 			# log error and stack trace
 			message = sys.exc_info()[0]
 			logging.exception(message)
@@ -121,8 +138,8 @@ class AutomationBot(object):
 			if self.debug:
 				exit(1)
 			else:
-				self.sql_object.log_error(message=message)
-				return {'status': False}
+				self.sql_object.log_error( message=str(err) )
+				return {'status': False, 'data': str(err)}
 
 	def beta_week_stats(self):
 		'''gets beta week stats and pings them

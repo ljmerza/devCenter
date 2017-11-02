@@ -97,7 +97,7 @@ export class JiraService extends DataService {
 	/*
 	*/
 	searchTicket(msrp:string){
-		return super.getAPI(`${this.apiUrl}/jira/get_key/${msrp}`)
+		return super.getAPI(`${this.apiUrl}/jira/getkey/${msrp}`)
 	}
 
 }

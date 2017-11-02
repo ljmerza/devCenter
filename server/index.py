@@ -16,33 +16,34 @@ from Jira import Jira
 from Crucible import Crucible
 from Flask import DevCenterServer
 
-
 jira_obj = Jira()
 crucible_obj = Crucible()
 
-# how many seconds between queries to Jira
-cron_delay = 1
-bot_delay = 20
+delay_time = 2
+debug = False
 
 
-
-def start_bots(is_cron, delay_time):
+def start_bots():
 	automationBot = AutomationBot.AutomationBot(
-		is_beta_week=0, is_qa_pcr=0, beta_stat_ping_now=0, debug=0, merge_alerts=0, jira_obj=jira_obj, crucible_obj=crucible_obj, is_cron=is_cron)
+		is_beta_week=0, is_qa_pcr=0, beta_stat_ping_now=0, debug=debug, merge_alerts=0, jira_obj=jira_obj, crucible_obj=crucible_obj)
 	
-	process_type = 'CRON' if is_cron else 'BOTS'
-	print(f' * Starting {process_type} with {delay_time} second delay time')
 	while True:
-
 		# if between 6am-7pm monday-friday then update tickets else wait a minute
 		d = datetime.datetime.now()
 		if d.hour in range(6, 19) and d.isoweekday() in range(1, 6):   
-			automationBot.update_jira()
+			response = automationBot.update_jira()
+
+			# print error is status not okay
+			if not response['status']:
+				print('ERROR:', response['data'])
+
 			time.sleep(delay_time)
+
 		else:
 			time.sleep(60)
 
-
+if debug:
+	print('..........RUNNING IN DEBUG MODE..........')
 
 
 # if not windows then use fork
@@ -50,18 +51,12 @@ if os.name != 'nt':
 	# create cron
 	newpid = os.fork()
 	if newpid == 0:
-		start_bots(is_cron=True, delay_time=cron_delay)
-	# create bots
-	newpid = os.fork()
-	if newpid == 0:
-		start_bots(is_cron=False, delay_time=bot_delay)
+		start_bots()
 	else:
-		DevCenterServer.start_server(debug=0, jira_obj=jira_obj, crucible_obj=crucible_obj)
+		DevCenterServer.start_server(debug=debug, jira_obj=jira_obj, crucible_obj=crucible_obj)
 
 else:
 	# else use threading
-	t = threading.Thread(target=start_bots, args=[True, cron_delay])
+	t = threading.Thread(target=start_bots)
 	t.start()
-	t = threading.Thread(target=start_bots, args=[False, bot_delay])
-	t.start()
-	DevCenterServer.start_server(debug=0, jira_obj=jira_obj, crucible_obj=crucible_obj)
+	DevCenterServer.start_server(debug=debug, jira_obj=jira_obj, crucible_obj=crucible_obj)

@@ -47,11 +47,9 @@ export class NavBarComponent implements AfterContentInit {
 		} else {
 			this.jira.searchTicket(this.ticketValue)
 			.subscribe( data => {
-				if(data.key){
-					window.open(`${this.data.jiraUrl}/browse/${data.key}`);
+				if(data.status){
+					window.open(`${this.data.jiraUrl}/browse/${data.data}`);
 				}
-
-				this.ticketValue = '';
 			})
 		}
 	}

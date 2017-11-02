@@ -109,7 +109,7 @@ class DevCenterSQL():
 		del jira_ticket['dates']
 
 		# set active marker
-		jira_ticket['set_active'] = 1
+		jira_ticket['is_active'] = 1
 
 		# try to get existing Jira ticket
 		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == jira_ticket['key']).first()
@@ -301,3 +301,15 @@ class DevCenterSQL():
 			return {'status': True, 'data': rows}
 		else:
 			return {'status': False, 'data': 'Did not find any tickets in the database'}
+
+	def get_ticket(self, key):
+		'''gets a Jira ticket from the DB
+
+			Args:
+				key (str) the Jira key to get
+
+			Returns:
+				A SQLAlchemy Jira ticket
+
+		'''
+		return self.session.query(SQLModels.ErrorLogs).filter(SQLModels.Tickets.key == key).first()

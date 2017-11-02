@@ -73,7 +73,7 @@ class Jira(JiraStatusComponent):
 			return response
 		return {'status': True, 'data': response['data']['issues']}
 
-	def get_jira_tickets(self, cred_hash, max_results=1000, start_at=0, fields='', jql='', filter_number='', get_crucible_ids=False):
+	def get_jira_tickets(self, cred_hash, max_results=1000, start_at=0, fields='', jql='', filter_number=''):
 		'''returns the formatted data from the Jira API of all Jira tickets from a filter number
 
 		Args:
@@ -141,7 +141,6 @@ class Jira(JiraStatusComponent):
 			ticket['severity'] = JiraFields.get_severity(issue)
 			ticket['dates'] = JiraFields.get_dates(issue)
 
-			# if get_crucible_ids then get them - this takes a while so we dont always want to do it
 			ticket['crucible_id'] = JiraFields.get_crucible_id(issue)
 
 			# add ticket to response
