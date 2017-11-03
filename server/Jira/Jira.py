@@ -181,6 +181,10 @@ class Jira(JiraStatusComponent):
 		search_response = self.get(url=f'{self.api_base}/search?jql=MSRP_Number~{msrp}', cred_hash=cred_hash)
 		if not search_response['status']:
 			return search_response
+
+		if not search_response['data']['issues']:
+			return {'status':False, 'data': 'Could not find MSRP from branch name'}
+
 		# get issue found
 		search_response = search_response['data']['issues'][0]
 

@@ -55,7 +55,7 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 
 	# save crucible title
 	qa_response = qa_response['data']
-	data['title'] = crucible.create_crucible_title(story_point=qa_response['story_point'], key=qa_response["key"], msrp=msrp, summary=qa_response['summary'])
+	data['title'] = crucible_obj.create_crucible_title(story_point=qa_response['story_point'], key=qa_response["key"], msrp=msrp, summary=qa_response['summary'])
 
 	# create crucible
 	crucible_data = crucible_obj.create_crucible(data=data, cred_hash=data['cred_hash'])
