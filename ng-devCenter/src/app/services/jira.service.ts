@@ -42,6 +42,7 @@ export class JiraService extends DataService {
 
 			case 'qa':
 				jql ='project+in+(AQE,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM)+AND+status+!%3D+closed+AND+status+in+(%22Ready+for+QA%22,+%22IN+QA%22)'
+				this.title = 'Quality Assurance';
 				break;
 
 			case 'uctready':
@@ -81,8 +82,8 @@ export class JiraService extends DataService {
 				break;
 
 			default:
-				this.title = 'My Open';
 				jql = `assignee%20%3D%20${this.user.username}%20AND%20resolution%20%3D%20unresolved%20ORDER%20BY%20priority%20DESC%2C%20created%20ASC`;
+				this.title = 'My Open';
 				break;
 		}
 
