@@ -65,6 +65,7 @@ class Jira(JiraStatusComponent):
 		else:
 			url = f'{self.jira_search_url}?jql={jql}'
 		# if fields not passed use default
+
 		if not fields:
 			fields = self.fields
 		# get filter data

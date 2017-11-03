@@ -59,7 +59,10 @@ def get_username(issue):
 		the issue username or empty string
 	'''
 	# get username if exists
-	return issue.get('fields', {}).get('assignee', {}).get('name', '')
+	if ('assignee' in issue.get('fields')) and (issue['fields']['assignee'] is not None):
+		return issue['fields']['assignee'].get('name', '')
+	else:
+		return ''
 
 def get_user_details(issue):	
 	'''gets a user's details

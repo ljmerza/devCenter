@@ -17,12 +17,16 @@
 					<a class="dropdown-item" [routerLink]="['/jira', 'qa']">QA Needed</a>
 					<a class="dropdown-item" [routerLink]="['/jira', 'uctready']">UCT Ready</a>
 					<a class="dropdown-item" [routerLink]="['/jira', 'cr']">CR Needed</a>
+					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" [routerLink]="['/jira', 'allmy']">All My Tickets</a>
 					<a class="dropdown-item" [routerLink]="['/jira', 'allopen']">All Open Tickets</a>
+					<a class="dropdown-item" [routerLink]="['/jira', 'teamdb_ember']">TeamDB Ember</a>
+					<a class="dropdown-item" [routerLink]="['/jira', 'sme']">SME</a>
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" target="_blank" href="{{data.jiraUrl}}/secure/Dashboard.jspa">Jira</a>
 					<a class="dropdown-item" target="_blank" href="{{data.crucibleUrl}}/cru/browse/CR-UD">Crucible</a>
 					<a class="dropdown-item" target="_blank" href="{{data.codeCloudUrl}}/projects">Code Cloud</a>
+					<a class="dropdown-item" target="_blank" href="{{data.jiraUrl}}/secure/RapidBoard.jspa?rapidView=178&view=planning.nodetail&versions=visible">Scrum Board</a>
 				</div>
 			</li>
 
@@ -52,14 +56,24 @@
 
 							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:{{user.emberPort}}/UD-ember/group-lead?lead_ticket=WTXIV000724">Group Ticket</a></li>
 							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}ticket/ethernet/WTXIV000892">WFA Ticket</a></li>
-							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}administration?attuid=lm240n">Admin Panel</a></li>
+							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}administration?attuid={{user.username}}">Admin Panel</a></li>
 							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/BAS539606001">BMP Ticket</a></li>
 							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/BAS539606001">ELD</a></li>
 						</ul>
 					</li>
 
+					<li class="dropdown-submenu">
+						<a class="dropdown-item" data-toggle="dropdown" href="#">TeamDB Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+						<ul class="dropdown-menu dropdown-submenu-items">
+							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:5{{user.emberPort}}/teamdb/team">Teams</a></li>
+							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:5{{user.emberPort}}/teamdb/team/227">Edit Team</a></li>
+							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:5{{user.emberPort}}/teamdb/user/{{user.username}}">Edit Profile</a></li>
+							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:5{{user.emberPort}}/teamdb/workgroup">Workgroup</a></li>
+						</ul>
+					</li>
+
 					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/aqe/cgi-bin/index.pl">AQE</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/teamdb/view.php?ATTuid=lm240n">TeamDB</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/teamdb/view.php?ATTuid={{user.username}}">TeamDB</a></li>
 					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/wam/cgi-bin/wam.pl">WAM</a></li>
 					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/upm/app.php">UPM</a></li>
 					<li><a class="dropdown-item" target="_blank" href="{{data.devUrl}}:{{user.port}}/Templates/cgi-bin/Template.pl">Template Tool</a></li>
@@ -73,7 +87,7 @@
 				<div ngbDropdownMenu aria-labelledby="prodDropdown">
 					<a class="dropdown-item" target="_blank" href="http://ud.web.att.com/UD/cgi-bin/worklist.pl">UD</a>
 					<a class="dropdown-item" target="_blank" href="http://aqe.web.att.com/aqe/cgi-bin/index.pl">AQE</a>
-					<a class="dropdown-item" target="_blank" href="http://teamdb.web.att.com/teamdb/view.php?ATTuid=lm240n">TeamDB</a>
+					<a class="dropdown-item" target="_blank" href="http://teamdb.web.att.com/teamdb/view.php?ATTuid={{user.username}}">TeamDB</a>
 					<a class="dropdown-item" target="_blank" href="http://wam.web.att.com/wam/cgi-bin/wam.pl">WAM</a>
 					<a class="dropdown-item" target="_blank" href="http://gcs-upm.web.att.com/upm2/access.php">UPM</a>
 					<a class="dropdown-item" target="_blank" href="http://gcs-templates.web.att.com/Templates/cgi-bin/Template.pl">Template Tool</a>
@@ -108,7 +122,7 @@
 					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/AQE%3A+How+to+Work+An+AQE+Search+String+Ticket">AQE Basics</a></li>
 					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/pages/viewpage.action?spaceKey=GCSDevOps&title=HOWTO%3A+Report+an+API+Defect">API Defect</a></li>
 					<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/Team+Deployments+Walkthrough">Team Deployments</a></li>
-
+					<div class="dropdown-divider"></div>
 					
 					<li class="dropdown-submenu">
 						<a class="dropdown-item" data-toggle="dropdown" href="#">Ember Links<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
@@ -126,6 +140,18 @@
 							<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/pages/viewpage.action?pageId=383617008">Perl</a></li>
 							<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/DTI+-+JavaScript+Coding+Standards">JavaScript</a></li>
 							<li><a class="dropdown-item" target="_blank" href="{{data.wikiUrl}}/display/GCSDevOps/DTI+-+SQL+Coding+Standards">SQL</a></li>
+						</ul>
+					</li>
+
+					<li class="dropdown-submenu">
+						<a class="dropdown-item" data-toggle="dropdown" href="#">Documentation<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+						<ul class="dropdown-menu dropdown-submenu-items">
+							<li><a class="dropdown-item" target="_blank" href="https://datatables.net/reference/api">DataTables</a></li>
+							<li><a class="dropdown-item" target="_blank" href="https://momentjs.com/docs/">moment.js</a></li>
+							<li><a class="dropdown-item" target="_blank" href="https://lodash.com/docs/4.17.4">Lodash</a></li>
+							<li><a class="dropdown-item" target="_blank" href="http://underscorejs.org/">Underscore</a></li>
+							<li><a class="dropdown-item" target="_blank" href="https://docs.atlassian.com/jira/REST/cloud">Jira API</a></li>
+							<li><a class="dropdown-item" target="_blank" href="http://www.ember-power-select.com/docs/how-to-use-it">Ember Power Select</a></li>
 						</ul>
 					</li>
 

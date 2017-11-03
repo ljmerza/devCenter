@@ -33,6 +33,7 @@ export class TicketsComponent implements OnInit {
 		order: [4, 'desc'],
 		columnDefs: [{targets: [4,5], type: 'date'}],
 		dom: 'Bfrtip',
+		pageLength: 20,
 		buttons: [
 			{
 				extend: 'colvis',

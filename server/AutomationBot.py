@@ -80,6 +80,8 @@ class AutomationBot(object):
 			jql = 'project+in+(AQE,+%22Auto+QM%22,+%22Customer+DB%22,+%22Manager+DB%22,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM,+SASHA)+AND+status+in+(%22IN+DEVELOPMENT%22,+%22IN+SPRINT%22,+%22Ready+for+Release%22,+%22Code+Review%22,+%22Ready+For+QA%22,+%22IN+QA%22,+%22READY+FOR+UCT%22)+OR+assignee+%3D+ep759g+ORDER+BY+assignee+ASC,+status+ASC'
 			jira_tickets = self.jira_obj.get_jira_tickets(jql=jql, cred_hash=self.cred_hash)			
 			
+			print('Processing '+str(len(jira_tickets['data']))+' Jira tickets')
+
 			end_get = time.time()
 			start_update = time.time()
 
@@ -116,8 +118,6 @@ class AutomationBot(object):
 
 			end_cron = time.time()
 
-			print('Processed '+str(len(jira_tickets['data']))+' Jira tickets')
-			print('-'*20)
 			print('Retrieved Tickets:        ', end_get-start_get)
 			print('Updated Tickets:          ', end_update-start_update)
 			print('Set Inactive Tickets:     ', end_inactive-start_inactive)

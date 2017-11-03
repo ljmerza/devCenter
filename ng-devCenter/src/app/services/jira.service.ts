@@ -60,6 +60,16 @@ export class JiraService extends DataService {
 				this.title = 'All Open';
 				break;
 
+			case 'teamdb_ember':
+				filterNumber = '12768';
+				this.title = 'TeamDB Ember';
+				break;
+
+			case 'sme':
+				filterNumber = '12770';
+				this.title = 'SME';
+				break;
+
 			default:
 				this.title = 'My Open';
 				jql = `assignee%20%3D%20${this.user.username}%20AND%20resolution%20%3D%20unresolved%20ORDER%20BY%20priority%20DESC%2C%20created%20ASC`;
