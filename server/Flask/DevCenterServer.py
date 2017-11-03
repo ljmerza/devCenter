@@ -19,6 +19,13 @@ def start_server(debug, jira_obj, crucible_obj):
 	app_name = 'dev_center'
 	port = 5858
 
+	try:
+		host = os.environ['FLASK_HOST'] or '0.0.0.0'
+	except:
+		host = '0.0.0.0'
+	
+
+
 	username = os.environ['USER']
 	password = os.environ['PASSWORD']
 	header_value = f'{username}:{password}'
@@ -81,7 +88,7 @@ def start_server(debug, jira_obj, crucible_obj):
 			"jql": request.args.get('jql'),
 			"fields": request.args.get('fields'),
 			"cred_hash": get_cred_hash(request=request)
-		}, jira_obj=jira_obj, crucible_obj=crucible_obj)
+		}, jira_obj=jira_obj)
 		return jsonify(data)
 
 
@@ -230,4 +237,4 @@ def start_server(debug, jira_obj, crucible_obj):
 
 
 	# start server
-	app.run(host='localhost', port=port)
+	app.run(host=host, port=port)

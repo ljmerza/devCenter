@@ -241,7 +241,6 @@ def get_crucible_id(issue):
 	crucible_id = ''
 	# get all comments
 	comments = get_comments(issue)
-	# print(comments)
 	# for each comment see if has crucible id
 	for comment in comments:
 		# try to pull out Crucible ID and if we have a match then save it

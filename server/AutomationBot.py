@@ -74,7 +74,7 @@ class AutomationBot(object):
 		'''
 
 		try:
-						start_get = time.time()
+			start_get = time.time()
 
 			# get all open Jira tickets
 			jql = 'project+in+(AQE,+%22Auto+QM%22,+%22Customer+DB%22,+%22Manager+DB%22,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM,+SASHA)+AND+status+in+(%22IN+DEVELOPMENT%22,+%22IN+SPRINT%22,+%22Ready+for+Release%22,+%22Code+Review%22,+%22Ready+For+QA%22,+%22IN+QA%22,+%22READY+FOR+UCT%22)+OR+assignee+%3D+ep759g+ORDER+BY+assignee+ASC,+status+ASC'
@@ -110,8 +110,8 @@ class AutomationBot(object):
 			# do this after updating tickets so we have fresh ticket data ASAP
 			for jira_ticket  in jira_tickets['data']:	
 				self.check_for_pings(jira_ticket=jira_ticket)
-			print('Checked For Pings:        ', end_ping-start_pings)
 			end_ping = time.time()
+			print('Checked For Pings:        ', end_ping-start_pings)
 			
 		
 			# if we want to add beta stuff

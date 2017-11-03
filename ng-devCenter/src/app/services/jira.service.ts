@@ -8,7 +8,7 @@ import { UserService } from './user.service';
 
 @Injectable()
 export class JiraService extends DataService {
-	fields:string = 'customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate'
+	fields:string = 'customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate,comment'
 	title:string = '';
 
 	/*
@@ -26,47 +26,47 @@ export class JiraService extends DataService {
 
 		switch(jiraListType) {
 			case 'pcr':
-				filterNumber = '11128';
+				jql = 'project+in+(AQE,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM,+SASHA)+AND+status+!%3D+closed+AND+component+in+(%22PCR+-+Needed%22)'
 				this.title = 'Peer Code Review';
 				break;
 
 			case 'beta':
-				filterNumber = '11004';
+				jql='project+in+(AQE,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM)+AND+status+!%3D+closed+AND+labels+%3D+BETA'
 				this.title = 'Beta';
 				break;
 
 			case 'cr':
-				filterNumber = '11007';
+				jql ='project+in+(AQE,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM)+AND+component+in+(%22PCR+-+Completed%22)+AND+type+!%3D+%22Technical+task%22+AND+Status+%3D+%22code+review%22'
 				this.title = 'Code Review';
 				break;
 
 			case 'qa':
-				filterNumber = '11019';
-				this.title = 'QA';
+				jql ='project+in+(AQE,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM)+AND+status+!%3D+closed+AND+status+in+(%22Ready+for+QA%22,+%22IN+QA%22)'
 				break;
 
 			case 'uctready':
-				filterNumber = '11014';
+				jql = 'project+in+(AQE,+%22Customer+DB%22,+%22Desktop+Integration%22,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+UPM,+%22Unified+Desktop%22,+WAM)+AND+status+!%3D+closed+AND+issuetype+!%3D+Epic+AND+status+%3D+%22Ready+for+UCT%22+AND+type+!%3D+%22Technical+task%22+AND+type+!%3D+Sub-task+AND+assignee+!%3D+ja2892'
 				this.title = 'UCT Ready';
 				break;
 
 			case 'allmy':
+				jql =`assignee%20%3D%20${this.user.username}%20ORDER%20BY%20updated%20DESC`
 				filterNumber = '11418';
 				this.title = 'All My';
 				break;
 
 			case 'allopen':
-				filterNumber = '12523';
+				jql='project%20in%20(AQE%2C%20"Auto%20QM"%2C%20"Customer%20DB"%2C%20"Manager%20DB"%2C%20"Taskmaster%20Dashboard"%2C%20TeamDB%2C%20TQI%2C%20"Unified%20Desktop"%2C%20UPM%2C%20WAM)%20AND%20status%20in%20("IN%20DEVELOPMENT"%2C%20"IN%20SPRINT"%2C%20"Ready%20for%20Release"%2C%20"Code%20Review"%2C%20"Ready%20For%20QA"%2C%20"IN%20QA"%2C%20"READY%20FOR%20UCT")%20OR%20assignee%20in%20(wc591w%2C%20ep759g)%20ORDER%20BY%20due%20DESC'
 				this.title = 'All Open';
 				break;
 
 			case 'teamdb_ember':
-				filterNumber = '12768';
+				jql='labels%3DNewGUI'
 				this.title = 'TeamDB Ember';
 				break;
 
 			case 'sme':
-				filterNumber = '12770';
+				jql='sprint%20in%20(3187%2C%203183%2C%203182%2C%203676%2C%203185%2C%203180%2C%203684%2C%203186%2C%203432)%20AND%20status%20!%3D%20closed'
 				this.title = 'SME';
 				break;
 

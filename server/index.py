@@ -58,5 +58,5 @@ if os.name != 'nt':
 else:
 	# else use threading
 	t = threading.Thread(target=start_bots)
-	t.start()
+	# t.start()
 	DevCenterServer.start_server(debug=debug, jira_obj=jira_obj, crucible_obj=crucible_obj)
