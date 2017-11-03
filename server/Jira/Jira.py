@@ -19,7 +19,7 @@ class Jira(JiraStatusComponent):
 			a Jira instance
 		'''
 		JiraStatusComponent.__init__(self)
-		self.fields = 'customfield_10109,comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,label,fixVersions,duedate,created,updated,customfield_10108,customfield_10102,customfield_10175,customfield_10103,customfield_10602,timetracking'
+		self.fields = 'customfield_10109,comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,label,fixVersions,duedate,created,updated,customfield_10108,customfield_10102,customfield_10175,customfield_10103,customfield_10602,timetracking,labels'
 		self.jira_search_url = f'{self.jira_url}/rest/api/2/search'
 
 	def get_filter_url(self, filter_number, cred_hash):

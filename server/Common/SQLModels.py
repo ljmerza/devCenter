@@ -19,7 +19,7 @@ class Tickets(Modal):
 	story_point = Column(VARCHAR(5))
 	sprint = Column(VARCHAR(30))
 	epic_link = Column(VARCHAR(20))
-	label = Column(VARCHAR(30))
+	label = Column(VARCHAR(50))
 	crucible_id = Column(VARCHAR(15))
 	qa_steps = Column(TEXT(charset='utf8'))
 

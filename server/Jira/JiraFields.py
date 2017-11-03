@@ -167,7 +167,7 @@ def get_epic_link(issue):
 	return epic_link
 
 def get_label(issue):
-	'''gets an issue's label
+	'''gets an issue's label is string format (concats with a space)
 
 	Args:
 		issue (dict) a Jira issue object
@@ -176,7 +176,11 @@ def get_label(issue):
 		the issue's label or empty string
 	'''
 	# if exists then return else return empty string
-	return issue.get('fields', {}).get('labels', '')
+	labels = issue.get('fields', {}).get('labels')
+	if labels:
+		return ' '.join(labels)
+	else:
+		''
 
 def get_comments(issue):
 	'''gets an issue's comments array

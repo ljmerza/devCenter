@@ -25,7 +25,7 @@ CREATE TABLE `tickets` (
   `story_point` varchar(5),
   `sprint` varchar(20),
   `epic_link` varchar(20),
-  `label` varchar(30),
+  `label` varchar(50),
   `qa_steps` text,
   `crucible_id` varchar(15),
   `customer_details` text,
