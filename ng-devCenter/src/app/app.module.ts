@@ -3,12 +3,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { MomentModule } from 'angular2-moment';
 
 import { DataTablesModule } from 'angular-datatables';
 import { NgProgressModule } from 'ngx-progressbar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
 import { AppComponent } from './app.component';
 
@@ -40,6 +42,8 @@ import { WorkTimePipe } from './work-time.pipe';
 		MomentModule,
 		AppRoutingModule,
 		NgProgressModule,
+		BrowserAnimationsModule,
+		ToastModule.forRoot(),
 		NgbModule.forRoot()
 	],
 	providers: [DataService, JiraService, UserService],
