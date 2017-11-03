@@ -65,9 +65,19 @@ export class JiraService extends DataService {
 				this.title = 'TeamDB Ember';
 				break;
 
+			case 'apollo':
+				jql='"Epic%20Link"%20%3D%20Apollo%20and%20status%20!%3D%20closed'
+				this.title = 'Apollo';
+				break;
+
 			case 'sme':
 				jql='sprint%20in%20(3187%2C%203183%2C%203182%2C%203676%2C%203185%2C%203180%2C%203684%2C%203186%2C%203432)%20AND%20status%20!%3D%20closed'
 				this.title = 'SME';
+				break;
+
+			case 'scrum':
+				jql='project%20in%20(AQE%2C%20"Desktop%20Integration"%2C%20TeamDB%2C%20TQI%2C%20"Unified%20Desktop"%2C%20UPM%2C%20WAM)%20AND%20status%20!%3D%20closed'
+				this.title = 'Scrum Board';
 				break;
 
 			default:
