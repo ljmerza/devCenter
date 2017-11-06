@@ -40,9 +40,9 @@ def start_server(debug, jira_obj, crucible_obj):
 
 
 	def get_cred_hash(request, required=False):
-		cred_hash = my_cred_hash
-		if required:
-			cred_hash = ''
+		cred_hash = ''
+		if not required:
+			cred_hash = my_cred_hash
 		return request.headers.get('Authorization', cred_hash)
 
 	
@@ -92,7 +92,7 @@ def start_server(debug, jira_obj, crucible_obj):
 
 	@app.route(f'/{app_name}/jira/getkey/<msrp>')
 	@cross_origin()
-	def getKey(msrp): 
+	def getKey(msrp):
 		'''gets a Jira key from a MSRP number
 
 		Args:
@@ -176,7 +176,7 @@ def start_server(debug, jira_obj, crucible_obj):
 			the Crucible ID number if successful else error
 		'''
 		data=request.get_json()
-		data["cred_hash"] = get_cred_hash(request)
+		data["cred_hash"] = get_cred_hash(request, required=True)
 		data = CrucibleRequests.crucible_create_review(data=data, crucible_obj=crucible_obj, jira_obj=jira_obj)
 		return jsonify(data)
 
@@ -196,12 +196,10 @@ def start_server(debug, jira_obj, crucible_obj):
 		# get POST data
 		post_data = request.get_json()
 		data = {
-			"cred_hash": get_cred_hash(request=request, required=True)
+			"cred_hash": get_cred_hash(request=request, required=True),
+			"username": post_data.get('username', ''),
+			"crucible_id": post_data.get('crucible_id', '')
 		}
-		if 'crucible_id' in post_data:
-			data["crucible_id"] = post_data['crucible_id']
-		if 'username' in post_data:
-			data["username"] = post_data['username']
 		# make POST call and return result
 		data = CrucibleRequests.set_pcr_pass(data=data, crucible_obj=crucible_obj)
 		return jsonify(data)
@@ -222,12 +220,11 @@ def start_server(debug, jira_obj, crucible_obj):
 		# get POST data
 		post_data = request.get_json()
 		data = {
-			"cred_hash": get_cred_hash(request=request, required=True)
+			"cred_hash": get_cred_hash(request=request, required=True),
+			"key": post_data.get('key', ''),
+			"username": post_data.get('username', '')
 		}
-		if 'key' in post_data:
-			data["key"] = post_data['key']
-		if 'username' in post_data:
-			data["username"] = post_data['username']
+
 		# make POST call and return result
 		data = JiraRequests.set_pcr_complete(data=data, jira_obj=jira_obj)
 		return jsonify(data)

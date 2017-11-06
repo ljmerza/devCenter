@@ -1,7 +1,8 @@
-import { Component, AfterContentInit, ViewChild } from '@angular/core';
+import { Component, AfterContentInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { UserService } from './../services/user.service'
 import { DataService } from './../services/data.service'
 import { JiraService } from './../services/jira.service'
+import { ToastrService } from './../services/toastr.service';
 
 declare var $ :any;
 
@@ -17,7 +18,13 @@ export class NavBarComponent implements AfterContentInit {
 
 	/*
 	*/
-	constructor(public user: UserService, public data:DataService,  private jira:JiraService) { }
+	constructor(
+		public user: UserService, 
+		public data:DataService,  
+		private jira:JiraService,
+		public toastr: ToastrService, 
+		vcr: ViewContainerRef
+	) { }
 
 	/*
 	*/
@@ -49,7 +56,10 @@ export class NavBarComponent implements AfterContentInit {
 			.subscribe( data => {
 				if(data.status){
 					window.open(`${this.data.jiraUrl}/browse/${data.data}`);
+				} else {
+					this.toastr.showToast(`Could not find Jira ticket ticket with given MSRP: ${this.ticketValue}`, 'error');
 				}
+				this.ticketValue = '';
 			})
 		}
 	}

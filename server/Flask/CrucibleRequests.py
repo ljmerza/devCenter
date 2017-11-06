@@ -25,13 +25,8 @@ def set_pcr_pass(data, crucible_obj):
 	if not response['status']:
 		return {"data": "Could not add PCR pass comment", "status": False}
 
-	# get number of PCR passes
-	number_of_passes = crucible_obj.get_pcr_pass(crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
-	if not response['status']:
-		return {"data": "Could not get number of PCR passes", "status": False}
-
 	# return ok
-	return {"status": True, "number": number_of_passes}
+	return {"status": True}
 
 
 
