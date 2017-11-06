@@ -11,7 +11,7 @@ import { WorkTimePipe } from './../work-time.pipe'
 import { DataTableDirective } from 'angular-datatables';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgProgress } from 'ngx-progressbar';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from './../services/toastr.service';
 
 import * as $ from 'jquery';
 
@@ -51,21 +51,10 @@ export class TicketsComponent implements OnInit {
 		private route:ActivatedRoute, 
 		private modalService:NgbModal, 
 		private user:UserService,
-		public toastr: ToastsManager, 
+		public toastr: ToastrService, 
 		vcr: ViewContainerRef
 	) {
-		this.toastr.setRootViewContainerRef(vcr);
-	}
-
-	/*
-	*/
-	showToast(message:string, type:string) {
-		if(type === 'success'){
-			this.toastr.success(message);
-		} else if(type === 'error'){
-			this.toastr.error(message);
-		}
-		
+		this.toastr.toastr.setRootViewContainerRef(vcr);
 	}
 	
 	/*
@@ -127,13 +116,13 @@ export class TicketsComponent implements OnInit {
 			// if confirm is true then do a PCR pass
 			if(confirm){
 				this.jira.pcrPass(cru_id, 'lm240n').subscribe( () => {
-					this.showToast('PCR Passed.', 'success');
+					this.toastr.showToast('PCR Passed.', 'success');
 
 					// if we want PCR complete then	call PCR complete API 
 					if(confirm === 'complete'){						
 						this.jira.pcrComplete(key, 'lm240n').subscribe( () => {
 
-							this.showToast('PCR Completed.', 'success');
+							this.toastr.showToast('PCR Completed.', 'success');
 
 							// get datatable instance, remove row, redraw table
 							this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {

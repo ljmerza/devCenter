@@ -23,7 +23,6 @@ let config = {
 	apiUrlDev: 'http://localhost',
 	apiUrlProd: 'http://m5devacoe01.gcsc.att.com'
 
-
 }
 
 
