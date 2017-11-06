@@ -41,14 +41,20 @@ class DevCenterSQL():
 		password = os.environ['SQL_PASSWORD']
 		host = os.environ['DEV_SERVER']
 		port = 3306
-		database = 'dev_center'
+
+		# try to get DB name or default to dev DB
+		try:
+			database = os.environ['DC_DB'] or 'dev_center_dev'
+		except:
+			database = 'dev_center_dev'
+
 		charset = 'utf8'
 
 		# create SQL engine and inspector
 		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}', echo=self.debug)
 		self.inspector = inspect(engine)
 		# create DB session
-		Session = sessionmaker(bind=engine)
+		Session = sessionmaker(bind=engine, autoflush=False)
 		self.session = Session()
 
 	def logout(self):
@@ -126,7 +132,8 @@ class DevCenterSQL():
 		# add comments of ticket
 		self._update_comments(comments=comments)
 
-		# commit the changes and return result
+
+	def commit(self):
 		return self.session.commit()
 		
 

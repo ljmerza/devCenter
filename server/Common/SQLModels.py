@@ -67,6 +67,7 @@ class Users(Modal):
 	new_ping = Column(SMALLINT, default=0)
 	conflict_ping = Column(SMALLINT, default=0)
 	cr_fail_ping = Column(SMALLINT, default=0)
+	uct_fail_ping = Column(SMALLINT, default=0)
 	merge_ping = Column(SMALLINT, default=0)
 	never_ping = Column(SMALLINT, default=0)
 	qa_fail_ping = Column(SMALLINT, default=0)

@@ -20,12 +20,10 @@ def start_server(debug, jira_obj, crucible_obj):
 	port = 5858
 
 	try:
-		host = os.environ['FLASK_HOST'] or '0.0.0.0'
+		host = os.environ['FLASK_HOST'] or 'localhost'
 	except:
-		host = '0.0.0.0'
+		host = 'localhost'
 	
-
-
 	username = os.environ['USER']
 	password = os.environ['PASSWORD']
 	header_value = f'{username}:{password}'
