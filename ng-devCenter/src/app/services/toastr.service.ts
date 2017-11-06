@@ -11,10 +11,10 @@ export class ToastrService {
 
 	/*
 	*/
-	showToast(message:string, type:string) {
-		if(type === 'success'){
+	showToast(message:string, message_type:string) {
+		if(message_type === 'success'){
 			this.toastr.success(message);
-		} else if(type === 'error'){
+		} else if(message_type === 'error'){
 			this.toastr.error(message);
 		}
 		

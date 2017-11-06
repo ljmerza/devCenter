@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
 
 import { UserService } from './user.service'
+import config from './config'
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -22,7 +23,7 @@ export class DataService {
 	crucibleUrl:string = 'https://icode3.web.att.com';
 	codeCloudUrl:string = 'https://codecloud.web.att.com';
 
-	apiUrl:string = 'http://localhost:5858/dev_center';
+	apiUrl:string = `${config.apiUrlDev}:5858/dev_center`;
 
 	devUrl:string = 'http://m5devacoe01.gcsc.att.com';
 	betaUrl:string = 'http://chrapud16b.gcsc.att.com';
