@@ -4,9 +4,9 @@ import { Subject } from 'rxjs/Subject';
 
 import { ActivatedRoute } from '@angular/router';
 
-import { UserService } from './../services/user.service'
-import { JiraService } from './../services/jira.service'
-import { WorkTimePipe } from './../work-time.pipe'
+import { UserService } from './../services/user.service';
+import { JiraService } from './../services/jira.service';
+import { WorkTimePipe } from './../work-time.pipe';
 
 import { DataTableDirective } from 'angular-datatables';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -25,6 +25,7 @@ export class TicketsComponent implements OnInit {
 	@Input() reloadTicketsEvent = new EventEmitter();
 
 	openTickets:Array<any>;
+	ticket_list_type:string;
 
 	@ViewChild(DataTableDirective)
 	private dtElement: DataTableDirective;
@@ -69,9 +70,11 @@ export class TicketsComponent implements OnInit {
 	   			this.searchTicket$.unsubscribe();
 			}
 
+			this.ticket_list_type = params.get('filter');
+
 			// if required user info exists then get tickets
 			if(this.user.username && this.user.port && this.user.emberUrl){
-				this.searchTicket$ = this.setFilterData( params.get('filter') );
+				this.searchTicket$ = this.setFilterData( this.ticket_list_type );
 			}
 		});
 	}
@@ -107,7 +110,7 @@ export class TicketsComponent implements OnInit {
 
 	/*
 	*/
-	openModal(cru_id:string, key:string, modalType:string, content):void {
+	openPCRModal(cru_id:string, key:string, modalType:string, content):void {
 
 		// open modal then on close process result
 		this.modalService.open(content).result.then( confirm => {
@@ -135,4 +138,29 @@ export class TicketsComponent implements OnInit {
 			}
 		});	
 	}
+
+
+	qa_submit_disable = true;
+	openQAModal(msrp:string, content):void {
+
+		// get QA model instance
+		let modelInstance = this.modalService.open(content);
+		// disabled submit button for QA gen
+		this.qa_submit_disable = true;
+
+		// get branches associated with this msrp then enable submit button
+		this.jira.getTicketBranches(msrp).subscribe(branches => {
+			this.qa_submit_disable = false;
+
+			modelInstance.result.then( (confirm:string) => {
+				console.log(branches, confirm, msrp)
+
+				if(confirm){
+					// generate QA stuff...
+				}
+
+			});	
+		});
+	}
+
 }

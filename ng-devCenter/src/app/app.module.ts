@@ -1,9 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MomentModule } from 'angular2-moment';
 
@@ -18,6 +18,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { TicketsComponent } from './tickets/tickets.component';
+import { QaGeneratorComponent } from './qa-generator/qa-generator.component';
 
 import { JiraService } from './services/jira.service';
 import { DataService } from './services/data.service';
@@ -33,11 +34,13 @@ import { WorkTimePipe } from './work-time.pipe';
 		UserSettingsComponent,
 		TicketsComponent,
 		NotFoundComponent,
-		WorkTimePipe
+		WorkTimePipe,
+		QaGeneratorComponent
 	],
 	imports: [
 		BrowserModule,
 		FormsModule,
+		ReactiveFormsModule,
 		DataTablesModule,
 		HttpModule,
 		MomentModule,

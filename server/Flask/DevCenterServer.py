@@ -57,8 +57,7 @@ def start_server(debug, jira_obj, crucible_obj):
 	@app.route(f"/{app_name}/qagen")
 	@cross_origin()
 	def qa_step_gen():
-		repo_names = ['AQE','aqe_api', 'Modules','Selenium_tests','Taskmaster','TeamDB','teamdbapi','teamdb_ember','Templates','Tools','TQI','UD','UD_api','UD_ember','UPM','upm_api','WAM','wam_api']
-		return render_template('qagen.html', repo_names=repo_names)
+		return render_template('qagen.html', repo_names=crucible_obj.repos)
 
 
 	@app.route(f"/leo/qagen")
@@ -144,21 +143,19 @@ def start_server(debug, jira_obj, crucible_obj):
 
 
 
-	@app.route(f'/{app_name}/git/repo/<repo_name>/<msrp>')
+	@app.route(f'/{app_name}/git/branches/<msrp>')
 	@cross_origin()
-	def branch(repo_name, msrp):
-		'''returns all branches from a repo that have a MSRP number in the branch name
+	def ticket_branches(msrp):
+		'''returns all branches tied to a Jira MSRP
 
 		Args:
-			repo_name (str) the name if the repo to get all the branches from
 			msrp (str) the MSRP to search for in the branch names
 
 		Returns:
 			
 		'''
-		data = CrucibleRequests.find_branch(data={
+		data = CrucibleRequests.ticket_branches(data={
 			"msrp": msrp,
-			"repo_name": repo_name, 
 			"cred_hash": get_cred_hash(request=request)
 		}, crucible_obj=crucible_obj)
 		return jsonify(data)

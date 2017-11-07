@@ -31,7 +31,17 @@
 							<td>{{ticket.msrp}}</td>
 							<td class='summary-format'>{{ticket.summary}}</td>
 							<td>
-								<div>{{ticket.status}}</div>
+								<div>
+									{{ticket.status}}
+								</div>
+								<i 
+										*ngIf='ticket_list_type == "mytickets" || ticket_list_type == "allopen"'
+										class="material-icons" 
+										title='Generate QA/Crucible'
+										(click)="openQAModal(ticket.msrp, qaModal)"
+									>
+										assignment
+									</i>
 								<div>{{ticket.component}}</div>
 							</td>
 							<td>{{ticket.dates.started | amDateFormat:'LL'}}</td>
@@ -41,7 +51,14 @@
 							<td>
 								<span *ngIf='ticket.crucible_id'>
 									<a target="_blank" href="{{jira.crucibleUrl}}/cru/{{ticket.crucible_id}}">{{ticket.crucible_id}}</a>
-									<i class="material-icons" title='PCR Pass/Complete' (click)="openModal(ticket.crucible_id, ticket.key, 'pass', statusModal)">done</i>
+									<i 
+										*ngIf='ticket_list_type == "pcr" || ticket_list_type == "allopen"'
+										class="material-icons" 
+										title='PCR Pass/Complete' 
+										(click)="openPCRModal(ticket.crucible_id, ticket.key, 'pass', statusModal)"
+									>
+										done
+									</i>
 								</span>
 							</td>
 							<td>
@@ -59,7 +76,7 @@
 
 
 
-<!-- Status Model -->
+<!-- PCR Model -->
 <ng-template #statusModal let-c="close" let-d="dismiss">
   <div class="modal-header">
     <h4 class="modal-title">PCR Pass/Complete</h4>
@@ -75,6 +92,12 @@
     <button type="button" class="btn btn-outline-dark" (click)="c('complete')">PCR Complete</button>
     <button type="button" class="btn btn-outline-dark" (click)="c()">Cancel</button>
   </div>
+</ng-template>
+
+
+<!-- QA Generator Model -->
+<ng-template #qaModal let-c="close" let-d="dismiss">
+	<app-qa-generator [modalInstance]=c [qa_submit_disable]=qa_submit_disable></app-qa-generator>
 </ng-template>
 
 

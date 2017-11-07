@@ -112,12 +112,12 @@ def get_branches(data, crucible_obj):
 	return crucible_obj.get_branches(cred_hash=data['cred_hash'], repo_name=data['repo_name'])
 
 
-def find_branch(data, crucible_obj):
+def ticket_branches(data, crucible_obj):
 	'''
 	'''
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'repo_name', 'msrp'])
+	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'msrp'])
 	if missing_params:
 		return {"data": "Missing required parameters: "+ missing_params, "status": False}
 	# return data
-	return crucible_obj.find_branch(repo_name=data['repo_name'], cred_hash=data['cred_hash'], msrp=data['msrp'])
+	return crucible_obj.ticket_branches(cred_hash=data['cred_hash'], msrp=data['msrp'])

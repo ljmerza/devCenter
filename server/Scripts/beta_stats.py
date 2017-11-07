@@ -68,7 +68,7 @@ Triage                                hasn't been looked at
 Backlog                             has been looked at but not assigned to a developer
 In Sprint                             assigned to a developer but hasn't been started
 In Development                  developer is working on it
-PCR - Needed                   developer is wait for peer to review code
+PCR - Needed                   developer is waiting for peer to review code
 PCR - Completed               peer code review complete and waiting for senior developer to look at it
 Code Review                     waiting for a senior developer to look at code
 Code Review - Working     senior developer is looking at code

@@ -174,8 +174,9 @@ class DevCenterSQL():
 			the SQL response from updating the DB
 		'''
 		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
-		setattr(row, field, value)
-		return self.session.commit()
+		if row:
+			setattr(row, field, value)
+			return self.session.commit()
 				
 	def get_user_ping_value(self, username, field):
 		'''get a user's ping value for a particular field type
@@ -240,7 +241,10 @@ class DevCenterSQL():
 			None
 		'''
 		row = self.session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
-		return getattr(row, field)
+		if row:
+			return getattr(row, field)
+		else:
+			return 0
 
 	def get_pings(self, key):
 		'''gets a Jira ticket's ping settings

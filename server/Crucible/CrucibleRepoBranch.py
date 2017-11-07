@@ -6,6 +6,9 @@ class CrucibleRepoBranch(CrucibleAPI):
 	def __init__(self):
 		CrucibleAPI.__init__(self)
 
+		# hard coded repos
+		self.repos = ["aqe","devtools","external_modules","modules","nightwatch","sasha","taskmaster","teamdb","teamdb_api","teamdb_ember","templates","tqi","ud","ud_api","ud_ember","upm","upm_api","wam","wam_api"]
+
 	def get_repos_of_review(self, crucible_id, cred_hash):
 		'''get all repos tied to a review
 		'''
@@ -51,6 +54,7 @@ class CrucibleRepoBranch(CrucibleAPI):
 		branch_names = []
 		# get data from API
 		response = self.get(url=f'{self.crucible_api_changelog}/{repo_name}?q=&command=branches&limit=50', cred_hash=cred_hash)
+
 		if not response['status']:
 			return response
 		for item in response['data']['items']:
@@ -80,10 +84,10 @@ class CrucibleRepoBranch(CrucibleAPI):
 		if len(returned_branches) > 0:
 			return {'status': True, 'data': returned_branches}
 		else:
-			return {'status': False, 'data': f'No branch found with MSRP {msrp}'}
+			return {'status': False, 'data': f'No branches found with MSRP {msrp}'}
 
 
-	def find_branches(self, msrp, cred_hash):
+	def ticket_branches(self, msrp, cred_hash):
 		''' finds all branches in all repos a user can access with the given MSRP
 		Args:
 			msrp (str) the MSRP of the Jira ticket
@@ -99,11 +103,11 @@ class CrucibleRepoBranch(CrucibleAPI):
 			return response
 		branches = []
 		# for each repo get branches
-		for repo in response['data']:
-			response = self.find_branch(repo_name=repo['name'], msrp=msrp, cred_hash=cred_hash)
+		for repo in self.repos:
+			response = self.find_branch(repo_name=repo, msrp=msrp, cred_hash=cred_hash)
 			# if branch found then add to found branches with MSRP
 			if response['status']:
-				branches.append({'repo': repo['name'], 'branches': response['data']})
+				branches.append({'repo': repo, 'branches': response['data']})
 		# if found branches then return else return error
 		if len(branches) > 0:
 			return {'status': True, 'data': branches}

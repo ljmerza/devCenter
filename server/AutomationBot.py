@@ -8,26 +8,21 @@ import logging
 import time
 import threading
 
-from Common import DevCenterSQL
-from Common.Chat import Chat
 from Jira.JiraFields import *
 
 
 class AutomationBot(object):
 	'''Handles Scraping data from Jira and Crucible to Store in DB and handle any ping notifications'''
 
-	def __init__(self, is_beta_week, is_qa_pcr, beta_stat_ping_now, debug, merge_alerts, crucible_obj, jira_obj):
+	def __init__(self, is_beta_week, beta_stat_ping_now, error_log, crucible_obj, jira_obj, sql_object, chat_obj):
 		'''
 
 		Args:
 			is_beta_week (boolean) 
-			is_qa_pcr (boolean) 
 			beta_stat_ping_now (boolean) 
-			debug (boolean) 
-			merge_alerts (boolean) 
+			error_log (boolean) 
 
 		Returns:
-
 
 		'''
 		self.username = os.environ['USER']
@@ -36,17 +31,14 @@ class AutomationBot(object):
 		self.filters = {'my_filter':"11502", 'beta':'11004', 'qa':'11019', 'cr':'11007', 'uct':'11014', 'all':'11002', 'pcr':'11128'}
 		self.bot_name = os.environ['BOT_NAME']
 		self.bot_password = os.environ['BOT_PASSWORD']
-		self.debug = debug
-		self.merge_alerts = merge_alerts
+		self.error_log = error_log
 		################################################################################
 		# create DB object and connect
-		self.sql_object = DevCenterSQL.DevCenterSQL()
+		self.sql_object = sql_object
 		self.sql_object.login()
-		################################################################################
-		# create objects
 		self.jira_obj = jira_obj
 		self.crucible_obj = crucible_obj
-		self.chat_obj = Chat(debug=debug, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
+		self.chat_obj = chat_obj
 		################################################################################
 		self.add_beta_message = True
 		self.beta_wait_time = 300 # how many times to wait for beta message
@@ -139,12 +131,12 @@ class AutomationBot(object):
 			message = sys.exc_info()[0]
 			logging.exception(message)
 
-			# if debug mode then just die else log error and continue
-			if self.debug:
-				exit(1)
-			else:
+			# if error_log mode then just die else log error and continue
+			if self.error_log:
 				self.sql_object.log_error( message=str(err) )
 				return {'status': False, 'data': str(err)}
+			else:
+				exit(1)
 
 	def beta_week_stats(self):
 		'''gets beta week stats and pings them

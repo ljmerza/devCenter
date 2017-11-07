@@ -123,4 +123,10 @@ export class JiraService extends DataService {
 		return super.getAPI(`${this.apiUrl}/jira/getkey/${msrp}`)
 	}
 
+	/*
+	*/
+	getTicketBranches(msrp:string){
+		return super.getAPI(`${this.apiUrl}/git/branches/${msrp}`)
+	}
+
 }
