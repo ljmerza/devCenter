@@ -6,7 +6,7 @@ $(document).ready(function(){
   $("#createReview").click(createNewCrucible);
 
 });
-const host_url = 'http://localhost:5858';
+const host_url = 'http://m5devacoe01.gcsc.att.com:5858';
 
 
 function getRepoBranches() {
@@ -22,8 +22,6 @@ function getRepoBranches() {
 
   $.get(`${host_url}/dev_center/git/repo/${repo}`)
   .then( branches => {
-
-    console.log('branches: ', branches);
 
     if(!branches.status){
       createNotification(branches.data);
@@ -147,7 +145,9 @@ function createNewCrucible() {
     url: `${host_url}/dev_center/crucible/review/create`,
     data: JSON.stringify(data),
     contentType: 'application/json;charset=UTF-8',
-
+    headers: {
+      "Authorization": "Basic " + btoa(`${data.username}:${data.password}`)
+    }
   })
   .then( response => {
     if(response.status) {

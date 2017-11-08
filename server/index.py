@@ -22,8 +22,8 @@ from Common.Chat import Chat
 
 delay_time = 2
 error_log = False
-devbot = False
-devdb = False
+devbot = True
+devdb = True
 devflk = False
 
 start_bot = True
@@ -34,16 +34,16 @@ time_shift = 0
 
 if 'server' in sys.argv:
 	start_bot = False
-if 'bot' in sys.argv:
+if 'cron' in sys.argv:
 	start_server = False
 if 'single' in sys.argv:
 	start_threads = False
-if 'devdb' in sys.argv:
-	devdb = True
-if 'devbot' in sys.argv:
-	devbot = True
+
 if 'prod' in sys.argv:
 	time_shift = 4
+	devdb = True
+	devbot = False
+
 if 'error_log' in sys.argv:
 	error_log = True
 if 'devflk' in sys.argv:
@@ -62,14 +62,15 @@ chat_obj = Chat(debug=devbot, is_qa_pcr=0, merge_alerts=0)
 
 def start_bots():
 	automationBot = AutomationBot.AutomationBot(
-		is_beta_week=0, beta_stat_ping_now=0, error_log=error_log, 
+		is_beta_week=1, beta_stat_ping_now=1, error_log=error_log, 
 		jira_obj=jira_obj, crucible_obj=crucible_obj, sql_object=sql_object, chat_obj=chat_obj)
 	
 	while True:
 		# if between 6am-7pm monday-friday then update tickets else wait a minute
 		# prod server is in GMT so time shift if we are in prod mode
 		d = datetime.datetime.now()
-		if d.hour in range(6+time_shift, 19+time_shift) and d.isoweekday() in range(1, 6):   
+		if d.hour in range(6+time_shift, 19+time_shift) and d.isoweekday() in range(1, 6): 
+			print('test')  
 			response = automationBot.update_jira()
 
 			# print error is status not okay

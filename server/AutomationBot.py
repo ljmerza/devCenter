@@ -40,7 +40,6 @@ class AutomationBot(object):
 		self.crucible_obj = crucible_obj
 		self.chat_obj = chat_obj
 		################################################################################
-		self.add_beta_message = True
 		self.beta_wait_time = 300 # how many times to wait for beta message
 		 # how many times we've waited for beta message - start off with a message
 		if beta_stat_ping_now:
@@ -76,8 +75,9 @@ class AutomationBot(object):
 
 			# make sure we have Jira tickets
 			if not jira_tickets['status']:
-				self.sql_object.log_error(message='Could not get Jira tickets: '+jira_tickets['data'])
-				return {'status': False, 'data': 'Could not get Jira tickets: '+jira_tickets['data']}
+				message = 'Could not get Jira tickets: '+jira_tickets['data']
+				self.sql_object.log_error(message=message)
+				return {'status': False, 'data': message}
 
 			# print time to retrieve tickets
 			print('Processing '+str(len(jira_tickets['data']))+' Jira tickets')
@@ -112,11 +112,13 @@ class AutomationBot(object):
 			end_inactive = time.time()
 			print('Set Inactive Tickets:     ', end_inactive-start_inactive)		
 			
-			# if we want to add beta stuff
-			if self.is_beta_week:
+			# if we want to add beta stuff and enough time has passed then show beta stats
+			if self.is_beta_week and (self.beta_wait_time == self.beta_wait_count):
 				start_beta = time.time()
-				self.beta_week_stats()
+				thr = threading.Thread(target=self.beta_week_stats)
+				thr.start()
 				end_beta = time.time()
+				self.beta_wait_count = self.beta_wait_count + 1
 				print('CRON processing end time: ', end_beta-start_beta)
 
 			# print cron runtime 
@@ -147,27 +149,22 @@ class AutomationBot(object):
 		Returns:
 			None
 		'''
-		# if enough time has passed then show beta stats if we want to
-		if ( (self.beta_wait_time == self.beta_wait_count) and self.add_beta_message ):
-			
-			# clear beta stats array and list filters to get
-			filter_values = []
-			filter_names = ['uct', 'qa', 'cr', 'uct', 'beta', 'pcr']
-			
-			# for each beta filter get total number of tickets
-			for filter_name in filter_names:
-				jira_tickets = self.jira_obj.get_jira_tickets(self.filters[filter_name])
-				filter_values.append( jira_tickets['total_tickets'] )
-
-			# create kwargs for pinging beta stats and ping stats
-			stat_results = dict(zip(filter_names, filter_values))
-			self.chat_obj.beta_statistics(**stat_results)
-			
-			# reset beta stat counter
-			self.beta_wait_count = 0
+		filter_values = []
+		filter_names = ['uct', 'qa', 'cr', 'uct', 'beta', 'pcr']
 		
-		# increment beta message counter
-		self.beta_wait_count = self.beta_wait_count + 1
+		# for each beta filter get total number of tickets
+		for filter_name in filter_names:
+			jira_tickets = self.jira_obj.get_jira_tickets(cred_hash=self.cred_hash, filter_number=self.filters[filter_name])
+			filter_values.append( len(jira_tickets['data']) )
+
+		# create kwargs for pinging beta stats and ping stats
+		stat_results = dict(zip(filter_names, filter_values))
+		self.chat_obj.beta_statistics(**stat_results)
+		
+		# reset beta stat counter
+		self.beta_wait_count = 0
+		
+		
 
 	def check_for_pings(self, jira_ticket):
 		'''updates a Jira ticket in the DB and pings any new tickets if it meets the conditions:
