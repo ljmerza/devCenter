@@ -116,21 +116,25 @@ def disconnect():
 
 @socketio.on('qa_tickets')
 def qa_tickets(username):
+	print(username)
 	join_room('qa_tickets')
 	emit('qa_tickets', {'data':'qa_tickets'}, room='qa_tickets')
 
 @socketio.on('pcr_tickets')
 def pcr_tickets(username):
+	print(username)
 	join_room('pcr_tickets')
 	emit('pcr_tickets', {'data':'pcr_tickets'}, room='pcr_tickets')
 
 @socketio.on('qa_tickets_leave')
 def qa_tickets(username):
+	print(username)
 	leave_room('qa_tickets')
 	emit('qa_tickets_leave', {'data':'qa_tickets_leave'}, room='qa_tickets')
 
 @socketio.on('pcr_tickets_leave')
 def pcr_tickets(username):
+	print(username)
 	leave_room('pcr_tickets')
 	emit('pcr_tickets_leave', {'data':'pcr_tickets_leave'}, room='pcr_tickets')
 
