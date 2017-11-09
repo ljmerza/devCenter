@@ -6,7 +6,6 @@ import os
 import time
 import datetime
 import sys
-import websocket
 
 sys.path.append('Common')
 sys.path.append('Crucible')
@@ -33,7 +32,22 @@ start_bot = True
 start_server = True
 start_threads = True
 time_shift = 0
+
+is_beta_week = False
+is_qa_pcr = False
+beta_stat_ping_now = False
+merge_alerts = False
 ####################################
+# allow pcr/qa pings and beta stats
+if 'beta' in sys.argv:
+	is_qa_pcr = True
+	is_beta_week = True
+# allow for merge pings
+if 'merge' in sys.argv:
+	merge_alerts = True
+# ping beta stats now
+if 'betanow' in sys.argv:
+	beta_stat_ping_now = True
 
 # only start Flask
 if 'server' in sys.argv:
@@ -68,8 +82,41 @@ if 'devserver' in sys.argv:
 jira_obj = Jira()
 crucible_obj = Crucible()
 sql_object = DevCenterSQL.DevCenterSQL()
-chat_obj = Chat(debug=devbot, is_qa_pcr=0, merge_alerts=0)
+chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
 ##################################################
+
+from flask import Flask
+from flask_socketio import SocketIO, emit, join_room, leave_room, send
+
+app = Flask(__name__)
+socketio = SocketIO(app)
+
+@socketio.on('connect')
+def connect():
+	emit('my response', {'data': 'Connected'})
+
+@socketio.on('disconnect')
+def disconnect():
+	print('Client disconnected')
+
+@socketio.on('qa_tickets')
+def qa_tickets(username):
+	join_room('qa_tickets')
+    send(f'{username} has joined qa_tickets', room='qa_tickets')
+
+@socketio.on('pcr_tickets')
+def pcr_tickets(username):
+	join_room('pcr_tickets')
+    send(f'{username} has joined pcr_tickets', room='pcr_tickets')
+
+port = 5859
+try:
+	host = os.environ['FLASK_HOST'] or 'localhost'
+except:
+	host = 'localhost'
+
+socketio.run(app, host=host, port=port)
+############################################
 
 def start_bots():
 	'''create automation bot instance and websockets
@@ -82,27 +129,22 @@ def start_bots():
 		None
 	'''
 	automationBot = AutomationBot.AutomationBot(
-		is_beta_week=1, beta_stat_ping_now=1, error_log=error_log, 
+		is_beta_week=is_beta_week, beta_stat_ping_now=beta_stat_ping_now, error_log=error_log, 
 		jira_obj=jira_obj, crucible_obj=crucible_obj, sql_object=sql_object, chat_obj=chat_obj)
-	
-	websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("ws://echo.websocket.org/")
-    ws.on_open = on_open
-    ws.run_forever()
 
 	while True:
 		# if between 6am-7pm monday-friday then update tickets else wait a minute
 		# prod server is in GMT so time shift if we are in prod mode
 		d = datetime.datetime.now()
-		if d.hour in range(6+time_shift, 19+time_shift) and d.isoweekday() in range(1, 6): 
-			print('test')  
+		if d.hour in range(6+time_shift, 19+time_shift) and d.isoweekday() in range(1, 6):
 			response = automationBot.update_jira()
 
-			# print error is status not okay or send tickets to sockets
-			if not response['status']:
-				print('ERROR:', response['data'])
+			# send tickets or print error message
+			if response['status']:
+				socketio.emit('pcr_tickets', response['pcrs'], emit='pcr_tickets')
+				socketio.emit('qa_tickets', response['qas'], emit='qa_tickets')
 			else:
-				ws.send(response)
+				print('ERROR:', response['data'])
 
 			# wait for next iteration
 			time.sleep(delay_time)

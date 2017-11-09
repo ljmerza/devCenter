@@ -127,7 +127,7 @@ class AutomationBot(object):
 			print('CRON processing end time: ', end_cron-start_get)
 			print('-'*20)
 
-			return jira_tickets
+			return self.collect_pcr_qa(jira_tickets)
 
 		except Exception as err:
 			# log error and stack trace
@@ -140,6 +140,24 @@ class AutomationBot(object):
 				return {'status': False, 'data': str(err)}
 			else:
 				exit(1)
+
+	def collect_pcr_qa(self, jira_tickets):
+		'''collects all pcr and qa tickets into their own list
+
+		Args
+			jira_tickets - list of formatted jira tickets
+
+		Returns:
+			dict with status True and pcr/qa_tickets lists
+		'''
+		qas = [x for x in jira_tickets if x['status'] in ('In QA', 'QA Ready')]
+		pcrs = [x for x in jira_tickets if 'PCR - Needed' in x['component']]
+		return {
+			'status': True,
+			'pcr_tickets': pcrs,
+			'qa_tickets': qas
+		}
+
 
 	def beta_week_stats(self):
 		'''gets beta week stats and pings them
