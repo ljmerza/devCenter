@@ -7,6 +7,10 @@ import time
 import datetime
 import sys
 
+from flask import Flask
+from flask_cors import CORS
+from flask_socketio import SocketIO, emit
+
 sys.path.append('Common')
 sys.path.append('Crucible')
 sys.path.append('Jira')
@@ -18,13 +22,7 @@ from Flask import DevCenterServer
 from Common import DevCenterSQL
 from Common.Chat import Chat
 
-from flask import Flask
-from flask_cors import CORS, cross_origin
-from flask_socketio import SocketIO, emit, join_room, leave_room
-
-
 #################################### 
-delay_time = 2
 error_log = False
 devflk = False
 
@@ -88,10 +86,9 @@ crucible_obj = Crucible()
 sql_object = DevCenterSQL.DevCenterSQL()
 chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
 ##################################################
-
+# flask settings and start up
 root_dir = os.path.dirname(os.getcwd())
 
-# create Flask app with CORS and web sockets
 app = Flask(__name__, template_folder=os.path.abspath('../templates'), static_folder=os.path.abspath('../'))
 cors = CORS(app)
 socketio = SocketIO(app)
@@ -103,42 +100,16 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 if devflk:
 	app.config['DEBUG'] = True
 	app.config['TEMPLATES_AUTO_RELOAD'] = True
-
 #########################################################
 # web socket routes
 @socketio.on('connect')
 def connect():
-	emit('connect', {'data': 'Connected'})
+	print('Connected')
 
 @socketio.on('disconnect')
 def disconnect():
 	print('Disconnected')
-
-@socketio.on('qa_tickets')
-def qa_tickets(username):
-	print(username)
-	join_room('qa_tickets')
-	emit('qa_tickets', {'data':'qa_tickets'}, room='qa_tickets')
-
-@socketio.on('pcr_tickets')
-def pcr_tickets(username):
-	print(username)
-	join_room('pcr_tickets')
-	emit('pcr_tickets', {'data':'pcr_tickets'}, room='pcr_tickets')
-
-@socketio.on('qa_tickets_leave')
-def qa_tickets(username):
-	print(username)
-	leave_room('qa_tickets')
-	emit('qa_tickets_leave', {'data':'qa_tickets_leave'}, room='qa_tickets')
-
-@socketio.on('pcr_tickets_leave')
-def pcr_tickets(username):
-	print(username)
-	leave_room('pcr_tickets')
-	emit('pcr_tickets_leave', {'data':'pcr_tickets_leave'}, room='pcr_tickets')
-
-############################################
+#########################################################
 
 def start_bots():
 	'''create automation bot instance and websockets
@@ -163,17 +134,17 @@ def start_bots():
 
 			# send tickets or print error message
 			if response['status']:
-				socketio.emit('pcr_tickets', response['data']['pcrs'], room='pcr_tickets')
-				socketio.emit('qa_tickets', response['data']['qas'], room='qa_tickets')
+				socketio.emit('pcr_tickets', response['data']['pcrs'])
+				socketio.emit('qa_tickets', response['data']['qas'])
 			else:
 				print('ERROR:', response['data'])
-
-			# wait for next iteration
-			time.sleep(delay_time)
 
 		else:
 			time.sleep(60)
 
+
+##################################################
+# optional thread/fork creation
 
 # if we want threads then create them
 if start_threads:

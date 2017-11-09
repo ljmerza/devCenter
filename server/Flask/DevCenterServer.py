@@ -17,11 +17,7 @@ def start_server(app, socketio, jira_obj, crucible_obj):
 
 	app_name = 'dev_center'
 	my_cred_hash = ''
-
-	try:
-		host = os.environ['FLASK_HOST'] or '127.0.0.1'
-	except:
-		host = '127.0.0.1'
+	host = '127.0.0.1'
 	port = 5858
 
 	def get_cred_hash(request, required=False):
@@ -214,4 +210,4 @@ def start_server(app, socketio, jira_obj, crucible_obj):
 
 
 	# start server
-	socketio.run(app, host='127.0.0.1', port=port)
+	socketio.run(app, host=host, port=port)
