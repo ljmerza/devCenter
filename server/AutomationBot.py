@@ -35,7 +35,6 @@ class AutomationBot(object):
 		################################################################################
 		# create DB object and connect
 		self.sql_object = sql_object
-		self.sql_object.login()
 		self.jira_obj = jira_obj
 		self.crucible_obj = crucible_obj
 		self.chat_obj = chat_obj
@@ -93,7 +92,7 @@ class AutomationBot(object):
 			start_update = time.time()
 
 			# for each jira ticket update DB table
-			for jira_ticket  in jira_tickets['data']:
+			for jira_ticket in jira_tickets['data']:
 				self.sql_object.update_tickets_raw(jira_ticket=jira_ticket)
 				# self.sql_object.update_ticket(jira_ticket=jira_ticket)
 

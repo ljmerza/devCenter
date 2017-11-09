@@ -86,28 +86,34 @@ chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
 ##################################################
 
 from flask import Flask
-from flask_socketio import SocketIO, emit, join_room, leave_room, send
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 app = Flask(__name__)
 socketio = SocketIO(app)
 
 @socketio.on('connect')
 def connect():
-	emit('my response', {'data': 'Connected'})
+	emit('connect', {'data': 'Connected'})
 
 @socketio.on('disconnect')
 def disconnect():
-	print('Client disconnected')
+	print('Disconnected')
 
 @socketio.on('qa_tickets')
 def qa_tickets(username):
 	join_room('qa_tickets')
-    send(f'{username} has joined qa_tickets', room='qa_tickets')
 
 @socketio.on('pcr_tickets')
 def pcr_tickets(username):
 	join_room('pcr_tickets')
-    send(f'{username} has joined pcr_tickets', room='pcr_tickets')
+
+@socketio.on('qa_tickets_leave')
+def qa_tickets(username):
+	leave_room('qa_tickets')
+
+@socketio.on('pcr_tickets_leave')
+def pcr_tickets(username):
+	leave_room('pcr_tickets')
 
 port = 5859
 try:
