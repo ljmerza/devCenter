@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from flask import Flask, render_template, jsonify, send_from_directory, request, Response, stream_with_context
+from flask import Flask, render_template, jsonify, send_from_directory, request, Response
 from flask_cors import CORS, cross_origin
 
 import os
@@ -13,31 +13,16 @@ import JiraRequests
 import CrucibleRequests
 
 
-def start_server(debug, jira_obj, crucible_obj):
+def start_server(app, socketio, jira_obj, crucible_obj):
 
-	root_dir = os.path.dirname(os.getcwd())
 	app_name = 'dev_center'
-	port = 5858
+	my_cred_hash = ''
 
 	try:
-		host = os.environ['FLASK_HOST'] or 'localhost'
+		host = os.environ['FLASK_HOST'] or '127.0.0.1'
 	except:
-		host = 'localhost'
-	
-	username = os.environ['USER']
-	password = os.environ['PASSWORD']
-	header_value = f'{username}:{password}'
-	encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
-	my_cred_hash = f'Basic {encoded_header}'
-
-	app = Flask(__name__, template_folder=os.path.abspath('../templates'), static_folder=os.path.abspath('../'))
-	cors = CORS(app)
-	app.config['CORS_HEADERS'] = 'Content-Type'
-
-	if debug:
-		app.config['DEBUG'] = True
-		app.config['TEMPLATES_AUTO_RELOAD'] = True
-
+		host = '127.0.0.1'
+	port = 5858
 
 	def get_cred_hash(request, required=False):
 		cred_hash = ''
@@ -229,4 +214,4 @@ def start_server(debug, jira_obj, crucible_obj):
 
 
 	# start server
-	app.run(host=host, port=port)
+	socketio.run(app, host='127.0.0.1', port=port)
