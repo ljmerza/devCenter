@@ -94,7 +94,8 @@ class AutomationBot(object):
 
 			# for each jira ticket update DB table
 			for jira_ticket  in jira_tickets['data']:
-				self.sql_object.update_ticket(jira_ticket=jira_ticket)
+				self.sql_object.update_tickets_raw(jira_ticket=jira_ticket)
+				# self.sql_object.update_ticket(jira_ticket=jira_ticket)
 
 			# print time to update tickets in DB
 			end_update = time.time()
@@ -126,7 +127,7 @@ class AutomationBot(object):
 			print('CRON processing end time: ', end_cron-start_get)
 			print('-'*20)
 
-			return {'status':True}
+			return jira_tickets
 
 		except Exception as err:
 			# log error and stack trace

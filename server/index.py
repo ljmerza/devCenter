@@ -6,6 +6,7 @@ import os
 import time
 import datetime
 import sys
+import websocket
 
 sys.path.append('Common')
 sys.path.append('Crucible')
@@ -19,52 +20,76 @@ from Common import DevCenterSQL
 from Common.Chat import Chat
 
 
-
+#################################### 
 delay_time = 2
 error_log = False
+devflk = False
+
+# default to dev chat and db
 devbot = True
 devdb = True
-devflk = False
 
 start_bot = True
 start_server = True
 start_threads = True
 time_shift = 0
+####################################
 
-
+# only start Flask
 if 'server' in sys.argv:
 	start_bot = False
+# only start cron
 if 'cron' in sys.argv:
 	start_server = False
+# only allow one thread
 if 'single' in sys.argv:
 	start_threads = False
 
+# shift time to GMT, use prod db, use prod chat
 if 'prod' in sys.argv:
 	time_shift = 4
-	devdb = True
+	devdb = False
 	devbot = False
 
+# allow error logging
 if 'error_log' in sys.argv:
 	error_log = True
+# use dev Flask
 if 'devflk' in sys.argv:
 	devflk = True
+# only use flask server, one thread, debug mode for Flask
 if 'devserver' in sys.argv:
 	start_bot = False
 	start_threads = False
 	devflk = True
 
+##################################################
 # create instance for DI
 jira_obj = Jira()
 crucible_obj = Crucible()
 sql_object = DevCenterSQL.DevCenterSQL()
 chat_obj = Chat(debug=devbot, is_qa_pcr=0, merge_alerts=0)
-
+##################################################
 
 def start_bots():
+	'''create automation bot instance and websockets
+	starts cron in forever loop pushing tickets to websocket
+
+	Args:
+		None
+
+	Returns:
+		None
+	'''
 	automationBot = AutomationBot.AutomationBot(
 		is_beta_week=1, beta_stat_ping_now=1, error_log=error_log, 
 		jira_obj=jira_obj, crucible_obj=crucible_obj, sql_object=sql_object, chat_obj=chat_obj)
 	
+	websocket.enableTrace(True)
+    ws = websocket.WebSocketApp("ws://echo.websocket.org/")
+    ws.on_open = on_open
+    ws.run_forever()
+
 	while True:
 		# if between 6am-7pm monday-friday then update tickets else wait a minute
 		# prod server is in GMT so time shift if we are in prod mode
@@ -73,10 +98,13 @@ def start_bots():
 			print('test')  
 			response = automationBot.update_jira()
 
-			# print error is status not okay
+			# print error is status not okay or send tickets to sockets
 			if not response['status']:
 				print('ERROR:', response['data'])
+			else:
+				ws.send(response)
 
+			# wait for next iteration
 			time.sleep(delay_time)
 
 		else:

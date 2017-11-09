@@ -15,26 +15,15 @@ from sqlalchemy import inspect, create_engine, or_, and_
 
 class DevCenterSQL():
 	def __init__(self):
-		'''gets parameters from ENV and creates DevCenterSQL object
+		'''gets parameters from ENV and creates SQLAlchemy engine object on instance
 
 		Args:
 			None
 
 		Returns:
-			MySQL object
+			DevCenterSQL object
 		'''
 		self.project_managers = os.environ['PM'].split(',')
-		self.debug = False
-
-	def login(self):
-		'''logs into the SQL DB and creates a connection property on the instance
-
-		Args:
-			None
-		
-		Returns:
-			None
-		'''
 		# gather URL params
 		drivername = 'mysql+pymysql'
 		username = os.environ['USER']
@@ -44,30 +33,38 @@ class DevCenterSQL():
 
 		# try to get DB name or default to dev DB
 		try:
-			database = os.environ['DC_DB'] or 'dev_center_dev'
+			self.database = os.environ['DC_DB'] or 'dev_center_dev'
 		except:
-			database = 'dev_center_dev'
+			self.database = 'dev_center_dev'
 
 		charset = 'utf8'
 
 		# create SQL engine and inspector
-		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}', echo=self.debug)
-		self.inspector = inspect(engine)
-		# create DB session
-		Session = sessionmaker(bind=engine, autoflush=False)
-		self.session = Session()
+		self.engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{self.database}?charset={charset}', echo=self.debug)
+		
 
-	def logout(self):
-		'''closes the DB connection
+	def login(self):
+		'''creates a DB connection
 
 		Args:
 			None
+		
+		Returns:
+			the connection object to the DB
+		'''
+		
+		return self.engine.connection()
+
+	def logout(self, connect):
+		'''closes a DB connection
+
+		Args:
+			a connection object to close
 
 		Returns:
 			None
 		'''
-		if self.session:
-			self.session.close()
+		connect.close()
 
 	def add_crucible(self, key, crucible_id):
 		'''adds a cricuble key to a Jira row
@@ -95,8 +92,28 @@ class DevCenterSQL():
 			jira_ticket.is_active = 0
 		self.session.commit()
 
+	def update_tickets_raw(self, jira_ticket):
+		'''updates a ticket into the table using raw SQL and creating it's
+			own connection instance and closing it when done. Used for performance
+			purposes
+
+		Args:
+			jira_ticket (dict) - a Jira ticket with at least a msrp and key
+
+		Returns:
+			None
+		'''
+		sql = text(f' \
+			INSERT INTO {self.database} \
+			(`msrp`, `key`) \
+			VALUES (:msrp, :key) \
+			ON DUPLICATE KEY UPDATE `key`=:key')
+		connection = self.engine.connection()
+		connection.execute(sql, {'msrp': jira_ticket['msrp'], 'key': jira_ticket['key']})
+		connection.close()
+
 	def update_ticket(self, jira_ticket):
-		'''inserts a Jira ticket's key, username, and MSRP values in the DB 
+		'''inserts a Jira ticket's values in the DB 
 		unless it already exist then updates these values.
 
 		Args:
