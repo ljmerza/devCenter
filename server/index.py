@@ -169,7 +169,7 @@ if start_threads:
 
 else:
 	# else only allow single thread/process
-	if start_bot:
-		start_bots()
 	if start_server:
 		DevCenterServer.start_server(app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
+	if start_bot:
+		start_bots()

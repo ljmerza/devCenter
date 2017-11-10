@@ -13,6 +13,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgProgress } from 'ngx-progressbar';
 import { ToastrService } from './../services/toastr.service';
 
+import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
+
 import * as $ from 'jquery';
 
 @Component({
@@ -27,9 +29,10 @@ export class TicketsComponent implements OnInit {
 	openTickets:Array<any>;
 	ticket_list_type:string;
 
-	@ViewChild(DataTableDirective)
-	private dtElement: DataTableDirective;
+	@ViewChild(DataTableDirective) private dtElement: DataTableDirective;
 	dtTrigger:Subject<any> = new Subject();
+
+	@ViewChild(QaGeneratorComponent) private qaGen:QaGeneratorComponent;
 
 	dtOptions = {
 		order: [4, 'desc'],
@@ -139,28 +142,9 @@ export class TicketsComponent implements OnInit {
 		});	
 	}
 
-
-	qa_submit_disable = true;
-	openQAModal(msrp:string, content):void {
-
-		// get QA model instance
-		let modelInstance = this.modalService.open(content);
-		// disabled submit button for QA gen
-		this.qa_submit_disable = true;
-
-		// get branches associated with this msrp then enable submit button
-		this.jira.getTicketBranches(msrp).subscribe(branches => {
-			this.qa_submit_disable = false;
-
-			modelInstance.result.then( (confirm:string) => {
-				console.log(branches, confirm, msrp)
-
-				if(confirm){
-					// generate QA stuff...
-				}
-
-			});	
-		});
+	/*
+	*/
+	openQAModal(msrp){
+		this.qaGen.openQAModal(msrp);
 	}
-
 }

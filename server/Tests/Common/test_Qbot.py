@@ -1,11 +1,14 @@
 #!/usr/bin/python3
 
-import Chat
+import sys
+sys.path.append('../../')
+
+from Common.Chat import Chat
 import os
 
 
 username = os.environ['USER']
-chat = Chat.Chat(debug=1, is_qa_pcr=1, merge_alerts=1)
+chat = Chat(debug=1, is_qa_pcr=1, merge_alerts=1)
 
 
 divider = '-'*40

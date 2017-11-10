@@ -39,7 +39,7 @@
 									*ngIf='ticket_list_type == "mytickets" || ticket_list_type == "allopen"'
 									class="material-icons float-right" 
 									title='Generate QA/Crucible'
-									(click)="openQAModal(ticket.msrp, qaModal)"
+									(click)="openQAModal(ticket.msrp)"
 								>
 									assignment
 								</i>
@@ -101,9 +101,4 @@
 </ng-template>
 
 
-<!-- QA Generator Model -->
-<ng-template #qaModal let-c="close" let-d="dismiss">
-	<app-qa-generator [modalInstance]=c [qa_submit_disable]=qa_submit_disable></app-qa-generator>
-</ng-template>
-
-
+<app-qa-generator></app-qa-generator>
