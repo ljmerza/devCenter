@@ -31,18 +31,19 @@
 							<td>{{ticket.msrp}}</td>
 							<td class='summary-format'>{{ticket.summary}}</td>
 							<td>
-								<div>
+								<div class='float-left'>
 									{{ticket.status}}
+									<div>{{ticket.component}}</div>
 								</div>
 								<i 
-										*ngIf='ticket_list_type == "mytickets" || ticket_list_type == "allopen"'
-										class="material-icons" 
-										title='Generate QA/Crucible'
-										(click)="openQAModal(ticket.msrp, qaModal)"
-									>
-										assignment
-									</i>
-								<div>{{ticket.component}}</div>
+									*ngIf='ticket_list_type == "mytickets" || ticket_list_type == "allopen"'
+									class="material-icons float-right" 
+									title='Generate QA/Crucible'
+									(click)="openQAModal(ticket.msrp, qaModal)"
+								>
+									assignment
+								</i>
+								
 							</td>
 							<td>{{ticket.dates.started | amDateFormat:'LL'}}</td>
 							<td>{{ticket.dates.duedate | amDateFormat:'LL'}}</td>
@@ -50,10 +51,15 @@
 							<td>{{ticket.dates.logged | worktime}}</td>
 							<td>
 								<span *ngIf='ticket.crucible_id'>
-									<a target="_blank" href="{{jira.crucibleUrl}}/cru/{{ticket.crucible_id}}">{{ticket.crucible_id}}</a>
+									<a 
+										target="_blank" 
+										class='float-left'
+										href="{{jira.crucibleUrl}}/cru/{{ticket.crucible_id}}">
+											{{ticket.crucible_id}}
+									</a>
 									<i 
 										*ngIf='ticket_list_type == "pcr" || ticket_list_type == "allopen"'
-										class="material-icons" 
+										class="material-icons float-right" 
 										title='PCR Pass/Complete' 
 										(click)="openPCRModal(ticket.crucible_id, ticket.key, 'pass', statusModal)"
 									>
