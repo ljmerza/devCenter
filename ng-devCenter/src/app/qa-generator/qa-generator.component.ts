@@ -12,13 +12,12 @@ import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 export class QaGeneratorComponent {
 
 	@ViewChild('qaModal') content:ElementRef;
-	time: NgbTimeStruct = {hour: 0, minute: 0, second: 0};
+	time: NgbTimeStruct;
 	hourStep = 1;
 	minuteStep = 15;
 
-	repos:Array<string> = [];
-	branches:Array<string> = [];
-	sourceBranches:Array<string> = [];
+	selectArray = [];
+	branchDivider = 16;
 
 	constructor(public jira:JiraService, private modalService:NgbModal) { }
 
@@ -33,19 +32,44 @@ export class QaGeneratorComponent {
 		this.qa_submit_disable = true;
 
 		// get branches associated with this msrp then enable submit button
-		this.jira.getTicketBranches(msrp).subscribe(branches => {
+		this.jira.getTicketBranches(msrp).subscribe(repos => {
 			this.qa_submit_disable = false;
 
-			// get all branches found
-			if(branches.status){
-				branches.data.forEach( branch => {
-					this.repos.push(branch.repo)
-					this.branches.push(branch.branches[0])
+			if(repos.status){
+
+				let selectArray = [];
+
+				// for each repo found create arrays of data needed
+				repos.data.forEach( (repo, index) => {
+
+					// for each matching dev branch found get list of branches
+					repo.branches.forEach( devBranch => {
+
+						let selection = {
+							repo: repo.repo,
+							devBranch: devBranch,
+							allBranches: [],
+							sourceBranches: []
+						};
+
+						// divide all branches from a repo into source and the rest
+						repo.all.forEach( devBranch => {
+
+							if(devBranch.length > this.branchDivider){
+								selection.allBranches.push(devBranch);
+							} else {
+								selection.sourceBranches.push(devBranch);
+							}
+						});
+
+						selectArray.push(selection);
+					});	
 				});
+
+				this.selectArray = selectArray;
 			}
 			
 			modelInstance.result.then( (confirm:string) => {
-				console.log(branches, confirm, msrp)
 
 				if(confirm){
 					// generate QA stuff...
@@ -53,6 +77,16 @@ export class QaGeneratorComponent {
 
 			});	
 		});
+	}
+
+	/*
+	*/
+	deleteDevBranch(branchName){
+		const index = this.selectArray.findIndex( branch => {
+			return branch.devBranch === branchName;
+		});
+
+		this.selectArray.splice(index,1);
 	}
 
 }

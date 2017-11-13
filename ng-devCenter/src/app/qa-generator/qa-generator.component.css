@@ -18,3 +18,11 @@
 button {
 	cursor: pointer;
 }
+
+.qa-modal .modal-body .delete-icon {
+	margin-top: 41px;
+}
+
+.qa-modal .modal-body .delete-icon:hover {
+	color: red;
+}

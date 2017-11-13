@@ -20,8 +20,11 @@
 							<th>Due Date</th>
 							<th>Estimate</th>
 							<th>Logged</th>
+							<th>Last Update</th>
+							<th>Created</th>
 							<th>Crucible</th>
 							<th>ATTuid</th>
+							<th>Customer Attuid</th>
 						</tr>
 					</thead>
 
@@ -49,6 +52,8 @@
 							<td>{{ticket.dates.duedate | amDateFormat:'LL'}}</td>
 							<td>{{ticket.dates.estimate | worktime }}</td>
 							<td>{{ticket.dates.logged | worktime}}</td>
+							<td>{{ticket.dates.updated | amDateFormat:'LL'}}</td>
+							<td>{{ticket.dates.created | amDateFormat:'LL'}}</td>
 							<td>
 								<span *ngIf='ticket.crucible_id'>
 									<a 
@@ -70,7 +75,12 @@
 							<td>
 								<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open Q chat window with {{ticket.username}}">{{ticket.username}}</a>
 								<img src="http://presence.q.att.com/presence/{{ticket.username}}.gif">
-
+							</td>
+							<td>
+								<a [href]="jira.chatUrlSanitize(ticket.customer_details.username)" title="Open Q chat window with {{ticket.customer_details.display_name}}">
+									{{ticket.customer_details.username}}
+								</a>
+								<img src="http://presence.q.att.com/presence/{{ticket.customer_details.username}}.gif">
 							</td>
 						</tr>
 					</tbody>

@@ -36,7 +36,7 @@ export class TicketsComponent implements OnInit {
 
 	dtOptions = {
 		order: [4, 'desc'],
-		columnDefs: [{targets: [4,5], type: 'date'}],
+		columnDefs: [{targets: [4,5,8,9], type: 'date'}],
 		dom: 'Bfrtip',
 		pageLength: 20,
 		buttons: [
@@ -44,7 +44,9 @@ export class TicketsComponent implements OnInit {
 				extend: 'colvis',
 				columns: ':gt(0)'
 			}
-		]
+		],
+		colReorder: true,
+		stateSave: true
 	};
 
 	/*

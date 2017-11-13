@@ -82,7 +82,7 @@ class CrucibleRepoBranch(CrucibleAPI):
 				returned_branches.append(branch_name)
 		# if found branches then return else return error
 		if len(returned_branches) > 0:
-			return {'status': True, 'data': returned_branches}
+			return {'status': True, 'data': returned_branches, 'all': response['data']}
 		else:
 			return {'status': False, 'data': f'No branches found with MSRP {msrp}'}
 
@@ -107,7 +107,7 @@ class CrucibleRepoBranch(CrucibleAPI):
 			response = self.find_branch(repo_name=repo, msrp=msrp, cred_hash=cred_hash)
 			# if branch found then add to found branches with MSRP
 			if response['status']:
-				branches.append({'repo': repo, 'branches': response['data']})
+				branches.append({'repo': repo, 'branches': response['data'], 'all': response['all']})
 		# if found branches then return else return error
 		if len(branches) > 0:
 			return {'status': True, 'data': branches}
