@@ -15,8 +15,6 @@ import CrucibleRequests
 
 def start_server(app, socketio, jira_obj, crucible_obj):
 
-	print('------')
-
 	app_name = 'dev_center'
 	my_cred_hash = ''
 	host = '127.0.0.1'

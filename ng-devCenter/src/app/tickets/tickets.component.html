@@ -29,7 +29,7 @@
 					</thead>
 
 					<tbody>
-						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}}'>
+						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}};trackBy: ticketTrackBy'>
 							<td><a target="_blank" href="{{jira.jiraUrl}}/browse/{{ticket.key}}">{{ticket.key}}</a></td>
 							<td>{{ticket.msrp}}</td>
 							<td class='summary-format'>{{ticket.summary}}</td>

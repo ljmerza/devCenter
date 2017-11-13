@@ -141,7 +141,6 @@ class Jira(JiraStatusComponent):
 			ticket['customer_details'] = JiraFields.get_customer_details(issue)
 			ticket['severity'] = JiraFields.get_severity(issue)
 			ticket['dates'] = JiraFields.get_dates(issue)
-			print(ticket['dates'])
 
 			ticket['crucible_id'] = JiraFields.get_crucible_id(issue)
 

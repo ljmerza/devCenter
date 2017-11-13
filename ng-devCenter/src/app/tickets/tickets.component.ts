@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild, Input, EventEmitter, ViewContainerRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, EventEmitter, ViewContainerRef, OnDestroy } from '@angular/core';
 
-import { Subject } from 'rxjs/Subject';
+import { Subject, Observable } from 'rxjs';
 
 import { ActivatedRoute } from '@angular/router';
 
@@ -13,6 +13,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgProgress } from 'ngx-progressbar';
 import { ToastrService } from './../services/toastr.service';
 
+import 'rxjs/add/observable/interval';
+
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 
 import * as $ from 'jquery';
@@ -22,7 +24,7 @@ import * as $ from 'jquery';
 	templateUrl: './tickets.component.html',
 	styleUrls: ['./tickets.component.css']
 })
-export class TicketsComponent implements OnInit {
+export class TicketsComponent implements OnInit, OnDestroy {
 
 	@Input() reloadTicketsEvent = new EventEmitter();
 
@@ -84,17 +86,32 @@ export class TicketsComponent implements OnInit {
 		});
 	}
 
+	ngOnDestroy(){
+		this.searchTicket$.unsubscribe();
+	}
+
 	/*
 	*/
 	setFilterData(jiraListType:string) {
 		this.ngProgress.start();
 
-		return this.jira.getFilterData(jiraListType)
+		return Observable.interval(3000)
+		.concatMap(() => this.jira.getFilterData(jiraListType) )
 		.subscribe( issues => {
-			// save tickets and re-render data tables
-			this.openTickets = issues.data;
-			this.ngProgress.done();
-			this.rerender();
+			console.log('test3')
+
+			// if new tickets gotten are different than currently saved
+			// ones then set new ones and redraw table
+			const savedTickets = JSON.stringify(this.openTickets);
+			const newTickets = JSON.stringify(issues.data);
+
+			if(JSON.stringify(savedTickets) !== JSON.stringify(newTickets)){
+				console.log('test')
+				// save tickets and re-render data tables
+				this.openTickets = issues.data;
+				this.ngProgress.done();
+				this.rerender();
+			}			
 		});	
 	}
 
@@ -105,8 +122,9 @@ export class TicketsComponent implements OnInit {
 		// if datatable already exists then destroy then render else just render
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-				dtInstance.destroy();
-				this.dtTrigger.next();
+
+				// make redraw on next event loop
+				setTimeout(dtInstance.draw,0);
 			});
 		} else {
 			this.dtTrigger.next();
@@ -148,5 +166,10 @@ export class TicketsComponent implements OnInit {
 	*/
 	openQAModal(msrp){
 		this.qaGen.openQAModal(msrp);
+	}
+
+	ticketTrackBy(index, item) {
+		console.log(index, item)
+		return index;
 	}
 }

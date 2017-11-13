@@ -171,6 +171,8 @@ class Crucible(CrucibleRepoBranch, CruciblePCR):
 			dict with status/data properties.
 		'''
 		# create JSON data to send to API
+
+		print('data, cred_hash', data, cred_hash)
 		json_data = {"reviewData": {
 			"allowReviewersToJoin":"true",
 			"author":{"userName":data['username']},
@@ -182,6 +184,7 @@ class Crucible(CrucibleRepoBranch, CruciblePCR):
 		}}
 		# create a crucible review
 		response = self.post_json(url=f'{self.crucible_api_review}.json', json_data=json_data, cred_hash=cred_hash)
+		print('-----response cred_hash------', response, data, cred_hash)
 		if not response['status']:
 			return {'data':  'Could not create crucible review: '+response['data'], 'status': False}
 		# make sure we have valid data
@@ -198,6 +201,7 @@ class Crucible(CrucibleRepoBranch, CruciblePCR):
 				"reviewedBranch": repo['reviewedBranch']
 			}
 			response = self.post_json(url=f'{self.crucible_api_branch}/{crucible_id}.json', json_data=json_data, cred_hash=cred_hash)
+			
 			if not response['status']:
 				json_data = str(json_data)
 				return {'data': f'Could not add repo {repo}: '+response['data'], 'status': False}
