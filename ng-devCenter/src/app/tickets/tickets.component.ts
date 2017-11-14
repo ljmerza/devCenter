@@ -95,10 +95,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	setFilterData(jiraListType:string) {
 		this.ngProgress.start();
 
-		return Observable.interval(3000)
-		.concatMap(() => this.jira.getFilterData(jiraListType) )
+		return this.jira.getFilterData(jiraListType)
 		.subscribe( issues => {
-			console.log('test3')
 
 			// if new tickets gotten are different than currently saved
 			// ones then set new ones and redraw table
@@ -106,7 +104,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			const newTickets = JSON.stringify(issues.data);
 
 			if(JSON.stringify(savedTickets) !== JSON.stringify(newTickets)){
-				console.log('test')
 				// save tickets and re-render data tables
 				this.openTickets = issues.data;
 				this.ngProgress.done();

@@ -34,7 +34,7 @@ def set_pcr_pass(data, crucible_obj):
 def crucible_create_review(data, crucible_obj, jira_obj):
 
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['username','repos','qa_steps','autoPCR','autoCR','cred_hash'])
+	missing_params = FlaskUtils.check_args(params=data, required=['username', 'password','repos','qa_steps','autoPCR','autoCR','cred_hash'])
 	if missing_params:
 		return {"data": "Missing required parameters: "+ missing_params, "status": False}
 

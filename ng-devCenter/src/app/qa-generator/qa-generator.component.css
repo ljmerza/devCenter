@@ -23,6 +23,12 @@ button {
 	margin-top: 41px;
 }
 
-.qa-modal .modal-body .delete-icon:hover {
+.qa-modal .modal-body .delete-icon-next {
+	margin-top: 5px;
+}
+
+.qa-modal .modal-body .delete-icon:hover,
+.qa-modal .modal-body .delete-icon-next:hover {
+	cursor: pointer;
 	color: red;
 }

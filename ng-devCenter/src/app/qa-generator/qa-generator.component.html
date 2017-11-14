@@ -13,29 +13,33 @@
 		<form class="form-group" #qaGenForm="ngForm">
 
 			<h2>Your Branches:</h2>
-			<div class="repoDropdownParent" *ngFor='let repo of selectArray'>
+			<div class="repoDropdownParent" *ngFor='let repo of selectArray; index as idx'>
 				<div class="form-group">
 					<div class="row">
-						<div class="col-2">
-							<label for="repositoryName">Repo:</label>
+						<div class='col-2'>
+							<label for="repositoryName" *ngIf='idx == 0'>Repo:</label>
 							<select class="form-control repositoryName">
 								<option selected>{{repo.repo}}</option>
 							</select>
 						</div>
-						<div class="col-6">
-							<label for="reviewedBranch">Branch:</label>
+						<div class='col-6'>
+							<label for="reviewedBranch" *ngIf='idx == 0'>Branch:</label>
 							<select class="form-control reviewedBranch">
 								<option *ngFor='let branch of repo.allBranches' [selected]='branch == repo.devBranch'>{{branch}}</option>
 							</select>
 						</div>
-						<div class="col-3">
-							<label for="baseBranch">Branched From:</label>
+						<div class='col-3'>
+							<label for="baseBranch" *ngIf='idx == 0'>Branched From:</label>
 							<select class="form-control baseBranch">
 								<option *ngFor='let sourceBranch of repo.sourceBranches'>{{sourceBranch}}</option>
 							</select>
 						</div>
-						<div class='col-1 delete-icon'>
-							<i class="material-icons" (click)='deleteDevBranch(repo.devBranch)'>delete</i>
+						<div class='col-1'>
+							<i 
+								class="material-icons" 
+								[ngClass]="{'delete-icon': idx == 0, 'delete-icon-next': idx != 0}" 
+								(click)='deleteDevBranch(repo.devBranch)'
+							>delete</i>
 						</div>
 					</div>
 				</div>
