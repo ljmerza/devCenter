@@ -6,7 +6,7 @@ import datetime
 import base64
 import logging
 import time
-import threading
+import multiprocessing
 
 from Jira.JiraFields import *
 
@@ -115,7 +115,7 @@ class AutomationBot(object):
 			# if we want to add beta stuff and enough time has passed then show beta stats
 			if self.is_beta_week and (self.beta_wait_time == self.beta_wait_count):
 				start_beta = time.time()
-				thr = threading.Thread(target=self.beta_week_stats)
+				thr = multiprocessing.Process(target=self.beta_week_stats)
 				thr.start()
 				end_beta = time.time()
 				self.beta_wait_count = self.beta_wait_count + 1

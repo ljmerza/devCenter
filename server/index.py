@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import AutomationBot
-import threading
+import multiprocessing
 import os
 import time
 import datetime
@@ -162,7 +162,7 @@ if start_threads:
 	else:
 		# else use threading
 		if start_bot:
-			t = threading.Thread(target=start_bots)
+			t = multiprocessing.Process(target=start_bots)
 			t.start()
 		if start_server:
 			DevCenterServer.start_server(app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
