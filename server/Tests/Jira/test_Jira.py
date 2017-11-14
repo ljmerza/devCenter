@@ -17,6 +17,8 @@ header_value = f'{username}:{password}'
 encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
 cred_hash = f'Basic {encoded_header}'
 
+print(cred_hash)
+
 
 jira = Jira()
 
@@ -53,8 +55,6 @@ def get_jira_tickets():
 	# print(response)
 	# print(divider)
 	return response
-
-get_jira_tickets()
 
 def find_key_by_msrp():
 	print('find_key_by_msrp')

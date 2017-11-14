@@ -22,9 +22,11 @@ def start_server(app, socketio, jira_obj, crucible_obj):
 
 	def get_cred_hash(request, required=False):
 		cred_hash = ''
-		if not required:
+		if required:
+			cred_hash = request.headers.get('Authorization', cred_hash)
+		else:
 			cred_hash = my_cred_hash
-		return request.headers.get('Authorization', cred_hash)
+		return cred_hash
 
 	
 	@app.route(f'/node_modules/<path:path>')

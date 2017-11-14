@@ -162,8 +162,9 @@ class Crucible(CrucibleRepoBranch, CruciblePCR):
 		'''creates a Crucible review with correct title, adds branches to review, then publishes review
 
 		Args:
-			data (dict) contains prperties:
+			data (dict) contains properties:
 				username (str) username of user to add
+				password (str) password of user to add
 				title (str) the title of the Crucible (premade to pass less args)
 				repos (Array<str>) array of repo string names to add to new Crucible review
 
@@ -172,7 +173,6 @@ class Crucible(CrucibleRepoBranch, CruciblePCR):
 		'''
 		# create JSON data to send to API
 
-		print('data, cred_hash', data, cred_hash)
 		json_data = {"reviewData": {
 			"allowReviewersToJoin":"true",
 			"author":{"userName":data['username']},
@@ -182,16 +182,22 @@ class Crucible(CrucibleRepoBranch, CruciblePCR):
 			"name": data['title'],
 			"projectKey":"CR-UD"
 		}}
+		
 		# create a crucible review
 		response = self.post_json(url=f'{self.crucible_api_review}.json', json_data=json_data, cred_hash=cred_hash)
-		print('-----response cred_hash------', response, data, cred_hash)
 		if not response['status']:
 			return {'data':  'Could not create crucible review: '+response['data'], 'status': False}
+
 		# make sure we have valid data
-		if not response['data'].get('permaId'):
+		if 'permaId' not in response['data']:
 			return {'data': 'Could not get permId: '+response['data'], 'status': False}
+
 		# get Crucible ID
 		crucible_id = response['data']['permaId']['id']
+		
+		# get manual Crucible session
+		self.manual_login(username=data['username'], password=data['password'])
+
 		# for each repo add it to review
 		for repo in data['repos']:
 			json_data = {
@@ -200,17 +206,17 @@ class Crucible(CrucibleRepoBranch, CruciblePCR):
 				"repositoryName": repo['repositoryName'],
 				"reviewedBranch": repo['reviewedBranch']
 			}
-			response = self.post_json(url=f'{self.crucible_api_branch}/{crucible_id}.json', json_data=json_data, cred_hash=cred_hash)
-			
+			response = session.manual_post_json(url=f'{self.crucible_api_branch}/{crucible_id}.json', json=json_data)
 			if not response['status']:
-				json_data = str(json_data)
-				return {'data': f'Could not add repo {repo}: '+response['data'], 'status': False}
+				return {'status': False, 'data': f'Could not add repo {repo}: '+response['data']}
+
 		# publish review
-		response = self.post(url=f'{self.crucible_api_review}/{crucible_id}/transition?action=action:approveReview&ignoreWarnings=true.json', cred_hash=cred_hash)
+		response = self.manual_post_json(url=f'{self.crucible_api_review}/{crucible_id}/transition?action=action:approveReview&ignoreWarnings=true.json')
 		if not response['status']:
-			return {'data': f'Could not publish review: '+response['data'], 'status': False}
+			return {'status': False, 'data': f'Could not publish review: '+response['data']}
+		
 		# return crucible id and status ok
-		return {'data': crucible_id, 'status': True}
+		return {'status': True, 'data': crucible_id}
 
 
 	def close_crucible(self, crucible_id, cred_hash):

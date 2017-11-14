@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 import os
+import requests
+
 from Common.DevCenterAPI import DevCenterAPI
 
 class CrucibleAPI(DevCenterAPI):
@@ -16,6 +18,8 @@ class CrucibleAPI(DevCenterAPI):
 		'''
 		DevCenterAPI.__init__(self)
 		self.crucible_url = os.environ['CRUCIBLE_URL']
+		self.atl_token = os.environ['ATL_TOKEN']
+		
 		self.crucible_api_review = f'{self.crucible_url}/rest-service/reviews-v1'
 		self.crucible_api_repo = f'{self.crucible_url}/rest-service/repositories-v1'
 		self.crucible_api_changelog = f'{self.crucible_url}/changelog-ajax'
@@ -84,3 +88,31 @@ class CrucibleAPI(DevCenterAPI):
 		# else return response
 		else:
 			return response
+
+	def manual_login(self, username, password):
+		'''Manually logs into Crucible
+		'''
+		# get login page
+		self.session = requests.session()
+		self.session.get(url=f'{self.crucible_url}/login')
+		# try to login
+		login_data = dict(username=username, password=password, rememberme='yes', atl_token=self.atl_token)
+		self.session.post(url=f'{self.crucible_url}/login', data=login_data)
+
+	def manual_post_json(self, url, json={}):
+		'''Manually make a POST request
+		'''
+		# make sure we have a session
+		if not self.session:
+			return {'status': False, 'data': 'Please login first.'}
+
+		# post json
+		response = self.session.post(url=url, json=data)
+
+		# process response
+		if response.status_code != 200:
+			return {'status': False, 'data': response.text}
+		else:
+			return {'status': True, 'data': response.text}
+
+

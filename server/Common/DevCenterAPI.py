@@ -169,12 +169,12 @@ class DevCenterAPI():
 			# if not data then unknown error
 			if 'data' not in response:
 				return { "status": False, "data":  'Unknown error' }
-			# if message in data then return error message
-			elif 'message' in response['data']:
-				return { "status": False, "data":  response['data']['message'] }
+			# if  data is dict then get message then return error message
+			elif isinstance(response['data'], dict) and 'message' in response['data']:
+				return { "status": False, "data": response['data']['message'] }
 			# else just return data as error
 			else:
-				return { "status": False, "data":  response['data'] }
+				return { "status": False, "data": response['data'] }
 		# else return response
 		else:
 			return response
