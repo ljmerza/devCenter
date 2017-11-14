@@ -43,6 +43,7 @@ def get_jira_tickets(data, jira_obj):
 
 	# get jira tickets
 	jira_data = jira_obj.get_jira_tickets(filter_number=filter_number, cred_hash=data['cred_hash'], fields=data['fields'], jql=data['jql'])
+
 	if not jira_data['status']:
 		return {'status': False, 'data': f'Could not get Jira tickets for filter number {filter_number}: '+jira_data['data'] }
 

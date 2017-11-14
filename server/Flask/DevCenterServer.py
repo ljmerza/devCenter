@@ -15,14 +15,24 @@ import CrucibleRequests
 
 def start_server(app, socketio, jira_obj, crucible_obj):
 
+	# flask config
 	app_name = 'dev_center'
-	my_cred_hash = ''
 	host = '127.0.0.1'
 	port = 5858
 
+	# get master cred hash
+	username = os.environ['USER']
+	password = os.environ['PASSWORD']
+	header_value = f'{username}:{password}'
+	encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
+	my_cred_hash = f'Basic {encoded_header}'
+
+
 	def get_cred_hash(request, required=False):
+		'''
+		'''
 		cred_hash = ''
-		if required:
+		if required or request.headers.get('Authorization'):
 			cred_hash = request.headers.get('Authorization', cred_hash)
 		else:
 			cred_hash = my_cred_hash
