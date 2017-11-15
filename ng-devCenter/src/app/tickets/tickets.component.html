@@ -29,7 +29,7 @@
 					</thead>
 
 					<tbody>
-						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}};trackBy: ticketTrackBy'>
+						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}}'>
 							<td><a target="_blank" href="{{jira.jiraUrl}}/browse/{{ticket.key}}">{{ticket.key}}</a></td>
 							<td>{{ticket.msrp}}</td>
 							<td class='summary-format'>{{ticket.summary}}</td>
@@ -39,7 +39,7 @@
 									<div>{{ticket.component}}</div>
 								</div>
 								<i 
-									*ngIf='ticket_list_type == "mytickets" || ticket_list_type == "allopen"'
+									*ngIf='jira.title == "My Open" || jira.title == "All Open"'
 									class="material-icons float-right" 
 									title='Generate QA/Crucible'
 									(click)="openQAModal(ticket.msrp)"
@@ -63,7 +63,7 @@
 											{{ticket.crucible_id}}
 									</a>
 									<i 
-										*ngIf='ticket_list_type == "pcr" || ticket_list_type == "allopen"'
+										*ngIf='jira.title == "Peer Code Review" || jira.title == "All Open"'
 										class="material-icons float-right" 
 										title='PCR Pass/Complete' 
 										(click)="openPCRModal(ticket.crucible_id, ticket.key, 'pass', statusModal)"
@@ -111,4 +111,4 @@
 </ng-template>
 
 
-<app-qa-generator></app-qa-generator>
+<app-qa-generator (newCrucible)="newCrucible($event)"></app-qa-generator>

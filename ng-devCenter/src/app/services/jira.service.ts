@@ -102,7 +102,7 @@ export class JiraService extends DataService {
 		        crucible_id: id,
 				username: attuid
 		    })
-		})
+		});
 	}
 
 	/*
@@ -114,19 +114,38 @@ export class JiraService extends DataService {
 		        key: id,
 				username: attuid
 		    })
-		})
+		});
 	}
 
 	/*
 	*/
 	searchTicket(msrp:string){
-		return super.getAPI(`${this.apiUrl}/jira/getkey/${msrp}`)
+		return super.getAPI(`${this.apiUrl}/jira/getkey/${msrp}`);
 	}
 
 	/*
 	*/
 	getTicketBranches(msrp:string){
-		return super.getAPI(`${this.apiUrl}/git/branches/${msrp}`)
+		return super.getAPI(`${this.apiUrl}/git/branches/${msrp}`);
+	}
+
+	/*
+	*/
+	getRepos(){
+		return super.getAPI(`${this.apiUrl}/git/repos`);
+	}
+
+	generateQA(postData){
+
+		// add creds
+		postData.username = this.user.username;
+		postData.password = this.user.password;
+
+		return super.postAPI({
+			url: `${this.apiUrl}/crucible/review/create`,
+			body: JSON.stringify(postData)
+		});
+
 	}
 
 }

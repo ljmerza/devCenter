@@ -107,7 +107,7 @@ class CrucibleAPI(DevCenterAPI):
 			return {'status': False, 'data': 'Please login first.'}
 
 		# post json
-		response = self.session.post(url=url, json=data)
+		response = self.session.post(url=url, json=json)
 
 		# process response
 		if response.status_code != 200:

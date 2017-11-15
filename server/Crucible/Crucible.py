@@ -206,7 +206,7 @@ class Crucible(CrucibleRepoBranch, CruciblePCR):
 				"repositoryName": repo['repositoryName'],
 				"reviewedBranch": repo['reviewedBranch']
 			}
-			response = session.manual_post_json(url=f'{self.crucible_api_branch}/{crucible_id}.json', json=json_data)
+			response = self.manual_post_json(url=f'{self.crucible_api_branch}/{crucible_id}.json', json=json_data)
 			if not response['status']:
 				return {'status': False, 'data': f'Could not add repo {repo}: '+response['data']}
 

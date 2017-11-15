@@ -1,37 +1,38 @@
 <!-- QA Generator Model -->
 <ng-template #qaModal let-c="close" id='qa-modal'>
+	<form class="form-group" #qaGenForm="ngForm" (ngSubmit)="submitQA(qaGenForm.value)">
 
-	<div class="modal-header">
-		<h4 class="modal-title">QA Generator</h4>
-		<button type="button" class="close" aria-label="Close" (click)="c()">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
+		<div class="modal-header">
+			<h4 class="modal-title">QA Generator</h4>
+			<button type="button" class="close" aria-label="Close" (click)="c()">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
 
 
-	<div class="modal-body">
-		<form class="form-group" #qaGenForm="ngForm">
+		<div class="modal-body">
+		
 
 			<h2>Your Branches:</h2>
-			<div class="repoDropdownParent" *ngFor='let repo of selectArray; index as idx'>
+			<div class="repoDropdownParent" *ngFor=' let repo of repoArray; index as idx'>
 				<div class="form-group">
 					<div class="row">
 						<div class='col-2'>
 							<label for="repositoryName" *ngIf='idx == 0'>Repo:</label>
-							<select class="form-control repositoryName">
-								<option selected>{{repo.repo}}</option>
+							<select class="form-control repositoryName" name="repositoryName-{{idx}}" [(ngModel)]='repo.repositoryName'>
+								<option *ngFor='let allRepo of repo.allRepos'>{{allRepo.name}}</option>
 							</select>
 						</div>
 						<div class='col-6'>
 							<label for="reviewedBranch" *ngIf='idx == 0'>Branch:</label>
-							<select class="form-control reviewedBranch">
-								<option *ngFor='let branch of repo.allBranches' [selected]='branch == repo.devBranch'>{{branch}}</option>
+							<select class="form-control reviewedBranch" name="reviewedBranch-{{idx}}" [(ngModel)]='repo.reviewedBranch'>
+								<option *ngFor='let branch of repo.allBranches'>{{branch}}</option>
 							</select>
 						</div>
 						<div class='col-3'>
 							<label for="baseBranch" *ngIf='idx == 0'>Branched From:</label>
-							<select class="form-control baseBranch">
-								<option *ngFor='let sourceBranch of repo.sourceBranches'>{{sourceBranch}}</option>
+							<select class="form-control baseBranch" name="baseBranch-{{idx}}" [(ngModel)]='repo.baseBranch'>
+								<option *ngFor='let branch of repo.allBranches'>{{branch}}</option>
 							</select>
 						</div>
 						<div class='col-1'>
@@ -49,7 +50,7 @@
 			<!-- QA steps -->
 			<h2>QA Steps:</h2>
 			<div class="form-group">
-				 <textarea class="form-control" name="qaSteps" id="qaSteps" rows=20></textarea>
+				 <textarea class="form-control" name="qaSteps" id="qaSteps" rows=20 [(ngModel)]="qaSteps"></textarea>
 			</div>
 
 
@@ -59,13 +60,13 @@
 					<div class="col">
 						<div class="form-check form-check-inline">
 							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+								<input class="form-check-input" type="checkbox" name='pcrNeeded' [(ngModel)]="pcrNeeded">
 								Auto set to "PCR - Needed" component
 							</label>
 						</div>
 						<div class="form-check form-check-inline">
 							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+								<input class="form-check-input" type="checkbox" name='codeReview' [(ngModel)]="codeReview">
 								Auto set to "Code Review" status
 							</label>
 						</div>
@@ -76,7 +77,7 @@
 							<ngb-timepicker
 								class='float-right button-border'
 								name="logTime"
-								[(ngModel)]="time"
+								[(ngModel)]="logTime"
 								[hourStep]="hourStep" 
 								[minuteStep]="minuteStep">
 							</ngb-timepicker>
@@ -84,17 +85,17 @@
 					</div>
 				</div>
 			</div>
+		
+		</div>
 
-		</form>
-	</div>
-
-	<div class="modal-footer">
-		<button 
-			type="button" 
-			[disabled]="qa_submit_disable"
-			class="btn btn-outline-dark" 
-			(click)="c('gen')">Generate
-		</button>
-		<button type="button" class="btn btn-outline-dark" (click)="c()">Cancel</button>
-	</div>
+		<div class="modal-footer">
+			<button 
+				type="submit" 
+				[disabled]="qa_submit_disable"
+				class="btn btn-outline-dark" 
+			>Generate
+			</button>
+			<button type="button" class="btn btn-outline-dark" (click)="c()">Cancel</button>
+		</div>
+	</form>
 </ng-template>

@@ -29,7 +29,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	@Input() reloadTicketsEvent = new EventEmitter();
 
 	openTickets:Array<any>;
-	ticket_list_type:string;
 
 	@ViewChild(DataTableDirective) private dtElement: DataTableDirective;
 	dtTrigger:Subject<any> = new Subject();
@@ -77,11 +76,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	   			this.searchTicket$.unsubscribe();
 			}
 
-			this.ticket_list_type = params.get('filter');
-
 			// if required user info exists then get tickets
 			if(this.user.username && this.user.port && this.user.emberUrl){
-				this.searchTicket$ = this.setFilterData( this.ticket_list_type );
+				this.searchTicket$ = this.setFilterData( params.get('filter') );
 			}
 		});
 	}
@@ -100,15 +97,15 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 			// if new tickets gotten are different than currently saved
 			// ones then set new ones and redraw table
-			const savedTickets = JSON.stringify(this.openTickets);
-			const newTickets = JSON.stringify(issues.data);
+			// const savedTickets = JSON.stringify(this.openTickets);
+			// const newTickets = JSON.stringify(issues.data);
 
-			if(JSON.stringify(savedTickets) !== JSON.stringify(newTickets)){
+			// if(JSON.stringify(savedTickets) !== JSON.stringify(newTickets)){
 				// save tickets and re-render data tables
 				this.openTickets = issues.data;
 				this.ngProgress.done();
 				this.rerender();
-			}			
+			// }			
 		});	
 	}
 
@@ -119,9 +116,10 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		// if datatable already exists then destroy then render else just render
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-
+				dtInstance.destroy();
+				this.dtTrigger.next();
 				// make redraw on next event loop
-				setTimeout(dtInstance.draw,0);
+				// setTimeout(dtInstance.draw,0);
 			});
 		} else {
 			this.dtTrigger.next();
@@ -168,5 +166,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	ticketTrackBy(index, item) {
 		console.log(index, item)
 		return index;
+	}
+
+	newCrucible(data){
+		console.log(data)
 	}
 }

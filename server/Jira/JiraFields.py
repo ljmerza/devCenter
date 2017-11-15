@@ -122,7 +122,12 @@ def get_story_point(issue):
 		the issue's story points or 0
 	'''
 	# if exists then return else return 0
-	return issue.get('fields', {}).get('customfield_10006', 0)
+	if 'customfield_10006' in issue['fields']:
+		points = issue['fields']['customfield_10006']
+		if points is not None:
+			return points
+		else:
+			return 0
 
 def get_sprint(issue):
 	'''gets an issue's sprint

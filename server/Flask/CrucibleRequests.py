@@ -34,7 +34,7 @@ def set_pcr_pass(data, crucible_obj):
 def crucible_create_review(data, crucible_obj, jira_obj):
 
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['username', 'password','repos','qa_steps','autoPCR','autoCR','cred_hash'])
+	missing_params = FlaskUtils.check_args(params=data, required=['username', 'password', 'repos','cred_hash'])
 	if missing_params:
 		return {"data": "Missing required parameters: "+ missing_params, "status": False}
 
@@ -57,34 +57,11 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	# if error on create crucible close crucible and return error
 	if not crucible_data['status']:
 		return {"status": False, "data": 'Could not create Crucible review: '+crucible_data['data']}
+
+	# return crucible id
+	return {"status": True, "data": crucible_data['data']}
 	
-	# if QA step exist then modify Jira data
-	if 'qa_steps' in data and data['qa_steps']:
-
-		# generate QA steps
-		qa_steps = jira_obj.generate_qa_template(qa_steps=data['qa_steps'], repos=data['repos'], crucible_id=crucible_data['data'])
-		comment_response = jira_obj.add_comment(key=qa_response["key"], comment=qa_steps, cred_hash=data['cred_hash'])
-
-		# check if Jira comment created
-		if not comment_response['status']:
-			return {"status": False, "data": 'Could not add comment to Jira: '+comment_response['data']}
-
-		# set PCR if needed
-		if 'autoPCR' in data and data['autoPCR']:
-			pcr_response = jira_obj.set_pcr_needed(key=qa_response["key"], cred_hash=data['cred_hash'])
-			if not pcr_response['status']:
-				return {"status": False, "data": 'Could not set Jira to PCR Needed: '+pcr_response['data']}
-
-		# set CR if needed
-		if 'autoCR' in data and data['autoCR']:
-			cr_response = jira_obj.set_code_review(key=qa_response["key"], cred_hash=data['cred_hash'])
-			if not cr_response['status']:
-				return {"status": False, "data": 'Could not set Jira ticket to Code Review: '+cr_response['data']}
-
-		if 'log_time' in data and data['log_time']:
-			log_response = jira_obj.add_work_log(key=qa_response["key"], time=data['log_time'], cred_hash=data['cred_hash'])
-			if not log_response['status']:
-				return {"status": False, "data": 'Could not log time to Jira: '+log_response['data']}
+	
 
 	# return data
 	return {"status": True, "data": {'jira': qa_response["key"], 'crucible': crucible_data['data']}}
