@@ -39,6 +39,8 @@ is_beta_week = False
 is_qa_pcr = False
 beta_stat_ping_now = False
 merge_alerts = False
+
+host = '127.0.0.1'
 ####################################
 # allow pcr/qa pings and beta stats
 if 'beta' in sys.argv:
@@ -66,6 +68,7 @@ if 'prod' in sys.argv:
 	time_shift = 4
 	devdb = False
 	devbot = False
+	host = '0.0.0.0'
 
 # allow error logging
 if 'error_log' in sys.argv:
@@ -157,7 +160,7 @@ if start_threads:
 				start_bots()
 		else:
 			if start_server:
-				DevCenterServer.start_server(app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
+				DevCenterServer.start_server(host=host, app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
 
 	else:
 		# else use threading
@@ -165,11 +168,11 @@ if start_threads:
 			t = multiprocessing.Process(target=start_bots)
 			t.start()
 		if start_server:
-			DevCenterServer.start_server(app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
+			DevCenterServer.start_server(host=host, app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
 
 else:
 	# else only allow single thread/process
 	if start_server:
-		DevCenterServer.start_server(app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
+		DevCenterServer.start_server(host=host, app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
 	if start_bot:
 		start_bots()

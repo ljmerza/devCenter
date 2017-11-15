@@ -13,11 +13,10 @@ import JiraRequests
 import CrucibleRequests
 
 
-def start_server(app, socketio, jira_obj, crucible_obj):
+def start_server(host, app, socketio, jira_obj, crucible_obj):
 
 	# flask config
 	app_name = 'dev_center'
-	host = '127.0.0.1'
 	port = 5858
 
 	# get master cred hash
