@@ -21,7 +21,7 @@ import config from '../services/config';
 	encapsulation: ViewEncapsulation.None
 })
 export class QaGeneratorComponent {
-	key;
+	key:string;
 	modalReference;
 	loadingBranches:boolean = true;
 
@@ -29,15 +29,14 @@ export class QaGeneratorComponent {
 	codeReview:boolean = true;
 	qaSteps:string;
 	logTime = {hour: 0, minute: 0};
-
-	@ViewChild('qaModal') content:ElementRef;
-
 	hourStep = 1;
 	minuteStep = 15;
-
 	repoArray = [];
-	branchDivider = 16;
 
+	repos;
+	branches;
+
+	@ViewChild('qaModal') content:ElementRef;
 	@Output() newCrucible = new EventEmitter();
 
 	constructor(
@@ -52,6 +51,10 @@ export class QaGeneratorComponent {
 	/*
 	*/
 	submitQA(formObj: NgForm){
+
+		// reset data
+		this.branches = [];
+		this.repos = [];
 	
 		// close modal
 		this.modalReference.close();
@@ -96,7 +99,8 @@ export class QaGeneratorComponent {
 		});
 	}
 
-	qa_submit_disable = true;
+	/*
+	*/
 	openQAModal(msrp:string, key:string):void {
 
 		// save MSRP and reset selected repos
@@ -119,36 +123,36 @@ export class QaGeneratorComponent {
 		});
 
 		// disabled submit button for QA gen
-		this.qa_submit_disable = true;
 		this.loadingBranches = true;
 
 		// get all repos and branches associated with this msrp then enable submit button
 		forkJoin([this.jira.getTicketBranches(msrp), this.jira.getRepos()]).subscribe(data => {
 
-			const branches = data[0];
-			const repos = data[1];
+			// save results on instance
+			this.branches = data[0];
+			this.repos = data[1];
 
-			this.loadingBranches = false;
+			
 			
 			// make sure we got back data
-			if(!branches.status){
-				this.toastr.showToast(branches.data, 'error');
+			if(!this.branches.status){
+				this.toastr.showToast(this.branches.data, 'error');
 				return;
-			} else if (!repos.status){
-				this.toastr.showToast(repos.data, 'error');
+			} else if (!this.repos.status){
+				this.toastr.showToast(this.repos.data, 'error');
 				return;
 			}
 
 			// allow submit of form
-			this.qa_submit_disable = false;
+			this.loadingBranches = false;
 
 			// for each repo found create arrays of data needed
-			this.repoArray = branches.data.map( (repo, index) => {
+			this.repoArray = this.branches.data.map( (repo, index) => {
 
 				// for each matching dev branch found get list of branches
 				return repo.branches.map( devBranch => {
 					let selection = {
-						allRepos: repos.data,
+						allRepos: this.repos.data,
 						allBranches: repo.all,
 
 						repositoryName: repo.repo,
@@ -195,6 +199,31 @@ export class QaGeneratorComponent {
 		});
 
 		this.repoArray.splice(index,1);
+	}
+
+	/*
+	*/
+	addRepo(){
+		const selection = {
+			allRepos: this.repos.data,
+			allBranches: [],
+
+			repositoryName: '',
+			reviewedBranch: '',
+			baseBranch: '',
+		};
+
+		this.repoArray.push(selection)
+	}
+
+	getBranches(repoName:string, index:Number){
+		this.jira.getBranches(repoName).subscribe( branches => {
+			if(!branches.status){
+				this.toastr.showToast(`Could not get branches: ${branches.data}`, 'error');
+			} else {
+				console.log(branches);
+			}
+		})
 	}
 
 }

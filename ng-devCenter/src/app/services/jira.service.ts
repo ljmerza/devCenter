@@ -144,7 +144,10 @@ export class JiraService extends DataService {
 			url: `${this.apiUrl}/crucible/review/create`,
 			body: JSON.stringify(postData)
 		});
+	}
 
+	getBranches(repoName){
+		return super.getAPI(`${this.apiUrl}/git/repo/${repoName}`);
 	}
 
 }

@@ -39,6 +39,7 @@ class CrucibleAPI(DevCenterAPI):
 		return self._process_response(response)
 
 	def get(self, url, cred_hash):
+		print(url)
 		'''sends a GET request
 		Args:
 			url (str) the URL to make a POST request
@@ -72,6 +73,7 @@ class CrucibleAPI(DevCenterAPI):
 			returns a dict with status/data property. 
 		'''
 		# if no status
+		# print(response)
 		if 'status' not in response:
 			return { "status": False, "data": 'There was no status given' }
 		# if status False
