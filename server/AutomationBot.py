@@ -6,7 +6,7 @@ import datetime
 import base64
 import logging
 import time
-import multiprocessing
+import threading
 
 from Jira.JiraFields import *
 

@@ -18,11 +18,7 @@ let config = {
 
 	mytickets: function(username){
 		return `assignee%20%3D%20${username}%20AND%20resolution%20%3D%20unresolved%20ORDER%20BY%20priority%20DESC%2C%20created%20ASC`;
-	},
-
-	apiUrlDev: 'http://localhost',
-	apiUrlProd: 'http://m5devacoe01.gcsc.att.com'
-
+	}
 }
 
 
