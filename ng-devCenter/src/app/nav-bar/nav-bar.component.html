@@ -1,5 +1,5 @@
 <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light z-index-2">
-	<a class="navbar-brand" href="#">Dev Center</a>
+	<a class="navbar-brand">Dev Center</a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
@@ -42,12 +42,12 @@
 					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}/UD/cgi-bin/worklist.pl">UD</a></li>
 	
 					<li class="dropdown-submenu">
-						<a class="dropdown-item">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+						<a class="dropdown-item" data-toggle="dropdown">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
 							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}asset/history?asset=TEST&UAT=0&usertimezone=America/New_York&usertimeformat=12HR">Asset History</a></li>
 							
 							<li class="dropdown-submenu">
-								<a class="dropdown-item">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+								<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 								<ul class="dropdown-menu dropdown-submenu-items">
 									<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/GAS544770001">GAS544770001 (EAN Data)</a></li>
 									<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/OKS433527001">OKS433527001 (Word Doc)</a></li>
@@ -70,7 +70,7 @@
 					</li>
 
 					<li class="dropdown-submenu">
-						<a class="dropdown-item" data-toggle="dropdown" href="#">TeamDB Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+						<a class="dropdown-item" data-toggle="dropdown">TeamDB Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
 							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:5{{user.emberPort}}/teamdb/team">Teams</a></li>
 							<li><a class="dropdown-item" target="_blank" href="http://{{user.emberUrl}}:5{{user.emberPort}}/teamdb/team/227">Edit Team</a></li>
@@ -132,7 +132,7 @@
 					<div class="dropdown-divider"></div>
 					
 					<li class="dropdown-submenu">
-						<a class="dropdown-item" data-toggle="dropdown" href="#">Ember Links<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+						<a class="dropdown-item" data-toggle="dropdown">Ember Links<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
 							<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/Ember+Installation+and+Setup">Ember Install</a></li>
 							<li><a class="dropdown-item" target="_blank" href="https://emberjs.com/api/ember/2.14/modules/ember">Ember API</a></li>
@@ -143,7 +143,7 @@
 					</li>
 
 					<li class="dropdown-submenu">
-						<a class="dropdown-item" data-toggle="dropdown" href="#">Coding Standards<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+						<a class="dropdown-item" data-toggle="dropdown">Coding Standards<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
 							<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/pages/viewpage.action?pageId=383617008">Perl</a></li>
 							<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/DTI+-+JavaScript+Coding+Standards">JavaScript</a></li>
@@ -152,7 +152,7 @@
 					</li>
 
 					<li class="dropdown-submenu">
-						<a class="dropdown-item" data-toggle="dropdown" href="#">Documentation<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+						<a class="dropdown-item" data-toggle="dropdown">Documentation<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
 							<li><a class="dropdown-item" target="_blank" href="https://datatables.net/reference/api">DataTables</a></li>
 							<li><a class="dropdown-item" target="_blank" href="https://momentjs.com/docs/">moment.js</a></li>
@@ -164,7 +164,7 @@
 					</li>
 
 					<li class="dropdown-submenu">
-						<a class="dropdown-item" data-toggle="dropdown" href="#">Pretty Printers<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+						<a class="dropdown-item" data-toggle="dropdown">Pretty Printers<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
 							<li><a class="dropdown-item" target="_blank" href="http://xmlprettyprint.com/">XML</a></li>
 							<li><a class="dropdown-item" target="_blank" href="http://jsonprettyprint.com/">JSON</a></li>
@@ -185,7 +185,7 @@
 			</li>
 
 			<li class="nav-item">
-				<a class="nav-link" href="http://ix.web.att.com:2017/">MSRP</a>
+				<a class="nav-link" target="_blank" href="http://ix.web.att.com:2017/">MSRP</a>
 			</li>
 		</ul>
 
@@ -199,7 +199,6 @@
 				aria-label="Search"
 				[ngModelOptions]="{standalone: true}"
 				[(ngModel)]="ticketValue"
-				(keyup.enter)="ticketValue = $event.target.value; searchTicket()"
 			>
 			<button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="searchTicket()">Search</button>
 		</form>
