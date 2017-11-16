@@ -39,11 +39,15 @@ export class UserSettingsComponent implements AfterContentInit {
 
 		this.modalService.open(this.content, {keyboard:false,backdrop:false}).result.then((result) => {
 
+			// if save action then save new data
 			if(result === 'save'){
 				this.user.setUserData('username', this.username);
 				this.user.setUserData('password', this.password);
 				this.user.setUserData('port', this.port);
 				this.user.setUserData('emberUrl', this.emberUrl);
+
+				// notify tickets we need a refresh
+				this.user.notifyTicketComponent();
 			}
 		});
 	}

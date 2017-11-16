@@ -73,4 +73,10 @@ export class NavBarComponent implements AfterContentInit {
 		this.userSetting.openUserSettings();
 	}
 
+	/*
+	*/
+	resetUserSettings(){
+
+	}
+
 }

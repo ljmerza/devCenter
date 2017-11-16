@@ -71,6 +71,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	searchTicket$;
+	userReloadTickets$
 	ngOnInit():void {
 		this.route.paramMap
 		.subscribe( params => {
@@ -84,11 +85,21 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			if(this.user.username && this.user.port && this.user.emberUrl){
 				this.searchTicket$ = this.setFilterData( params.get('filter') );
 			}
+
+			// be notified if user changes settings
+			this.userReloadTickets$ = this.user.notifyTickets$.subscribe( () => {
+				this.setFilterData( params.get('filter') );
+	      	});			
 		});
+
+
 	}
 
+	/*
+	*/
 	ngOnDestroy(){
 		this.searchTicket$.unsubscribe();
+		this.userReloadTickets$.unsubscribe();
 	}
 
 	/*

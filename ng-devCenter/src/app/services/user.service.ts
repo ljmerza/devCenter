@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import config from './config';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class UserService {
@@ -10,6 +11,11 @@ export class UserService {
 	emberUrl;
 	emberLocal;
 	emberPort;
+
+	emberBuilds = [
+		{'label':'acoe', 'value':config.devUrl},
+		{'label':'localhost', 'value':'localhost'}
+	];
 
 	constructor() { 
 		this.username = localStorage.getItem('devCenter.username') || '';
@@ -26,17 +32,12 @@ export class UserService {
 		if(value){
 			localStorage.setItem(`devCenter.${data}`, value);
 			this[data] = value;
-
 			this.setUrls();
 		}
 	}
 
-	emberBuilds = [
-		{'label':'acoe', 'value':config.devUrl},
-		{'label':'localhost', 'value':'localhost'}
-	];
-
-
+	/*
+	*/
 	setUrls(){
 		// set emberUrl based on if localhost or not
 		if(this.emberUrl && this.emberUrl.match(/localhost/)){
@@ -48,5 +49,11 @@ export class UserService {
 		}
 	}
 
-	
+	/*
+	*/
+	private notifyTickets = new Subject<any>()
+	notifyTickets$ = this.notifyTickets.asObservable()
+	public notifyTicketComponent() {
+		this.notifyTickets.next()
+	}
 }
