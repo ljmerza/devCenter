@@ -1,8 +1,10 @@
 import { Component, AfterContentInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { UserService } from './../services/user.service'
-import { DataService } from './../services/data.service'
-import { JiraService } from './../services/jira.service'
+import { UserService } from './../services/user.service';
+import { DataService } from './../services/data.service';
+import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
+
+import config from '../services/config';
 
 declare var $ :any;
 
@@ -12,6 +14,7 @@ declare var $ :any;
 	styleUrls: ['./nav-bar.component.css']
 })
 export class NavBarComponent implements AfterContentInit {
+	config=config
 
 	ticketValue:string;
 	@ViewChild('userSetting') private userSetting;
@@ -48,14 +51,14 @@ export class NavBarComponent implements AfterContentInit {
 	searchTicket() {
 		// if NaN then is key and go to Jira else need key from MSRP
 		if( isNaN(parseInt(this.ticketValue)) ){
-			window.open(`${this.data.jiraUrl}/browse/${this.ticketValue}`);
+			window.open(`${config.jiraUrl}/browse/${this.ticketValue}`);
 			this.ticketValue = '';
 			
 		} else {
 			this.jira.searchTicket(this.ticketValue)
 			.subscribe( data => {
 				if(data.status){
-					window.open(`${this.data.jiraUrl}/browse/${data.data}`);
+					window.open(`${config.jiraUrl}/browse/${data.data}`);
 				} else {
 					this.toastr.showToast(`Could not find Jira ticket ticket with given MSRP: ${this.ticketValue}`, 'error');
 				}

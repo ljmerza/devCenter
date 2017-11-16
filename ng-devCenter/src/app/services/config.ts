@@ -18,7 +18,20 @@ let config = {
 
 	mytickets: function(username){
 		return `assignee%20%3D%20${username}%20AND%20resolution%20%3D%20unresolved%20ORDER%20BY%20priority%20DESC%2C%20created%20ASC`;
-	}
+	},
+
+	jiraUrl: 'https://jira.web.att.com:8443',
+	crucibleUrl: 'https://icode3.web.att.com',
+	codeCloudUrl: 'https://codecloud.web.att.com',
+
+	devUrl: 'http://m5devacoe01.gcsc.att.com',
+	betaUrl: 'http://chrapud16b.gcsc.att.com',
+	wikiUrl: 'https://wiki.web.att.com',
+
+	chatUrl: 'qto://talk',
+
+	fields: 'customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate,comment,updated,created,customfield_10102,customfield_10175,customfield_10103,customfield_10602'
+
 }
 
 

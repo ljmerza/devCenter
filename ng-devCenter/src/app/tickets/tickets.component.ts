@@ -13,6 +13,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgProgress } from 'ngx-progressbar';
 import { ToastrService } from './../services/toastr.service';
 
+import config from '../services/config';
+
 import 'rxjs/add/observable/interval';
 
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
@@ -25,6 +27,8 @@ import * as $ from 'jquery';
 	styleUrls: ['./tickets.component.css']
 })
 export class TicketsComponent implements OnInit, OnDestroy {
+	config=config
+	loadingTickets:boolean = true;
 
 	@Input() reloadTicketsEvent = new EventEmitter();
 
@@ -91,6 +95,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	*/
 	setFilterData(jiraListType:string) {
 		this.ngProgress.start();
+		this.loadingTickets = true;
 
 		return this.jira.getFilterData(jiraListType)
 		.subscribe( issues => {
@@ -105,6 +110,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				this.openTickets = issues.data;
 				this.ngProgress.done();
 				this.rerender();
+
+				this.loadingTickets = false;
 			// }			
 		});	
 	}

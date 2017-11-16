@@ -10,7 +10,6 @@ import config from './config';
 
 @Injectable()
 export class JiraService extends DataService {
-	fields:string = 'customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate,comment,updated,created,customfield_10102,customfield_10175,customfield_10103,customfield_10602'
 	title:string = '';
 
 	/*
@@ -90,7 +89,7 @@ export class JiraService extends DataService {
 		}
 
 
-		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${this.fields}&filter=${filterNumber}`);
+		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${config.fields}&filter=${filterNumber}`);
 	}
 
 	/*

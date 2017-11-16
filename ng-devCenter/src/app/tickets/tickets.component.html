@@ -1,5 +1,20 @@
+<ng-progress [showSpinner]="false" [color]="'blue'"></ng-progress>
 
-<div class="container-fluid">
+<div class='loading' [hidden]="!loadingTickets">
+	<div class='container'>
+		<div class='loader'>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--text'></div>
+		</div>
+	</div>
+</div>
+
+<div class="container-fluid" [hidden]='loadingTickets'>
 	<div class="row">
 		<div class="col-12">
 			<h1 class='text-center title-spacing'>{{jira.title}} Tickets</h1>
@@ -7,7 +22,6 @@
 	</div>
 	<div class="row">
 		<div class="col-12">
-			<ng-progress [showSpinner]="false" [color]="'blue'"></ng-progress>
 			<div [hidden]='!openTickets'>
 				<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
 					<thead>
@@ -30,7 +44,7 @@
 
 					<tbody>
 						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}}'>
-							<td><a target="_blank" href="{{jira.jiraUrl}}/browse/{{ticket.key}}">{{ticket.key}}</a></td>
+							<td><a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket.key}}">{{ticket.key}}</a></td>
 							<td>{{ticket.msrp}}</td>
 							<td class='summary-format'>{{ticket.summary}}</td>
 							<td>
@@ -59,7 +73,7 @@
 									<a 
 										target="_blank" 
 										class='float-left'
-										href="{{jira.crucibleUrl}}/cru/{{ticket.crucible_id}}">
+										href="{{config.crucibleUrl}}/cru/{{ticket.crucible_id}}">
 											{{ticket.crucible_id}}
 									</a>
 									<i 
@@ -92,22 +106,24 @@
 
 
 
+
+
 <!-- PCR Model -->
 <ng-template #statusModal let-c="close" let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title">PCR Pass/Complete</h4>
-    <button type="button" class="close" aria-label="Close" (click)="c()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <p>Would you like to PCR Pass or Complete?</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="c('pass')">PCR Pass</button>
-    <button type="button" class="btn btn-outline-dark" (click)="c('complete')">PCR Complete</button>
-    <button type="button" class="btn btn-outline-dark" (click)="c()">Cancel</button>
-  </div>
+	<div class="modal-header">
+		<h4 class="modal-title">PCR Pass/Complete</h4>
+		<button type="button" class="close" aria-label="Close" (click)="c()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+		<p>Would you like to PCR Pass or Complete?</p>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-dark" (click)="c('pass')">PCR Pass</button>
+		<button type="button" class="btn btn-outline-dark" (click)="c('complete')">PCR Complete</button>
+		<button type="button" class="btn btn-outline-dark" (click)="c()">Cancel</button>
+	</div>
 </ng-template>
 
 

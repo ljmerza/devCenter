@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import config from './config';
 
 @Injectable()
 export class UserService {
@@ -31,7 +32,7 @@ export class UserService {
 	}
 
 	emberBuilds = [
-		{'label':'acoe', 'value':'m5devacoe01.gcsc.att.com'},
+		{'label':'acoe', 'value':config.devUrl},
 		{'label':'localhost', 'value':'localhost'}
 	];
 

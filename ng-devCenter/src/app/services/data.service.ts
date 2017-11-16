@@ -19,21 +19,10 @@ import { Headers, RequestOptions } from '@angular/http';
 
 @Injectable()
 export class DataService {
-
-	jiraUrl:string = 'https://jira.web.att.com:8443';
-	crucibleUrl:string = 'https://icode3.web.att.com';
-	codeCloudUrl:string = 'https://codecloud.web.att.com';
-
 	apiUrl:string = `${environment.apiUrl}:5858/dev_center`;
 
-	devUrl:string = 'http://m5devacoe01.gcsc.att.com';
-	betaUrl:string = 'http://chrapud16b.gcsc.att.com';
-	wikiUrl:string = 'https://wiki.web.att.com';
-
-	chatUrl = 'qto://talk';
-
 	chatUrlSanitize(username:string){
-		return this.sanitizer.bypassSecurityTrustUrl(`${this.chatUrl}/${username}`)
+		return this.sanitizer.bypassSecurityTrustUrl(`${config.chatUrl}/${username}`)
 	}
 
 
@@ -64,7 +53,7 @@ export class DataService {
 	/*
 	*/
 	getAPI(url:string) {
-		return this.http.get(url, this.createHeaders() )
+		return this.http.get(url, this.createAuthHeaders() )
 			.map(response => response.json())
 			// .retry(3)
 			.catch(this.handleError);
@@ -73,7 +62,7 @@ export class DataService {
 	/*
 	*/
 	postAPI(options) {
-		return this.http.post( options.url, options.body, this.createHeaders() )
+		return this.http.post( options.url, options.body, this.createAuthHeaders() )
 		.map(response => response.json())
 		// .retry(3)
 		.catch(this.handleError);
@@ -81,7 +70,7 @@ export class DataService {
 
 	/*
 	*/
-	createHeaders(){
+	createAuthHeaders(){
 		let headers = new Headers();
 
 		// try to get Auth header and set it

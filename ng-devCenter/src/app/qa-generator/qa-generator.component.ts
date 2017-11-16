@@ -8,9 +8,10 @@ import { JiraService } from './../services/jira.service';
 import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { ToastrService } from './../services/toastr.service';
-import { DataService } from './../services/data.service'
 
 import { forkJoin } from "rxjs/observable/forkJoin";
+
+import config from '../services/config';
 
 @Component({
 	selector: 'app-qa-generator',
@@ -21,11 +22,12 @@ import { forkJoin } from "rxjs/observable/forkJoin";
 export class QaGeneratorComponent {
 	msrp;
 	modalReference;
+	loadingBranches:boolean = true;
 
 	formRepos;
-	pcrNeeded;
-	codeReview;
-	qaSteps;
+	pcrNeeded:boolean = true;
+	codeReview:boolean = true;
+	qaSteps:string;
 	logTime = {hour: 0, minute: 0};
 
 	@ViewChild('qaModal') content:ElementRef;
@@ -41,8 +43,7 @@ export class QaGeneratorComponent {
 		public jira:JiraService, 
 		private modalService:NgbModal, 
 		public toastr: ToastrService, 
-		public vcr: ViewContainerRef,
-		public data: DataService
+		public vcr: ViewContainerRef
 	) {
 		this.toastr.toastr.setRootViewContainerRef(vcr);
 	}
@@ -104,13 +105,15 @@ export class QaGeneratorComponent {
 
 			const branches = data[0];
 			const repos = data[1];
+
+			this.loadingBranches = false;
 			
 			// make sure we got back data
 			if(!branches.status){
 				this.toastr.showToast(branches.data, 'error');
 				return;
 			} else if (!repos.status){
-				this.toastr.showToast(`<a href='${this.data.crucibleUrl}/${repos.data}'>repos.data</a>`, 'error');
+				this.toastr.showToast(`<a href='${config.crucibleUrl}/${repos.data}'>repos.data</a>`, 'error');
 				return;
 			}
 
