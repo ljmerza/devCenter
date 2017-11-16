@@ -38,6 +38,15 @@ export class UserService {
 
 	/*
 	*/
+	resetUserData(){
+		localStorage.removeItem(`devCenter.emberUrl`);
+		localStorage.removeItem(`devCenter.password`);
+		localStorage.removeItem(`devCenter.port`);
+		localStorage.removeItem(`devCenter.username`);
+	}
+
+	/*
+	*/
 	setUrls(){
 		// set emberUrl based on if localhost or not
 		if(this.emberUrl && this.emberUrl.match(/localhost/)){

@@ -208,9 +208,9 @@
 			<li ngbDropdown placement="bottom-right" class="d-inline-block" *ngIf='user.username'>
 				<a class="nav-link dropdown-toggle" id="userDropdown" ngbDropdownToggle>{{user.username}}</a>
 				<div ngbDropdownMenu aria-labelledby="userDropdown">
-					<li><a class="dropdown-item" (click)='openUserSettings()'>User Settings</a></li>
+					<li><a class="dropdown-item" (click)='userSetting.openUserSettings()'>User Settings</a></li>
 					<li><div class="dropdown-divider"></div></li>
-					<li><a class="dropdown-item"(click)='resetUserSettings()'>Logout</a></li>
+					<li><a class="dropdown-item"(click)='resetUserSettings(logoutModal)'>Logout</a></li>
 				</div>
 			</li>
 			<li class="nav-item" *ngIf='!user.username'>
@@ -225,3 +225,22 @@
 
 
 <app-user-settings #userSetting></app-user-settings>
+
+
+
+<!-- logout model -->
+<ng-template #logoutModal let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">Logout Confirmation</h4>
+		<button type="button" class="close" aria-label="Close" (click)="c()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body">
+		<p>Are you sure you want to logout?</p>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-dark" (click)="c('logout')">Logout</button>
+		<button type="button" class="btn btn-outline-dark" (click)="c()">Cancel</button>
+	</div>
+</ng-template>

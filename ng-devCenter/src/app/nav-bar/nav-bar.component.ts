@@ -1,4 +1,6 @@
 import { Component, AfterContentInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { UserService } from './../services/user.service';
 import { DataService } from './../services/data.service';
 import { JiraService } from './../services/jira.service';
@@ -25,8 +27,9 @@ export class NavBarComponent implements AfterContentInit {
 		public user: UserService, 
 		public data:DataService,  
 		private jira:JiraService,
-		public toastr: ToastrService, 
-		vcr: ViewContainerRef
+		public toastr: ToastrService,
+		private modalService:NgbModal,
+		private vcr: ViewContainerRef
 	) { }
 
 	/*
@@ -69,13 +72,16 @@ export class NavBarComponent implements AfterContentInit {
 
 	/*
 	*/
-	openUserSettings(){
-		this.userSetting.openUserSettings();
-	}
+	resetUserSettings(content){
 
-	/*
-	*/
-	resetUserSettings(){
+		this.modalService.open(content).result.then( confirm => {
+
+			// if we logout delete user data then reload page
+			if(confirm){
+				this.user.resetUserData();
+				window.location.reload();
+			}
+		});
 
 	}
 

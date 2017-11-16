@@ -181,11 +181,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		this.qaGen.openQAModal(msrp, key);
 	}
 
-	ticketTrackBy(index, item) {
-		console.log(index, item)
-		return index;
-	}
-
 	newCrucible(data){
 		console.log(data)
 	}

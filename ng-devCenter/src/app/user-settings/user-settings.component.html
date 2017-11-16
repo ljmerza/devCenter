@@ -1,4 +1,4 @@
-<ng-template #content let-c="close" let-d="dismiss">
+<ng-template #content let-c="close">
 	<div class="modal-header">
 		<h4 class="modal-title">User Settings</h4>
 		<button 
@@ -7,7 +7,7 @@
 			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
 			class="close" 
 			aria-label="Close" 
-			(click)="d()"
+			(click)="c()"
 		>
 			<span aria-hidden="true">&times;</span>
 		</button>
