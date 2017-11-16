@@ -56,7 +56,7 @@
 									*ngIf='jira.title == "My Open" || jira.title == "All Open"'
 									class="material-icons float-right" 
 									title='Generate QA/Crucible'
-									(click)="openQAModal(ticket.msrp)"
+									(click)="openQAModal(ticket.msrp, ticket.key)"
 								>
 									assignment
 								</i>

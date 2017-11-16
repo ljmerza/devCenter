@@ -166,8 +166,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	openQAModal(msrp){
-		this.qaGen.openQAModal(msrp);
+	openQAModal(msrp:string, key:string){
+		this.qaGen.openQAModal(msrp, key);
 	}
 
 	ticketTrackBy(index, item) {

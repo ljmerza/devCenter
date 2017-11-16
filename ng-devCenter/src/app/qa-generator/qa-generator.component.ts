@@ -6,6 +6,7 @@ import {
 
 import { JiraService } from './../services/jira.service';
 import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgForm } from '@angular/forms';
 
 import { ToastrService } from './../services/toastr.service';
 
@@ -20,17 +21,17 @@ import config from '../services/config';
 	encapsulation: ViewEncapsulation.None
 })
 export class QaGeneratorComponent {
-	msrp;
+	key;
 	modalReference;
 	loadingBranches:boolean = true;
 
-	formRepos;
 	pcrNeeded:boolean = true;
 	codeReview:boolean = true;
 	qaSteps:string;
 	logTime = {hour: 0, minute: 0};
 
 	@ViewChild('qaModal') content:ElementRef;
+
 	hourStep = 1;
 	minuteStep = 15;
 
@@ -50,10 +51,14 @@ export class QaGeneratorComponent {
 
 	/*
 	*/
-	submitQA(formData){
-
+	submitQA(formObj: NgForm){
+	
 		// close modal
 		this.modalReference.close();
+
+		// get form values and reset form
+		const formData = formObj.value;
+		formObj.resetForm()
 
 		// get logged time in minutes
 		const logTime = formData.logTime.hour * 60 + formData.logTime.minute;
@@ -79,8 +84,12 @@ export class QaGeneratorComponent {
 		// send POST request and notify results
 		this.jira.generateQA(postData).subscribe(response => {
 			if(response.status){
-				this.toastr.showToast(response.data, 'success');
-				this.newCrucible.emit({jira: this.msrp, crucible: response.data})
+				this.toastr.showToast(`
+					<a href='${config.jiraUrl}/${this.key}'>Jira Link</a>
+					<br>
+					<a href='${config.jiraUrl}/${response.data}'>Crucible Link</a>
+				`, 'success');
+				this.newCrucible.emit({jira: this.key, crucible: response.data})
 			} else {
 				this.toastr.showToast(response.data, 'error');
 			}
@@ -88,17 +97,30 @@ export class QaGeneratorComponent {
 	}
 
 	qa_submit_disable = true;
-	openQAModal(msrp:string):void {
+	openQAModal(msrp:string, key:string):void {
 
 		// save MSRP and reset selected repos
-		this.msrp = msrp;
+		this.key = key;
 		this.repoArray = [];
 
 		// open modal
-		this.modalReference = this.modalService.open(this.content, { windowClass: 'qa-modal' });
+		this.modalReference = this.modalService
+			.open(this.content, { windowClass: 'qa-modal' })
+
+		// once modal is closed if we just exited out then reset inputs
+		this.modalReference.result.then( result => {
+			if(result){
+				this.pcrNeeded = true;
+				this.codeReview = true;
+				this.qaSteps = '';
+				this.logTime = {hour: 0, minute: 0};
+				this.repoArray = [];
+			}
+		});
 
 		// disabled submit button for QA gen
 		this.qa_submit_disable = true;
+		this.loadingBranches = true;
 
 		// get all repos and branches associated with this msrp then enable submit button
 		forkJoin([this.jira.getTicketBranches(msrp), this.jira.getRepos()]).subscribe(data => {
@@ -113,7 +135,7 @@ export class QaGeneratorComponent {
 				this.toastr.showToast(branches.data, 'error');
 				return;
 			} else if (!repos.status){
-				this.toastr.showToast(`<a href='${config.crucibleUrl}/${repos.data}'>repos.data</a>`, 'error');
+				this.toastr.showToast(repos.data, 'error');
 				return;
 			}
 
