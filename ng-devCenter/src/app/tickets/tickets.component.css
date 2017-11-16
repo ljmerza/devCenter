@@ -1,3 +1,8 @@
+.top-space {
+	margin-top: 50px;
+	margin-bottom: 100px;
+}
+
 .summary-format {
 	word-break: break-all;
 	max-width: 300px;

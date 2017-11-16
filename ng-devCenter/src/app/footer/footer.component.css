@@ -1,0 +1,9 @@
+footer {
+	position: fixed;
+  	bottom: 0;
+  	padding: 0 3rem 3rem 3rem;
+  	background-color: white;
+}
+.col {
+	border-top: 1px solid #DDD;
+}

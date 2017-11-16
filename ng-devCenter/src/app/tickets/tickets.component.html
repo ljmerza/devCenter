@@ -14,7 +14,7 @@
 	</div>
 </div>
 
-<div class="container-fluid" [hidden]='loadingTickets'>
+<div class="container-fluid top-space" [hidden]='loadingTickets'>
 	<div class="row">
 		<div class="col-12">
 			<h1 class='text-center title-spacing'>{{jira.title}} Tickets</h1>
@@ -69,7 +69,7 @@
 							<td>{{ticket.dates.updated | amDateFormat:'LL'}}</td>
 							<td>{{ticket.dates.created | amDateFormat:'LL'}}</td>
 							<td>
-								<span *ngIf='ticket.crucible_id'>
+								<div *ngIf='ticket.crucible_id'>
 									<a 
 										target="_blank" 
 										class='float-left'
@@ -77,14 +77,13 @@
 											{{ticket.crucible_id}}
 									</a>
 									<i 
-										*ngIf='jira.title == "Peer Code Review" || jira.title == "All Open"'
 										class="material-icons float-right" 
 										title='PCR Pass/Complete' 
 										(click)="openPCRModal(ticket.crucible_id, ticket.key, 'pass', statusModal)"
 									>
 										done
 									</i>
-								</span>
+								</div>
 							</td>
 							<td>
 								<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open Q chat window with {{ticket.username}}">{{ticket.username}}</a>
@@ -120,9 +119,9 @@
 		<p>Would you like to PCR Pass or Complete?</p>
 	</div>
 	<div class="modal-footer">
-		<button type="button" class="btn btn-outline-dark" (click)="c('pass')">PCR Pass</button>
-		<button type="button" class="btn btn-outline-dark" (click)="c('complete')">PCR Complete</button>
-		<button type="button" class="btn btn-outline-dark" (click)="c()">Cancel</button>
+		<button type="button" class="btn btn-outline-success" (click)="c('pass')">PCR Pass</button>
+		<button type="button" class="btn btn-outline-primary" (click)="c('complete')">PCR Complete</button>
+		<button type="button" class="btn btn-outline-danger" (click)="c()">Cancel</button>
 	</div>
 </ng-template>
 

@@ -21,16 +21,18 @@ button {
 
 .qa-modal .modal-body .delete-icon {
 	margin-top: 41px;
+  color: #cc3300;
 }
 
 .qa-modal .modal-body .delete-icon-next {
 	margin-top: 5px;
+  color: #cc3300;
 }
 
 .qa-modal .modal-body .delete-icon:hover,
 .qa-modal .modal-body .delete-icon-next:hover {
 	cursor: pointer;
-	color: red;
+  color: #ff3300;
 }
 
 .qa-modal .modal-body .loading {

@@ -62,7 +62,7 @@
 			<!-- QA steps -->
 			<h4>QA Steps:</h4>
 			<div class="form-group">
-				 <textarea class="form-control" name="qaSteps" id="qaSteps" rows=20 [(ngModel)]="qaSteps"></textarea>
+				 <textarea class="form-control" name="qaSteps" id="qaSteps" rows=15 [(ngModel)]="qaSteps"></textarea>
 			</div>
 
 			<!-- checkboxes -->
@@ -102,10 +102,10 @@
 			<button 
 				type="submit" 
 				[disabled]="qa_submit_disable"
-				class="btn btn-outline-dark"
+				class="btn btn-outline-success"
 			>Generate
 			</button>
-			<button type="button" class="btn btn-outline-dark" (click)="c('close')">Cancel</button>
+			<button type="button" class="btn btn-outline-danger" (click)="c('close')">Cancel</button>
 		</div>
 	</form>
 </ng-template>

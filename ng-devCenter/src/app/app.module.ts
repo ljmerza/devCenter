@@ -26,6 +26,7 @@ import { UserService } from './services/user.service';
 import { ToastrService } from './services/toastr.service';
 
 import { WorkTimePipe } from './work-time.pipe';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
 	declarations: [
@@ -35,7 +36,8 @@ import { WorkTimePipe } from './work-time.pipe';
 		TicketsComponent,
 		NotFoundComponent,
 		WorkTimePipe,
-		QaGeneratorComponent
+		QaGeneratorComponent,
+		FooterComponent
 	],
 	imports: [
 		BrowserModule,
