@@ -52,6 +52,7 @@ class Comments(Modal):
 	email = Column(VARCHAR(30))
 	display_name = Column(VARCHAR(50))
 	tickets = relationship("Tickets", back_populates="comments")
+	comment_type = Column(VARCHAR(30))
 
 
 class ErrorLogs(Modal):

@@ -167,14 +167,17 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		data=request.get_json()
 		data["cred_hash"] = get_cred_hash(request, required=True)
 		response = CrucibleRequests.crucible_create_review(data=data, crucible_obj=crucible_obj, jira_obj=jira_obj)
-
 		# if crucible errored out then return error
 		if not response['status']:
 			return jsonify(response)
 
 		# if we have qa steps then make Jira changes too
 		if 'qa_steps' in data and data['qa_steps']:
-			response = JiraRequests.transition_to_cr(data=data, jira_obj=jira_obj, crucible_id=response['data'])
+
+			data['crucible_id'] = response['data']['crucible_id']
+			data['key'] = response['data']['key']
+
+			response = JiraRequests.transition_to_cr(data=data, jira_obj=jira_obj)
 
 		# return whatever response jira made
 		return jsonify(response)

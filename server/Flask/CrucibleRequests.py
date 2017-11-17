@@ -58,8 +58,8 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	if not crucible_data['status']:
 		return {"status": False, "data": 'Could not create Crucible review: '+crucible_data['data']}
 
-	# return crucible id
-	return {"status": True, "data": crucible_data['data']}
+	# return data
+	return {"status": True, "data": {'key': qa_response["key"], 'crucible_id': crucible_data['data']}}
 	
 	
 

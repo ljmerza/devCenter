@@ -211,7 +211,7 @@ def get_comments(issue):
 			'username': comment.get('author', {}).get('name', ''),
 			'email': comment.get('author', {}).get('emailAddress', ''),
 			'display_name': comment.get('author', {}).get('displayName', ''),
-			'type': comment_type
+			'comment_type': comment_type
 
 		})
 	return comments

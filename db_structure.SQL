@@ -63,6 +63,7 @@ CREATE TABLE `comments` (
   `email` varchar(30) NOT NULL,
   `display_name` varchar(50) NOT NULL,
   `id` VARCHAR(30) NOT NULL,
+  `comment_type` VARCHAR(30) NOT NULL,
   PRIMARY KEY (`comment_id`),
   FOREIGN KEY (`key`) REFERENCES tickets(`key`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
