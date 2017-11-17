@@ -79,7 +79,7 @@
 			type="button" 
 			[attr.title]='(!emberUrl || !port || !username) ? "ATTuid, Port, and Ember Url are required." : "Save Changes"'
 			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
-			class="btn btn-outline-dark" 
+			class="btn btn-outline-success" 
 			(click)="c('save')"
 		>
 			Save
@@ -88,7 +88,7 @@
 			type="button"
 			[attr.title]='(!emberUrl || !port || !username) ? "ATTuid, Port, and Ember Url are required." : "Cancel Changes"'
 			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
-			class="btn btn-outline-dark" 
+			class="btn btn-outline-danger" 
 			(click)="c()"
 		>
 			Cancel

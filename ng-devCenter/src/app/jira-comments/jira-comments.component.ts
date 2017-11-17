@@ -25,6 +25,7 @@ export class JiraCommentsComponent {
   	}
 
 	openCommentModal(key:string, comments): void {
+
 		this.key = key;
 		this.comments = comments;
 

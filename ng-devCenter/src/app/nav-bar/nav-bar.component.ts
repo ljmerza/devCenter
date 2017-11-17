@@ -16,18 +16,18 @@ declare var $ :any;
 	styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent implements AfterContentInit {
-	private config: Object = config
-	private ticketValue:string;
+	config=config
+	ticketValue:string;
 
 	@ViewChild('userSetting') private userSetting;
 
 	/*
 	*/
 	constructor(
-		private user: UserService, 
-		private data:DataService,  
+		public user: UserService, 
+		public data:DataService,  
 		private toastr: ToastrService,
-		private jira:JiraService,
+		public jira:JiraService,
 		private modalService:NgbModal,
 		private vcr: ViewContainerRef
 	) { }
@@ -51,7 +51,7 @@ export class NavBarComponent implements AfterContentInit {
 
 	/*
 	*/
-	private searchTicket(): void {
+	public searchTicket(): void {
 		// if NaN then is key and go to Jira else need key from MSRP
 		if( isNaN(parseInt(this.ticketValue)) ){
 			window.open(`${config.jiraUrl}/browse/${this.ticketValue}`);

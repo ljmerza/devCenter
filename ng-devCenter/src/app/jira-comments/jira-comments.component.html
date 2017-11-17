@@ -8,7 +8,7 @@
 	</div>
 
 	<ngb-accordion #acc="ngbAccordion" activeIds='{{openPanelIds}}'>
-		<ngb-panel *ngFor='let comment of comments' title="{{comment.display_name}}" type='{{comment.type}}'>
+		<ngb-panel title="{{comment.display_name}}"*ngFor='let comment of comments'>
 			<ng-template ngbPanelContent>
 				<div [innerHTML]="comment.comment | safehtml"></div>
 			</ng-template>

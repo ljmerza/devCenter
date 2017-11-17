@@ -49,15 +49,20 @@
 						[ngClass]="{
 							'table-primary': ticket.status == 'Ready for QA' && jira.title == 'All Open',
 							'table-warning': ticket.status == 'Code Review' && jira.title == 'All Open',
-							'table-secondary': ticket.status == 'In Sprint' && jira.title == 'All Open',
+							'table-light': ticket.status == 'In Sprint' && jira.title == 'All Open',
 							'table-info': ticket.status == 'In Development' && jira.title == 'All Open',
-							'table-success': ticket.status == 'Ready for UCT' && jira.title == 'All Open',
-							'table-success': ticket.status == 'Ready for Release' && jira.title == 'All Open',
-							'table-danger': ticket.status == 'Closed' && jira.title == 'All Open',
-							'table-danger': ticket.component == 'Merge Code' && jira.title == 'All Open'
+							'table-success': (ticket.status == 'Ready for UCT' || ticket.status == 'Ready for Release') && jira.title == 'All Open',
+							'table-danger': (ticket.status == 'Closed' || ticket.component == 'Merge Code') && jira.title == 'All Open'
 						}"
 					>
-							<td><a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket.key}}">{{ticket.key}}</a></td>
+							<td>
+								<a target="_blank" 
+									href="{{config.jiraUrl}}/browse/{{ticket.key}}"
+									title='view comments'
+								>
+									{{ticket.key}}
+								</a>
+							</td>
 							<td (click)="openCommentModal(ticket.key, ticket.comments)">
 								<div class='float-left'>
 									{{ticket.msrp}}
