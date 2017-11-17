@@ -13,28 +13,28 @@ declare var $ :any;
 @Component({
 	selector: 'app-nav-bar',
 	templateUrl: './nav-bar.component.html',
-	styleUrls: ['./nav-bar.component.css']
+	styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent implements AfterContentInit {
-	config=config
+	private config: Object = config
+	private ticketValue:string;
 
-	ticketValue:string;
 	@ViewChild('userSetting') private userSetting;
 
 	/*
 	*/
 	constructor(
-		public user: UserService, 
-		public data:DataService,  
+		private user: UserService, 
+		private data:DataService,  
+		private toastr: ToastrService,
 		private jira:JiraService,
-		public toastr: ToastrService,
 		private modalService:NgbModal,
 		private vcr: ViewContainerRef
 	) { }
 
 	/*
 	*/
-	ngAfterContentInit() {
+	ngAfterContentInit(): void {
 
 		// add mouse events to show/hide submenus
 		$('.dropdown-submenu').on('mouseenter mouseleave','.dropdown', function(e){
@@ -51,7 +51,7 @@ export class NavBarComponent implements AfterContentInit {
 
 	/*
 	*/
-	searchTicket() {
+	private searchTicket(): void {
 		// if NaN then is key and go to Jira else need key from MSRP
 		if( isNaN(parseInt(this.ticketValue)) ){
 			window.open(`${config.jiraUrl}/browse/${this.ticketValue}`);
@@ -72,7 +72,7 @@ export class NavBarComponent implements AfterContentInit {
 
 	/*
 	*/
-	resetUserSettings(content){
+	private resetUserSettings(content): void {
 
 		this.modalService.open(content).result.then( confirm => {
 

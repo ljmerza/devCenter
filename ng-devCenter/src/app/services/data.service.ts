@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
 
 import { UserService } from './user.service'
+import { ToastrService } from './../services/toastr.service';
+
 import config from './config'
 import { environment } from '../../environments/environment';
 
@@ -13,64 +15,58 @@ import 'rxjs/add/operator/retry';
 import 'rxjs/add/operator/map';
 
 import { AppError } from './../errors/app-error';
+import { FalseError } from './../errors/false-error';
 import { NotFoundError } from './../errors/not-found-error';
 
 import { Headers, RequestOptions } from '@angular/http';
 
 @Injectable()
 export class DataService {
+
 	apiUrl:string = `${environment.apiUrl}:5858/dev_center`;
 
-	chatUrlSanitize(username:string){
+	constructor(
+		public http:Http, 
+		public user:UserService, 
+		public sanitizer: DomSanitizer, 
+		public toastr: ToastrService
+	) { }
+
+	/*
+	*/
+	public chatUrlSanitize(username:string): SafeUrl {
 		return this.sanitizer.bypassSecurityTrustUrl(`${config.chatUrl}/${username}`)
 	}
 
-
 	/*
 	*/
-	constructor(public http:Http, public user:UserService, public sanitizer: DomSanitizer) { }
-
-	/*
-	*/
-	authorizationHeader() {
-		if(this.user.username && this.user.password){
-			return "Basic " + btoa(`${this.user.username}:${this.user.password}`);
-		} else {
-			return '';
-		}
-		
-	} 
-	
-	/*
-	*/
-	private handleError(error:Response){
-		if(error.status === 404)
- 			return Observable.throw(new NotFoundError(error));
-	 	else
- 			return Observable.throw(new AppError(error));
-	}
-
-	/*
-	*/
-	getAPI(url:string) {
+	public getAPI(url:string): Observable<any> {
 		return this.http.get(url, this.createAuthHeaders() )
-			.map(response => response.json())
-			// .retry(3)
-			.catch(this.handleError);
-	}
-
-	/*
-	*/
-	postAPI(options) {
-		return this.http.post( options.url, options.body, this.createAuthHeaders() )
 		.map(response => response.json())
-		// .retry(3)
+		.do( response => {
+			if(!response.status){
+				return Observable.throw(response);
+			}
+		})
 		.catch(this.handleError);
 	}
 
 	/*
 	*/
-	createAuthHeaders(){
+	public postAPI(options): Observable<any> {
+		return this.http.post( options.url, options.body, this.createAuthHeaders() )
+		.map(response => response.json())
+		.do( response => {
+			if(!response.status){
+				return Observable.throw(response);
+			}
+		})
+		.catch(this.handleError);
+	}
+
+	/*
+	*/
+	private createAuthHeaders(): RequestOptions {
 		let headers = new Headers();
 
 		// try to get Auth header and set it
@@ -88,5 +84,30 @@ export class DataService {
 	        headers: headers
 	    });
 
+	}
+
+	/*
+	*/
+	private authorizationHeader(): string {
+		if(this.user.username && this.user.password){
+			return "Basic " + btoa(`${this.user.username}:${this.user.password}`);
+		} else {
+			return '';
+		}
+		
+	} 
+	
+	/*
+	*/
+	private handleError(error:Response): Observable<any> {
+		if(error.status === 404) {
+ 			return Observable.throw(new NotFoundError(error, this.toastr));
+
+		} else if(typeof error.status !== 'undefined' && !error.status) {
+			return Observable.throw(new FalseError(error, this.toastr));
+			
+		} else {
+ 			return Observable.throw(new AppError(error, this.toastr));
+	 	}
 	}
 }

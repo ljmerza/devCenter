@@ -23,7 +23,7 @@
 	<div class="row">
 		<div class="col-12">
 			<div [hidden]='!openTickets'>
-				<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+				<table [ngClass]="{'table-striped': jira.title != 'All Open'}" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
 					<thead>
 						<tr>
 							<th>Key</th>
@@ -43,9 +43,27 @@
 					</thead>
 
 					<tbody>
-						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}}'>
+						<tr 
+						*ngFor='let ticket of openTickets' 
+						id='{{ticket.key}}'
+						[ngClass]="{
+							'table-primary': ticket.status == 'Ready for QA' && jira.title == 'All Open',
+							'table-warning': ticket.status == 'Code Review' && jira.title == 'All Open',
+							'table-secondary': ticket.status == 'In Sprint' && jira.title == 'All Open',
+							'table-info': ticket.status == 'In Development' && jira.title == 'All Open',
+							'table-success': ticket.status == 'Ready for UCT' && jira.title == 'All Open',
+							'table-success': ticket.status == 'Ready for Release' && jira.title == 'All Open',
+							'table-danger': ticket.status == 'Closed' && jira.title == 'All Open',
+							'table-danger': ticket.component == 'Merge Code' && jira.title == 'All Open'
+						}"
+					>
 							<td><a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket.key}}">{{ticket.key}}</a></td>
-							<td>{{ticket.msrp}}</td>
+							<td (click)="openCommentModal(ticket.key, ticket.comments)">
+								<div class='float-left'>
+									{{ticket.msrp}}
+								</div>
+								<i class="material-icons float-right">storage</i>
+							</td>
 							<td class='summary-format'>{{ticket.summary}}</td>
 							<td>
 								<div class='float-left'>
@@ -127,3 +145,4 @@
 
 
 <app-qa-generator (newCrucible)="newCrucible($event)"></app-qa-generator>
+<app-jira-comments></app-jira-comments>

@@ -1,0 +1,150 @@
+.qa-modal {
+	.modal-dialog {
+		max-width: 1000px;
+	}
+
+	.modal-body {
+		textarea{
+			width: 100%;
+		}
+
+		.creds-margin {
+			margin-top: 10px;
+		}
+
+		.button-border button {
+			border: transparent;
+			cursor: pointer;
+		}
+
+		.delete-icon {
+			margin-top: 41px;
+			color: #cc3300;
+			&:hover{
+				cursor: pointer;
+				color: #ff3300;
+			}
+		}
+
+		.delete-icon-next {
+			margin-top: 5px;
+			color: #cc3300;
+			&:hover{
+				cursor: pointer;
+				color: #ff3300;
+			}
+		}
+
+		.loading {
+			text-align: center;
+
+			i {
+				font-size: 60px;
+			}
+		}
+
+		.cs-loader {
+			height: 100%;
+			width: 100%;
+		}
+
+		.cs-loader-inner {
+			transform: translateY(-50%);
+			color: #BBB;
+			padding: 0 100px;
+			text-align: center;
+
+			label {
+				font-size: 20px;
+				opacity: 0;
+				display:inline-block;
+
+				&:nth-child(6) {
+					-webkit-animation: lol 3s infinite ease-in-out;
+					animation: lol 3s infinite ease-in-out;
+				}
+
+				&:nth-child(5) {
+					-webkit-animation: lol 3s 100ms infinite ease-in-out;
+					animation: lol 3s 100ms infinite ease-in-out;
+				}
+
+				&:nth-child(4) {
+					-webkit-animation: lol 3s 200ms infinite ease-in-out;
+					animation: lol 3s 200ms infinite ease-in-out;
+				}
+
+				&:nth-child(3) {
+					-webkit-animation: lol 3s 300ms infinite ease-in-out;
+					animation: lol 3s 300ms infinite ease-in-out;
+				}
+
+				&:nth-child(2) {
+					-webkit-animation: lol 3s 400ms infinite ease-in-out;
+					animation: lol 3s 400ms infinite ease-in-out;
+				}
+
+				&:nth-child(1) {
+					-webkit-animation: lol 3s 500ms infinite ease-in-out;
+					animation: lol 3s 500ms infinite ease-in-out;
+				}
+			}
+		}
+	}
+}
+
+
+.add-repo {
+	margin-bottom: 20px;
+	position: relative;
+
+	i {
+		float: left;
+	}
+
+	span {
+		margin-left: 5px;
+	}
+}
+
+button, i {
+	cursor: pointer;
+}
+
+@keyframes lol {
+	0% {
+		opacity: 0;
+		transform: translateX(-300px);
+	}
+	33% {
+		opacity: 1;
+		transform: translateX(0px);
+	}
+	66% {
+		opacity: 1;
+		transform: translateX(0px);
+	}
+	100% {
+		opacity: 0;
+		transform: translateX(300px);
+	}
+}
+
+@-webkit-keyframes lol {
+	0% {
+		opacity: 0;
+		-webkit-transform: translateX(-300px);
+	}
+	33% {
+		opacity: 1;
+		-webkit-transform: translateX(0px);
+	}
+	66% {
+		opacity: 1;
+		-webkit-transform: translateX(0px);
+	}
+	100% {
+		opacity: 0;
+		-webkit-transform: translateX(300px);
+	}
+}

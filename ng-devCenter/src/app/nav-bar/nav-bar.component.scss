@@ -1,12 +1,12 @@
 .dropdown-submenu{
 	position: relative;
-}
 
-.dropdown-submenu:hover > .dropdown-submenu-items {
-	display: block;
-	position: absolute;
-	top: -10px;
-	left: 100%;
+	&:hover > .dropdown-submenu-items {
+		display: block;
+		position: absolute;
+		top: -10px;
+		left: 100%;
+	}
 }
 
 .dropdown-submenu-icon {

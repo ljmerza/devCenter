@@ -1,7 +1,8 @@
 import { ToastrService } from './../services/toastr.service';
+import { AppError } from './app-error';
 
-export class AppError {
+export class FalseError extends AppError {
 	constructor(public orignalError:any, public toastr: ToastrService){
-		this.toastr.showToast(orignalError, 'error');
+		super(orignalError.data, toastr);
 	}
 }

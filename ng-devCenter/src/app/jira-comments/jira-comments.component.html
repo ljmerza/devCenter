@@ -1,0 +1,21 @@
+<ng-template #commentModal let-c="close" id='comment-modal'>
+
+	<div class="modal-header">
+		<h2 class="modal-title">Comments for {{key}}</h2>
+		<button type="button" class="close" aria-label="Close" (click)="c('close')">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<ngb-accordion #acc="ngbAccordion" activeIds='{{openPanelIds}}'>
+		<ngb-panel *ngFor='let comment of comments' title="{{comment.display_name}}" type='{{comment.type}}'>
+			<ng-template ngbPanelContent>
+				<div [innerHTML]="comment.comment | safehtml"></div>
+			</ng-template>
+		</ngb-panel>
+	</ngb-accordion>
+		
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-success" (click)="c('close')">Close</button>
+	</div>
+</ng-template>

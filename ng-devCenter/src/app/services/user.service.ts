@@ -5,14 +5,14 @@ import { Subject } from 'rxjs/Subject';
 @Injectable()
 export class UserService {
 
-	username;
-	port;
-	password;
-	emberUrl;
-	emberLocal;
-	emberPort;
+	public username:string;
+	public port:string;
+	public password:string;
+	public emberUrl:string;
+	public emberLocal:string;
+	public emberPort:string;
 
-	emberBuilds = [
+	emberBuilds:Array<Object> = [
 		{'label':'acoe', 'value':config.devUrl},
 		{'label':'localhost', 'value':'localhost'}
 	];
@@ -28,7 +28,7 @@ export class UserService {
 
 	/*
 	*/
-	setUserData(data:string, value){
+	public setUserData(data:string, value): void {
 		if(value){
 			localStorage.setItem(`devCenter.${data}`, value);
 			this[data] = value;
@@ -38,7 +38,7 @@ export class UserService {
 
 	/*
 	*/
-	resetUserData(){
+	public resetUserData(): void {
 		localStorage.removeItem(`devCenter.emberUrl`);
 		localStorage.removeItem(`devCenter.password`);
 		localStorage.removeItem(`devCenter.port`);
@@ -47,7 +47,7 @@ export class UserService {
 
 	/*
 	*/
-	setUrls(){
+	private setUrls(): void {
 		// set emberUrl based on if localhost or not
 		if(this.emberUrl && this.emberUrl.match(/localhost/)){
 			this.emberLocal = '#/';
@@ -62,7 +62,7 @@ export class UserService {
 	*/
 	private notifyTickets = new Subject<any>()
 	notifyTickets$ = this.notifyTickets.asObservable()
-	public notifyTicketComponent() {
+	public notifyTicketComponent(): void {
 		this.notifyTickets.next()
 	}
 }

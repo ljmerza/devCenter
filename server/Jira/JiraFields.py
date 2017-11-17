@@ -200,15 +200,77 @@ def get_comments(issue):
 	# for each comment save it and see if QA steps
 	for comment in issue.get('fields', {}).get('comment', {}).get('comments', []):
 		# save comment
+		comment_type = 'info'
+		if 'QA Steps' in comment.get('body', ''):
+			comment_type = True
+
 		comments.append({
-			'comment': comment.get('body', ''),
+			'comment': _format_comments( comment.get('body', '') ),
 			'id': comment.get('id', ''),
 			'key': issue.get('key', ''),
 			'username': comment.get('author', {}).get('name', ''),
 			'email': comment.get('author', {}).get('emailAddress', ''),
-			'display_name': comment.get('author', {}).get('displayName', '')
+			'display_name': comment.get('author', {}).get('displayName', ''),
+			'type': comment_type
+
 		})
 	return comments
+
+def _format_comments(comment):
+	'''
+	'''
+	i=1
+	new_comments = []
+	table_start = False
+
+	for line in comment.split('\n'):
+
+		if '# ' in line:
+			line = line.replace('# ', str(i)+'.&nbsp;')
+			i+=1
+		elif '#* ' in line:
+			line = line.replace('#* ', '&nbsp;&nbsp;&nbsp;-&nbsp;')
+		elif 'h2. ' in line:
+			line = line.replace('h2. ', '')
+			line = f'<h4>{line}</h4>'
+
+		if line.startswith('||'):
+			table_start = True
+			th = line.split('||')
+			start = '<div class="container"><table class="table"><thead><tr>'
+			for thline in th:
+				start +='<th>'+thline+'<th>'
+			start+='</tr><thead><tbody>'
+			line = start
+		elif line.startswith('|'):
+			table_start = True
+			th = line.split('|')
+			start = '<tr>'
+			for thline in th:
+				start +='<td>'+thline+'<td>'
+			start+='</tr>'
+			line = start
+		else:
+			if table_start:
+				table_start = False
+				line+='<tbody></table></div>'
+
+		if line.startswith('[Crucible'):
+			links = line.replace('[', '').replace(']', '').split('|')
+			if len(links) == 2:
+				title = links[0]
+				link = links[1]
+				line = f'<a href="{link}" target="_blank">{title}</a>'
+
+		if '{color:red}' in line:
+			line = line.replace('{color:red}', '<span class="text-danger">').replace('{color}', '</span>')
+			print(line)
+
+		line+='<br>'
+
+		new_comments.append(line)
+
+	return '\n'.join(new_comments)
 
 def get_qa_steps(issue):
 	'''finds an issue's QA steps in the comments if they exist

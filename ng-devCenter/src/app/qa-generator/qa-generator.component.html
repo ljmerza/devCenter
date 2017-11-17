@@ -35,7 +35,7 @@
 									class="form-control repositoryName" 
 									name="repositoryName-{{idx}}" 
 									[(ngModel)]='repo.repositoryName'
-									(change)='getBranches($event.target.value)'
+									(change)='getBranches($event.target.value, idx)'
 								>
 									<option *ngFor='let allRepo of repo.allRepos'>{{allRepo.name}}</option>
 								</select>
@@ -62,7 +62,10 @@
 						</div>
 					</div>
 				</div>
-				<i class="material-icons" (click)='addRepo()'>add_box</i>
+				<div class="add-repo">
+					<i class="material-icons text-success" (click)='addRepo()'>add_box</i> 
+					<span>Add Repo</span>
+				</div>
 			</ng-template>
 
 			<!-- QA steps -->

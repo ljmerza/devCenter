@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { DataService } from './data.service';
 import { UserService } from './user.service';
+import { ToastrService } from './../services/toastr.service';
 
 import config from './config';
 
@@ -14,14 +15,19 @@ export class JiraService extends DataService {
 
 	/*
 	*/
-	constructor(public http: Http, public user:UserService, public sanitizer: DomSanitizer) {
-		super(http, user, sanitizer);
+	constructor(
+		public http: Http, 
+		public user:UserService, 
+		public sanitizer: DomSanitizer, 
+		public toastr: ToastrService 
+	) {
+		super(http, user, sanitizer, toastr);
 	}
 
 
 	/*
 	*/
-	getFilterData(jiraListType:string) {
+	getFilterData(jiraListType:string): Observable<any> {
 		let filterNumber:string = '';
 		let jql:string = '';
 
@@ -94,7 +100,7 @@ export class JiraService extends DataService {
 
 	/*
 	*/
-	pcrPass(id, attuid) {
+	pcrPass(id, attuid): Observable<any> {
 		return super.postAPI({
 			url: `${this.apiUrl}/crucible/review/pcr_pass`,
 			body: JSON.stringify({
@@ -106,7 +112,7 @@ export class JiraService extends DataService {
 
 	/*
 	*/
-	pcrComplete(id, attuid) {
+	pcrComplete(id, attuid): Observable<any> {
 		return super.postAPI({
 			url: `${this.apiUrl}/crucible/review/pcr_complete`,
 			body: JSON.stringify({
@@ -118,23 +124,23 @@ export class JiraService extends DataService {
 
 	/*
 	*/
-	searchTicket(msrp:string){
+	searchTicket(msrp:string): Observable<any> {
 		return super.getAPI(`${this.apiUrl}/jira/getkey/${msrp}`);
 	}
 
 	/*
 	*/
-	getTicketBranches(msrp:string){
+	getTicketBranches(msrp:string): Observable<any> {
 		return super.getAPI(`${this.apiUrl}/git/branches/${msrp}`);
 	}
 
 	/*
 	*/
-	getRepos(){
+	getRepos(): Observable<any>{
 		return super.getAPI(`${this.apiUrl}/git/repos`);
 	}
 
-	generateQA(postData){
+	generateQA(postData): Observable<any> {
 
 		// add creds
 		postData.username = this.user.username;
@@ -146,7 +152,7 @@ export class JiraService extends DataService {
 		});
 	}
 
-	getBranches(repoName){
+	getBranches(repoName): Observable<any> {
 		return super.getAPI(`${this.apiUrl}/git/repo/${repoName}`);
 	}
 

@@ -1,7 +1,7 @@
 import { 
 	Component, ViewChild, ElementRef, 
 	ViewEncapsulation, ViewContainerRef, 
-	EventEmitter, Output 
+	EventEmitter, Output, OnInit
 } from '@angular/core';
 
 import { JiraService } from './../services/jira.service';
@@ -9,18 +9,15 @@ import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgForm } from '@angular/forms';
 
 import { ToastrService } from './../services/toastr.service';
-
-import { forkJoin } from "rxjs/observable/forkJoin";
-
 import config from '../services/config';
 
 @Component({
 	selector: 'app-qa-generator',
 	templateUrl: './qa-generator.component.html',
-	styleUrls: ['./qa-generator.component.css'],
+	styleUrls: ['./qa-generator.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class QaGeneratorComponent {
+export class QaGeneratorComponent implements OnInit {
 	key:string;
 	modalReference;
 	loadingBranches:boolean = true;
@@ -50,10 +47,16 @@ export class QaGeneratorComponent {
 
 	/*
 	*/
-	submitQA(formObj: NgForm){
+	ngOnInit(): void {
+		this.jira.getRepos()
+		.subscribe( repos => this.repos = repos);
+	}
+
+	/*
+	*/
+	submitQA(formObj: NgForm): void {
 
 		// reset data
-		this.branches = [];
 		this.repos = [];
 	
 		// close modal
@@ -61,7 +64,7 @@ export class QaGeneratorComponent {
 
 		// get form values and reset form
 		const formData = formObj.value;
-		formObj.resetForm()
+		formObj.resetForm();
 
 		// get logged time in minutes
 		const logTime = formData.logTime.hour * 60 + formData.logTime.minute;
@@ -86,22 +89,18 @@ export class QaGeneratorComponent {
 
 		// send POST request and notify results
 		this.jira.generateQA(postData).subscribe(response => {
-			if(response.status){
-				this.toastr.showToast(`
-					<a href='${config.jiraUrl}/${this.key}'>Jira Link</a>
-					<br>
-					<a href='${config.jiraUrl}/${response.data}'>Crucible Link</a>
-				`, 'success');
-				this.newCrucible.emit({jira: this.key, crucible: response.data})
-			} else {
-				this.toastr.showToast(response.data, 'error');
-			}
+			this.toastr.showToast(`
+				<a target="_blank" href='${config.jiraUrl}/browse/${this.key}'>Jira Link</a>
+				<br>
+				<a target="_blank" href='${config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
+			`, 'success');
+			this.newCrucible.emit({jira: this.key, crucible: response.data})
 		});
 	}
 
 	/*
 	*/
-	openQAModal(msrp:string, key:string):void {
+	openQAModal(msrp:string, key:string): void {
 
 		// save MSRP and reset selected repos
 		this.key = key;
@@ -120,59 +119,55 @@ export class QaGeneratorComponent {
 				this.logTime = {hour: 0, minute: 0};
 				this.repoArray = [];
 			}
-		});
+		}, () => null);
 
 		// disabled submit button for QA gen
 		this.loadingBranches = true;
 
 		// get all repos and branches associated with this msrp then enable submit button
-		forkJoin([this.jira.getTicketBranches(msrp), this.jira.getRepos()]).subscribe(data => {
-
-			// save results on instance
-			this.branches = data[0];
-			this.repos = data[1];
-
-			
-			
-			// make sure we got back data
-			if(!this.branches.status){
-				this.toastr.showToast(this.branches.data, 'error');
-				return;
-			} else if (!this.repos.status){
-				this.toastr.showToast(this.repos.data, 'error');
-				return;
-			}
-
-			// allow submit of form
+		this.jira.getTicketBranches(msrp).subscribe(branches => {
+			this.processBranches(branches);
 			this.loadingBranches = false;
-
-			// for each repo found create arrays of data needed
-			this.repoArray = this.branches.data.map( (repo, index) => {
-
-				// for each matching dev branch found get list of branches
-				return repo.branches.map( devBranch => {
-					let selection = {
-						allRepos: this.repos.data,
-						allBranches: repo.all,
-
-						repositoryName: repo.repo,
-						reviewedBranch: devBranch,
-						baseBranch: '',
-					};
-
-					// get base branch of current selection
-					const baseBranch = this.getBaseBranch(repo.all);
-					selection.baseBranch = baseBranch.length == 1 ? baseBranch[0] : '';
-
-					return selection;
-				});	
-			})[0];
 		});
 	}
 
 	/*
 	*/
-	getBaseBranch(repos){
+	processBranches(branches): void {
+
+		// for each repo found create arrays of data needed
+		this.repoArray = branches.data.map( (repo, index) => {
+
+			// for each matching dev branch found get list of branches
+			return repo.branches.map( devBranch => {
+				let selection = {
+					allRepos: this.repos.data,
+					allBranches: repo.all,
+
+					repositoryName: repo.repo,
+					reviewedBranch: devBranch,
+					baseBranch: '',
+				};
+
+				// get base branch of current selection
+				let baseBranch;
+				if(repo.repo === 'external_modules'){
+					baseBranch = ['dev'];
+				} else {
+					baseBranch = this.getBaseBranch(repo.all);
+				}
+
+				selection.baseBranch = baseBranch.length == 1 ? baseBranch[0] : '';
+
+				return selection;
+			})[0];	
+		});
+	}
+
+
+	/*
+	*/
+	getBaseBranch(repos): Array<any> {
 
 		// get all short branch names with numbers in them and sort
 		const selections = repos
@@ -187,7 +182,7 @@ export class QaGeneratorComponent {
 
 	/*
 	*/
-	deleteDevBranch(branchName){
+	deleteDevBranch(branchName): void {
 		// if only one left cant delete
 		if(this.repoArray.length == 1){
 			this.toastr.showToast('Must have at least one repo.', 'error');
@@ -203,7 +198,7 @@ export class QaGeneratorComponent {
 
 	/*
 	*/
-	addRepo(){
+	addRepo(): void {
 		const selection = {
 			allRepos: this.repos.data,
 			allBranches: [],
@@ -213,17 +208,17 @@ export class QaGeneratorComponent {
 			baseBranch: '',
 		};
 
-		this.repoArray.push(selection)
+		this.repoArray.push(selection);
 	}
 
-	getBranches(repoName:string, index:Number){
+	/*
+	*/
+	getBranches(repoName:string, index): void {
+		this.repoArray[index].allBranches = ['Loading Branches...'];
+
 		this.jira.getBranches(repoName).subscribe( branches => {
-			if(!branches.status){
-				this.toastr.showToast(`Could not get branches: ${branches.data}`, 'error');
-			} else {
-				console.log(branches);
-			}
-		})
+			this.repoArray[index].allBranches = branches.data;
+		});
 	}
 
 }

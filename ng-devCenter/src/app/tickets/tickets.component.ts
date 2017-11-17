@@ -18,13 +18,14 @@ import config from '../services/config';
 import 'rxjs/add/observable/interval';
 
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
+import { JiraCommentsComponent } from './../jira-comments/jira-comments.component';
 
 import * as $ from 'jquery';
 
 @Component({
 	selector: 'app-tickets',
 	templateUrl: './tickets.component.html',
-	styleUrls: ['./tickets.component.css']
+	styleUrls: ['./tickets.component.scss']
 })
 export class TicketsComponent implements OnInit, OnDestroy {
 	config=config
@@ -38,6 +39,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	dtTrigger:Subject<any> = new Subject();
 
 	@ViewChild(QaGeneratorComponent) private qaGen:QaGeneratorComponent;
+	@ViewChild(JiraCommentsComponent) private jiraComments:JiraCommentsComponent;
 
 	dtOptions = {
 		order: [4, 'desc'],
@@ -179,6 +181,10 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	*/
 	openQAModal(msrp:string, key:string){
 		this.qaGen.openQAModal(msrp, key);
+	}
+
+	openCommentModal(msrp:string, comments){
+		this.jiraComments.openCommentModal(msrp, comments);
 	}
 
 	newCrucible(data){

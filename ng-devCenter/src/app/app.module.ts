@@ -14,7 +14,6 @@ import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
 import { AppComponent } from './app.component';
 
-import { NotFoundComponent } from './not-found/not-found.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { TicketsComponent } from './tickets/tickets.component';
@@ -27,6 +26,8 @@ import { ToastrService } from './services/toastr.service';
 
 import { WorkTimePipe } from './work-time.pipe';
 import { FooterComponent } from './footer/footer.component';
+import { JiraCommentsComponent } from './jira-comments/jira-comments.component';
+import { SafehtmlPipe } from './safehtml.pipe';
 
 @NgModule({
 	declarations: [
@@ -34,10 +35,11 @@ import { FooterComponent } from './footer/footer.component';
 		NavBarComponent,
 		UserSettingsComponent,
 		TicketsComponent,
-		NotFoundComponent,
 		WorkTimePipe,
 		QaGeneratorComponent,
-		FooterComponent
+		FooterComponent,
+		JiraCommentsComponent,
+		SafehtmlPipe
 	],
 	imports: [
 		BrowserModule,
