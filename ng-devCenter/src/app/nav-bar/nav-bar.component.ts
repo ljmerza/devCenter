@@ -52,20 +52,29 @@ export class NavBarComponent implements AfterContentInit {
 	/*
 	*/
 	public searchTicket(): void {
+
+		// make sure we have a value
+		if(!this.ticketValue){
+			this.toastr.showToast('MSRP or Jira key required to lookup a ticket', 'error');
+			return;
+		}
+
+		// get ticket value and reset
+		const ticketValue = this.ticketValue;
+		this.ticketValue = '';
+
 		// if NaN then is key and go to Jira else need key from MSRP
-		if( isNaN(parseInt(this.ticketValue)) ){
+		if( isNaN(parseInt(ticketValue)) ){
 			window.open(`${config.jiraUrl}/browse/${this.ticketValue}`);
-			this.ticketValue = '';
 			
 		} else {
-			this.jira.searchTicket(this.ticketValue)
+			this.jira.searchTicket(ticketValue)
 			.subscribe( data => {
 				if(data.status){
 					window.open(`${config.jiraUrl}/browse/${data.data}`);
 				} else {
-					this.toastr.showToast(`Could not find Jira ticket ticket with given MSRP: ${this.ticketValue}`, 'error');
+					this.toastr.showToast(`Could not find Jira ticket ticket with given MSRP: ${ticketValue}`, 'error');
 				}
-				this.ticketValue = '';
 			})
 		}
 	}

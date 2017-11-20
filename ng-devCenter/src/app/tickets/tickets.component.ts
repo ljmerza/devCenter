@@ -30,16 +30,18 @@ import * as $ from 'jquery';
 export class TicketsComponent implements OnInit, OnDestroy {
 	config=config
 	loadingTickets:boolean = true;
+	openTickets:Array<any>;
+
+	searchTicket$;
+	userReloadTickets$
+	dtTrigger:Subject<any> = new Subject();
 
 	@Input() reloadTicketsEvent = new EventEmitter();
 
-	openTickets:Array<any>;
-
 	@ViewChild(DataTableDirective) private dtElement: DataTableDirective;
-	dtTrigger:Subject<any> = new Subject();
-
 	@ViewChild(QaGeneratorComponent) private qaGen:QaGeneratorComponent;
 	@ViewChild(JiraCommentsComponent) private jiraComments:JiraCommentsComponent;
+
 
 	dtOptions = {
 		order: [4, 'desc'],
@@ -72,8 +74,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	
 	/*
 	*/
-	searchTicket$;
-	userReloadTickets$
 	ngOnInit():void {
 		this.route.paramMap
 		.subscribe( params => {
@@ -110,7 +110,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	*/
 	ngOnDestroy(){
 		this.searchTicket$.unsubscribe();
-		this.userReloadTickets$.unsubscribe();
 	}
 
 	/*
@@ -119,31 +118,20 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		this.ngProgress.start();
 		this.loadingTickets = true;
 
-		return Observable.interval(5000)
+		// every x milliseconds get latest tickets if last ajax call finished
+		// only update if different then last ajax -> start first time immediately
+		return Observable.interval(10000)
 		.startWith(0)
-		.concatMap(() => this.jira.getFilterData(jiraListType) )
-		.distinctUntilChanged()
+		.exhaustMap(() => this.jira.getFilterData(jiraListType))
+		.distinctUntilChanged( (old_tickets, new_tickets) => {
+			return JSON.stringify(old_tickets.data) === JSON.stringify(new_tickets.data)
+		})
 		.subscribe( issues => {
-
-			console.log('issues: ', issues);
-
-			// if new tickets gotten are different than currently saved
-			// ones then set new ones and redraw table
-			const savedTickets = JSON.stringify(this.openTickets);
-			const newTickets = JSON.stringify(issues.data);
-
-			if(JSON.stringify(savedTickets) !== JSON.stringify(newTickets)){
-				// save tickets and re-render data tables
-				this.openTickets = issues.data;
-
-				this.rerender();
-				this.ngProgress.done();
-
-				this.loadingTickets = false;
-
-			}	
-
-			
+			// save tickets and re-render data tables
+			this.openTickets = issues.data;
+			this.rerender();
+			this.ngProgress.done();
+			this.loadingTickets = false;
 		});	
 	}
 
