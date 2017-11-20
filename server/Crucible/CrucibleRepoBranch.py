@@ -24,22 +24,27 @@ class CrucibleRepoBranch(CrucibleAPI):
 				repos.append(file['source'])
 		return { 'status': True, 'data': list(set(repos)) }
 
-	def get_repos(self, cred_hash):
+	def get_repos(self, cred_hash, cached=True):
 		'''gets all repos a user can access
 		Args:
 			cred_hash - 
+			cached - (boolean) get hard coded repos or get all repos (default True)
 			
 		Returns:
 			a dict of status/data properties
 		'''
-		# get data from API
-		response = self.get(url=f'{self.crucible_api_repo}.json', cred_hash=cred_hash)
-		if not response['status']:
-			return response
-		# save all repo names and locations
 		data = []
-		for review in response['data']['repoData']:
-			data.append({'name': review['name'], 'location':review['location']})
+		if cached:
+			for repo in self.repos:
+				data.append({'name': repo})
+		else:
+			# get data from API
+			response = self.get(url=f'{self.crucible_api_repo}.json', cred_hash=cred_hash)
+			if not response['status']:
+				return response
+			# save all repo names and locations
+			for review in response['data']['repoData']:
+				data.append({'name': review['name'], 'location':review['location']})
 		return {'status': True, 'data': data}
 
 

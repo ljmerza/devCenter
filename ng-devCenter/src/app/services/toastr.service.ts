@@ -15,10 +15,15 @@ export class ToastrService {
 	/*
 	*/
 	public showToast(message:string, message_type:string): void {
+
 		if(message_type === 'success'){
 			this.toastr.success(message, null, this.toastrOptions);
+
 		} else if(message_type === 'error'){
 			this.toastr.error(message, null, this.toastrOptions);
+			
+		} else if(message_type === 'info'){
+			this.toastr.info(message, null, this.toastrOptions);
 		}
 		
 	}

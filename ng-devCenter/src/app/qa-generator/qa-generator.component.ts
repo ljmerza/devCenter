@@ -66,25 +66,27 @@ export class QaGeneratorComponent implements OnInit {
 		const formData = formObj.value;
 		formObj.resetForm();
 
-		// get logged time in minutes
-		const logTime = formData.logTime.hour * 60 + formData.logTime.minute;
-
 		// create POST data structure
 		let postData = {
-			repos: [],
 			qa_steps: formData.qaSteps,
-			log_time: logTime,
+			log_time: formData.logTime.hour * 60 + formData.logTime.minute,
 			autoCR: formData.codeReview,
-			autoPCR: formData.pcrNeeded
+			autoPCR: formData.pcrNeeded,
+			key: this.key,
+			repos: this.repoArray.map( (repo,index) => {
+				return {
+					baseBranch: formData[`baseBranch-${index}`],
+					repositoryName: formData[`repositoryName-${index}`],
+					reviewedBranch: formData[`reviewedBranch-${index}`]
+				};
+			}),
 		};
 
-		// get all repos selected int proper format
-		for(let i=0; i <this.repoArray.length; i++){
-			postData.repos.push({
-				baseBranch: formData[`baseBranch-${i}`],
-				repositoryName: formData[`repositoryName-${i}`],
-				reviewedBranch: formData[`reviewedBranch-${i}`]
-			});
+		// show informational toast
+		if(!formData.qaSteps){
+			this.toastr.showToast('Creating Crucible but not updating to Jira', 'info');
+		} else {
+			this.toastr.showToast('Creating Crucible and updating Jira', 'info');
 		}
 
 		// send POST request and notify results
@@ -92,9 +94,9 @@ export class QaGeneratorComponent implements OnInit {
 			this.toastr.showToast(`
 				<a target="_blank" href='${config.jiraUrl}/browse/${this.key}'>Jira Link</a>
 				<br>
-				<a target="_blank" href='${config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
+				<a target="_blank" href='${config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
 			`, 'success');
-			this.newCrucible.emit({jira: this.key, crucible: response.data})
+			this.newCrucible.emit({jira: this.key, crucible: response.data.crucible_id})
 		});
 	}
 

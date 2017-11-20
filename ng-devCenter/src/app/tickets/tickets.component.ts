@@ -77,21 +77,30 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	ngOnInit():void {
 		this.route.paramMap
 		.subscribe( params => {
+			const ticket_type = params.get('filter');
 
 			// if an ajax request is already being made then cancel it
 			if (this.searchTicket$) {
 	   			this.searchTicket$.unsubscribe();
 			}
 
-			// if required user info exists then get tickets
-			if(this.user.username && this.user.port && this.user.emberUrl){
-				this.searchTicket$ = this.setFilterData( params.get('filter') );
+			// if an interval is already defined then stop it
+			if (this.userReloadTickets$) {
+	   			this.userReloadTickets$.unsubscribe();
 			}
 
-			// be notified if user changes settings
-			this.userReloadTickets$ = this.user.notifyTickets$.subscribe( () => {
-				this.setFilterData( params.get('filter') );
-	      	});			
+			// if required user info exists then get tickets
+			if(this.user.username && this.user.port && this.user.emberUrl){
+				this.searchTicket$ = this.setFilterData(ticket_type);
+			}
+
+			// only interval refresh tickets on certain routes
+			if( ['qa', 'pcr', 'allopen'].includes(ticket_type) ){
+				// be notified if user changes settings
+				this.userReloadTickets$ = this.user.notifyTickets$.subscribe( () => {
+					this.setFilterData(ticket_type);
+		      	});	
+			}	
 		});
 
 
@@ -110,22 +119,31 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		this.ngProgress.start();
 		this.loadingTickets = true;
 
-		return this.jira.getFilterData(jiraListType)
+		return Observable.interval(5000)
+		.startWith(0)
+		.concatMap(() => this.jira.getFilterData(jiraListType) )
+		.distinctUntilChanged()
 		.subscribe( issues => {
+
+			console.log('issues: ', issues);
 
 			// if new tickets gotten are different than currently saved
 			// ones then set new ones and redraw table
-			// const savedTickets = JSON.stringify(this.openTickets);
-			// const newTickets = JSON.stringify(issues.data);
+			const savedTickets = JSON.stringify(this.openTickets);
+			const newTickets = JSON.stringify(issues.data);
 
-			// if(JSON.stringify(savedTickets) !== JSON.stringify(newTickets)){
+			if(JSON.stringify(savedTickets) !== JSON.stringify(newTickets)){
 				// save tickets and re-render data tables
 				this.openTickets = issues.data;
-				this.ngProgress.done();
+
 				this.rerender();
+				this.ngProgress.done();
 
 				this.loadingTickets = false;
-			// }			
+
+			}	
+
+			
 		});	
 	}
 
