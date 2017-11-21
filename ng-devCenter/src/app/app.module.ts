@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MomentModule } from 'angular2-moment';
@@ -46,7 +46,7 @@ import { SafehtmlPipe } from './safehtml.pipe';
 		FormsModule,
 		ReactiveFormsModule,
 		DataTablesModule,
-		HttpModule,
+		HttpClientModule,
 		MomentModule,
 		AppRoutingModule,
 		NgProgressModule,

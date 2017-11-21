@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { DataService } from './data.service';
@@ -16,7 +16,7 @@ export class JiraService extends DataService {
 	/*
 	*/
 	constructor(
-		public http: Http, 
+		public http: HttpClient, 
 		public user:UserService, 
 		public sanitizer: DomSanitizer, 
 		public toastr: ToastrService 
@@ -86,6 +86,11 @@ export class JiraService extends DataService {
 			case 'scrum':
 				jql=config.scrum;
 				this.title = 'Scrum Board';
+				break;
+
+			case 'rocc':
+				jql=config.rocc;
+				this.title = 'ROCC Automation';
 				break;
 
 			default:

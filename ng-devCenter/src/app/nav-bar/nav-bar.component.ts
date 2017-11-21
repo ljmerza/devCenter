@@ -65,7 +65,7 @@ export class NavBarComponent implements AfterContentInit {
 
 		// if NaN then is key and go to Jira else need key from MSRP
 		if( isNaN(parseInt(ticketValue)) ){
-			window.open(`${config.jiraUrl}/browse/${this.ticketValue}`);
+			window.open(`${config.jiraUrl}/browse/${ticketValue}`);
 			
 		} else {
 			this.jira.searchTicket(ticketValue)

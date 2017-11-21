@@ -11,6 +11,7 @@ let config = {
 	apollo:'"Epic%20Link"%20%3D%20Apollo%20and%20status%20!%3D%20closed',
 	sme:'(sprint%20in%20(3187%2C%203183%2C%203182%2C%203676%2C%203185%2C%203180%2C%203684%2C%203186%2C%203432%2C%203968)%20OR%20assignee%20in%20(dh6094%2C%20bb486m%2C%20cc216t%2C%20jc001b%2C%20bp215n%2C%20tt0163%2C%20sm6821%2C%20br591w%2C%20sr6855%2C%20na0952))%20AND%20status%20!%3D%20closed',
 	scrum:'project%20in%20(AQE%2C%20"Desktop%20Integration"%2C%20TeamDB%2C%20TQI%2C%20"Unified%20Desktop"%2C%20UPM%2C%20WAM)%20AND%20status%20!%3D%20closed',
+	rocc: '"Epic%20Link"%20%3D%20%27ROCC%27',
 
 	allmy: function(username){
 		return `assignee%20%3D%20${username}%20ORDER%20BY%20updated%20DESC`;

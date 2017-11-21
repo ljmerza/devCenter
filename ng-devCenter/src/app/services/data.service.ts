@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
 
@@ -26,7 +26,7 @@ export class DataService {
 	apiUrl:string = `${environment.apiUrl}:5858/dev_center`;
 
 	constructor(
-		public http:Http, 
+		public http:HttpClient, 
 		public user:UserService, 
 		public sanitizer: DomSanitizer, 
 		public toastr: ToastrService
@@ -41,9 +41,8 @@ export class DataService {
 	/*
 	*/
 	public getAPI(url:string): Observable<any> {
-		return this.http.get(url, this.createAuthHeaders() )
-		.map(response => response.json())
-		.do( response => {
+		return this.http.get(url, this.createHeaders() )
+		.do( (response:any) => {
 			if(!response.status){
 				return Observable.throw(response);
 			}
@@ -54,9 +53,8 @@ export class DataService {
 	/*
 	*/
 	public postAPI(options): Observable<any> {
-		return this.http.post( options.url, options.body, this.createAuthHeaders() )
-		.map(response => response.json())
-		.do( response => {
+		return this.http.post( options.url, options.body, this.createHeaders() )
+		.do( (response:any) => {
 			if(!response.status){
 				return Observable.throw(response);
 			}
@@ -66,24 +64,13 @@ export class DataService {
 
 	/*
 	*/
-	private createAuthHeaders(): RequestOptions {
-		let headers = new Headers();
+	private createHeaders() {
+		let headers = new HttpHeaders();
 
-		// try to get Auth header and set it
-		const authHeader = this.authorizationHeader();
+		headers.set('Authorization', this.authorizationHeader() );	
+		headers.set('Content-Type', 'application/json');
 
-		if(authHeader){
-			headers.append('Authorization', authHeader);	
-		}
-
-		// add content type header
-		headers.append('Content-Type', 'application/json');
-
-		// create header object and return it
-		return new RequestOptions({
-	        headers: headers
-	    });
-
+		return { headers };
 	}
 
 	/*
