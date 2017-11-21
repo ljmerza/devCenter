@@ -197,6 +197,7 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		'''
 		# get POST data
 		post_data = request.get_json()
+		print(post_data)
 		data = {
 			"cred_hash": get_cred_hash(request=request, required=True),
 			"username": post_data.get('username', ''),

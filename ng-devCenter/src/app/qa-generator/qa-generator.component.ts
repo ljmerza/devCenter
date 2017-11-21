@@ -128,8 +128,14 @@ export class QaGeneratorComponent implements OnInit {
 
 		// get all repos and branches associated with this msrp then enable submit button
 		this.jira.getTicketBranches(msrp).subscribe(branches => {
-			this.processBranches(branches);
 			this.loadingBranches = false;
+			
+			if(!branches.status) {
+				this.toastr.showToast(branches.data, 'error');
+				return;
+			}
+
+			this.processBranches(branches);
 		});
 	}
 

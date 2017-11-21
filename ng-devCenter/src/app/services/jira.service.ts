@@ -105,25 +105,25 @@ export class JiraService extends DataService {
 
 	/*
 	*/
-	pcrPass(id, attuid): Observable<any> {
+	pcrPass(id, username): Observable<any> {
 		return super.postAPI({
 			url: `${this.apiUrl}/crucible/review/pcr_pass`,
-			body: JSON.stringify({
+			body: {
 		        crucible_id: id,
-				username: attuid
-		    })
+				username: username
+		    }
 		});
 	}
 
 	/*
 	*/
-	pcrComplete(id, attuid): Observable<any> {
+	pcrComplete(id, username): Observable<any> {
 		return super.postAPI({
 			url: `${this.apiUrl}/crucible/review/pcr_complete`,
-			body: JSON.stringify({
+			body: {
 		        key: id,
-				username: attuid
-		    })
+				username: username
+		    }
 		});
 	}
 

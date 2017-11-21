@@ -41,10 +41,14 @@ export class DataService {
 	/*
 	*/
 	public getAPI(url:string): Observable<any> {
-		return this.http.get(url, this.createHeaders() )
+		const options = { 
+			headers: this.createHeaders()
+		};
+
+		return this.http.get(url, options)
 		.do( (response:any) => {
 			if(!response.status){
-				return Observable.throw(response);
+				return Observable.throw(new Error(response.data));
 			}
 		})
 		.catch(this.handleError);
@@ -52,11 +56,15 @@ export class DataService {
 
 	/*
 	*/
-	public postAPI(options): Observable<any> {
-		return this.http.post( options.url, options.body, this.createHeaders() )
+	public postAPI(args): Observable<any> {
+		const options = { 
+			headers: this.createHeaders()
+		};
+
+		return this.http.post( args.url, args.body, options )
 		.do( (response:any) => {
 			if(!response.status){
-				return Observable.throw(response);
+				return Observable.throw(new Error(response.data));
 			}
 		})
 		.catch(this.handleError);
@@ -70,7 +78,7 @@ export class DataService {
 		headers.set('Authorization', this.authorizationHeader() );	
 		headers.set('Content-Type', 'application/json');
 
-		return { headers };
+		return headers;
 	}
 
 	/*
@@ -87,6 +95,7 @@ export class DataService {
 	/*
 	*/
 	private handleError(error:Response): Observable<any> {
+		console.log('error: ', error, error.status);
 		if(error.status === 404) {
  			return Observable.throw(new NotFoundError(error, this.toastr));
 
