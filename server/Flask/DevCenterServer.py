@@ -24,7 +24,6 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		'''
 		'''
 		cred_hash = request.headers.get('Authorization')
-
 		# if POST request and we dont have creds then just abort request
 		if request.method == 'POST' and not cred_hash:
 			abort(401)
@@ -163,17 +162,41 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		response = CrucibleRequests.crucible_create_review(data=data, crucible_obj=crucible_obj, jira_obj=jira_obj)
 		# if crucible errored out then return error
 		if not response['status']:
-			return jsonify(response)
+			return Response(response, mimetype='application/json')
 
 		# if we have qa steps then make Jira changes too
 		if 'qa_steps' in data and data['qa_steps']:
 
+			# get crucible id and jira key
 			data['crucible_id'] = response['data']['crucible_id']
 			data['key'] = response['data']['key']
 
-			response = JiraRequests.transition_to_cr(data=data, jira_obj=jira_obj)
+			# update jira
+			jira_response = JiraRequests.transition_to_cr(data=data, jira_obj=jira_obj)
 
-		# return whatever response jira made
+			# if update okay then save cru id on return
+			if not jira_response['status']:
+				cru_id = data['crucible_id']
+				response['data'] = response['data'] + f' but Crucible created with ID: {cru_id}'
+				response = jira_response
+
+		return Response(response, mimetype='application/json')
+
+
+	@app.route(f'/{app_name}/jira/update', methods=['POST'])
+	@cross_origin()
+	def update_ticket():
+		'''Updates a Jira ticket with a comment and optional time log
+
+		Args:
+
+
+		Returns:
+			
+		'''
+		data=request.get_json()
+		data["cred_hash"] = g.cred_hash
+		jira_response = JiraRequests.update_ticket(data=data, jira_obj=jira_obj)
 		return Response(response, mimetype='application/json')
 
 

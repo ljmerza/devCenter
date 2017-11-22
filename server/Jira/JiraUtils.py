@@ -1,6 +1,9 @@
 import os
 import re
 
+qa_begin = "h3. ==== QA Steps ===="
+qa_end = "h3. ==============="
+
 def generate_username(username):
 	'''gets real username if not working
 
@@ -59,9 +62,6 @@ def generate_qa_template(qa_steps, repos, crucible_id):
 		The formatted QA table string
 	'''
 	crucible_url = os.environ['CRUCIBLE_URL']
-
-	qa_begin = "h2. ============================ QA Steps ============================"
-	qa_end = "h2. ================================================================="
 
 	repo_table = generate_repo_table(repos)
 	return """

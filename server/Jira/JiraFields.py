@@ -1,7 +1,7 @@
 import re
 
-qa_regex_begin = re.compile(r"h2\. ============================ QA Steps ============================")
-qa_regex_end = re.compile(r"h2\. =================================================================")
+qa_regex_begin = re.compile(r"h3\. ==== QA Steps ====")
+qa_regex_end = re.compile(r"h3\. ===============")
 
 
 def get_key(issue):
@@ -238,19 +238,21 @@ def _format_comment(comment):
 			i+=1
 
 		# else if sub QA step add spacing
-		elif '#* ' in line:
+		if '#* ' in line:
 			line = line.replace('#* ', '&nbsp;&nbsp;&nbsp;-&nbsp;')
 
 		# else if heading add header element
-		elif 'h2. ' in line:
-			line = line.replace('h2. ', '')
-			line = f'<h4>{line}</h4>'
+		match = re.search(r'h[0-9]{1}. ', line)
+		if match:
+			header = match.group(0)
+			line = line.replace(header, '')
+			line = f'<h{header[1]}>{line}</h{header[1]}>'
 
 		# if table start table header
 		if line.startswith('||'):
 			table_start = True
 			th = line.split('||')
-			start = '<div class="container"><table class="table"><thead><tr>'
+			start = '<table class="table"><thead><tr>'
 			for thline in th:
 				start +='<th>'+thline+'<th>'
 			start+='</tr><thead><tbody>'
@@ -270,7 +272,7 @@ def _format_comment(comment):
 		else:
 			if table_start:
 				table_start = False
-				line+='<tbody></table></div>'
+				line+='<tbody></table>'
 
 		# if crucible link then create link
 		if line.startswith('[Crucible'):
@@ -281,8 +283,10 @@ def _format_comment(comment):
 				line = f'<a href="{link}" target="_blank">{title}</a>'
 
 		# if colored string then add color CSS
-		if '{color:red}' in line:
-			line = line.replace('{color:red}', '<span class="text-danger">').replace('{color}', '</span>')
+		match = re.search(r'{color:[a-z]+}', line)
+		if match:
+			color_html = match.group(0)
+			line = line.replace(color_html, '<span class="text-danger">').replace('{color}', '</span>')
 
 		# add new line to comment line
 		line+='<br>'
@@ -291,7 +295,7 @@ def _format_comment(comment):
 		new_comments.append(line)
 
 	# return a string of the entire formatted comment
-	return '\n'.join(new_comments)
+	return '<div class="container">'+ '\n'.join(new_comments) + '</div>'
 
 def get_qa_steps(issue):
 	'''finds an issue's QA steps in the comments if they exist

@@ -74,6 +74,6 @@ export class DataService {
 	/*
 	*/
 	public processErrorResponse(response:HttpErrorResponse): string {
-		return response.error.data || response.error;
+		return response.error.data || response.message || response.error;
 	}
 }

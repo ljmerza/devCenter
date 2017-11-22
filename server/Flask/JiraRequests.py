@@ -13,6 +13,14 @@ def set_pcr_complete(data, jira_obj):
 
 def transition_to_cr(data, jira_obj):
 	'''
+
+	Args:
+		data (dict) object with properties:
+			cred_hash (str) Authorization header value
+		jira_obj (Class instance) Jira class instance to connect to Jira
+
+	Returns:
+
 	'''
 	missing_params = FlaskUtils.check_args(params=data, required=['key', 'crucible_id','repos', 'qa_steps', 'cred_hash'])
 	if missing_params:
@@ -42,6 +50,38 @@ def transition_to_cr(data, jira_obj):
 		log_response = jira_obj.add_work_log(key=data["key"], time=data['log_time'], cred_hash=data['cred_hash'])
 		if not log_response['status']:
 			return {"status": False, "data": 'Could not log time to Jira: '+log_response['data']}
+
+	return {'status': True}
+
+
+def update_ticket(data, jira_obj):
+	'''Adds a comment to a ticket and updates the time log if given
+
+	Args:
+		data (dict) object with properties:
+			cred_hash (str) Authorization header value
+		jira_obj (Class instance) Jira class instance to connect to Jira
+
+	Returns:
+
+	'''
+	missing_params = FlaskUtils.check_args(params=data, required=['key', 'comment', 'cred_hash'])
+	if missing_params:
+		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+
+	comment_response = jira_obj.add_comment(key=data["key"], comment=data["comment"], cred_hash=data['cred_hash'])
+
+	# check if Jira comment created
+	if not comment_response['status']:
+		return {"status": False, "data": 'Could not add comment to Jira: '+comment_response['data']}
+
+		# check if log_time exist and log time if it does
+	if 'log_time' in data and data['log_time']:
+		log_response = jira_obj.add_work_log(key=data["key"], time=data['log_time'], cred_hash=data['cred_hash'])
+		if not log_response['status']:
+			return {"status": False, "data": 'Could not log time to Jira: '+log_response['data']}
+
+	return {'status': True}
 
 
 def get_jira_tickets(data, jira_obj):
@@ -85,6 +125,15 @@ def get_jira_tickets(data, jira_obj):
 
 def find_key_by_msrp(data, jira_obj):
 	'''
+
+	Args:
+		data (dict) object with properties:
+		msrp (str) the msrp of the ticket to find
+			cred_hash (str) Authorization header value
+		jira_obj (Class instance) Jira class instance to connect to Jira
+
+	Returns:
+		the server response JSON object with status/data properties
 	'''
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','msrp'])

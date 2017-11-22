@@ -63,11 +63,22 @@
 									{{ticket.key}}
 								</a>
 							</td>
-							<td (click)="openCommentModal(ticket.key, ticket.comments)">
-								<div class='float-left'>
-									{{ticket.msrp}}
+							<td>
+								<div class='float-left'>{{ticket.msrp}}</div>
+								<div class="float-right">
+									<i 
+										(click)="openCommentModal(ticket.key, ticket.comments)" 
+										class="material-icons"
+										title='Add comment/time log'
+									>alarm_add</i>
+									<i 
+										(click)="openCommentModal(ticket.key, ticket.comments)" 
+										class="material-icons"
+										title='View comments'
+									>storage</i>
 								</div>
-								<i class="material-icons float-right">storage</i>
+								
+								
 							</td>
 							<td class='summary-format'>{{ticket.summary}}</td>
 							<td>
@@ -83,7 +94,6 @@
 								>
 									assignment
 								</i>
-								
 							</td>
 							<td>{{ticket.dates.started | amDateFormat:'LL'}}</td>
 							<td>{{ticket.dates.duedate | amDateFormat:'LL'}}</td>
