@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from flask import Flask, render_template, jsonify, send_from_directory, request, Response
+from flask import Flask, render_template, jsonify, send_from_directory, request, Response, g,abort
 from flask_cors import CORS, cross_origin
 
 import os
@@ -15,48 +15,42 @@ import CrucibleRequests
 
 def start_server(host, app, socketio, jira_obj, crucible_obj):
 
-	# flask config
 	app_name = 'dev_center'
 	port = 5858
 
-	# get master cred hash
-	username = os.environ['USER']
-	password = os.environ['PASSWORD']
-	header_value = f'{username}:{password}'
-	encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
-	my_cred_hash = f'Basic {encoded_header}'
 
-
-	def get_cred_hash(request, required=False):
+	@app.before_request
+	def get_cred_hash():
 		'''
 		'''
-		cred_hash = ''
-		if required or request.headers.get('Authorization'):
-			cred_hash = request.headers.get('Authorization', cred_hash)
-		else:
-			cred_hash = my_cred_hash
-		return cred_hash
+		cred_hash = request.headers.get('Authorization')
 
-	
-	@app.route(f'/node_modules/<path:path>')
-	def node_modules(path):
-		return send_from_directory(f'{app.static_folder}/node_modules/', path)
+		# if POST request and we dont have creds then just abort request
+		if request.method == 'POST' and not cred_hash:
+			abort(401)
 
-	@app.route(f'/static/<path:path>')
-	def static_files(path):
-		return send_from_directory(f'{app.static_folder}/static/', path)
+		elif request.method == 'GET':
+			# if user didn't supply password then use mine for retrieving data
+			if not cred_hash:
+				username = os.environ['USER']
+				password = os.environ['PASSWORD']
+				header_value = f'{username}:{password}'
+				encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
+				cred_hash = f'Basic {encoded_header}'
 
-	@app.route(f"/{app_name}/qagen")
-	@cross_origin()
-	def qa_step_gen():
-		return render_template('qagen.html', repo_names=crucible_obj.repos)
+		# set creds to global object
+		g.cred_hash = cred_hash
 
 
-	@app.route(f"/leo/qagen")
-	@cross_origin()
-	def qa_step_gen_old():
-		repo_names = ['AQE','aqe_api', 'Modules','Selenium_tests','Taskmaster','TeamDB','teamdbapi','teamdb_ember','Templates','Tools','TQI','UD','UD_api','UD_ember','UPM','upm_api','WAM','wam_api']
-		return render_template('qagen.html', repo_names=repo_names)
+	@app.after_request
+	def check_status(response):
+		'''
+		'''
+		status = 200
+		if len(response.response):
+			if not response.response['status']:
+				status=404
+		return Response(json.dumps(response.response), status=status, mimetype='application/json')
 
 
 	@app.route(f"/{app_name}/jira/tickets")
@@ -76,9 +70,9 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 			"filter_number": request.args.get('filter'),
 			"jql": request.args.get('jql'),
 			"fields": request.args.get('fields'),
-			"cred_hash": get_cred_hash(request=request)
+			"cred_hash": g.cred_hash
 		}, jira_obj=jira_obj)
-		return jsonify(data)
+		return Response(data, mimetype='application/json')
 
 
 	@app.route(f'/{app_name}/jira/getkey/<msrp>')
@@ -94,9 +88,9 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		'''
 		data = JiraRequests.find_key_by_msrp(data={
 			"msrp": msrp,
-			"cred_hash": get_cred_hash(request=request)
+			"cred_hash": g.cred_hash
 		}, jira_obj=jira_obj)
-		return jsonify(data)
+		return Response(data, mimetype='application/json')
 
 
 	@app.route(f'/{app_name}/git/repos')
@@ -111,9 +105,9 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 			All repos a user can access
 		'''
 		data = CrucibleRequests.get_repos(data={
-			"cred_hash":get_cred_hash(request=request)
+			"cred_hash": g.cred_hash
 		}, crucible_obj=crucible_obj)
-		return jsonify(data)
+		return Response(data, mimetype='application/json')
 
 
 	@app.route(f'/{app_name}/git/repo/<repo_name>')
@@ -129,9 +123,9 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		'''
 		data = CrucibleRequests.get_branches(data={
 			"repo_name": repo_name, 
-			"cred_hash": get_cred_hash(request=request)
+			"cred_hash": g.cred_hash
 		}, crucible_obj=crucible_obj)
-		return jsonify(data)
+		return Response(data, mimetype='application/json')
 
 
 
@@ -148,9 +142,9 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		'''
 		data = CrucibleRequests.ticket_branches(data={
 			"msrp": msrp,
-			"cred_hash": get_cred_hash(request=request)
+			"cred_hash": g.cred_hash
 		}, crucible_obj=crucible_obj)
-		return jsonify(data)
+		return Response(data, mimetype='application/json')
 
 
 	@app.route(f'/{app_name}/crucible/review/create', methods=['POST'])
@@ -165,7 +159,7 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 			the Crucible ID number if successful else error
 		'''
 		data=request.get_json()
-		data["cred_hash"] = get_cred_hash(request, required=True)
+		data["cred_hash"] = g.cred_hash
 		response = CrucibleRequests.crucible_create_review(data=data, crucible_obj=crucible_obj, jira_obj=jira_obj)
 		# if crucible errored out then return error
 		if not response['status']:
@@ -180,7 +174,7 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 			response = JiraRequests.transition_to_cr(data=data, jira_obj=jira_obj)
 
 		# return whatever response jira made
-		return jsonify(response)
+		return Response(response, mimetype='application/json')
 
 
 	@app.route(f'/{app_name}/crucible/review/pcr_pass', methods=['POST'])
@@ -197,15 +191,14 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		'''
 		# get POST data
 		post_data = request.get_json()
-		print(post_data)
 		data = {
-			"cred_hash": get_cred_hash(request=request, required=True),
+			"cred_hash": g.cred_hash,
 			"username": post_data.get('username', ''),
 			"crucible_id": post_data.get('crucible_id', '')
 		}
 		# make POST call and return result
 		data = CrucibleRequests.set_pcr_pass(data=data, crucible_obj=crucible_obj)
-		return jsonify(data)
+		return Response(data, mimetype='application/json')
 
 
 	@app.route(f'/{app_name}/crucible/review/pcr_complete', methods=['POST'])
@@ -223,14 +216,14 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		# get POST data
 		post_data = request.get_json()
 		data = {
-			"cred_hash": get_cred_hash(request=request, required=True),
+			"cred_hash": g.cred_hash,
 			"key": post_data.get('key', ''),
 			"username": post_data.get('username', '')
 		}
 
 		# make POST call and return result
 		data = JiraRequests.set_pcr_complete(data=data, jira_obj=jira_obj)
-		return jsonify(data)
+		return Response(data, mimetype='application/json')
 
 
 

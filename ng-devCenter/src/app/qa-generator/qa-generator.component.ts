@@ -1,13 +1,13 @@
 import { 
 	Component, ViewChild, ElementRef, 
 	ViewEncapsulation, ViewContainerRef, 
-	EventEmitter, Output, OnInit
+	EventEmitter, Output
 } from '@angular/core';
 
-import { JiraService } from './../services/jira.service';
 import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgForm } from '@angular/forms';
 
+import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
 import config from '../services/config';
 
@@ -17,7 +17,7 @@ import config from '../services/config';
 	styleUrls: ['./qa-generator.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class QaGeneratorComponent implements OnInit {
+export class QaGeneratorComponent {
 	key:string;
 	modalReference;
 	loadingBranches:boolean = true;
@@ -43,13 +43,6 @@ export class QaGeneratorComponent implements OnInit {
 		public vcr: ViewContainerRef
 	) {
 		this.toastr.toastr.setRootViewContainerRef(vcr);
-	}
-
-	/*
-	*/
-	ngOnInit(): void {
-		this.jira.getRepos()
-		.subscribe( repos => this.repos = repos);
 	}
 
 	/*
@@ -126,17 +119,23 @@ export class QaGeneratorComponent implements OnInit {
 		// disabled submit button for QA gen
 		this.loadingBranches = true;
 
-		// get all repos and branches associated with this msrp then enable submit button
-		this.jira.getTicketBranches(msrp).subscribe(branches => {
-			this.loadingBranches = false;
-			
-			if(!branches.status) {
-				this.toastr.showToast(branches.data, 'error');
-				return;
-			}
+		// get repos
+		this.jira.getRepos().subscribe( 
+			branches => this.repos = branches.data,
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
 
-			this.processBranches(branches);
-		});
+		// get all branches associated with this msrp
+		this.jira.getTicketBranches(msrp).subscribe(
+			response => {
+				this.loadingBranches = false;
+				this.processBranches(response.data);
+			},
+			error => {
+				this.loadingBranches = false;
+				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
+			}
+		);
 	}
 
 	/*
@@ -144,12 +143,12 @@ export class QaGeneratorComponent implements OnInit {
 	processBranches(branches): void {
 
 		// for each repo found create arrays of data needed
-		this.repoArray = branches.data.map( (repo, index) => {
+		this.repoArray = branches.map( (repo, index) => {
 
 			// for each matching dev branch found get list of branches
 			return repo.branches.map( devBranch => {
 				let selection = {
-					allRepos: this.repos.data,
+					allRepos: this.repos,
 					allBranches: repo.all,
 
 					repositoryName: repo.repo,
@@ -208,7 +207,7 @@ export class QaGeneratorComponent implements OnInit {
 	*/
 	addRepo(): void {
 		const selection = {
-			allRepos: this.repos.data,
+			allRepos: this.repos,
 			allBranches: [],
 
 			repositoryName: '',
@@ -224,9 +223,12 @@ export class QaGeneratorComponent implements OnInit {
 	getBranches(repoName:string, index): void {
 		this.repoArray[index].allBranches = ['Loading Branches...'];
 
-		this.jira.getBranches(repoName).subscribe( branches => {
-			this.repoArray[index].allBranches = branches.data;
-		});
+		this.jira.getBranches(repoName).subscribe( 
+			branches => {
+				this.repoArray[index].allBranches = branches.data;
+			},
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
 	}
 
 }

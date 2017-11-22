@@ -126,13 +126,16 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		.distinctUntilChanged( (old_tickets, new_tickets) => {
 			return JSON.stringify(old_tickets.data) === JSON.stringify(new_tickets.data)
 		})
-		.subscribe( issues => {
-			// save tickets and re-render data tables
-			this.openTickets = issues.data;
-			this.rerender();
-			this.ngProgress.done();
-			this.loadingTickets = false;
-		});	
+		.subscribe( 
+			issues => {
+				// save tickets and re-render data tables
+				this.openTickets = issues.data;
+				this.rerender();
+				this.ngProgress.done();
+				this.loadingTickets = false;
+			},
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
 	}
 
 	/*
@@ -162,23 +165,29 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 			// if confirm is true then do a PCR pass
 			if(confirm){
-				this.jira.pcrPass(cru_id, 'lm240n').subscribe( () => {
-					this.toastr.showToast('PCR Passed.', 'success');
+				this.jira.pcrPass(cru_id, this.user.username).subscribe( 
+					() => {
+						this.toastr.showToast('PCR Passed.', 'success');
 
-					// if we want PCR complete then	call PCR complete API 
-					if(confirm === 'complete'){						
-						this.jira.pcrComplete(key, 'lm240n').subscribe( () => {
+						// if we want PCR complete then	call PCR complete API 
+						if(confirm === 'complete'){						
+							this.jira.pcrComplete(key, this.user.username).subscribe( 
+								() => {
 
-							this.toastr.showToast('PCR Completed.', 'success');
+									this.toastr.showToast('PCR Completed.', 'success');
 
-							// get datatable instance, remove row, redraw table
-							this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-								dtInstance.row( $(`#${key}`)[0] ).remove();
-								dtInstance.draw();
-							});
-						});
-					}
-				});
+									// get datatable instance, remove row, redraw table
+									this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+										dtInstance.row( $(`#${key}`)[0] ).remove();
+										dtInstance.draw();
+									});
+								},
+								error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+							);
+						}
+					}, 
+					error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+				);
 			}
 		});	
 	}

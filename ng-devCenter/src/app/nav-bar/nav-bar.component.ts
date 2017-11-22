@@ -69,13 +69,10 @@ export class NavBarComponent implements AfterContentInit {
 			
 		} else {
 			this.jira.searchTicket(ticketValue)
-			.subscribe( data => {
-				if(data.status){
-					window.open(`${config.jiraUrl}/browse/${data.data}`);
-				} else {
-					this.toastr.showToast(`Could not find Jira ticket ticket with given MSRP: ${ticketValue}`, 'error');
-				}
-			})
+			.subscribe( 
+				data => window.open(`${config.jiraUrl}/browse/${data.data}`),
+				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+			);
 		}
 	}
 

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
 
 import { UserService } from './user.service'
-import { ToastrService } from './../services/toastr.service';
 
 import config from './config'
 import { environment } from '../../environments/environment';
@@ -13,10 +12,6 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/retry';
 import 'rxjs/add/operator/map';
-
-import { AppError } from './../errors/app-error';
-import { FalseError } from './../errors/false-error';
-import { NotFoundError } from './../errors/not-found-error';
 
 import { Headers, RequestOptions } from '@angular/http';
 
@@ -28,8 +23,7 @@ export class DataService {
 	constructor(
 		public http:HttpClient, 
 		public user:UserService, 
-		public sanitizer: DomSanitizer, 
-		public toastr: ToastrService
+		public sanitizer: DomSanitizer
 	) { }
 
 	/*
@@ -45,13 +39,7 @@ export class DataService {
 			headers: this.createHeaders()
 		};
 
-		return this.http.get(url, options)
-		.do( (response:any) => {
-			if(!response.status){
-				return Observable.throw(new Error(response.data));
-			}
-		})
-		.catch(this.handleError);
+		return this.http.get(url, options);
 	}
 
 	/*
@@ -61,24 +49,15 @@ export class DataService {
 			headers: this.createHeaders()
 		};
 
-		return this.http.post( args.url, args.body, options )
-		.do( (response:any) => {
-			if(!response.status){
-				return Observable.throw(new Error(response.data));
-			}
-		})
-		.catch(this.handleError);
+		return this.http.post(args.url, args.body, options)
 	}
 
 	/*
 	*/
 	private createHeaders() {
-		let headers = new HttpHeaders();
-
-		headers.set('Authorization', this.authorizationHeader() );	
-		headers.set('Content-Type', 'application/json');
-
-		return headers;
+		return new HttpHeaders()
+			.set('Authorization', this.authorizationHeader() )
+			.set('Content-Type', 'application/json');
 	}
 
 	/*
@@ -91,19 +70,10 @@ export class DataService {
 		}
 		
 	} 
-	
+
 	/*
 	*/
-	private handleError(error:Response): Observable<any> {
-		console.log('error: ', error, error.status);
-		if(error.status === 404) {
- 			return Observable.throw(new NotFoundError(error, this.toastr));
-
-		} else if(typeof error.status !== 'undefined' && !error.status) {
-			return Observable.throw(new FalseError(error, this.toastr));
-			
-		} else {
- 			return Observable.throw(new AppError(error, this.toastr));
-	 	}
+	public processErrorResponse(response:HttpErrorResponse): string {
+		return response.error.data || response.error;
 	}
 }

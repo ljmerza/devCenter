@@ -5,7 +5,6 @@ import { Observable } from 'rxjs/Observable';
 
 import { DataService } from './data.service';
 import { UserService } from './user.service';
-import { ToastrService } from './../services/toastr.service';
 
 import config from './config';
 
@@ -18,10 +17,9 @@ export class JiraService extends DataService {
 	constructor(
 		public http: HttpClient, 
 		public user:UserService, 
-		public sanitizer: DomSanitizer, 
-		public toastr: ToastrService 
+		public sanitizer: DomSanitizer
 	) {
-		super(http, user, sanitizer, toastr);
+		super(http, user, sanitizer);
 	}
 
 

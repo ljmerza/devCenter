@@ -29,10 +29,10 @@
 					<a class="dropdown-item" [routerLink]="['/jira', 'sme']">SME</a>
 					<a class="dropdown-item" [routerLink]="['/jira', 'scrum']">Scrum Board</a>
 					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" target="_blank" href="{{config.jiraUrl}}/secure/Dashboard.jspa">Jira</a>
-					<a class="dropdown-item" target="_blank" href="{{config.crucibleUrl}}/cru/browse/CR-UD">Crucible</a>
-					<a class="dropdown-item" target="_blank" href="{{config.codeCloudUrl}}/projects">Code Cloud</a>
-					<a class="dropdown-item" target="_blank" href="{{config.jiraUrl}}/secure/RapidBoard.jspa?rapidView=178&view=planning.nodetail&versions=visible">Scrum Board</a>
+					<a class="dropdown-item" target="_blank" href="{{config.jiraUrl}}{{config.jiraPath}}">Jira</a>
+					<a class="dropdown-item" target="_blank" href="{{config.crucibleUrl}}{{config.cruciblePath}}">Crucible</a>
+					<a class="dropdown-item" target="_blank" href="{{config.codeCloudUrl}}{{config.codeCloudPath}}">Code Cloud</a>
+					<a class="dropdown-item" target="_blank" href="{{config.jiraUrl}}{{config.scrumBoardPath}}">Scrum Board</a>
 				</div>
 			</li>
 
@@ -42,53 +42,56 @@
 				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Dev Links</a>
 				<ul ngbDropdownMenu aria-labelledby="devDropdown">
 
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}/UD/cgi-bin/worklist.pl">UD</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[5].link}}">{{config.dev_links[5].name}}</a></li>
 	
 					<li class="dropdown-submenu">
 						<a class="dropdown-item" data-toggle="dropdown">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}asset/history?asset=TEST&UAT=0&usertimezone=America/New_York&usertimeformat=12HR">Asset History</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[0].link}}">{{config.ember_links[0].name}}</a></li>
 							
 							<li class="dropdown-submenu">
 								<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 								<ul class="dropdown-menu dropdown-submenu-items">
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/GAS544770001">GAS544770001 (EAN Data)</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/OKS433527001">OKS433527001 (Word Doc)</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/HOC574865001">HOC574865001 (Juniper)</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/BAS539606001">BAS539606001 (Inventory Data)</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/MIS140524001">MIS140524001 (CTH Data)</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/MIS140524001">NCC326168001 (EVC Data)</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/WTS252430001">WTS252430001 (Canopi Data)</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/TNS268897001">TNS268897001</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/SLS817036001">SLS817036001</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/SWS230192001 ">SWS230192001</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[0].link}}">{{config.order_links[0].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[1].link}}">{{config.order_links[1].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[2].link}}">{{config.order_links[2].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[3].link}}">{{config.order_links[3].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[4].link}}">{{config.order_links[4].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[5].link}}">{{config.order_links[5].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[6].link}}">{{config.order_links[6].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[7].link}}">{{config.order_links[7].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[8].link}}">{{config.order_links[8].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[9].link}}">{{config.order_links[9].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[10].link}}">{{config.order_links[10].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[11].link}}">{{config.order_links[11].name}}</a></li>
+									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[12].link}}">{{config.order_links[12].name}}</a></li>
 								</ul>
 							</li>
 
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/group-lead?lead_ticket=WTXIV000724">Group Ticket</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}ticket/ethernet/WTXIV000892">WFA Ticket</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}administration?attuid={{user.username}}">Admin Panel</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/BAS539606001">BMP Ticket</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/BAS539606001">ELD</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}ticketing-system/aots/advanced-search">AOTS Advanced Search</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[1].link}}">{{config.ember_links[1].name}}</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[2].link}}">{{config.ember_links[2].name}}</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[3].link}}{{user.username}}">{{config.ember_links[3].name}}</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[4].link}}">{{config.ember_links[4].name}}</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[5].link}}">{{config.ember_links[5].name}}</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[6].link}}">{{config.ember_links[6].name}}</a></li>
 						</ul>
 					</li>
 
 					<li class="dropdown-submenu">
 						<a class="dropdown-item" data-toggle="dropdown">TeamDB Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}/teamdb/team">Teams</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}/teamdb/team/227">Edit Team</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}/teamdb/user/{{user.username}}">Edit Profile</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}/teamdb/workgroup">Workgroup</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}{{config.teamdb_ember_links[0].link}}">{{config.teamdb_ember_links[0].name}}</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}{{config.teamdb_ember_links[1].link}}">{{config.teamdb_ember_links[1].name}}</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}{{config.teamdb_ember_links[2].link}}{{user.username}}">{{config.teamdb_ember_links[2].name}}</a></li>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}{{config.teamdb_ember_links[3].link}}">{{config.teamdb_ember_links[3].name}}</a></li>
 						</ul>
 					</li>
 
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}/aqe/cgi-bin/index.pl">AQE</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}/teamdb/view.php?ATTuid={{user.username}}">TeamDB</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}/wam/cgi-bin/wam.pl">WAM</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}/upm/app.php">UPM</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}/Templates/cgi-bin/Template.pl">Template Tool</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[0].link}}">{{config.dev_links[0].name}}</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[1].link}}{{user.username}}">{{config.dev_links[1].name}}</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[2].link}}">{{config.dev_links[2].name}}</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[3].link}}">{{config.dev_links[3].name}}</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[4].link}}">{{config.dev_links[4].name}}</a></li>
 
 				</ul>
 			</li>
@@ -97,13 +100,13 @@
 			<li ngbDropdown class="d-inline-block">
 				<a class="nav-link dropdown-toggle" id="prodDropdown" ngbDropdownToggle>Prod Links</a>
 				<div ngbDropdownMenu aria-labelledby="prodDropdown">
-					<a class="dropdown-item" target="_blank" href="http://ud.web.att.com/UD/cgi-bin/worklist.pl">UD</a>
-					<a class="dropdown-item" target="_blank" href="http://aqe.web.att.com/aqe/cgi-bin/index.pl">AQE</a>
-					<a class="dropdown-item" target="_blank" href="http://teamdb.web.att.com/teamdb/view.php?ATTuid={{user.username}}">TeamDB</a>
-					<a class="dropdown-item" target="_blank" href="http://wam.web.att.com/wam/cgi-bin/wam.pl">WAM</a>
-					<a class="dropdown-item" target="_blank" href="http://gcs-upm.web.att.com/upm2/access.php">UPM</a>
-					<a class="dropdown-item" target="_blank" href="http://gcs-templates.web.att.com/Templates/cgi-bin/Template.pl">Template Tool</a>
-					<a class="dropdown-item" target="_blank" href="http://chrapud09.gcsc.att.com/tqi3/cgi-bin/index.pl">TQI</a>
+					<a class="dropdown-item" target="_blank" href="{{config.prod_links[0].link}}">{{config.prod_links[0].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.prod_links[1].link}}">{{config.prod_links[1].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.prod_links[2].link}}/{{user.username}}">{{config.prod_links[2].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.prod_links[3].link}}">{{config.prod_links[3].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.prod_links[4].link}}">{{config.prod_links[4].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.prod_links[5].link}}">{{config.prod_links[5].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.prod_links[6].link}}">{{config.prod_links[6].name}}</a>
 				</div>
 			</li>
 
@@ -111,13 +114,13 @@
 			<li ngbDropdown class="d-inline-block">
 				<a class="nav-link dropdown-toggle" id="betaDropdown" ngbDropdownToggle>Beta Links</a>
 				<div ngbDropdownMenu aria-labelledby="betaDropdown">
-					<a class="dropdown-item" target="_blank" href="http://ud-beta.web.att.com/UD/cgi-bin/worklist.pl">UD</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}/aqe/cgi-bin/index.pl">AQE</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}/teamdb/teams.php">TeamDB</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}/wam/cgi-bin/wam.pl">WAM</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}/upm2/access.php">UPM</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}/Templates/cgi-bin/Template.pl">Template Tool</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}/tqi3/cgi-bin/index.pl">TQI</a>
+					<a class="dropdown-item" target="_blank" href="{{config.beta_links[0].link}}">{{config.beta_links[0].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[1].link}}">{{config.beta_links[1].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[2].link}}/{{user.username}}">{{config.beta_links[2].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[3].link}}">{{config.beta_links[3].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[4].link}}">{{config.beta_links[4].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[5].link}}">{{config.beta_links[5].name}}</a>
+					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[6].link}}">{{config.beta_links[6].name}}</a>
 				</div>
 			</li>
 
@@ -190,7 +193,7 @@
 			</li>
 
 			<li class="nav-item">
-				<a class="nav-link" target="_blank" href="http://ix.web.att.com:2017/">MSRP</a>
+				<a class="nav-link" target="_blank" href="{{config.msrpLink}}">MSRP</a>
 			</li>
 		</ul>
 

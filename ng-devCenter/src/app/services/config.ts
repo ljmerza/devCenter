@@ -29,10 +29,211 @@ let config = {
 	betaUrl: 'http://chrapud16b.gcsc.att.com',
 	wikiUrl: 'https://wiki.web.att.com',
 
+	msrpLink: 'http://ix.web.att.com:2017',
+
 	chatUrl: 'qto://talk',
 
-	fields: 'customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate,comment,updated,created,customfield_10102,customfield_10175,customfield_10103,customfield_10602'
+	fields: 'customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate,comment,updated,created,customfield_10102,customfield_10175,customfield_10103,customfield_10602',
 
+	jiraPath: '/secure/Dashboard.jspa',
+	cruciblePath: '/cru/browse/CR-UD',
+	codeCloudPath: '/projects',
+	scrumBoardPath: '/secure/RapidBoard.jspa?rapidView=178&view=planning.nodetail&versions=visible',
+
+	dev_links: [
+		{
+			link: '/aqe/cgi-bin/index.pl',
+			name: 'AQE'
+		},
+		{
+			link: '/teamdb/view.php?ATTuid=',
+			name: 'TeamDB'
+		},
+		{
+			link: '/wam/cgi-bin/wam.pl',
+			name: 'WAM'
+		},
+		{
+			link: '/upm/app.php',
+			name: 'UPM'
+		},
+		{
+			link: '/Templates/cgi-bin/Template.pl',
+			name: 'Template Tool'
+		},
+		{
+			link: '/UD/cgi-bin/worklist.pl',
+			name: 'UD'
+		}
+
+	],
+
+	ember_links: [
+		{
+			name: 'Asset History',
+			link: 'asset/history?asset=TEST&UAT=0&usertimezone=America/New_York&usertimeformat=12HR'
+		},
+		{
+			name: 'Group Ticket',
+			link: 'group-lead?lead_ticket=WTXIV000724'
+		},
+		{
+			name: 'WFA Ticket',
+			link: 'ticket/ethernet/WTXIV000892'
+		},
+		{
+			name: 'Admin Panel',
+			link: 'administration?attuid='
+		},
+		{
+			name: 'BMP Ticket',
+			link: 'order/ethernet/BAS539606001'
+		},
+		{
+			name: 'ELD',
+			link: 'order/ethernet/BAS539606001'
+		},
+		{
+			name: 'AOTS Advanced Search',
+			link: 'ticketing-system/aots/advanced-search'
+		}
+	],
+
+	order_links: [
+		{
+			link: 'order/ethernet/GAS544770001',
+			name: 'GAS544770001 (EAN)'
+		},
+		{
+			link: 'order/ethernet/OKS433527001',
+			name: 'OKS433527001 (Word Doc)'
+		},
+		{
+			link: 'order/ethernet/HOC574865001',
+			name: 'HOC574865001 (Juniper)'
+		},
+		{
+			link: 'order/ethernet/BAS539606001',
+			name: 'BAS539606001 (Inventory)'
+		},
+		{
+			link: 'order/ethernet/MIS140524001',
+			name: 'MIS140524001 (CTH)'
+		},
+		{
+			link: 'order/ethernet/MIS140524001',
+			name: 'NCC326168001 (EVC)'
+		},
+		{
+			link: 'order/ethernet/WTS252430001',
+			name: 'WTS252430001 (Canopi)'
+		},
+		{
+			link: 'order/ethernet/DLS186977001',
+			name: 'DLS186977001 (Force/Edge)'
+		},
+		{
+			link: 'order/ethernet/TNS268897001',
+			name: 'TNS268897001'
+		},
+		{
+			link: 'order/ethernet/SLS817036001',
+			name: 'SLS817036001'
+		},
+		{
+			link: 'order/ethernet/SWS230192001',
+			name: 'SWS230192001'
+		},
+		{
+			link: 'order/ethernet/SFS016277001',
+			name: 'SFS016277001'
+		},
+		{
+			link: 'order/ethernet/NOS193664001',
+			name: 'NOS193664001'
+		}
+	],
+
+	teamdb_ember_links: [
+		{
+			name: 'Teams',
+			link: '/teamdb/team',
+		},
+		{
+			name: 'Edit Team',
+			link: '/teamdb/team/227',
+		},
+		{
+			name: 'Edit Profile',
+			link: '/teamdb/user/',
+		},
+		{
+			name: 'Workgroup',
+			link: '/teamdb/workgroup',
+		}
+	],
+
+	prod_links: [
+		{
+			link: 'http://ud.web.att.com/UD/cgi-bin/worklist.pl',
+			name: 'UD'
+		},
+		{
+			link: 'http://aqe.web.att.com/aqe/cgi-bin/index.pl',
+			name: 'AQE'
+		},
+		{
+			link: 'http://teamdb.web.att.com/teamdb/view.php?ATTuid=',
+			name: 'TeamDB'
+		},
+		{
+			link: 'http://wam.web.att.com/wam/cgi-bin/wam.pl',
+			name: 'WAM'
+		},
+		{
+			link: 'http://gcs-upm.web.att.com/upm2/access.php',
+			name: 'UPM'
+		},
+		{
+			link: 'http://gcs-templates.web.att.com/Templates/cgi-bin/Template.pl',
+			name: 'Template Tool'
+		},
+		{
+			link: 'http://chrapud09b.gcsc.att.com/tqi3/cgi-bin/',
+			name: 'TQI'
+		}
+	],
+
+	beta_links: [
+		{
+			link: 'http://ud-beta.web.att.com/UD/cgi-bin/worklist.pl',
+			name: 'UD'
+		},
+		{
+			link: '/aqe/cgi-bin/index.pl',
+			name: 'AQE'
+		},
+		{
+			link: '/teamdb/teams.php',
+			name: 'TeamDB'
+		},
+		{
+			link: '/wam/cgi-bin/wam.pl',
+			name: 'WAM'
+		},
+		{
+			link: '/upm2/access.php',
+			name: 'UPM'
+		},
+		{
+			link: 'Templates/cgi-bin/Template.pl',
+			name: 'Template Tool'
+		},
+		{
+			link: '/tqi3/cgi-bin/index.pl',
+			name: 'TQI'
+		}
+	]
 }
 
 
