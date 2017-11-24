@@ -67,7 +67,7 @@
 								<div class='float-left'>{{ticket.msrp}}</div>
 								<div class="float-right">
 									<i 
-										(click)="openCommentModal(ticket.key, ticket.comments)" 
+										(click)="openLogModal(ticket.key)" 
 										class="material-icons"
 										title='Add comment/time log'
 									>alarm_add</i>
@@ -136,6 +136,7 @@
 	</div>
 </div>
 
+<app-time-log></app-time-log>
 <app-pcr-modal (pcrPassEvent)="pcrPassEvent($event)"></app-pcr-modal>
 <app-qa-generator (newCrucible)="newCrucible($event)"></app-qa-generator>
 <app-jira-comments></app-jira-comments>

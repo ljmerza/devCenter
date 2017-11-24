@@ -1,0 +1,46 @@
+<!-- QA Generator Model -->
+<ng-template #logModal let-c="close">
+	<form class="form-group" #logForm="ngForm" (ngSubmit)="submitLog(logForm)">
+
+		<div class="modal-header">
+			<h2 class="modal-title">Add Comment/Time Log</h2>
+			<button type="button" class="close" aria-label="Close" (click)="c('close')">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+
+		<div class="modal-body">
+
+			<h4>Comment:</h4>
+			<div class="form-group">
+				 <textarea class="form-control" name="comment" id="comment" rows=15 [(ngModel)]="comment"></textarea>
+			</div>
+
+			<div class="form-group">
+				<div class="row">
+					<div class="col">
+						<span class="float-right">
+							<label for="">Log Time:</label>
+							<ngb-timepicker
+								class='float-right button-border'
+								name="logTime"
+								[(ngModel)]="logTime"
+								[hourStep]="hourStep" 
+								[minuteStep]="minuteStep">
+							</ngb-timepicker>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal-footer">
+			<button 
+				type="submit" 
+				class="btn btn-outline-success"
+			>Log Work
+			</button>
+			<button type="button" class="btn btn-outline-danger" (click)="c('close')">Cancel</button>
+		</div>
+	</form>
+</ng-template>

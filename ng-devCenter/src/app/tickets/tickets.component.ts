@@ -19,6 +19,7 @@ import 'rxjs/add/observable/interval';
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 import { JiraCommentsComponent } from './../jira-comments/jira-comments.component';
 import { PcrModalComponent } from './../pcr-modal/pcr-modal.component';
+import { TimeLogComponent } from './../time-log/time-log.component';
 
 import * as $ from 'jquery';
 
@@ -42,6 +43,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	@ViewChild(QaGeneratorComponent) private qaGen: QaGeneratorComponent;
 	@ViewChild(JiraCommentsComponent) private jiraComments: JiraCommentsComponent;
 	@ViewChild(PcrModalComponent) private pcrModal: PcrModalComponent;
+	@ViewChild(TimeLogComponent) private logWork: TimeLogComponent;
 
 
 	dtOptions = {
@@ -159,6 +161,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	*/
 	openQAModal(msrp:string, key:string){
 		this.qaGen.openQAModal(msrp, key);
+	}
+
+	/*
+	*/
+	openLogModal(key:string){
+		this.logWork.openLogModal(key);
 	}
 
 	/*

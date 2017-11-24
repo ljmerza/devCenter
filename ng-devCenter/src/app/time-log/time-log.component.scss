@@ -1,0 +1,16 @@
+.log-modal {
+	.modal-dialog {
+		max-width: 1000px;
+	}
+
+	.modal-body {
+		textarea{
+			width: 100%;
+		}
+
+		.button-border button {
+			border: transparent;
+			cursor: pointer;
+		}
+	}
+}

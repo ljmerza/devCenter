@@ -143,6 +143,8 @@ export class JiraService extends DataService {
 		return super.getAPI(`${this.apiUrl}/git/repos`);
 	}
 
+	/*
+	*/
 	generateQA(postData): Observable<any> {
 
 		// add creds
@@ -151,12 +153,24 @@ export class JiraService extends DataService {
 
 		return super.postAPI({
 			url: `${this.apiUrl}/crucible/review/create`,
-			body: JSON.stringify(postData)
+			body: postData
 		});
 	}
 
+	/*
+	*/
 	getBranches(repoName): Observable<any> {
 		return super.getAPI(`${this.apiUrl}/git/repo/${repoName}`);
+	}
+
+	/*
+	*/
+	workLog(postData): Observable<any> {
+
+		return super.postAPI({
+			url: `${this.apiUrl}/jira/worklog`,
+			body: postData
+		});
 	}
 
 }

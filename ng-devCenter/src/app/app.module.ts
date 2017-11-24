@@ -29,6 +29,7 @@ import { FooterComponent } from './footer/footer.component';
 import { JiraCommentsComponent } from './jira-comments/jira-comments.component';
 import { SafehtmlPipe } from './safehtml.pipe';
 import { PcrModalComponent } from './pcr-modal/pcr-modal.component';
+import { TimeLogComponent } from './time-log/time-log.component';
 
 @NgModule({
 	declarations: [
@@ -41,7 +42,8 @@ import { PcrModalComponent } from './pcr-modal/pcr-modal.component';
 		FooterComponent,
 		JiraCommentsComponent,
 		SafehtmlPipe,
-		PcrModalComponent
+		PcrModalComponent,
+		TimeLogComponent
 	],
 	imports: [
 		BrowserModule,
