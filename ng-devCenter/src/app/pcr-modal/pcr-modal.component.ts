@@ -15,6 +15,7 @@ export class PcrModalComponent {
 
 	@ViewChild('pcrModal') content: ElementRef;
 	@Output() pcrPassEvent = new EventEmitter();
+	statusType;
 
 	constructor(
 		private user: UserService, 
@@ -28,7 +29,10 @@ export class PcrModalComponent {
 
 	/*
 	*/
-	openPCRModal(cru_id:string, key:string): void {
+	openPCRModal(cru_id:string, key:string, statusType): void {
+
+		// save status type for template
+		this.statusType = statusType;
 
 		// open modal then on close process result
 		this.modalService.open(this.content).result.then( confirm => {
@@ -39,19 +43,19 @@ export class PcrModalComponent {
 			);
 
 			// if we want PCR complete then	call PCR complete API 
-			if(confirm === 'complete'){						
+			if(statusType === 'complete'){						
 				this.jira.pcrComplete(key, this.user.username).subscribe( 
 					() => {
 
 						// notify to remove ticket from table and show notification
-						this.pcrPassEvent.emit(key);	
+						this.pcrPassEvent.emit({key, isTransitioned: true});	
 						this.toastr.showToast('PCR Completed.', 'success');
 					},
 					error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 				);
 			}
 
-		}, () => null);	
+		}, () => this.pcrPassEvent.emit({key, isTransitioned: false}) );	
 	}
 
 }

@@ -51,6 +51,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		'In Sprint',
 		'In Development',
 		'PCR - Needed',
+		'PCR - Pass',
 		'PCR - Completed',
 		'Code Review - Working',
 		'Ready for QA',
@@ -190,17 +191,22 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	openPCRModal(cru_id:string, key:string):void {
-		this.pcrModal.openPCRModal(cru_id, key);
-	}
+	pcrPassEvent({key, isTransitioned}):void {
 
-	/*
-	*/
-	pcrPassEvent(key):void {
-		this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-			dtInstance.row( $(`#${key}`)[0] ).remove();
-			dtInstance.draw();
-		});
+		// if success then remove ticket
+		if(isTransitioned){
+			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+				dtInstance.row( $(`#${key}`)[0] ).remove();
+				dtInstance.draw();
+			});
+
+		} else {
+			console.log('this.oldState: ', this.oldState);
+			// else revert status change
+			this.ticketDropdown.value = this.oldState;
+			this.toastr.showToast(`Ticket status change cancelled`, 'info');
+		}
+		
 	}
 
 	/*
@@ -242,14 +248,20 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	oldState;
 	ticketDropdown;
 	stateChange(ticketDropdown, ticket){
-		// save select element reference
+		// save select element reference and old status
 		this.ticketDropdown = ticketDropdown;
+		this.oldState = ticket.component || ticket.status;
 
 		// open QA gen
 		if(ticketDropdown.value == 'PCR - Needed'){
-			this.oldState = ticket.component || ticket.status;
 			this.qaGen.openQAModal(ticket.msrp, ticket.key);
-			return;
+
+		} else if(ticketDropdown.value == 'PCR - Pass'){
+			ticketDropdown.value = 'PCR - Needed';
+			this.pcrModal.openPCRModal(ticket.crucible_id, ticket.key, 'pass');
+
+		}  else if(ticketDropdown.value == 'PCR - Completed'){
+			this.pcrModal.openPCRModal(ticket.crucible_id, ticket.key, 'complete');
 		}
 	}
 }
