@@ -50,6 +50,7 @@ export class TimeLogComponent	{
 
 		if(!formData.comment){
 			this.toastr.showToast('Must enter a comment to update Jira', 'error');
+			return;
 		}
 
 		let postData = {
@@ -66,7 +67,7 @@ export class TimeLogComponent	{
 				this.toastr.showToast('Work Log updated', 'success');
 				this.logTimeEvent.emit({key: this.key, logTime: postData.log_time});
 			},
-			error => this.toastr.showToast(error, 'error')
+			error => this.toastr.showToast(error.data, 'error')
 		);
 	}
 
