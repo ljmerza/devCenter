@@ -28,6 +28,7 @@ import { WorkTimePipe } from './work-time.pipe';
 import { FooterComponent } from './footer/footer.component';
 import { JiraCommentsComponent } from './jira-comments/jira-comments.component';
 import { SafehtmlPipe } from './safehtml.pipe';
+import { PcrModalComponent } from './pcr-modal/pcr-modal.component';
 
 @NgModule({
 	declarations: [
@@ -39,7 +40,8 @@ import { SafehtmlPipe } from './safehtml.pipe';
 		QaGeneratorComponent,
 		FooterComponent,
 		JiraCommentsComponent,
-		SafehtmlPipe
+		SafehtmlPipe,
+		PcrModalComponent
 	],
 	imports: [
 		BrowserModule,

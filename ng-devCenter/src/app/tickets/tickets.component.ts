@@ -9,7 +9,6 @@ import { JiraService } from './../services/jira.service';
 import { WorkTimePipe } from './../work-time.pipe';
 
 import { DataTableDirective } from 'angular-datatables';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgProgress } from 'ngx-progressbar';
 import { ToastrService } from './../services/toastr.service';
 
@@ -19,6 +18,7 @@ import 'rxjs/add/observable/interval';
 
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 import { JiraCommentsComponent } from './../jira-comments/jira-comments.component';
+import { PcrModalComponent } from './../pcr-modal/pcr-modal.component';
 
 import * as $ from 'jquery';
 
@@ -39,8 +39,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	@Input() reloadTicketsEvent = new EventEmitter();
 
 	@ViewChild(DataTableDirective) private dtElement: DataTableDirective;
-	@ViewChild(QaGeneratorComponent) private qaGen:QaGeneratorComponent;
-	@ViewChild(JiraCommentsComponent) private jiraComments:JiraCommentsComponent;
+	@ViewChild(QaGeneratorComponent) private qaGen: QaGeneratorComponent;
+	@ViewChild(JiraCommentsComponent) private jiraComments: JiraCommentsComponent;
+	@ViewChild(PcrModalComponent) private pcrModal: PcrModalComponent;
 
 
 	dtOptions = {
@@ -64,7 +65,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		public ngProgress: NgProgress, 
 		public jira:JiraService, 
 		private route:ActivatedRoute, 
-		private modalService:NgbModal, 
 		private user:UserService,
 		public toastr: ToastrService, 
 		vcr: ViewContainerRef
@@ -157,49 +157,29 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	openPCRModal(cru_id:string, key:string, modalType:string, content):void {
-
-		// open modal then on close process result
-		this.modalService.open(content).result.then( confirm => {
-
-
-			// if confirm is true then do a PCR pass
-			if(confirm){
-				this.jira.pcrPass(cru_id, this.user.username).subscribe( 
-					() => {
-						this.toastr.showToast('PCR Passed.', 'success');
-
-						// if we want PCR complete then	call PCR complete API 
-						if(confirm === 'complete'){						
-							this.jira.pcrComplete(key, this.user.username).subscribe( 
-								() => {
-
-									this.toastr.showToast('PCR Completed.', 'success');
-
-									// get datatable instance, remove row, redraw table
-									this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-										dtInstance.row( $(`#${key}`)[0] ).remove();
-										dtInstance.draw();
-									});
-								},
-								error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-							);
-						}
-					}, 
-					error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-				);
-			}
-		});	
-	}
-
-	/*
-	*/
 	openQAModal(msrp:string, key:string){
 		this.qaGen.openQAModal(msrp, key);
 	}
 
+	/*
+	*/
 	openCommentModal(msrp:string, comments){
 		this.jiraComments.openCommentModal(msrp, comments);
+	}
+
+	/*
+	*/
+	openPCRModal(cru_id:string, key:string){
+		this.pcrModal.openPCRModal(cru_id, key);
+	}
+
+	/*
+	*/
+	pcrPassEvent(key){
+		this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+			dtInstance.row( $(`#${key}`)[0] ).remove();
+			dtInstance.draw();
+		});
 	}
 
 	newCrucible(data){
