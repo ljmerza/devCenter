@@ -1,10 +1,10 @@
 <!-- QA Generator Model -->
-<ng-template #qaModal let-c="close">
+<ng-template #qaModal let-c="close" let-d='dismiss'>
 	<form class="form-group" #qaGenForm="ngForm" (ngSubmit)="submitQA(qaGenForm)">
 
 		<div class="modal-header">
 			<h2 class="modal-title">QA Generator</h2>
-			<button type="button" class="close" aria-label="Close" (click)="c('close')">
+			<button type="button" class="close" aria-label="Close" (click)="d()">
 				<span aria-hidden="true">&times;</span>
 			</button>
 		</div>
@@ -114,7 +114,7 @@
 				class="btn btn-outline-success"
 			>Generate
 			</button>
-			<button type="button" class="btn btn-outline-danger" (click)="c('close')">Cancel</button>
+			<button type="button" class="btn btn-outline-danger" (click)="d()">Cancel</button>
 		</div>
 	</form>
 </ng-template>

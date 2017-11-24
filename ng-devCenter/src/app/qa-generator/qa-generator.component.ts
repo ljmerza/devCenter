@@ -106,15 +106,18 @@ export class QaGeneratorComponent {
 			.open(this.content, { windowClass: 'qa-modal' })
 
 		// once modal is closed if we just exited out then reset inputs
-		this.modalReference.result.then( result => {
-			if(result){
-				this.pcrNeeded = true;
-				this.codeReview = true;
-				this.qaSteps = '';
-				this.logTime = {hour: 0, minute: 0};
-				this.repoArray = [];
-			}
-		}, () => null);
+		this.modalReference.result.then( 
+			result => {
+				if(result){
+					this.pcrNeeded = true;
+					this.codeReview = true;
+					this.qaSteps = '';
+					this.logTime = {hour: 0, minute: 0};
+					this.repoArray = [];
+				}
+			}, 
+			() => this.newCrucible.emit({key: this.key, crucible_id: ''}) 
+		);
 
 		// disabled submit button for QA gen
 		this.loadingBranches = true;

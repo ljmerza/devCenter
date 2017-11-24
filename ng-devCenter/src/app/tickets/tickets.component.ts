@@ -45,6 +45,25 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	@ViewChild(PcrModalComponent) private pcrModal: PcrModalComponent;
 	@ViewChild(TimeLogComponent) private logWork: TimeLogComponent;
 
+	ticketStates = [
+		'Triage',
+		'Backlog',
+		'In Sprint',
+		'In Development',
+		'PCR - Needed',
+		'PCR - Completed',
+		'Code Review - Working',
+		'Ready for QA',
+		'In QA',
+		'QA Fail',
+		'Merge Code',
+		'Ready for UCT',
+		'In UCT',
+		'Ready for Release',
+		'Closed',
+		'On Hold'
+	];
+
 
 	dtOptions = {
 		order: [4, 'desc'],
@@ -159,12 +178,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	openQAModal(msrp:string, key:string):void {
-		this.qaGen.openQAModal(msrp, key);
-	}
-
-	/*
-	*/
 	openLogModal(key:string):void {
 		this.logWork.openLogModal(key);
 	}
@@ -206,13 +219,37 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	newCrucible({key, crucible_id}):void {
+
 		const ticket = this.openTickets.filter( ticket => ticket.key == key);
 
 		if(ticket.length == 1){
-			ticket[0].crucible_id = crucible_id;
-			this.rerender();
+
+			if(crucible_id) {
+				ticket[0].crucible_id = crucible_id;
+				this.rerender();
+			} else {
+				this.ticketDropdown.value = this.oldState;
+				this.toastr.showToast(`Ticket status change cancelled`, 'info');
+			}
+
 		} else {
-			this.toastr.showToast(`Could not update crucible for ${key} on frontend interface`, 'info');
+			this.toastr.showToast(`Error updating tikcet status on UI`, 'info');
+		}
+
+		
+	}
+
+	oldState;
+	ticketDropdown;
+	stateChange(ticketDropdown, ticket){
+		// save select element reference
+		this.ticketDropdown = ticketDropdown;
+
+		// open QA gen
+		if(ticketDropdown.value == 'PCR - Needed'){
+			this.oldState = ticket.component || ticket.status;
+			this.qaGen.openQAModal(ticket.msrp, ticket.key);
+			return;
 		}
 	}
 }

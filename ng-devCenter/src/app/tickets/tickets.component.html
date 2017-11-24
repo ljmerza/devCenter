@@ -83,17 +83,16 @@
 							<td class='summary-format'>{{ticket.summary}}</td>
 							<td>
 								<div class='float-left'>
-									{{ticket.status}}
-									<div>{{ticket.component}}</div>
+									<select (change)="stateChange(ticketState, ticket)" #ticketState>
+										<option 
+											*ngFor='let state of ticketStates'
+											[attr.selected]="state==ticket.component || state==ticket.status ? 'true': null"
+											[value]="state"
+										>
+											{{state}}
+										</option>
+									</select>
 								</div>
-								<i 
-									*ngIf='jira.title == "My Open" || jira.title == "All Open"'
-									class="material-icons float-right" 
-									title='Generate QA/Crucible'
-									(click)="openQAModal(ticket.msrp, ticket.key)"
-								>
-									assignment
-								</i>
 							</td>
 							<td>{{ticket.dates.started | amDateFormat:'LL'}}</td>
 							<td>{{ticket.dates.duedate | amDateFormat:'LL'}}</td>
