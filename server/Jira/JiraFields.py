@@ -287,17 +287,37 @@ def _format_comment(comment):
 				link = links[1]
 				line = f'<a href="{link}" target="_blank">{title}</a>'
 
-		# if colored string then add color CSS
-		match = re.search(r'{color:[a-z]+}', line)
-		if match:
-			color_html = match.group(0)
-			line = line.replace(color_html, '<span class="text-danger">').replace('{color}', '</span>')
+		# replace all hex colors
+		match = re.findall(r'{color:#[a-z0-9]+}', line)
+		for m in match:
+			hex_color = m[7:-1]
+			line = line.replace(m, f'<span style="color: {hex_color}">')
 
-		# add new line to comment line
+		# replace all standard colors
+		match = re.findall(r'{color:\w+}', line)
+		for m in match:
+			std_color = m[7:-1]
+			line = line.replace(m, f'<span style="color: {std_color}">')
+
+		# replace all closing colors
+		match = re.findall(r'{color}', line)
+		for m in match:
+			line = line.replace(m, '</span>')
+
+
+		# replace any crucible links
+		link_match = re.match(r"^.*\[https://icode(.*)\].*$", line)
+		if link_match:
+			link_match_format = '[https://icode'+link_match.group(1)+']'
+			line = line.replace(link_match_format, f'<a href="https://icode{link_match.group(1)}">Crucible</a>')
+
+		# add new line to comment line if
 		line+='<br>'
 
 		# append everything we did to this comment's line
 		new_comments.append(line)
+
+	
 
 	# return a string of the entire formatted comment
 	return '<div class="container">'+ '\n'.join(new_comments) + '</div>'

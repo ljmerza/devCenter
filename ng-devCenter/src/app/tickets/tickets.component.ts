@@ -151,13 +151,37 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		.subscribe( 
 			issues => {
 				// save tickets and re-render data tables
-				this.openTickets = issues.data;
+				this.openTickets = this._formatCommentCode(issues);
 				this.rerender();
 				this.ngProgress.done();
 				this.loadingTickets = false;
 			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
+	}
+
+	/*
+	*/
+	_formatCommentCode(issues){
+		return issues.data.map( issue => {
+			issue.comments = issue.comments.map( comment => {
+				const splitComment = comment.comment.split('{code}');
+
+				if(splitComment.length > 1){
+					for(let i=0;i<splitComment.length-1;i++){
+						if(i%2==1){
+							splitComment[i] = splitComment[i].replace('<br>', '');
+							splitComment[i] = `<pre class='code'>${splitComment[i]}</pre>`;
+						}
+					}
+				}
+
+				comment.comment = splitComment.join('');
+				return comment;
+			});
+
+			return issue;
+		});
 	}
 
 	/*
