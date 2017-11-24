@@ -47,6 +47,10 @@ export class TimeLogComponent	{
 		const formData = formObj.value;
 		formObj.resetForm();
 
+		if(!formData.comment){
+			this.toastr.showToast('Must enter a comment to update Jira', 'error');
+		}
+
 		let postData = {
 			comment: formData.comment,
 			log_time: formData.logTime.hour * 60 + formData.logTime.minute,
@@ -62,14 +66,14 @@ export class TimeLogComponent	{
 
 	openLogModal(key:string):void {
 
+		// set values
 		this.key = key;
+		this.comments = '';
+		this.logTime = {hour: 0, minute: 0};
 
 		// open modal
 		this.modalReference = this.modalService
-			.open(this.content, { windowClass: 'log-modal' })
-
-		// once modal is closed if we just exited out then reset inputs
-		this.modalReference.result.then( () => {}, () => null);
+			.open(this.content, { windowClass: 'log-modal' });
 	}
 
 }

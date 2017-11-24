@@ -183,9 +183,9 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		return Response(response, mimetype='application/json')
 
 
-	@app.route(f'/{app_name}/jira/update', methods=['POST'])
+	@app.route(f'/{app_name}/jira/worklog', methods=['POST'])
 	@cross_origin()
-	def update_ticket():
+	def worklog():
 		'''Updates a Jira ticket with a comment and optional time log
 
 		Args:
@@ -196,7 +196,7 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 		'''
 		data=request.get_json()
 		data["cred_hash"] = g.cred_hash
-		jira_response = JiraRequests.update_ticket(data=data, jira_obj=jira_obj)
+		response = JiraRequests.worklog(data=data, jira_obj=jira_obj)
 		return Response(response, mimetype='application/json')
 
 

@@ -54,12 +54,15 @@ def transition_to_cr(data, jira_obj):
 	return {'status': True}
 
 
-def update_ticket(data, jira_obj):
+def worklog(data, jira_obj):
 	'''Adds a comment to a ticket and updates the time log if given
 
 	Args:
 		data (dict) object with properties:
 			cred_hash (str) Authorization header value
+			comment (str) the comment to add
+			key (str) the Jira key to post a comment to
+			log_time (str) the time to add to the work log (optional)
 		jira_obj (Class instance) Jira class instance to connect to Jira
 
 	Returns:
