@@ -89,7 +89,7 @@ export class QaGeneratorComponent {
 				<br>
 				<a target="_blank" href='${config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
 			`, 'success');
-			this.newCrucible.emit({jira: this.key, crucible: response.data.crucible_id})
+			this.newCrucible.emit({key: this.key, crucible_id: response.data.crucible_id})
 		});
 	}
 

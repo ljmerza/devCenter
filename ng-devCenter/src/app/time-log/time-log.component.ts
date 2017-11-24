@@ -1,7 +1,7 @@
 import { 
-	Component, ViewChild, 
+	Component, ViewChild, EventEmitter,
 	ElementRef, ViewContainerRef, 
-	ViewEncapsulation 
+	ViewEncapsulation, Output 
 } from '@angular/core';
 
 import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -28,6 +28,7 @@ export class TimeLogComponent	{
 	minuteStep = 15;
 
 	@ViewChild('logModal') content:ElementRef;
+	@Output() logTimeEvent = new EventEmitter();
 
 	constructor(
 		public jira:JiraService,
@@ -59,7 +60,12 @@ export class TimeLogComponent	{
 
 		// log work and show results
 		this.jira.workLog(postData).subscribe( 
-			() => this.toastr.showToast('Work Log updated', 'success'),
+			() => {
+
+				// show success and notify table to update time
+				this.toastr.showToast('Work Log updated', 'success');
+				this.logTimeEvent.emit({key: this.key, logTime: postData.log_time});
+			},
 			error => this.toastr.showToast(error, 'error')
 		);
 	}

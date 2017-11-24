@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Input, EventEmitter, ViewContainerRef, OnDestroy } from '@angular/core';
 
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, Subscription } from 'rxjs';
 
 import { ActivatedRoute } from '@angular/router';
 
@@ -116,7 +116,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	setFilterData(jiraListType:string) {
+	setFilterData(jiraListType:string):Subscription {
 		this.ngProgress.start();
 		this.loadingTickets = true;
 
@@ -159,38 +159,60 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	openQAModal(msrp:string, key:string){
+	openQAModal(msrp:string, key:string):void {
 		this.qaGen.openQAModal(msrp, key);
 	}
 
 	/*
 	*/
-	openLogModal(key:string){
+	openLogModal(key:string):void {
 		this.logWork.openLogModal(key);
 	}
 
 	/*
 	*/
-	openCommentModal(msrp:string, comments){
+	openCommentModal(msrp:string, comments):void {
 		this.jiraComments.openCommentModal(msrp, comments);
 	}
 
 	/*
 	*/
-	openPCRModal(cru_id:string, key:string){
+	openPCRModal(cru_id:string, key:string):void {
 		this.pcrModal.openPCRModal(cru_id, key);
 	}
 
 	/*
 	*/
-	pcrPassEvent(key){
+	pcrPassEvent(key):void {
 		this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
 			dtInstance.row( $(`#${key}`)[0] ).remove();
 			dtInstance.draw();
 		});
 	}
 
-	newCrucible(data){
-		console.log(data)
+	/*
+	*/
+	logTimeEvent({key, logTime}):void {
+		const ticket = this.openTickets.filter( ticket => ticket.key == key);
+		
+		if(ticket.length == 1){
+			ticket[0].dates.logged += logTime;
+			this.rerender();
+		} else {
+			this.toastr.showToast(`Could not update time log for ${key} on frontend interface`, 'info');
+		}
+	}
+
+	/*
+	*/
+	newCrucible({key, crucible_id}):void {
+		const ticket = this.openTickets.filter( ticket => ticket.key == key);
+
+		if(ticket.length == 1){
+			ticket[0].crucible_id = crucible_id;
+			this.rerender();
+		} else {
+			this.toastr.showToast(`Could not update crucible for ${key} on frontend interface`, 'info');
+		}
 	}
 }

@@ -30,6 +30,7 @@ import { JiraCommentsComponent } from './jira-comments/jira-comments.component';
 import { SafehtmlPipe } from './safehtml.pipe';
 import { PcrModalComponent } from './pcr-modal/pcr-modal.component';
 import { TimeLogComponent } from './time-log/time-log.component';
+import { LogoutComponent } from './logout/logout.component';
 
 @NgModule({
 	declarations: [
@@ -43,7 +44,8 @@ import { TimeLogComponent } from './time-log/time-log.component';
 		JiraCommentsComponent,
 		SafehtmlPipe,
 		PcrModalComponent,
-		TimeLogComponent
+		TimeLogComponent,
+		LogoutComponent
 	],
 	imports: [
 		BrowserModule,

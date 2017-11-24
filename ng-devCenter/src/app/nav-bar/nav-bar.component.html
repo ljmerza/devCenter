@@ -42,56 +42,59 @@
 				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Dev Links</a>
 				<ul ngbDropdownMenu aria-labelledby="devDropdown">
 
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[5].link}}">{{config.dev_links[5].name}}</a></li>
 	
 					<li class="dropdown-submenu">
 						<a class="dropdown-item" data-toggle="dropdown">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
 							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[0].link}}">{{config.ember_links[0].name}}</a></li>
 							
+							<!-- orders list -->
 							<li class="dropdown-submenu">
 								<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 								<ul class="dropdown-menu dropdown-submenu-items">
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[0].link}}">{{config.order_links[0].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[1].link}}">{{config.order_links[1].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[2].link}}">{{config.order_links[2].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[3].link}}">{{config.order_links[3].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[4].link}}">{{config.order_links[4].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[5].link}}">{{config.order_links[5].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[6].link}}">{{config.order_links[6].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[7].link}}">{{config.order_links[7].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[8].link}}">{{config.order_links[8].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[9].link}}">{{config.order_links[9].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[10].link}}">{{config.order_links[10].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[11].link}}">{{config.order_links[11].name}}</a></li>
-									<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.order_links[12].link}}">{{config.order_links[12].name}}</a></li>
+									<li><a 
+											*ngFor='let navLink of config.order_links'
+											class="dropdown-item" 
+											target="_blank" 
+											href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
+										>{{navLink.name}}
+									</a></li>
 								</ul>
 							</li>
 
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[1].link}}">{{config.ember_links[1].name}}</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[2].link}}">{{config.ember_links[2].name}}</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[3].link}}{{user.username}}">{{config.ember_links[3].name}}</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[4].link}}">{{config.ember_links[4].name}}</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[5].link}}">{{config.ember_links[5].name}}</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[6].link}}">{{config.ember_links[6].name}}</a></li>
+							<!-- ember list -->
+							<li><a 
+									*ngFor='let navLink of config.ember_links'
+									class="dropdown-item" 
+									target="_blank" 
+									href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
+								>{{navLink.name}}
+							</a></li>
 						</ul>
 					</li>
-
+					
+					<!-- db ember links -->
 					<li class="dropdown-submenu">
 						<a class="dropdown-item" data-toggle="dropdown">TeamDB Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}{{config.teamdb_ember_links[0].link}}">{{config.teamdb_ember_links[0].name}}</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}{{config.teamdb_ember_links[1].link}}">{{config.teamdb_ember_links[1].name}}</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}{{config.teamdb_ember_links[2].link}}{{user.username}}">{{config.teamdb_ember_links[2].name}}</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:5{{user.emberPort}}{{config.teamdb_ember_links[3].link}}">{{config.teamdb_ember_links[3].name}}</a></li>
+							<li><a 
+									*ngFor='let navLink of config.teamdb_ember_links'
+									class="dropdown-item" 
+									target="_blank" 
+									href="{{user.emberUrl}}:5{{user.emberPort}}{{navLink.link}}"
+								>{{navLink.name}}
+							</a></li>
 						</ul>
 					</li>
 
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[0].link}}">{{config.dev_links[0].name}}</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[1].link}}{{user.username}}">{{config.dev_links[1].name}}</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[2].link}}">{{config.dev_links[2].name}}</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[3].link}}">{{config.dev_links[3].name}}</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.devUrl}}:{{user.port}}{{config.dev_links[4].link}}">{{config.dev_links[4].name}}</a></li>
+					<!-- dev links -->
+					<li><a 
+							*ngFor='let navLink of config.dev_links'
+							class="dropdown-item" 
+							target="_blank" 
+							href="{{config.devUrl}}:{{user.port}}{{navLink.link}}"
+						>{{navLink.name}}
+					</a></li>
 
 				</ul>
 			</li>
@@ -100,13 +103,12 @@
 			<li ngbDropdown class="d-inline-block">
 				<a class="nav-link dropdown-toggle" id="prodDropdown" ngbDropdownToggle>Prod Links</a>
 				<div ngbDropdownMenu aria-labelledby="prodDropdown">
-					<a class="dropdown-item" target="_blank" href="{{config.prod_links[0].link}}">{{config.prod_links[0].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.prod_links[1].link}}">{{config.prod_links[1].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.prod_links[2].link}}/{{user.username}}">{{config.prod_links[2].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.prod_links[3].link}}">{{config.prod_links[3].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.prod_links[4].link}}">{{config.prod_links[4].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.prod_links[5].link}}">{{config.prod_links[5].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.prod_links[6].link}}">{{config.prod_links[6].name}}</a>
+					<a 
+						*ngFor='let navLink of config.prod_links'
+						class="dropdown-item" 
+						target="_blank" 
+						href="{{navLink.link}}"
+					>{{navLink.name}}</a>
 				</div>
 			</li>
 
@@ -114,81 +116,63 @@
 			<li ngbDropdown class="d-inline-block">
 				<a class="nav-link dropdown-toggle" id="betaDropdown" ngbDropdownToggle>Beta Links</a>
 				<div ngbDropdownMenu aria-labelledby="betaDropdown">
-					<a class="dropdown-item" target="_blank" href="{{config.beta_links[0].link}}">{{config.beta_links[0].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[1].link}}">{{config.beta_links[1].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[2].link}}/{{user.username}}">{{config.beta_links[2].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[3].link}}">{{config.beta_links[3].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[4].link}}">{{config.beta_links[4].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[5].link}}">{{config.beta_links[5].name}}</a>
-					<a class="dropdown-item" target="_blank" href="{{config.betaUrl}}{{config.beta_links[6].link}}">{{config.beta_links[6].name}}</a>
+					<a 
+						*ngFor='let navLink of config.beta_links'
+						class="dropdown-item" 
+						target="_blank" 
+						href="{{navLink.link}}"
+					>{{navLink.name}}</a>
 				</div>
 			</li>
 
 			<!-- wiki links -->
 			<li ngbDropdown class="d-inline-block">
-				<a class="nav-link dropdown-toggle" id="betaDropdown" ngbDropdownToggle>Wiki Links</a>
-				<ul ngbDropdownMenu aria-labelledby="betaDropdown">
-					<li><a class="dropdown-item" target="_blank" href="http://glossary.web.att.com/">Glossary</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/GCS+BizOps">Biz Ops</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/pages/viewpage.action?pageId=480723373">Accelerate</a></li>
-					<div class="dropdown-divider"></div>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/Complete+New+Hire+Training+Program">New Hire</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/HOWTO%3A+Create+a+SASHA+UA+Ticket">Create SASHA UA Ticket</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/AQE%3A+How+to+Work+An+AQE+Search+String+Ticket">AQE Basics</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/pages/viewpage.action?spaceKey=GCSDevOps&title=HOWTO%3A+Report+an+API+Defect">API Defect</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/Team+Deployments+Walkthrough">Team Deployments</a></li>
-					<div class="dropdown-divider"></div>
-					
-					<li class="dropdown-submenu">
-						<a class="dropdown-item" data-toggle="dropdown">Ember Links<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-						<ul class="dropdown-menu dropdown-submenu-items">
-							<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/Ember+Installation+and+Setup">Ember Install</a></li>
-							<li><a class="dropdown-item" target="_blank" href="https://emberjs.com/api/ember/2.14/modules/ember">Ember API</a></li>
-							<li><a class="dropdown-item" target="_blank" href="https://emberjs.com/api/ember-data/2.14/modules/ember-data">Ember-Data API</a></li>
-							<li><a class="dropdown-item" target="_blank" href="https://guides.emberjs.com/v2.14.0/testing/acceptance/">Ember Acceptance Test</a></li>
-							<li><a class="dropdown-item" target="_blank" href="https://ember-twiddle.com">Ember Twiddle</a></li>
+				<a class="nav-link dropdown-toggle" id="wikiDropdown" ngbDropdownToggle>Wiki Links</a>
+				<ul ngbDropdownMenu aria-labelledby="wikiDropdown">
+
+					<li *ngFor='let link of config.wikiLinks' [ngClass]="{'dropdown-submenu': link.links}">
+						
+						<!-- links -->
+						<a 
+							*ngIf='link.link && link.wiki'
+							class="dropdown-item" 
+							target="_blank" 
+							href="{{config.wikiUrl}}{{link.link}}"
+						>{{link.name}}</a>
+						<a 
+							*ngIf='link.link && !link.wiki'
+							class="dropdown-item" 
+							target="_blank" 
+							href="{{link.link}}"
+						>{{link.name}}</a>
+
+						<!-- divider -->
+						<div 
+							*ngIf='link.divider'
+							class="dropdown-divider" 
+						></div>
+
+						<!-- dropdowns -->
+						<a class="dropdown-item" data-toggle="dropdown" *ngIf='link.links'>
+							{{link.name}}
+							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
+						</a>
+						<ul class="dropdown-menu dropdown-submenu-items" *ngIf='link.links'>
+							<li *ngFor='let sublink of link.links'>
+								<a 
+									*ngIf='sublink.link && sublink.wiki; else subNoWiki'
+									class="dropdown-item" 
+									target="_blank" 
+									href="{{config.wikiUrl}}{{sublink.link}}"
+								>{{sublink.name}}</a>
+								<ng-template #subNoWiki><a 
+									class="dropdown-item" 
+									target="_blank" 
+									href="{{sublink.link}}"
+								>{{sublink.name}}</a></ng-template>
+							</li>
 						</ul>
 					</li>
-
-					<li class="dropdown-submenu">
-						<a class="dropdown-item" data-toggle="dropdown">Coding Standards<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-						<ul class="dropdown-menu dropdown-submenu-items">
-							<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/pages/viewpage.action?pageId=383617008">Perl</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/DTI+-+JavaScript+Coding+Standards">JavaScript</a></li>
-							<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/DTI+-+SQL+Coding+Standards">SQL</a></li>
-						</ul>
-					</li>
-
-					<li class="dropdown-submenu">
-						<a class="dropdown-item" data-toggle="dropdown">Documentation<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-						<ul class="dropdown-menu dropdown-submenu-items">
-							<li><a class="dropdown-item" target="_blank" href="https://datatables.net/reference/api">DataTables</a></li>
-							<li><a class="dropdown-item" target="_blank" href="https://momentjs.com/docs/">moment.js</a></li>
-							<li><a class="dropdown-item" target="_blank" href="https://lodash.com/docs/4.17.4">Lodash</a></li>
-							<li><a class="dropdown-item" target="_blank" href="http://underscorejs.org/">Underscore</a></li>
-							<li><a class="dropdown-item" target="_blank" href="https://docs.atlassian.com/jira/REST/cloud">Jira API</a></li>
-							<li><a class="dropdown-item" target="_blank" href="http://www.ember-power-select.com/docs/how-to-use-it">Ember Power Select</a></li>
-						</ul>
-					</li>
-
-					<li class="dropdown-submenu">
-						<a class="dropdown-item" data-toggle="dropdown">Pretty Printers<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-						<ul class="dropdown-menu dropdown-submenu-items">
-							<li><a class="dropdown-item" target="_blank" href="http://xmlprettyprint.com/">XML</a></li>
-							<li><a class="dropdown-item" target="_blank" href="http://jsonprettyprint.com/">JSON</a></li>
-							<li><a class="dropdown-item" target="_blank" href="https://www.10bestdesign.com/dirtymarkup/">HTML/CSS/JS</a></li>
-						</ul>
-					</li>
-
-					<div class="dropdown-divider"></div>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/Git+Process+-+DTI">Git Repos</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/Test+Circuits+for+BMP+and+WFA">Test Circuits</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/Crucible+Code+Reviews">Crucible PCR Process</a></li>
-					<li><a class="dropdown-item" target="_blank" href="{{config.wikiUrl}}/display/GCSDevOps/Developer+Workflow+in+JIRA">Jira Workflow</a></li>
-					<div class="dropdown-divider"></div>
-					<li><a class="dropdown-item" target="_blank" href="http://moose.web.att.com/">Moose</a></li>
-					<li><a class="dropdown-item" target="_blank" href="https://repl.it/">RPEL</a></li>
-
 				</ul>
 			</li>
 
@@ -198,17 +182,16 @@
 		</ul>
 
 		<!-- jira ticket search -->
-		<form class="form-inline mr-30" id='JiraSearchform'>
+		<form class="form-inline mr-30" #searchForm="ngForm" (ngSubmit)="searchTicket(searchForm)">
 			<input 
 				class="form-control mr-sm-2" 
-				id='searchJiraInput' 
 				type="text" 
 				placeholder="Search Jira ticket" 
 				aria-label="Search"
-				[ngModelOptions]="{standalone: true}"
+				name="ticketValue"
 				[(ngModel)]="ticketValue"
 			>
-			<button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="searchTicket()">Search</button>
+			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 		</form>
 
 		<ul class="navbar-nav position-relative mr-30">
@@ -232,22 +215,5 @@
 
 
 <app-user-settings #userSetting></app-user-settings>
+<app-logout></app-logout>
 
-
-
-<!-- logout model -->
-<ng-template #logoutModal let-c="close" let-d="dismiss">
-	<div class="modal-header">
-		<h4 class="modal-title">Logout Confirmation</h4>
-		<button type="button" class="close" aria-label="Close" (click)="c()">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-	<div class="modal-body">
-		<p>Are you sure you want to logout?</p>
-	</div>
-	<div class="modal-footer">
-		<button type="button" class="btn btn-outline-success" (click)="c('logout')">Logout</button>
-		<button type="button" class="btn btn-outline-danger" (click)="c()">Cancel</button>
-	</div>
-</ng-template>

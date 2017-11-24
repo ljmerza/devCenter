@@ -136,7 +136,7 @@
 	</div>
 </div>
 
-<app-time-log></app-time-log>
+<app-time-log (logTimeEvent)="logTimeEvent($event)"></app-time-log>
 <app-pcr-modal (pcrPassEvent)="pcrPassEvent($event)"></app-pcr-modal>
 <app-qa-generator (newCrucible)="newCrucible($event)"></app-qa-generator>
 <app-jira-comments></app-jira-comments>

@@ -8,11 +8,19 @@
 	</div>
 
 	<ngb-accordion #acc="ngbAccordion" activeIds='{{openPanelIds}}'>
-		<ngb-panel title="{{comment.display_name}}"*ngFor='let comment of comments'>
+
+		<ngb-panel *ngFor='let comment of comments'>
+			<!-- title -->
+			<ng-template ngbPanelTitle>
+				{{comment.display_name}}
+			</ng-template>
+			
+			<!-- body -->
 			<ng-template ngbPanelContent>
 				<div [innerHTML]="comment.comment | safehtml"></div>
 			</ng-template>
 		</ngb-panel>
+
 	</ngb-accordion>
 		
 	<div class="modal-footer">

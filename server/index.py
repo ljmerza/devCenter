@@ -94,7 +94,6 @@ root_dir = os.path.dirname(os.getcwd())
 
 app = Flask(__name__, template_folder=os.path.abspath('../templates'), static_folder=os.path.abspath('../'))
 cors = CORS(app)
-socketio = SocketIO(app)
 
 # set CORS headers
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -103,15 +102,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 if devflk:
 	app.config['DEBUG'] = True
 	app.config['TEMPLATES_AUTO_RELOAD'] = True
-#########################################################
-# web socket routes
-@socketio.on('connect')
-def connect():
-	print('Connected')
 
-@socketio.on('disconnect')
-def disconnect():
-	print('Disconnected')
 #########################################################
 
 def start_bots():
@@ -126,7 +117,8 @@ def start_bots():
 	'''
 	automationBot = AutomationBot.AutomationBot(
 		is_beta_week=is_beta_week, beta_stat_ping_now=beta_stat_ping_now, error_log=error_log, 
-		jira_obj=jira_obj, crucible_obj=crucible_obj, sql_object=sql_object, chat_obj=chat_obj)
+		jira_obj=jira_obj, crucible_obj=crucible_obj, sql_object=sql_object, chat_obj=chat_obj
+	)
 
 	while True:
 		# if between 6am-7pm monday-friday then update tickets else wait a minute
@@ -160,7 +152,7 @@ if start_threads:
 				start_bots()
 		else:
 			if start_server:
-				DevCenterServer.start_server(host=host, app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
+				DevCenterServer.start_server(host=host, app=app, jira_obj=jira_obj, crucible_obj=crucible_obj)
 
 	else:
 		# else use threading
@@ -168,11 +160,11 @@ if start_threads:
 			t = multiprocessing.Process(target=start_bots)
 			t.start()
 		if start_server:
-			DevCenterServer.start_server(host=host, app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
+			DevCenterServer.start_server(host=host, app=app, jira_obj=jira_obj, crucible_obj=crucible_obj)
 
 else:
 	# else only allow single thread/process
 	if start_server:
-		DevCenterServer.start_server(host=host, app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj)
+		DevCenterServer.start_server(host=host, app=app, jira_obj=jira_obj, crucible_obj=crucible_obj)
 	if start_bot:
 		start_bots()

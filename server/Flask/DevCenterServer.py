@@ -13,7 +13,7 @@ import JiraRequests
 import CrucibleRequests
 
 
-def start_server(host, app, socketio, jira_obj, crucible_obj):
+def start_server(host, app, jira_obj, crucible_obj):
 
 	app_name = 'dev_center'
 	port = 5858
@@ -251,4 +251,4 @@ def start_server(host, app, socketio, jira_obj, crucible_obj):
 
 
 	# start server
-	socketio.run(app, host=host, port=port)
+	app.run(host=host, port=port)

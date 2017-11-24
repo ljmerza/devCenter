@@ -46,7 +46,7 @@ let config = {
 			name: 'AQE'
 		},
 		{
-			link: '/teamdb/view.php?ATTuid=',
+			link: '/teamdb/teams.php?ATTuid=',
 			name: 'TeamDB'
 		},
 		{
@@ -183,7 +183,7 @@ let config = {
 			name: 'AQE'
 		},
 		{
-			link: 'http://teamdb.web.att.com/teamdb/view.php?ATTuid=',
+			link: 'http://teamdb.web.att.com/teamdb/teams.php?ATTuid=',
 			name: 'TeamDB'
 		},
 		{
@@ -214,7 +214,7 @@ let config = {
 			name: 'AQE'
 		},
 		{
-			link: '/teamdb/teams.php',
+			link: '/teamdb/teams.php?ATTuid=',
 			name: 'TeamDB'
 		},
 		{
@@ -226,13 +226,187 @@ let config = {
 			name: 'UPM'
 		},
 		{
-			link: 'Templates/cgi-bin/Template.pl',
+			link: '/Templates/cgi-bin/Template.pl',
 			name: 'Template Tool'
 		},
 		{
 			link: '/tqi3/cgi-bin/index.pl',
 			name: 'TQI'
 		}
+	],
+
+	wikiLinks: [
+		{	
+			name: 'Glossary',
+			link: 'http://glossary.web.att.com/'
+		},
+		{
+			name: 'Accelerate',
+			link: '/pages/viewpage.action?pageId=480723373',
+			wiki: true
+		},
+		{
+			name: 'Biz Ops',
+			link: '/display/GCSDevOps/GCS+BizOps',
+			wiki: true
+		},
+		{
+			divider: true
+		},
+		{
+			name: 'New Hire',
+			link: '/display/GCSDevOps/Complete+New+Hire+Training+Program',
+			wiki: true
+		},
+		{
+			name: 'Create SASHA UA Ticket',
+			link: '/display/GCSDevOps/HOWTO%3A+Create+a+SASHA+UA+Ticket',
+			wiki: true
+		},
+		{
+			name: 'AQE Basics',
+			link: '/display/GCSDevOps/AQE%3A+How+to+Work+An+AQE+Search+String+Ticket',
+			wiki: true
+		},
+		{
+			name: 'API Defect',
+			link: '/pages/viewpage.action?spaceKey=GCSDevOps&title=HOWTO%3A+Report+an+API+Defect',
+			wiki: true
+		},
+		{
+			name: 'Team Deployments',
+			link: '/display/GCSDevOps/Team+Deployments+Walkthrough',
+			wiki: true
+		},
+		{
+			divider: true
+		},
+		{
+			name: 'Ember Links',
+			links: [
+				{
+					name: 'Ember Install',
+					link: '/display/GCSDevOps/Ember+Installation+and+Setup',
+					wiki: true
+				},
+				{
+					name: 'Ember API',
+					link: 'https://emberjs.com/api/ember/2.14/modules/ember'
+				},
+				{
+					name: 'Ember-Data API',
+					link: 'https://emberjs.com/api/ember-data/2.14/modules/ember-data'
+				},
+				{
+					name: 'Ember Acceptance Test',
+					link: 'https://guides.emberjs.com/v2.14.0/testing/acceptance/'
+				},
+				{
+					name: 'Ember Twiddle',
+					link: 'https://ember-twiddle.com'
+				}
+			]
+		},
+		{
+			name: 'Coding Standards',
+			links: [
+				{
+					name: 'Perl',
+					link: '/pages/viewpage.action?pageId=383617008',
+					wiki: true
+				},
+				{
+					name: 'JavaScript',
+					link: '/display/GCSDevOps/DTI+-+JavaScript+Coding+Standards',
+					wiki: true
+				},
+				{
+					name: 'SQL',
+					link: '/display/GCSDevOps/DTI+-+SQL+Coding+Standards',
+					wiki: true
+				}
+			]
+		},
+		{
+			name: 'Documentation',
+			links: [
+				{
+					name: 'DataTables',
+					link: 'https://datatables.net/reference/api'
+				},
+				{
+					name: 'moment.js',
+					link: 'https://momentjs.com/docs/'
+				},
+				{
+					name: 'Lodash',
+					link: 'https://lodash.com/docs/4.17.4'
+				},
+				{
+					name: 'Underscore',
+					link: 'http://underscorejs.org/'
+				},
+				{
+					name: 'Jira API',
+					link: 'https://docs.atlassian.com/jira/REST/cloud'
+				},
+				{
+					name: 'Ember Power Select',
+					link: 'http://www.ember-power-select.com/docs/how-to-use-it'
+				},
+			]
+		},
+		{
+			name: 'Pretty Printers',
+			links: [
+				{
+					name: 'XML',
+					link: 'http://xmlprettyprint.com/'
+				},
+				{
+					name: 'JSON',
+					link: 'http://jsonprettyprint.com/'
+				},
+				{
+					name: 'HTML/CSS/JS',
+					link: 'https://www.10bestdesign.com/dirtymarkup/'
+				},
+			]
+		},
+		{
+			divider: true
+		},
+		{
+			name: 'Git Repos',
+			link: '/display/GCSDevOps/Git+Process+-+DTI',
+			wiki: true
+		},
+		{
+			name: 'Test Circuits',
+			link: '/display/GCSDevOps/Test+Circuits+for+BMP+and+WFA',
+			wiki: true
+		},
+		{
+			name: 'Crucible PCR Process',
+			link: '/display/GCSDevOps/Crucible+Code+Reviews',
+			wiki: true
+		},
+		{
+			name: 'Jira Workflow',
+			link: '/display/GCSDevOps/Developer+Workflow+in+JIRA',
+			wiki: true
+		},
+		{
+			divider: true
+		},
+		{
+			name: 'Moose',
+			link: 'http://moose.web.att.com/'
+		},
+		{
+			name: 'RPEL',
+			link: 'https://repl.it/'
+		},
 	]
 }
 

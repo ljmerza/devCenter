@@ -35,7 +35,6 @@ class AutomationBot(object):
 		################################################################################
 		# create DB object and connect
 		self.sql_object = sql_object
-		self.sql_object.login()
 		self.jira_obj = jira_obj
 		self.crucible_obj = crucible_obj
 		self.chat_obj = chat_obj
@@ -76,7 +75,9 @@ class AutomationBot(object):
 			# make sure we have Jira tickets
 			if not jira_tickets['status']:
 				message = 'Could not get Jira tickets: '+jira_tickets['data']
-				self.sql_object.log_error(message=message)
+				session = self.sql_object.login()
+				self.sql_object.log_error(message=message, session=session)
+				self.sql_object.logout(session=session)
 				return {'status': False, 'data': message}
 
 			# print time to retrieve tickets
@@ -93,22 +94,20 @@ class AutomationBot(object):
 			start_update = time.time()
 
 			# for each jira ticket update DB table
+			session = self.sql_object.login()
 			for jira_ticket  in jira_tickets['data']:
-				self.sql_object.update_ticket(jira_ticket=jira_ticket)
+				self.sql_object.update_ticket(jira_ticket=jira_ticket, session=session)
+			self.sql_object.logout(session=session)
 
 			# print time to update tickets in DB
 			end_update = time.time()
 			print('Updated Tickets:          ', end_update-start_update)
 			start_commit = time.time()
 
-			# commit everything we've changed
-			self.sql_object.commit()
-			end_commit = time.time()
-			print('Commit time:              ', end_commit-start_commit)
-			start_inactive = time.time()
-
 			# set all inactive tickets and print time it took
-			self.sql_object.set_inactive_tickets(jira_tickets=jira_tickets)
+			session = self.sql_object.login()
+			self.sql_object.set_inactive_tickets(jira_tickets=jira_tickets, session=session)
+			self.sql_object.logout(session=session)
 			end_inactive = time.time()
 			print('Set Inactive Tickets:     ', end_inactive-start_inactive)		
 			
@@ -135,7 +134,9 @@ class AutomationBot(object):
 
 			# if error_log mode then just die else log error and continue
 			if self.error_log:
-				self.sql_object.log_error( message=str(err) )
+				session = self.sql_object.login()
+				self.sql_object.log_error( message=str(err), session=session )
+				self.sql_object.logout(session=session)
 				return {'status': False, 'data': str(err)}
 			else:
 				exit(1)
@@ -192,17 +193,22 @@ class AutomationBot(object):
 			None
 		'''
 		# if user not pinged yet then try
-		if( not self.sql_object.get_ping(field='new_ping', key=jira_ticket['key']) ):
-			self.check_for_new_ping(jira_ticket=jira_ticket)
+		session = self.sql_object.login()
+		if( not self.sql_object.get_ping(field='new_ping', key=jira_ticket['key'], session=session) ):
+			self.check_for_new_ping(jira_ticket=jira_ticket, session=session)
+		self.sql_object.logout(session=session)
 
 		# check for any other pings based on component and status
-		self.check_for_status_pings(jira_ticket=jira_ticket)
+		session = self.sql_object.login()
+		self.check_for_status_pings(jira_ticket=jira_ticket, session=session)
+		self.sql_object.logout(session=session)
 
-	def check_for_new_ping(self, jira_ticket):
+	def check_for_new_ping(self, jira_ticket, session):
 		'''checks Jira ticket for any new pings and update DB
 
 		Args:
 			jira_ticket (dict) a foramtted Jira ticket object
+			session (Session instance) the session to close
 
 		Returns:
 			None
@@ -216,7 +222,7 @@ class AutomationBot(object):
 		summary = jira_ticket['summary']
 
 		# see if user wants ping
-		wants_ping = self.sql_object.get_user_ping_value(username=username, field='new_ping')
+		wants_ping = self.sql_object.get_user_ping_value(username=username, field='new_ping', session=session)
 
 		# if user wants ping then ping them
 		if(wants_ping == 1):
@@ -228,28 +234,29 @@ class AutomationBot(object):
 			if(username != self.username):
 				self.chat_obj.send_me_ticket_info(key=key, summary=summary, username=username, ping_message='New Ticket')
 			# update ping for user
-			self.sql_object.update_ping(key=key, field='new_ping', value=1)
+			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
 
 		# else if project manager then ping me if not my ticket but do not update ping user
 		# and update my ping so I don't get it again
 		elif(wants_ping == 2):
-			if(username != self.username and not self.sql_object.get_ping(key=key, field='me_ping')):
+			if(username != self.username and not self.sql_object.get_ping(key=key, field='me_ping', session=session)):
 				# then ping me that a new user has been assigned
 				self.chat_obj.send_me_ticket_info(key=key, summary=summary, username=username, ping_message='New Ticket')
-			self.sql_object.update_ping(key=key, field='me_ping', value=1)
+			self.sql_object.update_ping(key=key, field='me_ping', value=1, session=session)
 
 		# else user doesn't want ping so update me ping and send me ticket
 		else:
 			if(username != self.username):
 				self.chat_obj.send_me_ticket_info(key=key, summary=summary, username=username, ping_message='New Ticket')
-			self.sql_object.update_ping(key=key, field='new_ping', value=1)
+			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
 
 
-	def check_for_status_pings(self, jira_ticket):
+	def check_for_status_pings(self, jira_ticket, session):
 		'''checks Jira ticket component/status for pings needed
 
 		Args:
 			jira_ticket (dict) a formatted Jira ticket object
+			session (Session instance) the session to close
 
 		Returns:
 			None
@@ -268,7 +275,7 @@ class AutomationBot(object):
 		crucible_id = jira_ticket['crucible_id']
 
 		# get jira ticket's ping settings
-		pings = self.sql_object.get_pings(key=key)
+		pings = self.sql_object.get_pings(key=key, session=session)
 
 		# safety check - make sure we have data before continuing
 		if not pings:
@@ -281,17 +288,17 @@ class AutomationBot(object):
 			# send ping
 			self.chat_obj.send_pcr_needed(key=key, msrp=msrp, sprint=sprint, label=label, crucible_id=crucible_id, pcr_estimate=pcr_estimate)
 			# reset ping settings if needed
-			self.sql_object.reset_pings(ping_type='pcr_ping', key=key)
+			self.sql_object.reset_pings(ping_type='pcr_ping', key=key, session=session)
 			# update ping
-			self.sql_object.update_ping(key=key, field='pcr_ping', value=1)
+			self.sql_object.update_ping(key=key, field='pcr_ping', value=1, session=session)
 
 		# if qa needed and has not been pinged - update db and send ping
 		elif("Ready for QA" in status and not pings.qa_ping):
 			self.chat_obj.send_qa_needed(key=key, msrp=msrp, sprint=sprint, label=label, crucible_id=crucible_id)
 			# reset ping settings if needed
-			self.sql_object.reset_pings(ping_type='qa_ping', key=key)
+			self.sql_object.reset_pings(ping_type='qa_ping', key=key, session=session)
 			# update ping
-			self.sql_object.update_ping(key=key, field='qa_ping', value=1)
+			self.sql_object.update_ping(key=key, field='qa_ping', value=1, session=session)
 		
 		# if merge needed and has not been pinged - update db and send ping
 		elif("Merge Code" in component and not pings.merge_ping):
@@ -316,9 +323,9 @@ class AutomationBot(object):
 			if repos_merged['status']:
 				self.chat_obj.send_merge_alert(key=key, msrp=msrp, sprint=sprint, username=username, repos_merged=repos_merged['data'], crucible_id=crucible_id, summary=summary)
 			else:
-				self.sql_object.log_error(message='Could not retrieve repos for repo update ping: '+repos_merged['data'])
+				self.sql_object.log_error(message='Could not retrieve repos for repo update ping: '+repos_merged['data'], session=session)
 			# update DB
-			self.sql_object.update_ping(key=key, field='uct_ping', value=1)
+			self.sql_object.update_ping(key=key, field='uct_ping', value=1, session=session)
 
 		# if in dev and already uct pinged then it's a uct fail
 		elif( "In Development" in status and pings.uct_ping):
@@ -345,16 +352,24 @@ class AutomationBot(object):
 			None
 		'''		
 		# see if user wants ping
-		wants_ping = self.sql_object.get_user_ping_value(username=username, field=ping_type)
+		session = self.sql_object.login()
+		wants_ping = self.sql_object.get_user_ping_value(username=username, field=ping_type, session=session)
+		
 		# if user wants ping then ping them
 		if(wants_ping == 1):
 			thr = threading.Thread(target=self.chat_obj.send_jira_update, kwargs={'key':key, 'msrp':msrp, 'summary':summary, 'username':username, 'ping_message':ping_message, 'sprint':sprint})
 			thr.start()
+		
 		# send me Merge Conflict
 		if(username != self.username):
 			thr = threading.Thread(target=self.chat_obj.send_me_ticket_info, kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':ping_message})
 			thr.start()
+
 		# reset pings
-		self.sql_object.reset_pings(ping_type=ping_type, key=key)
+		self.sql_object.reset_pings(ping_type=ping_type, key=key, session=session)
+
 		# update ping
-		self.sql_object.update_ping(key=key, field=ping_type, value=1)
+		self.sql_object.update_ping(key=key, field=ping_type, value=1, session=session)
+
+		# logout of session
+		self.sql_object.logout(session=session)

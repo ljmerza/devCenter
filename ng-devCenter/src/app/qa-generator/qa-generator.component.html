@@ -1,5 +1,5 @@
 <!-- QA Generator Model -->
-<ng-template #qaModal let-c="close" id='qa-modal'>
+<ng-template #qaModal let-c="close">
 	<form class="form-group" #qaGenForm="ngForm" (ngSubmit)="submitQA(qaGenForm)">
 
 		<div class="modal-header">
@@ -12,7 +12,7 @@
 		<div class="modal-body">
 			<h4>Your Branches:</h4>
 
-			<div class='loading' *ngIf="loadingBranches; else elseBlock">
+			<div class='loading' *ngIf="loadingBranches; else ticketTable">
 				<div class="cs-loader">
 					<div class="cs-loader-inner">
 						<label>	●</label>
@@ -25,7 +25,7 @@
 				</div>
 			</div>
 
-			<ng-template #elseBlock>
+			<ng-template #ticketTable>
 				<div class="repoDropdownParent" *ngFor=' let repo of repoArray; index as idx'>
 					<div class="form-group">
 						<div class="row">
