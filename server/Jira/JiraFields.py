@@ -110,6 +110,11 @@ def get_component(issue):
 	# for each component add to list to join then on return
 	for component in issue.get('fields', {}).get('components', []):
 		all_components.append(component['name'])
+
+	# if cr working then only show that
+	if 'Code Review - Working' in all_components:
+		all_components = ['Code Review - Working']
+
 	return ' '.join(all_components)
 
 def get_story_point(issue):
