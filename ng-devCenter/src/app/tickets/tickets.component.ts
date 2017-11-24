@@ -201,10 +201,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			});
 
 		} else {
-			console.log('this.oldState: ', this.oldState);
 			// else revert status change
 			this.ticketDropdown.value = this.oldState;
-			this.toastr.showToast(`Ticket status change cancelled`, 'info');
+			this.toastr.showToast(`Ticket status change cancelled for ${key}`, 'info');
 		}
 		
 	}
@@ -235,11 +234,11 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				this.rerender();
 			} else {
 				this.ticketDropdown.value = this.oldState;
-				this.toastr.showToast(`Ticket status change cancelled`, 'info');
+				this.toastr.showToast(`Ticket status change cancelled for ${key}`, 'info');
 			}
 
 		} else {
-			this.toastr.showToast(`Error updating tikcet status on UI`, 'info');
+			this.toastr.showToast(`Error updating tikcet status on UI for ${key}`, 'info');
 		}
 
 		
