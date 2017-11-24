@@ -31,6 +31,13 @@ export class PcrModalComponent {
 	*/
 	openPCRModal(cru_id:string, key:string, statusType): void {
 
+		// check for crucible id first
+		if(!cru_id){
+			this.toastr.showToast(`Missing Crucible ID. Cannot transition ${key}`, 'error');
+			this.pcrPassEvent.emit({key, isTransitioned: false, showToast: false});
+			return;
+		}
+
 		// save status type for template
 		this.statusType = statusType;
 

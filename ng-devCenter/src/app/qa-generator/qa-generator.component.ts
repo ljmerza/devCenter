@@ -116,7 +116,7 @@ export class QaGeneratorComponent {
 					this.repoArray = [];
 				}
 			}, 
-			() => this.newCrucible.emit({key: this.key, crucible_id: ''}) 
+			() => this.newCrucible.emit({key: this.key})
 		);
 
 		// disabled submit button for QA gen

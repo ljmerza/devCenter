@@ -191,7 +191,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	pcrPassEvent({key, isTransitioned}):void {
+	pcrPassEvent({key, isTransitioned, showToast=true}):void {
 
 		// if success then remove ticket
 		if(isTransitioned){
@@ -203,7 +203,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		} else {
 			// else revert status change
 			this.ticketDropdown.value = this.oldState;
-			this.toastr.showToast(`Ticket status change cancelled for ${key}`, 'info');
+			if(showToast) {
+				this.toastr.showToast(`Ticket status change cancelled for ${key}`, 'info');
+			}
 		}
 		
 	}
@@ -223,7 +225,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	newCrucible({key, crucible_id}):void {
+	newCrucible({key, crucible_id=''}):void {
 
 		const ticket = this.openTickets.filter( ticket => ticket.key == key);
 
