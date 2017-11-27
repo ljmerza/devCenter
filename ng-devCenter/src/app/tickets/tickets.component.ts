@@ -1,25 +1,15 @@
 import { Component, OnInit, ViewChild, Input, EventEmitter, ViewContainerRef, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { Subject, Observable, Subscription } from 'rxjs';
-
-import { ActivatedRoute } from '@angular/router';
+import 'rxjs/add/observable/interval';
 
 import { UserService } from './../services/user.service';
 import { JiraService } from './../services/jira.service';
-import { WorkTimePipe } from './../work-time.pipe';
+import { ToastrService } from './../services/toastr.service';
 
 import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
-import { ToastrService } from './../services/toastr.service';
-
-import config from '../services/config';
-
-import 'rxjs/add/observable/interval';
-
-import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
-import { JiraCommentsComponent } from './../jira-comments/jira-comments.component';
-import { PcrModalComponent } from './../pcr-modal/pcr-modal.component';
-import { TimeLogComponent } from './../time-log/time-log.component';
 
 import * as $ from 'jquery';
 
@@ -29,42 +19,16 @@ import * as $ from 'jquery';
 	styleUrls: ['./tickets.component.scss']
 })
 export class TicketsComponent implements OnInit, OnDestroy {
-	config=config
 	loadingTickets:boolean = true;
 	openTickets:Array<any>;
 
 	searchTicket$;
 	userReloadTickets$
+	repos;
 	dtTrigger:Subject<any> = new Subject();
 
 	@Input() reloadTicketsEvent = new EventEmitter();
-
 	@ViewChild(DataTableDirective) private dtElement: DataTableDirective;
-	@ViewChild(QaGeneratorComponent) private qaGen: QaGeneratorComponent;
-	@ViewChild(JiraCommentsComponent) private jiraComments: JiraCommentsComponent;
-	@ViewChild(PcrModalComponent) private pcrModal: PcrModalComponent;
-	@ViewChild(TimeLogComponent) private logWork: TimeLogComponent;
-
-	ticketStates = [
-		'Triage',
-		'Backlog',
-		'In Sprint',
-		'In Development',
-		'PCR - Needed',
-		'PCR - Pass',
-		'PCR - Completed',
-		'Code Review - Working',
-		'Ready for QA',
-		'In QA',
-		'QA Fail',
-		'Merge Code',
-		'Ready for UCT',
-		'In UCT',
-		'Ready for Release',
-		'Closed',
-		'On Hold'
-	];
-
 
 	dtOptions = {
 		order: [4, 'desc'],
@@ -125,6 +89,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			}	
 		});
 
+		// get list of repos once
+		this.jira.getRepos().subscribe( 
+			branches => this.repos = branches.data,
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
+
 
 	}
 
@@ -146,6 +116,19 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		.startWith(0)
 		.exhaustMap(() => this.jira.getFilterData(jiraListType))
 		.distinctUntilChanged( (old_tickets, new_tickets) => {
+
+			if(!old_tickets){
+				return false;
+			}
+
+			console.log('old_tickets, new_tickets: ', old_tickets, new_tickets);
+
+			const old_ticket_keys = old_tickets.data.map( ticket => ticket.key);
+			const new_ticket_keys = new_tickets.data.map( ticket => ticket.key);
+
+			var difference = old_ticket_keys.filter( x => !(new Set(new_ticket_keys.has(x))) );
+
+			console.log(old_tickets.data, new_tickets.data, difference)
 			return JSON.stringify(old_tickets.data) === JSON.stringify(new_tickets.data)
 		})
 		.subscribe( 
@@ -203,18 +186,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	openLogModal(key:string):void {
-		this.logWork.openLogModal(key);
-	}
-
-	/*
-	*/
-	openCommentModal(msrp:string, comments):void {
-		this.jiraComments.openCommentModal(msrp, comments);
-	}
-
-	/*
-	*/
 	pcrPassEvent({key, isTransitioned, showToast=true}):void {
 
 		// if success then remove ticket
@@ -225,68 +196,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			});
 
 		} else {
-			// else revert status change
-			this.ticketDropdown.value = this.oldState;
-			if(showToast) {
-				this.toastr.showToast(`Ticket status change cancelled for ${key}`, 'info');
-			}
+			
 		}
 		
-	}
-
-	/*
-	*/
-	logTimeEvent({key, logTime}):void {
-		const ticket = this.openTickets.filter( ticket => ticket.key == key);
-		
-		if(ticket.length == 1){
-			ticket[0].dates.logged += logTime;
-			this.rerender();
-		} else {
-			this.toastr.showToast(`Could not update time log for ${key} on frontend interface`, 'info');
-		}
-	}
-
-	/*
-	*/
-	newCrucible({key, crucible_id=''}):void {
-
-		const ticket = this.openTickets.filter( ticket => ticket.key == key);
-
-		if(ticket.length == 1){
-
-			if(crucible_id) {
-				ticket[0].crucible_id = crucible_id;
-				this.rerender();
-			} else {
-				this.ticketDropdown.value = this.oldState;
-				this.toastr.showToast(`Ticket status change cancelled for ${key}`, 'info');
-			}
-
-		} else {
-			this.toastr.showToast(`Error updating tikcet status on UI for ${key}`, 'info');
-		}
-
-		
-	}
-
-	oldState;
-	ticketDropdown;
-	stateChange(ticketDropdown, ticket){
-		// save select element reference and old status
-		this.ticketDropdown = ticketDropdown;
-		this.oldState = ticket.component || ticket.status;
-
-		// open QA gen
-		if(ticketDropdown.value == 'PCR - Needed'){
-			this.qaGen.openQAModal(ticket.msrp, ticket.key);
-
-		} else if(ticketDropdown.value == 'PCR - Pass'){
-			ticketDropdown.value = 'PCR - Needed';
-			this.pcrModal.openPCRModal(ticket.crucible_id, ticket.key, 'pass');
-
-		}  else if(ticketDropdown.value == 'PCR - Completed'){
-			this.pcrModal.openPCRModal(ticket.crucible_id, ticket.key, 'complete');
-		}
 	}
 }

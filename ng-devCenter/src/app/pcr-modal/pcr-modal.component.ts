@@ -1,4 +1,8 @@
-import { Component, OnInit, ViewContainerRef, EventEmitter, Input, Output, ViewChild, ElementRef } from '@angular/core';
+import { 
+	Component, OnInit, ViewContainerRef, 
+	EventEmitter, Input, Output, ViewChild, 
+	ElementRef 
+} from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserService } from './../services/user.service';
@@ -15,6 +19,8 @@ export class PcrModalComponent {
 
 	@ViewChild('pcrModal') content: ElementRef;
 	@Output() pcrPassEvent = new EventEmitter();
+	@Input() crucible_id;
+	@Input() key;
 	statusType;
 
 	constructor(
@@ -29,12 +35,12 @@ export class PcrModalComponent {
 
 	/*
 	*/
-	openPCRModal(cru_id:string, key:string, statusType): void {
+	openPCRModal(statusType): void {
 
 		// check for crucible id first
-		if(!cru_id){
-			this.toastr.showToast(`Missing Crucible ID. Cannot transition ${key}`, 'error');
-			this.pcrPassEvent.emit({key, isTransitioned: false, showToast: false});
+		if(!this.crucible_id){
+			this.toastr.showToast(`Missing Crucible ID. Cannot transition ${this.key}`, 'error');
+			this.pcrPassEvent.emit({key:this.key, isTransitioned: false, showToast: false});
 			return;
 		}
 
@@ -44,25 +50,25 @@ export class PcrModalComponent {
 		// open modal then on close process result
 		this.modalService.open(this.content).result.then( confirm => {
 
-			this.jira.pcrPass(cru_id, this.user.username).subscribe( 
+			this.jira.pcrPass(this.crucible_id, this.user.username).subscribe( 
 				() => this.toastr.showToast('PCR Passed.', 'success'), 
 				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 			);
 
 			// if we want PCR complete then	call PCR complete API 
 			if(statusType === 'complete'){						
-				this.jira.pcrComplete(key, this.user.username).subscribe( 
+				this.jira.pcrComplete(this.key, this.user.username).subscribe( 
 					() => {
 
 						// notify to remove ticket from table and show notification
-						this.pcrPassEvent.emit({key, isTransitioned: true});	
+						this.pcrPassEvent.emit({key:this.key, isTransitioned: true});	
 						this.toastr.showToast('PCR Completed.', 'success');
 					},
 					error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 				);
 			}
 
-		}, () => this.pcrPassEvent.emit({key, isTransitioned: false}) );	
+		}, () => this.pcrPassEvent.emit({key:this.key, isTransitioned: false}) );	
 	}
 
 }

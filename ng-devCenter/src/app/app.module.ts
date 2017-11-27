@@ -31,6 +31,7 @@ import { SafehtmlPipe } from './safehtml.pipe';
 import { PcrModalComponent } from './pcr-modal/pcr-modal.component';
 import { TimeLogComponent } from './time-log/time-log.component';
 import { LogoutComponent } from './logout/logout.component';
+import { TicketComponent } from './ticket/ticket.component';
 
 @NgModule({
 	declarations: [
@@ -45,7 +46,8 @@ import { LogoutComponent } from './logout/logout.component';
 		SafehtmlPipe,
 		PcrModalComponent,
 		TimeLogComponent,
-		LogoutComponent
+		LogoutComponent,
+		TicketComponent
 	],
 	imports: [
 		BrowserModule,

@@ -54,72 +54,7 @@
 							'table-success': (ticket.status == 'Ready for UCT' || ticket.status == 'Ready for Release') && jira.title == 'All Open',
 							'table-danger': (ticket.status == 'Closed' || ticket.component == 'Merge Code') && jira.title == 'All Open'
 						}"
-					>
-							<td>
-								<a target="_blank" 
-									href="{{config.jiraUrl}}/browse/{{ticket.key}}"
-									title='view comments'
-								>
-									{{ticket.key}}
-								</a>
-							</td>
-							<td>
-								<div class='float-left'>{{ticket.msrp}}</div>
-								<div class="float-right">
-									<i 
-										(click)="openLogModal(ticket.key)" 
-										class="material-icons"
-										title='Add comment/time log'
-									>alarm_add</i>
-									<i 
-										(click)="openCommentModal(ticket.key, ticket.comments)" 
-										class="material-icons"
-										title='View comments'
-									>storage</i>
-								</div>
-								
-								
-							</td>
-							<td class='summary-format'>{{ticket.summary}}</td>
-							<td>
-								<div class='float-left'>
-									<select (change)="stateChange(ticketState, ticket)" #ticketState>
-										<option 
-											*ngFor='let state of ticketStates'
-											[attr.selected]="state==ticket.component || state==ticket.status ? 'true': null"
-											[value]="state"
-										>
-											{{state}}
-										</option>
-									</select>
-								</div>
-							</td>
-							<td>{{ticket.dates.started | amDateFormat:'LL'}}</td>
-							<td>{{ticket.dates.duedate | amDateFormat:'LL'}}</td>
-							<td>{{ticket.dates.estimate | worktime }}</td>
-							<td>{{ticket.dates.logged | worktime}}</td>
-							<td>{{ticket.dates.updated | amDateFormat:'LL'}}</td>
-							<td>{{ticket.dates.created | amDateFormat:'LL'}}</td>
-							<td>
-								<div *ngIf='ticket.crucible_id'>
-									<a 
-										target="_blank" 
-										class='float-left'
-										href="{{config.crucibleUrl}}/cru/{{ticket.crucible_id}}">
-											{{ticket.crucible_id}}
-									</a>
-								</div>
-							</td>
-							<td>
-								<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open Q chat window with {{ticket.username}}">{{ticket.username}}</a>
-								<img src="http://presence.q.att.com/presence/{{ticket.username}}.gif">
-							</td>
-							<td>
-								<a [href]="jira.chatUrlSanitize(ticket.customer_details.username)" title="Open Q chat window with {{ticket.customer_details.display_name}}">
-									{{ticket.customer_details.username}}
-								</a>
-								<img src="http://presence.q.att.com/presence/{{ticket.customer_details.username}}.gif">
-							</td>
+						class="appTicket" [ticket]=ticket [repos]=repos>
 						</tr>
 					</tbody>
 				</table>
@@ -128,7 +63,3 @@
 	</div>
 </div>
 
-<app-time-log (logTimeEvent)="logTimeEvent($event)"></app-time-log>
-<app-pcr-modal (pcrPassEvent)="pcrPassEvent($event)"></app-pcr-modal>
-<app-qa-generator (newCrucible)="newCrucible($event)"></app-qa-generator>
-<app-jira-comments></app-jira-comments>

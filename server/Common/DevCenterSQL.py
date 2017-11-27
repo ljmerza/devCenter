@@ -32,11 +32,12 @@ class DevCenterSQL():
 		host = os.environ['DEV_SERVER']
 		port = 3306
 
-		# try to get DB name or default to dev DB
+		# try to get DB name  (default to dev DB)
+		database = 'dev_center_dev'
 		try:
-			database = os.environ['DC_DB'] or 'dev_center_dev'
+			database = os.environ['DC_DB']
 		except:
-			database = 'dev_center_dev'
+			pass
 
 		charset = 'utf8'
 

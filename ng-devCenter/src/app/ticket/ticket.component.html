@@ -1,0 +1,90 @@
+<td>
+	<a target="_blank" 
+		href="{{config.jiraUrl}}/browse/{{ticket.key}}"
+		title='Open ticket in Jira'
+	>
+		{{ticket.key}}
+	</a>
+</td>
+<td>
+	<div class='float-left'>{{ticket.msrp}}</div>
+	<div class="float-right">
+		<i 
+			(click)="logWork.openLogModal()" 
+			class="material-icons"
+			title='Add comment/time log'
+		>alarm_add</i>
+		<i 
+			(click)="jiraComments.openCommentModal()" 
+			class="material-icons"
+			title='View comments'
+		>storage</i>
+	</div>
+	
+	
+</td>
+<td class='summary-format'>{{ticket.summary}}</td>
+<td>
+	<div class='float-left'>
+		<select (change)="stateChange(ticketState, ticket)" #ticketState>
+			<option 
+				*ngFor='let state of ticketStates'
+				[attr.selected]="state==ticket.component || state==ticket.status ? 'true': null"
+				[value]="state"
+			>
+				{{state}}
+			</option>
+		</select>
+	</div>
+</td>
+<td>{{ticket.dates.started | amDateFormat:'LL'}}</td>
+<td>{{ticket.dates.duedate | amDateFormat:'LL'}}</td>
+<td>{{ticket.dates.estimate | worktime }}</td>
+<td>{{ticket.dates.logged | worktime}}</td>
+<td>{{ticket.dates.updated | amDateFormat:'LL'}}</td>
+<td>{{ticket.dates.created | amDateFormat:'LL'}}</td>
+<td>
+	<div *ngIf='ticket.crucible_id'>
+		<a 
+			target="_blank" 
+			class='float-left'
+			href="{{config.crucibleUrl}}/cru/{{ticket.crucible_id}}">
+				{{ticket.crucible_id}}
+		</a>
+	</div>
+</td>
+<td>
+	<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open Q chat window with {{ticket.username}}">{{ticket.username}}</a>
+	<img src="http://presence.q.att.com/presence/{{ticket.username}}.gif">
+</td>
+<td>
+	<a [href]="jira.chatUrlSanitize(ticket.customer_details.username)" title="Open Q chat window with {{ticket.customer_details.display_name}}">
+		{{ticket.customer_details.username}}
+	</a>
+	<img src="http://presence.q.att.com/presence/{{ticket.customer_details.username}}.gif">
+</td>
+
+
+<!-- modals for this ticket -->
+<app-time-log 
+	(logTimeEvent)="logTimeEvent($event)" 
+	[key]=ticket.key>
+</app-time-log>
+
+<app-pcr-modal 
+	(pcrPassEvent)="pcrPassEvent($event)" 
+	[crucible_id]=ticket.crucible_id 
+	[key]=ticket.key>
+</app-pcr-modal>
+
+<app-qa-generator 
+	(newCrucible)="newCrucible($event)"
+	[key]=ticket.key
+	[repos]=repos
+	[msrp]=ticket.msrp>
+</app-qa-generator>
+
+<app-jira-comments 
+	[key]=ticket.key 
+	[comments]=ticket.comments>
+</app-jira-comments>

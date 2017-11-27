@@ -1,7 +1,7 @@
 import { 
 	Component, ViewChild, EventEmitter,
 	ElementRef, ViewContainerRef, 
-	ViewEncapsulation, Output 
+	ViewEncapsulation, Output, Input
 } from '@angular/core';
 
 import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -20,7 +20,6 @@ import { ToastrService } from './../services/toastr.service';
 export class TimeLogComponent	{
 	modalReference;
 
-	key:string;
 	comments:string;
 	logTime = {hour: 0, minute: 0};
 
@@ -29,6 +28,7 @@ export class TimeLogComponent	{
 
 	@ViewChild('logModal') content:ElementRef;
 	@Output() logTimeEvent = new EventEmitter();
+	@Input() key:string;
 
 	constructor(
 		public jira:JiraService,
@@ -43,19 +43,21 @@ export class TimeLogComponent	{
 
 		// close modal
 		this.modalReference.close();
-
-		// get form values and reset form
-		const formData = formObj.value;
-		formObj.resetForm();
-
-		if(!formData.comment){
+		
+		// check for comment
+		if(!formObj.value.comment){
 			this.toastr.showToast('Must enter a comment to update Jira', 'error');
 			return;
+		} else if (!formObj.value.logTime.hour && !formObj.value.logTime.minute){
+			this.toastr.showToast('Posting comment to Jira', 'info');
+		} else {
+			this.toastr.showToast('Posting comment and updating worklog to Jira', 'info');
 		}
 
+		// create POST body
 		let postData = {
-			comment: formData.comment,
-			log_time: formData.logTime.hour * 60 + formData.logTime.minute,
+			comment: formObj.value.comment,
+			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
 			key: this.key
 		};
 
@@ -66,15 +68,16 @@ export class TimeLogComponent	{
 				// show success and notify table to update time
 				this.toastr.showToast('Work Log updated', 'success');
 				this.logTimeEvent.emit({key: this.key, logTime: postData.log_time});
+				// then reset form
+				formObj.resetForm();
 			},
 			error => this.toastr.showToast(error.data, 'error')
 		);
 	}
 
-	openLogModal(key:string):void {
+	openLogModal():void {
 
 		// set values
-		this.key = key;
 		this.comments = '';
 		this.logTime = {hour: 0, minute: 0};
 

@@ -1,7 +1,7 @@
 import { 
 	Component, ViewChild, ElementRef, 
 	ViewEncapsulation, ViewContainerRef, 
-	EventEmitter, Output
+	EventEmitter, Output, Input
 } from '@angular/core';
 
 import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -18,10 +18,10 @@ import config from '../services/config';
 	encapsulation: ViewEncapsulation.None
 })
 export class QaGeneratorComponent {
-	key:string;
-	modalReference;
-	loadingBranches:boolean = true;
+	modalReference; // reference to open modal
+	loadingBranches:boolean = true; // are we loading branches?
 
+	// form fields
 	pcrNeeded:boolean = true;
 	codeReview:boolean = true;
 	qaSteps:string;
@@ -30,11 +30,13 @@ export class QaGeneratorComponent {
 	minuteStep = 15;
 	repoArray = [];
 
-	repos;
-	branches;
+	branches; // loaded branches data
 
 	@ViewChild('qaModal') content:ElementRef;
 	@Output() newCrucible = new EventEmitter();
+	@Input() msrp;
+	@Input() key;
+	@Input() repos;
 
 	constructor(
 		public jira:JiraService, 
@@ -49,57 +51,51 @@ export class QaGeneratorComponent {
 	*/
 	submitQA(formObj: NgForm): void {
 
-		// reset data
-		this.repos = [];
-	
 		// close modal
 		this.modalReference.close();
 
-		// get form values and reset form
-		const formData = formObj.value;
-		formObj.resetForm();
-
 		// create POST data structure
 		let postData = {
-			qa_steps: formData.qaSteps,
-			log_time: formData.logTime.hour * 60 + formData.logTime.minute,
-			autoCR: formData.codeReview,
-			autoPCR: formData.pcrNeeded,
+			qa_steps: formObj.value.qaSteps,
+			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
+			autoCR: formObj.value.codeReview,
+			autoPCR: formObj.value.pcrNeeded,
 			key: this.key,
 			repos: this.repoArray.map( (repo,index) => {
 				return {
-					baseBranch: formData[`baseBranch-${index}`],
-					repositoryName: formData[`repositoryName-${index}`],
-					reviewedBranch: formData[`reviewedBranch-${index}`]
+					baseBranch: formObj.value[`baseBranch-${index}`],
+					repositoryName: formObj.value[`repositoryName-${index}`],
+					reviewedBranch: formObj.value[`reviewedBranch-${index}`]
 				};
 			}),
 		};
 
 		// show informational toast
-		if(!formData.qaSteps){
+		let changedStatus = false;
+		if(!formObj.value.qaSteps){
 			this.toastr.showToast('Creating Crucible but not updating to Jira', 'info');
 		} else {
 			this.toastr.showToast('Creating Crucible and updating Jira', 'info');
+			changedStatus = true;
 		}
 
 		// send POST request and notify results
-		this.jira.generateQA(postData).subscribe(response => {
-			this.toastr.showToast(`
-				<a target="_blank" href='${config.jiraUrl}/browse/${this.key}'>Jira Link</a>
-				<br>
-				<a target="_blank" href='${config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
-			`, 'success');
-			this.newCrucible.emit({key: this.key, crucible_id: response.data.crucible_id})
-		});
+		this.jira.generateQA(postData).subscribe(
+			response => {
+				this.toastr.showToast(`
+					<a target="_blank" href='${config.jiraUrl}/browse/${this.key}'>Jira Link</a>
+					<br>
+					<a target="_blank" href='${config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
+				`, 'success');
+				this.newCrucible.emit({key: this.key, crucible_id: response.data.crucible_id, changedStatus})
+			},
+			error => error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
 	}
 
 	/*
 	*/
-	openQAModal(msrp:string, key:string): void {
-
-		// save MSRP and reset selected repos
-		this.key = key;
-		this.repoArray = [];
+	openQAModal(): void {
 
 		// open modal
 		this.modalReference = this.modalService
@@ -107,29 +103,15 @@ export class QaGeneratorComponent {
 
 		// once modal is closed if we just exited out then reset inputs
 		this.modalReference.result.then( 
-			result => {
-				if(result){
-					this.pcrNeeded = true;
-					this.codeReview = true;
-					this.qaSteps = '';
-					this.logTime = {hour: 0, minute: 0};
-					this.repoArray = [];
-				}
-			}, 
+			() => null, 
 			() => this.newCrucible.emit({key: this.key})
 		);
 
 		// disabled submit button for QA gen
 		this.loadingBranches = true;
 
-		// get repos
-		this.jira.getRepos().subscribe( 
-			branches => this.repos = branches.data,
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
-
 		// get all branches associated with this msrp
-		this.jira.getTicketBranches(msrp).subscribe(
+		this.jira.getTicketBranches(this.msrp).subscribe(
 			response => {
 				this.loadingBranches = false;
 				this.processBranches(response.data);

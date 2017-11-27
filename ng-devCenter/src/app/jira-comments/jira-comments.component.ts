@@ -1,6 +1,6 @@
 import { 
 	Component, ViewChild, ElementRef, 
-	ViewEncapsulation
+	ViewEncapsulation, Input
 } from '@angular/core';
 
 import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -13,28 +13,25 @@ import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 })
 export class JiraCommentsComponent {
 	modalReference;
-	key;
-	comments;
 	openPanelIds = [];
 
 	@ViewChild('commentModal') content:ElementRef;
+	@Input() key;
+	@Input() comments;
 
 	constructor(private modalService:NgbModal, config: NgbAccordionConfig) {
     		config.closeOthers = false;
     		config.type = 'info';
   	}
 
-	openCommentModal(key:string, comments): void {
-
-		this.key = key;
-		this.comments = comments;
+	openCommentModal(): void {
 
 		// open certain panels
-		const commentsLength = comments.length;
+		const commentsLength = this.comments.length;
 		if(commentsLength > 6) {
 			this.openPanelIds = [`ngb-panel-${commentsLength-1}`,`ngb-panel-${commentsLength-2}`,`ngb-panel-${commentsLength-3}`];
 		} else {
-			this.openPanelIds = comments.map((c,i) => `ngb-panel-${i}`);
+			this.openPanelIds = this.comments.map((c,i) => `ngb-panel-${i}`);
 		}
 
 		// open modal
