@@ -75,27 +75,17 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	   			this.userReloadTickets$.unsubscribe();
 			}
 
-			// if required user info exists then get tickets
-			if(this.user.username && this.user.password && this.user.port && this.user.emberUrl){
+			// if required user info exists then get tickets and repos
+			if( !this.user.requireCredentials() ){
 				this.searchTicket$ = this.setFilterData(ticket_type);
+
+				// get list of repos once
+				this.jira.getRepos().subscribe( 
+					branches => this.repos = branches.data,
+					error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+				);
 			}
-
-			// only interval refresh tickets on certain routes
-			if( ['qa', 'pcr', 'allopen'].includes(ticket_type) ){
-				// be notified if user changes settings
-				this.userReloadTickets$ = this.user.notifyTickets$.subscribe( () => {
-					this.setFilterData(ticket_type);
-		      	});	
-			}	
 		});
-
-		// get list of repos once
-		this.jira.getRepos().subscribe( 
-			branches => this.repos = branches.data,
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
-
-
 	}
 
 	/*

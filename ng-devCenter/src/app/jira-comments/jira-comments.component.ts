@@ -1,9 +1,11 @@
 import { 
 	Component, ViewChild, ElementRef, 
-	ViewEncapsulation, Input
+	ViewEncapsulation, Input, AfterViewInit
 } from '@angular/core';
 
 import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
+
+declare var hljs :any;
 
 @Component({
 	selector: 'app-jira-comments',
@@ -11,7 +13,7 @@ import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 	styleUrls: ['./jira-comments.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class JiraCommentsComponent {
+export class JiraCommentsComponent implements AfterViewInit {
 	modalReference;
 	openPanelIds = [];
 
@@ -22,6 +24,11 @@ export class JiraCommentsComponent {
 	constructor(private modalService:NgbModal, config: NgbAccordionConfig) {
     		config.closeOthers = false;
     		config.type = 'info';
+  	}
+
+  	ngAfterViewInit(){
+  		console.log('hljs: ', hljs);
+  		// hljs.initHighlightingOnLoad();
   	}
 
 	openCommentModal(): void {

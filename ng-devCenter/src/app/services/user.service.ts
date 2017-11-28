@@ -14,7 +14,7 @@ export class UserService {
 
 	emberBuilds:Array<Object> = [
 		{'label':'acoe', 'value':config.devUrl},
-		{'label':'localhost', 'value':'localhost'}
+		{'label':'localhost', 'value':'http://localhost'}
 	];
 
 	constructor() { 
@@ -58,11 +58,7 @@ export class UserService {
 		}
 	}
 
-	/*
-	*/
-	private notifyTickets = new Subject<any>()
-	notifyTickets$ = this.notifyTickets.asObservable()
-	public notifyTicketComponent(): void {
-		this.notifyTickets.next()
+	public requireCredentials() {
+		return !(this.username && this.password && this.port && this.emberUrl);
 	}
 }

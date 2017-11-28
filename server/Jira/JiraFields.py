@@ -36,7 +36,21 @@ def get_status(issue):
 	Returns:
 		the issue status or empty string
 	'''
-	return issue.get('fields', {}).get('status', {}).get('name', '')
+	status = issue.get('fields', {}).get('status', {}).get('name', '')
+	all_components = get_component(issue)
+
+	# get components and set status on certain components
+	if 'Code Review - Working' in all_components:
+		status = 'Code Review - Working'
+	elif 'Merge Code' in all_components:
+		status = 'Merge Code'
+	elif 'PCR - Needed' in all_components:
+		status = 'PCR - Needed'
+	elif 'PCR - Completed' in all_components:
+		status = 'PCR - Completed'
+
+	return status
+
 
 def get_summary(issue):
 	'''gets an issue's summary
@@ -110,11 +124,6 @@ def get_component(issue):
 	# for each component add to list to join then on return
 	for component in issue.get('fields', {}).get('components', []):
 		all_components.append(component['name'])
-
-	# if cr working then only show that
-	if 'Code Review - Working' in all_components:
-		all_components = ['Code Review - Working']
-
 	return ' '.join(all_components)
 
 def get_story_point(issue):

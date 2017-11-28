@@ -29,7 +29,7 @@
 		<select (change)="stateChange(ticketState)" #ticketState>
 			<option 
 				*ngFor='let state of ticketStates'
-				[attr.selected]="(state==ticket.component || state==ticket.status) ? 'true': null"
+				[attr.selected]="state==ticket.status ? 'true': null"
 				[value]="state"
 			>
 				{{state}}

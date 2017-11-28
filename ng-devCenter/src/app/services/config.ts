@@ -133,6 +133,20 @@ let config = {
 			name: 'DLS186977001 (Force/Edge)'
 		},
 		{
+			link: 'order/ethernet/SWC246312001',
+			name: 'SWC246312001 (xlata data)'
+		},
+		{
+			link: 'order/ethernet/LBS065263001',
+			name: 'LBS065263001 (EvcMultiPointSite data)'
+		},
+
+{
+			link: 'order/ethernet/ARC167777001',
+			name: 'ARC167777001'
+		},
+
+		{
 			link: 'order/ethernet/TNS268897001',
 			name: 'TNS268897001'
 		},
@@ -406,6 +420,10 @@ let config = {
 		{
 			name: 'RPEL',
 			link: 'https://repl.it/'
+		},
+		{
+			name: 'Help Desk',
+			link: 'http://servicedesk.it.att.com/toolkit/cdt/index.cfm'
 		},
 	]
 }

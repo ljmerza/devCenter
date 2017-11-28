@@ -8,8 +8,6 @@ import { UserService } from './../services/user.service'
 	styleUrls: ['./user-settings.component.scss']
 })
 export class UserSettingsComponent implements AfterContentInit {
-	forcedSettings = false;
-
 	username;
 	password;
 	port;
@@ -25,9 +23,8 @@ export class UserSettingsComponent implements AfterContentInit {
 	}
 
 	ngAfterContentInit() {
-		if(!this.user.username || !this.user.password || !this.user.port || !this.user.emberUrl){
+		if( this.user.requireCredentials() ){
 			this.openUserSettings();
-			this.forcedSettings = true;
 		}
 	}
 
@@ -38,7 +35,6 @@ export class UserSettingsComponent implements AfterContentInit {
 		this.emberUrl = this.user.emberUrl
 
 		this.modalService.open(this.content, {keyboard:false,backdrop:false}).result.then((result) => {
-
 			// if save action then save new data
 			if(result === 'save'){
 				this.user.setUserData('username', this.username);
@@ -46,8 +42,8 @@ export class UserSettingsComponent implements AfterContentInit {
 				this.user.setUserData('port', this.port);
 				this.user.setUserData('emberUrl', this.emberUrl);
 
-				// notify tickets we need a refresh
-				this.user.notifyTicketComponent();
+				// refresh window
+				location.reload();
 			}
 		});
 	}
