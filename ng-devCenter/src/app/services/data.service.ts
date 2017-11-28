@@ -35,21 +35,13 @@ export class DataService {
 	/*
 	*/
 	public getAPI(url:string): Observable<any> {
-		const options = { 
-			headers: this.createHeaders()
-		};
-
-		return this.http.get(url, options);
+		return this.http.get(url, { headers: this.createHeaders() });
 	}
 
 	/*
 	*/
 	public postAPI(args): Observable<any> {
-		const options = { 
-			headers: this.createHeaders()
-		};
-
-		return this.http.post(args.url, args.body, options)
+		return this.http.post(args.url, args.body, { headers: this.createHeaders() })
 	}
 
 	/*

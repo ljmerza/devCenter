@@ -25,7 +25,7 @@ export class UserSettingsComponent implements AfterContentInit {
 	}
 
 	ngAfterContentInit() {
-		if(!this.user.username || !this.user.port || !this.user.emberUrl){
+		if(!this.user.username || !this.user.password || !this.user.port || !this.user.emberUrl){
 			this.openUserSettings();
 			this.forcedSettings = true;
 		}

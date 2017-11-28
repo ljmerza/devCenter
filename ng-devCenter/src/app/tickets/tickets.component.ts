@@ -76,7 +76,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			}
 
 			// if required user info exists then get tickets
-			if(this.user.username && this.user.port && this.user.emberUrl){
+			if(this.user.username && this.user.password && this.user.port && this.user.emberUrl){
 				this.searchTicket$ = this.setFilterData(ticket_type);
 			}
 

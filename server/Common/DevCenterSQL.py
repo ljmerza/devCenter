@@ -56,7 +56,7 @@ class DevCenterSQL():
 		Returns:
 			the session
 		'''		
-		return self.Session.session()
+		return self.Session()
 
 	def logout(self, session):
 		'''closes the DB connection
@@ -121,7 +121,7 @@ class DevCenterSQL():
 
 		# try to get existing Jira ticket
 		row = session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == jira_ticket['key']).first()
-
+		
 		# if existing ticket doesn't exist then add to DB
 		if row is None:
 			row = SQLModels.Tickets(**jira_ticket)
@@ -131,8 +131,9 @@ class DevCenterSQL():
 			for key, val in jira_ticket.items():
 				setattr(row, key, val)
 
-		# add comments of ticket
+		# add comments of ticket and commit
 		self._update_comments(comments=comments, session=session)
+		session.commit()
 		
 
 	def _update_comments(self, comments, session):

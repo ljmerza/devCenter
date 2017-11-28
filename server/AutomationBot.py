@@ -109,7 +109,7 @@ class AutomationBot(object):
 			self.sql_object.set_inactive_tickets(jira_tickets=jira_tickets, session=session)
 			self.sql_object.logout(session=session)
 			end_inactive = time.time()
-			print('Set Inactive Tickets:     ', end_inactive-start_inactive)		
+			print('Set Inactive Tickets:     ', end_inactive-start_commit)		
 			
 			# if we want to add beta stuff and enough time has passed then show beta stats
 			if self.is_beta_week and (self.beta_wait_time == self.beta_wait_count):

@@ -127,11 +127,7 @@ def start_bots():
 		if d.hour in range(6+time_shift, 19+time_shift) and d.isoweekday() in range(1, 6):
 			response = automationBot.update_jira()
 
-			# send tickets or print error message
-			if response['status']:
-				socketio.emit('pcr_tickets', response['data']['pcrs'])
-				socketio.emit('qa_tickets', response['data']['qas'])
-			else:
+			if not response['status']:
 				print('ERROR:', response['data'])
 
 		else:

@@ -29,10 +29,10 @@ export class TicketComponent {
 	@Input() ticket;
 	@Input() repos;
 	@Input() rerender = new EventEmitter();
-	@ViewChild(QaGeneratorComponent) private qaGen: QaGeneratorComponent;
-	@ViewChild(JiraCommentsComponent) private jiraComments: JiraCommentsComponent;
-	@ViewChild(PcrModalComponent) private pcrModal: PcrModalComponent;
-	@ViewChild(TimeLogComponent) private logWork: TimeLogComponent;
+	@ViewChild(QaGeneratorComponent) public qaGen: QaGeneratorComponent;
+	@ViewChild(JiraCommentsComponent) public jiraComments: JiraCommentsComponent;
+	@ViewChild(PcrModalComponent) public pcrModal: PcrModalComponent;
+	@ViewChild(TimeLogComponent) public logWork: TimeLogComponent;
 
 	
 	ticketStates = [
@@ -72,6 +72,10 @@ export class TicketComponent {
 
 		}  else if(ticketDropdown.value == 'PCR - Completed'){
 			this.pcrModal.openPCRModal('complete');
+
+		} else {
+			this.ticketDropdown.value = this.oldState;
+			this.toastr.showToast(`This status change has not been implemented.`, 'error');
 		}
 	}
 

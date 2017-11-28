@@ -3,8 +3,8 @@
 		<h4 class="modal-title">User Settings</h4>
 		<button 
 			type="button"
-			[attr.title]='(!emberUrl || !port || !username) ? "ATTuid, Port, and Ember Url are required." : "Cancel Changes"'
-			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
+			[attr.title]='(!emberUrl || !password || !port || !username) ? "username, Password, Port, and Ember Url are required." : "Cancel Changes"'
+			[attr.disabled]="(!emberUrl || !password || !port || !username) ? true : null"
 			class="close" 
 			aria-label="Close" 
 			(click)="c()"
@@ -16,20 +16,21 @@
 
 		<form>
 			<div class="form-group">
-				<label for="attuidSetting">ATTuid</label>
+				<label for="attuidSetting">Username</label>
 				<span class='text-danger'>*</span>
 				<input 
 					type="text" 
 					class="form-control" 
 					id="attuidSetting" 
 					aria-describedby="emailHelp" 
-					placeholder="Enter ATTuid"
+					placeholder="Enter username"
 					[ngModelOptions]="{standalone: true}"
 					[(ngModel)]="username"
 				>
 			</div>
 			<div class="form-group">
-				<label for="passwordSetting">Password</label> (Not required but app will be READ ONLY)
+				<label for="passwordSetting">Password</label>
+				<span class='text-danger'>*</span>
 				<input 
 					type="password" 
 					class="form-control" 
@@ -69,15 +70,15 @@
 				</select>
 			</div>
 
-			<div class="form-group text-danger text-center" *ngIf='!emberUrl || !port || !username'>
-				ATTuid, Port, and Ember Url are required to continue.
+			<div class="form-group text-danger text-center" *ngIf='!emberUrl || !password || !port || !username'>
+				Username, Password, Port, and Ember Url are required to continue.
 			</div>
 		</form>
 	</div>
 	<div class="modal-footer">
 		<button 
 			type="button" 
-			[attr.title]='(!emberUrl || !port || !username) ? "ATTuid, Port, and Ember Url are required." : "Save Changes"'
+			[attr.title]='(!emberUrl || !password || !port || !username) ? "Username, Password, Port, and Ember Url are required." : "Save Changes"'
 			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
 			class="btn btn-outline-success" 
 			(click)="c('save')"
@@ -86,8 +87,8 @@
 		</button>
 		<button 
 			type="button"
-			[attr.title]='(!emberUrl || !port || !username) ? "ATTuid, Port, and Ember Url are required." : "Cancel Changes"'
-			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
+			[attr.title]='(!emberUrl || !password || !port || !username) ? "ATTuid, Password, Port, and Ember Url are required." : "Cancel Changes"'
+			[attr.disabled]="(!emberUrl || !password || !port || !username) ? true : null"
 			class="btn btn-outline-danger" 
 			(click)="c()"
 		>

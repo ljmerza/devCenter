@@ -25,31 +25,36 @@ def start_server(host, app, jira_obj, crucible_obj):
 		'''
 		cred_hash = request.headers.get('Authorization')
 		# if POST request and we dont have creds then just abort request
-		if request.method == 'POST' and not cred_hash:
+		if not cred_hash:
 			abort(401)
-
-		elif request.method == 'GET':
-			# if user didn't supply password then use mine for retrieving data
-			if not cred_hash:
-				username = os.environ['USER']
-				password = os.environ['PASSWORD']
-				header_value = f'{username}:{password}'
-				encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
-				cred_hash = f'Basic {encoded_header}'
-
-		# set creds to global object
-		g.cred_hash = cred_hash
+		else:
+			# set creds to global object
+			g.cred_hash = cred_hash
 
 
 	@app.after_request
 	def check_status(response):
 		'''
 		'''
-		status = 200
+
+		# if preflight then just accept
+		if request.method == 'OPTIONS':
+			return Response(status=200)
+
+		# if 
+		if response.status_code == 401:
+			return Response(json.dumps({'status': False, 'data': 'Invalid username and/or password'}), status=401, mimetype='application/json')
+		
+		status=200
+		# if we have response data then overwrite data
 		if len(response.response):
+			data = json.dumps(response.response)
+
+			# check manual status
 			if not response.response['status']:
 				status=404
-		return Response(json.dumps(response.response), status=status, mimetype='application/json')
+			# return status and data
+			return Response(data, status=status, mimetype='application/json')
 
 
 	@app.route(f"/{app_name}/jira/tickets")
