@@ -136,20 +136,28 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	_formatCommentCode(issues){
+
+		// for each issue get comments
 		return issues.data.map( issue => {
+
+			// for each comment get code pieces
 			issue.comments = issue.comments.map( comment => {
-				const splitComment = comment.comment.split('{code}');
 
-				if(splitComment.length > 1){
-					for(let i=0;i<splitComment.length-1;i++){
-						if(i%2==1){
-							splitComment[i] = splitComment[i].replace('<br>', '');
-							splitComment[i] = `<pre class='code'>${splitComment[i]}</pre>`;
-						}
+				// for each code piece if inside pre-format block then add pre element
+				// else just return unchanged comment piece
+				// finally join all pieces back to one comment and set on current comment
+				comment.comment = comment.comment.split('{code}').map( (commentPiece, index) => {
+					
+					if(index%2==1){
+						// if inside code block then wrap in pre element and
+						// remove all new line elements
+						return `<pre class='code'>${commentPiece}</pre>`.replace(/<br>/g, '');
+					} else {
+						return commentPiece;
 					}
-				}
+					
+				}).join('');
 
-				comment.comment = splitComment.join('');
 				return comment;
 			});
 

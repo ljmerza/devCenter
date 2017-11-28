@@ -1,11 +1,12 @@
 import { 
 	Component, ViewChild, ElementRef, 
-	ViewEncapsulation, Input, AfterViewInit
+	ViewEncapsulation, Input
 } from '@angular/core';
 
 import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 
 declare var hljs :any;
+declare var $ :any;
 
 @Component({
 	selector: 'app-jira-comments',
@@ -13,7 +14,7 @@ declare var hljs :any;
 	styleUrls: ['./jira-comments.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class JiraCommentsComponent implements AfterViewInit {
+export class JiraCommentsComponent {
 	modalReference;
 	openPanelIds = [];
 
@@ -26,11 +27,8 @@ export class JiraCommentsComponent implements AfterViewInit {
     		config.type = 'info';
   	}
 
-  	ngAfterViewInit(){
-  		console.log('hljs: ', hljs);
-  		// hljs.initHighlightingOnLoad();
-  	}
-
+  	/*
+  	*/
 	openCommentModal(): void {
 
 		// open certain panels
@@ -44,5 +42,13 @@ export class JiraCommentsComponent implements AfterViewInit {
 		// open modal
 		this.modalReference = this.modalService
 			.open(this.content, { windowClass: 'qa-modal' });
+
+		// highlight code needs to be triggered after modal opens
+		// so set call to initializer to back of event loop
+		setTimeout( () => {
+			$('pre').each(function(i, block) {
+				hljs.highlightBlock(block);
+			});
+		},0);
 	}
 }

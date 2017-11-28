@@ -7,7 +7,7 @@
 		</button>
 	</div>
 
-	<ngb-accordion #acc="ngbAccordion" activeIds='{{openPanelIds}}'>
+	<ngb-accordion #acc="ngbAccordion" activeIds='{{openPanelIds}}' [type]='danger' [destroyOnHide]='false'>
 
 		<ngb-panel *ngFor='let comment of comments'>
 			<!-- title -->

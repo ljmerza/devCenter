@@ -242,6 +242,7 @@ def _format_comment(comment):
 	i=1
 	new_comments = []
 	table_start = False
+	new_line = True
 
 	# for each comment line format line
 	for line in comment.split('\n'):
@@ -320,8 +321,12 @@ def _format_comment(comment):
 			link_match_format = '[https://icode'+link_match.group(1)+']'
 			line = line.replace(link_match_format, f'<a href="https://icode{link_match.group(1)}">Crucible</a>')
 
-		# add new line to comment line if
-		line+='<br>'
+		# check if we are in preformatted code to add br or not
+		if not re.match(r"{code}", line):
+			new_line = not new_line
+
+		if new_line:
+			line+='<br>'
 
 		# append everything we did to this comment's line
 		new_comments.append(line)
