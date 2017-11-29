@@ -5,11 +5,11 @@ import { UserService } from './../services/user.service';
 import { DataService } from './../services/data.service';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
+import { ConfigService } from '../services/config.service';
 
 import { LogoutComponent } from '../logout/logout.component';
 import { NgForm } from '@angular/forms';
 
-import config from '../services/config';
 declare var $ :any;
 
 @Component({
@@ -18,7 +18,6 @@ declare var $ :any;
 	styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent implements AfterContentInit {
-	config=config
 	ticketValue:string;
 
 	@ViewChild('userSetting') private userSetting;
@@ -33,6 +32,7 @@ export class NavBarComponent implements AfterContentInit {
 		private toastr: ToastrService,
 		public jira:JiraService,
 		private modalService:NgbModal,
+		public config:ConfigService, 
 		private vcr: ViewContainerRef
 	) { }
 
@@ -69,12 +69,12 @@ export class NavBarComponent implements AfterContentInit {
 
 		// if NaN then is key and go to Jira else need key from MSRP
 		if( isNaN(parseInt(formData.ticketValue)) ){
-			window.open(`${config.jiraUrl}/browse/${formData.ticketValue}`);
+			window.open(`${this.config.jiraUrl}/browse/${formData.ticketValue}`);
 			
 		} else {
 			this.jira.searchTicket(formData.ticketValue)
 			.subscribe( 
-				data => window.open(`${config.jiraUrl}/browse/${data.data}`),
+				data => window.open(`${this.config.jiraUrl}/browse/${data.data}`),
 				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 			);
 		}

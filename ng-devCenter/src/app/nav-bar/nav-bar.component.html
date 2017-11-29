@@ -25,6 +25,7 @@
 					<a class="dropdown-item" [routerLink]="['/jira', 'teamdb_ember']">TeamDB Ember</a>
 					<a class="dropdown-item" [routerLink]="['/jira', 'rocc']">ROCC Automation</a>
 					<a class="dropdown-item" [routerLink]="['/jira', 'apollo']">Apollo</a>
+					<a class="dropdown-item" [routerLink]="['/jira', 'starship']">Starship</a>
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" [routerLink]="['/jira', 'sme']">SME</a>
 					<a class="dropdown-item" [routerLink]="['/jira', 'scrum']">Scrum Board</a>
@@ -120,7 +121,7 @@
 						*ngFor='let navLink of config.beta_links'
 						class="dropdown-item" 
 						target="_blank" 
-						href="{{navLink.link}}"
+						href="{{config.betaUrl}}{{navLink.link}}"
 					>{{navLink.name}}</a>
 				</div>
 			</li>

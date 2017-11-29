@@ -23,6 +23,7 @@ import { JiraService } from './services/jira.service';
 import { DataService } from './services/data.service';
 import { UserService } from './services/user.service';
 import { ToastrService } from './services/toastr.service';
+import { ConfigService } from './services/config.service';
 
 import { WorkTimePipe } from './work-time.pipe';
 import { FooterComponent } from './footer/footer.component';
@@ -62,7 +63,7 @@ import { TicketComponent } from './ticket/ticket.component';
 		ToastModule.forRoot(),
 		NgbModule.forRoot()
 	],
-	providers: [DataService, JiraService, UserService, ToastrService],
+	providers: [DataService, JiraService, UserService, ToastrService, ConfigService],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

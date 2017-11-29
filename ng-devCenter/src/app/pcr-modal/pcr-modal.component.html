@@ -1,28 +1,41 @@
-<ng-template #pcrModal let-c="close" let-d="dismiss">
-	<div class="modal-header">
-		<h4 *ngIf="statusType === 'pass'; else titleElse" class="modal-title">PCR Pass</h4>
-		<ng-template #titleElse><h4 class="modal-title">PCR Complete</h4></ng-template>
+<ng-template #statusModal let-c="close" let-d="dismiss">
+
+	<div class="modal-header" [ngSwitch]="statusType">
+		<h4 class="modal-title">
+			<ng-template [ngSwitchCase]="'inDev'">In Development</ng-template>
+			<ng-template [ngSwitchCase]="'pass'">PCR Pass</ng-template>
+			<ng-template [ngSwitchCase]="'complete'">PCR Complete</ng-template>
+			<ng-template [ngSwitchCase]="'inQA'">In QA</ng-template>
+			<ng-template [ngSwitchCase]="'qaFail'">QA Fail</ng-template>
+			<ng-template [ngSwitchCase]="'qaPass'">QA Pass</ng-template>
+		</h4>
+
 		<button type="button" class="close" aria-label="Close" (click)="d()">
 			<span aria-hidden="true">&times;</span>
 		</button>
 	</div>
-	<div class="modal-body">
-		<p *ngIf="statusType === 'pass'; else questionElse">Would you like to PCR Pass?</p>
-		<ng-template #questionElse><p>Would you like to PCR Complete?</p></ng-template>
-	</div>
-	<div class="modal-footer">
-		<button 
-			*ngIf="statusType === 'pass'; else submitElse"
-			type="button" 
-			class="btn btn-outline-success" 
-			(click)="c('pass')">PCR Pass
-		</button>
 
-		<ng-template #submitElse><button 
-			type="button" 
-			class="btn btn-outline-primary" 
-			(click)="c('complete')">PCR Complete
-		</button></ng-template>
+	<div class="modal-body" [ngSwitch]="statusType">
+		<p>
+			<ng-template [ngSwitchCase]="'inDev'">Would you like change to 'In Development'?</ng-template>
+			<ng-template [ngSwitchCase]="'pass'">Would you like to PCR Pass?</ng-template>
+			<ng-template [ngSwitchCase]="'complete'">Would you like to PCR Complete?</ng-template>
+			<ng-template [ngSwitchCase]="'inQA'">Would you like change to 'In QA'?</ng-template>
+			<ng-template [ngSwitchCase]="'qaFail'">Would you like change to 'QA Fail'?</ng-template>
+			<ng-template [ngSwitchCase]="'qaPass'">Would you like change to 'QA Pass'?</ng-template>
+		</p>
+	</div>
+
+	<div class="modal-footer" [ngSwitch]="statusType">
+		<button type="button" class="btn btn-outline-success" (click)="c()">
+			<ng-template [ngSwitchCase]="'inDev'">In Development</ng-template>
+			<ng-template [ngSwitchCase]="'pass'">PCR Pass</ng-template>
+			<ng-template [ngSwitchCase]="'complete'">PCR Complete</ng-template>
+			<ng-template [ngSwitchCase]="'inQA'">In QA</ng-template>
+			<ng-template [ngSwitchCase]="'qaFail'">QA Fail</ng-template>
+			<ng-template [ngSwitchCase]="'qaPass'">QA Pass</ng-template>
+		</button>
 		<button type="button" class="btn btn-outline-danger" (click)="d()">Cancel</button>
 	</div>
+
 </ng-template>

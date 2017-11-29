@@ -9,7 +9,7 @@ import { NgForm } from '@angular/forms';
 
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
-import config from '../services/config';
+import { ConfigService } from './../services/config.service'
 
 @Component({
 	selector: 'app-qa-generator',
@@ -42,7 +42,8 @@ export class QaGeneratorComponent {
 		public jira:JiraService, 
 		private modalService:NgbModal, 
 		public toastr: ToastrService, 
-		public vcr: ViewContainerRef
+		public vcr: ViewContainerRef,
+		public config: ConfigService
 	) {
 		this.toastr.toastr.setRootViewContainerRef(vcr);
 	}
@@ -83,9 +84,9 @@ export class QaGeneratorComponent {
 		this.jira.generateQA(postData).subscribe(
 			response => {
 				this.toastr.showToast(`
-					<a target="_blank" href='${config.jiraUrl}/browse/${this.key}'>Jira Link</a>
+					<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>
 					<br>
-					<a target="_blank" href='${config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
+					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
 				`, 'success');
 				this.newCrucible.emit({key: this.key, crucible_id: response.data.crucible_id, changedStatus})
 			},

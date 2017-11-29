@@ -4,8 +4,8 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Observable';
 
 import { UserService } from './user.service'
+import { ConfigService } from './config.service'
 
-import config from './config'
 import { environment } from '../../environments/environment';
 
 import 'rxjs/add/operator/catch';
@@ -22,6 +22,7 @@ export class DataService {
 
 	constructor(
 		public http:HttpClient, 
+		public config:ConfigService, 
 		public user:UserService, 
 		public sanitizer: DomSanitizer
 	) { }
@@ -29,7 +30,7 @@ export class DataService {
 	/*
 	*/
 	public chatUrlSanitize(username:string): SafeUrl {
-		return this.sanitizer.bypassSecurityTrustUrl(`${config.chatUrl}/${username}`)
+		return this.sanitizer.bypassSecurityTrustUrl(`${this.config.chatUrl}/${username}`)
 	}
 
 	/*

@@ -17,7 +17,7 @@ import { JiraService } from './../services/jira.service';
 })
 export class PcrModalComponent {
 
-	@ViewChild('pcrModal') content: ElementRef;
+	@ViewChild('statusModal') content: ElementRef;
 	@Output() pcrPassEvent = new EventEmitter();
 	@Input() crucible_id;
 	@Input() key;
@@ -35,40 +35,81 @@ export class PcrModalComponent {
 
 	/*
 	*/
-	openPCRModal(statusType): void {
+	openStatusModal(statusType): void {
+		this.statusType = statusType
 
-		// check for crucible id first
-		if(!this.crucible_id){
+		// check for crucible id first for pcr pass/complete
+		if(['pass', 'complete'].includes(statusType) && !this.crucible_id){
 			this.toastr.showToast(`Missing Crucible ID. Cannot transition ${this.key}`, 'error');
 			this.pcrPassEvent.emit({key:this.key, isTransitioned: false, showToast: false});
 			return;
 		}
 
-		// save status type for template
-		this.statusType = statusType;
-
 		// open modal then on close process result
-		this.modalService.open(this.content).result.then( confirm => {
+		this.modalService.open(this.content).result.then( () => {
 
-			this.jira.pcrPass(this.crucible_id, this.user.username).subscribe( 
-				() => this.toastr.showToast('PCR Passed.', 'success'), 
-				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-			);
-
-			// if we want PCR complete then	call PCR complete API 
-			if(statusType === 'complete'){						
-				this.jira.pcrComplete(this.key, this.user.username).subscribe( 
-					() => {
-
-						// notify to remove ticket from table and show notification
-						this.pcrPassEvent.emit({key:this.key, isTransitioned: true});	
-						this.toastr.showToast('PCR Completed.', 'success');
-					},
-					error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-				);
+			switch(statusType){
+				case 'complete':
+					this.pcrComplete();
+				case 'pass':
+					this.pcrPass();
+					break;
+				case 'inDev':
+					this.inDev();
+					break;
+				case 'inQA':
+					this.inQA();
+					break;
+				case 'qaFail':
+					this.qaFail();
+					break;
+				case 'qaPass':
+					this.qaPass();
+					break;
 			}
 
+		
+		
 		}, () => this.pcrPassEvent.emit({key:this.key, isTransitioned: false}) );	
+	}
+
+	/*
+	*/
+	pcrPass() {
+		this.jira.pcrPass(this.crucible_id, this.user.username).subscribe( 
+			() => this.toastr.showToast('PCR Passed.', 'success'), 
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
+	}
+
+	/*
+	*/
+	pcrComplete() {
+		this.jira.pcrComplete(this.key, this.user.username).subscribe( 
+			() => {
+
+				// notify to remove ticket from table and show notification
+				this.pcrPassEvent.emit({key:this.key, isTransitioned: true});	
+				this.toastr.showToast('PCR Completed.', 'success');
+			},
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
+	}
+
+	inDev() {
+		console.log('indev');
+	}
+
+	inQA() {
+
+	}
+
+	qaFail() {
+
+	}
+
+	qaPass() {
+
 	}
 
 }

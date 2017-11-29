@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import config from './config';
 import { Subject } from 'rxjs/Subject';
+import { ConfigService } from './config.service';
 
 @Injectable()
 export class UserService {
@@ -13,11 +13,11 @@ export class UserService {
 	public emberPort:string;
 
 	emberBuilds:Array<Object> = [
-		{'label':'acoe', 'value':config.devUrl},
+		{'label':'acoe', 'value':this.config.devUrl},
 		{'label':'localhost', 'value':'http://localhost'}
 	];
 
-	constructor() { 
+	constructor(public config:ConfigService) { 
 		this.username = localStorage.getItem('devCenter.username') || '';
 		this.port = localStorage.getItem('devCenter.port') || '';
 		this.password = localStorage.getItem('devCenter.password') || '';

@@ -7,9 +7,7 @@ import { TimeLogComponent } from './../time-log/time-log.component';
 
 import { ToastrService } from './../services/toastr.service';
 import { JiraService } from './../services/jira.service';
-
-
-import config from '../services/config';
+import { ConfigService } from './../services/config.service'
 
 
 @Component({
@@ -18,11 +16,15 @@ import config from '../services/config';
 	styleUrls: ['./ticket.component.scss']
 })
 export class TicketComponent {
-	config=config
 	oldState; // old ticket state when changed
 	ticketDropdown; // ticket dropdown reference
 
-	constructor(public toastr: ToastrService, vcr: ViewContainerRef, public jira:JiraService) {
+	constructor(
+		public toastr: ToastrService, 
+		private vcr: ViewContainerRef, 
+		public jira: JiraService, 
+		public config: ConfigService
+	) {
 		this.toastr.toastr.setRootViewContainerRef(vcr);
 	}
 
@@ -62,16 +64,32 @@ export class TicketComponent {
 		this.ticketDropdown = ticketDropdown;
 		this.oldState = this.ticket.component || this.ticket.status;
 
-		// open QA gen
-		if(ticketDropdown.value == 'PCR - Needed'){
-			this.qaGen.openQAModal();
+		console.log('config: ', this.config);
 
+		// open status change dialog with right settings
+		
+
+		if(ticketDropdown.value == 'In Development'){
+			this.pcrModal.openStatusModal('inDev');
+
+		} else if(ticketDropdown.value == 'PCR - Needed'){
+			this.qaGen.openQAModal();
+			
 		} else if(ticketDropdown.value == 'PCR - Pass'){
 			ticketDropdown.value = 'PCR - Needed';
-			this.pcrModal.openPCRModal('pass');
+			this.pcrModal.openStatusModal('pass');
 
-		}  else if(ticketDropdown.value == 'PCR - Completed'){
-			this.pcrModal.openPCRModal('complete');
+		} else if(ticketDropdown.value == 'PCR - Completed'){
+			this.pcrModal.openStatusModal('complete');
+
+		} else if(ticketDropdown.value == 'In QA'){
+			this.pcrModal.openStatusModal('inQA');
+
+		} else if(ticketDropdown.value == 'QA Pass'){
+			this.pcrModal.openStatusModal('qaPass');
+
+		} else if(ticketDropdown.value == 'QA Fail'){
+			this.pcrModal.openStatusModal('qaFail');
 
 		} else {
 			this.ticketDropdown.value = this.oldState;

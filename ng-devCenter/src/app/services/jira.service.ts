@@ -5,8 +5,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { DataService } from './data.service';
 import { UserService } from './user.service';
-
-import config from './config';
+import { ConfigService } from './config.service'
 
 @Injectable()
 export class JiraService extends DataService {
@@ -16,10 +15,11 @@ export class JiraService extends DataService {
 	*/
 	constructor(
 		public http: HttpClient, 
+		public config:ConfigService,
 		public user:UserService, 
 		public sanitizer: DomSanitizer
 	) {
-		super(http, user, sanitizer);
+		super(http, config, user, sanitizer);
 	}
 
 
@@ -31,74 +31,79 @@ export class JiraService extends DataService {
 
 		switch(jiraListType) {
 			case 'pcr':
-				jql = config.pcr;
+				jql = this.config.pcr;
 				this.title = 'Peer Code Review';
 				break;
 
 			case 'beta':
-				jql=config.beta;
+				jql=this.config.beta;
 				this.title = 'Beta';
 				break;
 
 			case 'cr':
-				jql=config.cr;
+				jql=this.config.cr;
 				this.title = 'Code Review';
 				break;
 
 			case 'qa':
-				jql=config.qa;
+				jql=this.config.qa;
 				this.title = 'QA';
 				break;
 
 			case 'uctready':
-				jql=config.uctready;
+				jql=this.config.uctready;
 				this.title = 'UCT Ready';
 				break;
 
 			case 'allmy':
-				jql = config.allmy(this.user.username);
+				jql = this.config.allmy(this.user.username);
 				filterNumber = '11418';
 				this.title = 'All My';
 				break;
 
 			case 'allopen':
-				jql=config.allopen;
+				jql=this.config.allopen;
 				this.title = 'All Open';
 				break;
 
 			case 'teamdb_ember':
-				jql=config.teamdb_ember;
+				jql=this.config.teamdb_ember;
 				this.title = 'TeamDB Ember';
 				break;
 
 			case 'apollo':
-				jql=config.apollo;
+				jql=this.config.apollo;
 				this.title = 'Apollo';
 				break;
 
 			case 'sme':
-				jql=config.sme;
+				jql=this.config.sme;
 				this.title = 'SME';
 				break;
 
 			case 'scrum':
-				jql=config.scrum;
+				jql=this.config.scrum;
 				this.title = 'Scrum Board';
 				break;
 
 			case 'rocc':
-				jql=config.rocc;
+				jql=this.config.rocc;
 				this.title = 'ROCC Automation';
 				break;
 
+			case 'starship':
+				jql=this.config.starship;
+				this.title = 'Starship';
+				break;
+
 			default:
-				jql = config.mytickets(this.user.username);
+				jql = this.config.mytickets(this.user.username);
 				this.title = 'My Open';
 				break;
 		}
 
 
-		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${config.fields}&filter=${filterNumber}`);
+		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${this.config.fields}&filter=${filterNumber}`);
 	}
 
 	/*
