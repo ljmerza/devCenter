@@ -261,7 +261,7 @@ def _format_comment(comment, issue):
 		
 
 		# if attachments exist then search for images in comments
-		if len(issue['fields']['attachment']) > 0:
+		if 'attachment' in issue['fields']:
 			image_urls = [ x['content'] for x in issue['fields']['attachment'] ]
 
 			# find image placeholder in comment line
