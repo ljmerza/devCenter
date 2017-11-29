@@ -1,4 +1,8 @@
-import { Component, Input, ViewChild, EventEmitter, Output, ViewContainerRef } from '@angular/core';
+import { 
+	Component, Input, ViewChild, 
+	EventEmitter, Output, ViewContainerRef,
+	AfterViewInit
+} from '@angular/core';
 
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 import { JiraCommentsComponent } from './../jira-comments/jira-comments.component';
@@ -15,7 +19,7 @@ import { ConfigService } from './../services/config.service'
 	templateUrl: './ticket.component.html',
 	styleUrls: ['./ticket.component.scss']
 })
-export class TicketComponent {
+export class TicketComponent implements AfterViewInit {
 	oldState; // old ticket state when changed
 	ticketDropdown; // ticket dropdown reference
 
@@ -36,26 +40,24 @@ export class TicketComponent {
 	@ViewChild(PcrModalComponent) public pcrModal: PcrModalComponent;
 	@ViewChild(TimeLogComponent) public logWork: TimeLogComponent;
 
-	
+	ngAfterViewInit(){
+
+		// if current status not in list of statues then add to beginning
+		if( !this.ticketStates.includes(this.ticket.status) ){
+			this.ticketStates.unshift(this.ticket.status);
+		}
+	}
+
 	ticketStates = [
-		'Triage',
-		'Backlog',
-		'In Sprint',
 		'In Development',
 		'PCR - Needed',
 		'PCR - Pass',
 		'PCR - Completed',
-		'Code Review - Working',
-		'Ready for QA',
 		'In QA',
 		'QA Fail',
 		'QA Pass',
-		'Merge Code',
-		'Ready for UCT',
 		'In UCT',
 		'Ready for Release',
-		'Closed',
-		'On Hold'
 	];
 
 	/*
@@ -123,7 +125,6 @@ export class TicketComponent {
 	/*
 	*/
 	statusChangeEvent({cancel=false}):void {
-		console.log('cancel: ', cancel);
 		if(cancel) {
 			this.ticketDropdown.value = this.oldState;
 			this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
