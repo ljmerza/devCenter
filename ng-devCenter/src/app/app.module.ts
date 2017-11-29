@@ -33,6 +33,7 @@ import { PcrModalComponent } from './pcr-modal/pcr-modal.component';
 import { TimeLogComponent } from './time-log/time-log.component';
 import { LogoutComponent } from './logout/logout.component';
 import { TicketComponent } from './ticket/ticket.component';
+import { CommentFormatPipe } from './comment-format.pipe';
 
 @NgModule({
 	declarations: [
@@ -48,7 +49,8 @@ import { TicketComponent } from './ticket/ticket.component';
 		PcrModalComponent,
 		TimeLogComponent,
 		LogoutComponent,
-		TicketComponent
+		TicketComponent,
+		CommentFormatPipe
 	],
 	imports: [
 		BrowserModule,

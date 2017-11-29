@@ -99,6 +99,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	setFilterData(jiraListType:string):Subscription {
 		this.ngProgress.start();
 		this.loadingTickets = true;
+		const self=this;
 
 		// every x milliseconds get latest tickets if last ajax call finished
 		// only update if different then last ajax -> start first time immediately
@@ -113,13 +114,28 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 			console.log('old_tickets, new_tickets: ', old_tickets, new_tickets);
 
+			// get old and new data we need to compare
 			const old_ticket_keys = old_tickets.data.map( ticket => ticket.key);
 			const new_ticket_keys = new_tickets.data.map( ticket => ticket.key);
 
-			var difference = old_ticket_keys.filter( x => !(new Set(new_ticket_keys.has(x))) );
+			const difference_old = old_ticket_keys.filter( x => !(new Set(new_ticket_keys).has(x)) );
+			const difference_new = new_ticket_keys.filter( x => !(new Set(old_ticket_keys).has(x)) );
 
-			console.log(old_tickets.data, new_tickets.data, difference)
-			return JSON.stringify(old_tickets.data) === JSON.stringify(new_tickets.data)
+			console.log('difference_new, difference_old: ', difference_new, difference_old);
+
+			difference_old.forEach( key => {
+				self.toastr.showToast(`Ticket ${key} was removed`, 'info');
+			});
+
+			difference_new.forEach( key => {
+				self.toastr.showToast(`Ticket ${key} was added`, 'info');
+			});
+
+			if(difference_new.length > 0 || difference_old.length > 0){
+				return false;
+			} else {
+				return true;
+			}
 		})
 		.subscribe( 
 			issues => {
@@ -146,7 +162,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				// for each code piece if inside pre-format block then add pre element
 				// else just return unchanged comment piece
 				// finally join all pieces back to one comment and set on current comment
-				comment.comment = comment.comment.split('{code}').map( (commentPiece, index) => {
+				comment.comment = comment.comment.split(/{code}|{noformat}/).map( (commentPiece, index) => {
 					
 					if(index%2==1){
 						// if inside code block then wrap in pre element and

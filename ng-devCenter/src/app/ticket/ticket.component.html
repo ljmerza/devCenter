@@ -72,7 +72,7 @@
 </app-time-log>
 
 <app-pcr-modal 
-	(pcrPassEvent)="pcrPassEvent($event)" 
+	(statusChangeEvent)="statusChangeEvent($event)" 
 	[crucible_id]=ticket.crucible_id 
 	[key]=ticket.key>
 </app-pcr-modal>

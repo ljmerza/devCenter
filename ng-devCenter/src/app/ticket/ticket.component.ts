@@ -49,6 +49,7 @@ export class TicketComponent {
 		'Ready for QA',
 		'In QA',
 		'QA Fail',
+		'QA Pass',
 		'Merge Code',
 		'Ready for UCT',
 		'In UCT',
@@ -64,11 +65,8 @@ export class TicketComponent {
 		this.ticketDropdown = ticketDropdown;
 		this.oldState = this.ticket.component || this.ticket.status;
 
-		console.log('config: ', this.config);
 
 		// open status change dialog with right settings
-		
-
 		if(ticketDropdown.value == 'In Development'){
 			this.pcrModal.openStatusModal('inDev');
 
@@ -124,19 +122,14 @@ export class TicketComponent {
 
 	/*
 	*/
-	pcrPassEvent({key, isTransitioned, showToast=true}):void {
-
-		// if successful transition then reload table
-		if(isTransitioned){
-			this.rerender.emit();
-
-		} else {
-			// else revert status change
+	statusChangeEvent({cancel=false}):void {
+		console.log('cancel: ', cancel);
+		if(cancel) {
 			this.ticketDropdown.value = this.oldState;
-			if(showToast) {
-				this.toastr.showToast(`Ticket status change cancelled for ${key}`, 'info');
-			}
+			this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
 		}
+
+		this.rerender.emit();
 	}
 
 }

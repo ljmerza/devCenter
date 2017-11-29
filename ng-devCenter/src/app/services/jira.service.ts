@@ -86,6 +86,11 @@ export class JiraService extends DataService {
 				this.title = 'Scrum Board';
 				break;
 
+			case 'fullscrum':
+				jql=this.config.fullScrum;
+				this.title = 'Full Scrum Board';
+				break;
+
 			case 'rocc':
 				jql=this.config.rocc;
 				this.title = 'ROCC Automation';
@@ -94,6 +99,10 @@ export class JiraService extends DataService {
 			case 'starship':
 				jql=this.config.starship;
 				this.title = 'Starship';
+				break;
+			case 'pm':
+				jql=this.config.pmTickets;
+				this.title = 'PM';
 				break;
 
 			default:
@@ -171,9 +180,17 @@ export class JiraService extends DataService {
 	/*
 	*/
 	workLog(postData): Observable<any> {
-
 		return super.postAPI({
 			url: `${this.apiUrl}/jira/worklog`,
+			body: postData
+		});
+	}
+
+	/*
+	*/
+	changeStatus(postData): Observable<any> {
+		return super.postAPI({
+			url: `${this.apiUrl}/jira/status`,
 			body: postData
 		});
 	}

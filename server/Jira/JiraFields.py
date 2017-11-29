@@ -219,7 +219,7 @@ def get_comments(issue):
 			comment_type = True
 
 		comments.append({
-			'comment': _format_comment( comment.get('body', '') ),
+			'comment': _format_comment( comment=comment.get('body', ''), issue=issue ),
 			'id': comment.get('id', ''),
 			'key': issue.get('key', ''),
 			'username': comment.get('author', {}).get('name', ''),
@@ -230,11 +230,12 @@ def get_comments(issue):
 		})
 	return comments
 
-def _format_comment(comment):
+def _format_comment(comment, issue):
 	'''formats a comment into HTML view
 
 	Args:
 		comment (str) Jira comment to format
+		issue (dict) a Jira issue object
 
 	Returns:
 		formatted comment
@@ -255,6 +256,28 @@ def _format_comment(comment):
 		# else if sub QA step add spacing
 		if '#* ' in line:
 			line = line.replace('#* ', '&nbsp;&nbsp;&nbsp;-&nbsp;')
+
+		# replace any images
+		
+
+		# if attachments exist then search for images in comments
+		if len(issue['fields']['attachment']) > 0:
+			image_urls = [ x['content'] for x in issue['fields']['attachment'] ]
+
+			# find image placeholder in comment line
+			match = re.search(r'!(.*?)!', line)
+			if match:
+				# if found split by thumbnail and replace
+				# image placeholders with image elements
+				m=match.group(0).split('|')
+
+				# for each filename found go through each image and find match
+				for filename in m:
+					filename = filename.replace('!', '')
+					for image_url in image_urls:
+						# if matc hthen replace image placeholder with image element
+						if filename in image_url:
+							line = line.replace(match.group(0), f'<img class="rounded mx-auto d-block comment-image" src="{image_url}">')
 
 		# else if heading add header element
 		match = re.search(r'h[0-9]{1}. ', line)

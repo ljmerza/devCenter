@@ -15,9 +15,11 @@ export class ConfigService {
 	teamdb_ember = 'labels%3DNewGUI';
 	apollo = '"Epic%20Link"%20%3D%20Apollo%20and%20status%20!%3D%20closed';
 	sme = '(sprint%20in%20(3187%2C%203183%2C%203182%2C%203676%2C%203185%2C%203180%2C%203684%2C%203186%2C%203432%2C%203968)%20OR%20assignee%20in%20(dh6094%2C%20bb486m%2C%20cc216t%2C%20jc001b%2C%20bp215n%2C%20tt0163%2C%20sm6821%2C%20br591w%2C%20sr6855%2C%20na0952))%20AND%20status%20!%3D%20closed';
-	scrum = 'project%20in%20(AQE%2C%20"Desktop%20Integration"%2C%20TeamDB%2C%20TQI%2C%20"Unified%20Desktop"%2C%20UPM%2C%20WAM)%20AND%20status%20!%3D%20closed';
+	fullScrum = 'project%20in%20(AQE%2C%20"Desktop%20Integration"%2C%20TeamDB%2C%20TQI%2C%20"Unified%20Desktop"%2C%20UPM%2C%20WAM)%20AND%20status%20!%3D%20closed';
+	scrum='project%20%3D%20BDEUT%20AND%20status%20!%3D%20closed';
 	rocc =  '"Epic%20Link"%20%3D%20%27ROCC%27';
 	starship = '"epic%20link"%3D%20starship';
+	pmTickets = 'resolution%20%3D%20Unresolved%20AND%20assignee%20in%20(ep759g%2C%20wc591w%2C%20lk2973)';
 
 	allmy(username){
 		return `assignee%20%3D%20${username}%20ORDER%20BY%20updated%20DESC`;
@@ -39,7 +41,7 @@ export class ConfigService {
 
 	chatUrl = 'qto://talk';
 
-	fields = 'customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate,comment,updated,created,customfield_10102,customfield_10175,customfield_10103,customfield_10602';
+	fields = 'attachment,customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate,comment,updated,created,customfield_10102,customfield_10175,customfield_10103,customfield_10602';
 
 	jiraPath = '/secure/Dashboard.jspa';
 	cruciblePath = '/cru/browse/CR-UD';
@@ -140,11 +142,19 @@ export class ConfigService {
 		},
 		{
 			link: 'order/ethernet/SWC246312001',
-			name: 'SWC246312001 (xlata data)'
+			name: 'SWC246312001 (xlata)'
 		},
 		{
 			link: 'order/ethernet/LBS065263001',
-			name: 'LBS065263001 (EvcMultiPointSite data)'
+			name: 'LBS065263001 (EvcMultiPointSite)'
+		},
+		{
+			link: 'order/ethernet/ORC338494001',
+			name: 'ORC338494001 (timeline)'
+		},
+		{
+			link: 'order/ethernet/SAS118018001',
+			name: 'SAS118018001 (OSSCN)'
 		},
 		{
 			link: 'order/ethernet/ARC167777001',
@@ -169,6 +179,11 @@ export class ConfigService {
 		{
 			link: 'order/ethernet/NOS193664001',
 			name: 'NOS193664001'
+		}
+		,
+		{
+			link: 'order/ethernet/LBS065460001',
+			name: 'LBS065460001'
 		}
 	];
 

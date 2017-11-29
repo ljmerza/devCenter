@@ -42,6 +42,7 @@ export class DataService {
 	/*
 	*/
 	public postAPI(args): Observable<any> {
+		console.log('args: ', args);
 		return this.http.post(args.url, args.body, { headers: this.createHeaders() })
 	}
 
@@ -67,7 +68,6 @@ export class DataService {
 	/*
 	*/
 	public processErrorResponse(response:HttpErrorResponse): string {
-		console.log('response: ', response);
 		return response.error.data || response.message || response.error;
 	}
 }

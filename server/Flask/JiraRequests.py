@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 from Flask import FlaskUtils
 
 
@@ -10,6 +9,26 @@ def set_pcr_complete(data, jira_obj):
 		return {"data": "Missing required parameters: "+ missing_params, "status": False}
 	# PCR complete jira ticket
 	return jira_obj.set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
+
+
+def set_status(data, jira_obj):
+	# check for required data
+	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','key'])
+	if missing_params:
+		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+
+	if data['status'] == 'inDev':
+		return jira_obj.set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status'] == 'inQA':
+		return jira_obj.set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status'] == 'qaPass':
+		return jira_obj.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
+		return jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status'] == 'qaFail':
+		return jira_obj.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
+	else:
+		return {"status": False, "data": 'Invalid status name'}
+
 
 def transition_to_cr(data, jira_obj):
 	'''

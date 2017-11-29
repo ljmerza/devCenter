@@ -254,6 +254,20 @@ def start_server(host, app, jira_obj, crucible_obj):
 		return Response(data, mimetype='application/json')
 
 
+	@app.route(f'/{app_name}/jira/status', methods=['POST'])
+	@cross_origin()
+	def change_status():
+		post_data = request.get_json()
+		data = {
+			"cred_hash": g.cred_hash,
+			"key": post_data.get('key', ''),
+			"status": post_data.get('status', '')
+		}
+
+		data = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+		return Response(data, mimetype='application/json')
+
+
 
 	# start server
 	app.run(host=host, port=port)

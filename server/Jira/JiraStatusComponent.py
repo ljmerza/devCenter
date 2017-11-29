@@ -68,7 +68,7 @@ class JiraStatusComponent(JiraAPI):
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-		return self._set_status(key=key, name='In Development', cred_hash=cred_hash)
+		return self._set_status(key=key, transition_id=551, cred_hash=cred_hash)
 
 	def set_pcr_needed(self, key, cred_hash):
 		'''sets a jira issue to the PCR Needed component
@@ -128,7 +128,7 @@ class JiraStatusComponent(JiraAPI):
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-		return self._set_status(key=key, name='Ready for QA', cred_hash=cred_hash)
+		return self._set_status(key=key, transition_id=71, cred_hash=cred_hash)
 
 	def set_in_qa(self, key, cred_hash):
 		'''sets a jira issue to the In QA status
@@ -140,10 +140,10 @@ class JiraStatusComponent(JiraAPI):
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-		return self._set_status(key=key, name='In QA', cred_hash=cred_hash)
+		return self._set_status(key=key, transition_id=541, cred_hash=cred_hash)
 
-	def set_ready_uct(self, key):
-		'''sets a jira issue to the Ready For UCT status
+	def set_qa_pass(self, key, cred_hash):
+		'''sets a jira issue to the QA Pass status
 
 		Args:
 			key (str) the jira issue key to update
@@ -152,7 +152,19 @@ class JiraStatusComponent(JiraAPI):
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-		return self._set_status(key=key, name='Ready for UCT')
+		return self._set_status(key=key, transition_id=191, cred_hash=cred_hash)
+
+	def set_qa_fail(self, key, cred_hash):
+		'''sets a jira issue to the QA Fail status
+
+		Args:
+			key (str) the jira issue key to update
+			cred_hash (str) Authorization header value
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._set_status(key=key, transition_id=171, cred_hash=cred_hash)
 
 	def set_merge_code(self, key, cred_hash):
 		'''sets a jira issue to the Merge Code component
@@ -188,7 +200,7 @@ class JiraStatusComponent(JiraAPI):
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-		return self._set_status(key=key, name='In UCT')
+		return self._set_status(key=key, transition_id=561)
 
 	def set_uct_fail(self, key, cred_hash):
 		'''sets a jira issue to the UCT Fail component
