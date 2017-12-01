@@ -16,11 +16,8 @@ sys.path.append('Crucible')
 sys.path.append('Jira')
 sys.path.append('Flask')
 
-from Jira.Jira import Jira
-from Crucible import Crucible
 from Flask import DevCenterServer
-from Common import DevCenterSQL
-from Common.Chat import Chat
+from Common.DevCenterSQL import DevCenterSQL
 
 #################################### 
 error_log = False
@@ -41,6 +38,7 @@ beta_stat_ping_now = False
 merge_alerts = False
 
 host = '127.0.0.1'
+
 ####################################
 # allow pcr/qa pings and beta stats
 if 'beta' in sys.argv:
@@ -69,39 +67,23 @@ if 'prod' in sys.argv:
 	devdb = False
 	devbot = False
 	host = '0.0.0.0'
+	error_log = True
 
 # allow error logging
 if 'error_log' in sys.argv:
 	error_log = True
-# use dev Flask
-if 'devflk' in sys.argv:
-	devflk = True
+
 # only use flask server, one thread, debug mode for Flask
 if 'devserver' in sys.argv:
 	start_bot = False
 	start_threads = False
 	devflk = True
 
-##################################################
-# create instance for DI
-jira_obj = Jira()
-crucible_obj = Crucible()
-sql_object = DevCenterSQL.DevCenterSQL()
-chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
-##################################################
-# flask settings and start up
-root_dir = os.path.dirname(os.getcwd())
+# use prod flask server
+if 'prodflk':
+	devflk = False
 
-app = Flask(__name__, template_folder=os.path.abspath('../templates'), static_folder=os.path.abspath('../'))
-cors = CORS(app)
 
-# set CORS headers
-app.config['CORS_HEADERS'] = 'Content-Type'
-
-# set debug if we want it
-if devflk:
-	app.config['DEBUG'] = True
-	app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 #########################################################
 
@@ -116,8 +98,8 @@ def start_bots():
 		None
 	'''
 	automationBot = AutomationBot.AutomationBot(
-		is_beta_week=is_beta_week, beta_stat_ping_now=beta_stat_ping_now, error_log=error_log, 
-		jira_obj=jira_obj, crucible_obj=crucible_obj, sql_object=sql_object, chat_obj=chat_obj
+		is_beta_week=is_beta_week, beta_stat_ping_now=beta_stat_ping_now, error_log=error_log,
+		devbot=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts
 	)
 
 	while True:
@@ -148,7 +130,7 @@ if start_threads:
 				start_bots()
 		else:
 			if start_server:
-				DevCenterServer.start_server(host=host, app=app, jira_obj=jira_obj, crucible_obj=crucible_obj)
+				DevCenterServer.start_server(devflk=devflk, host=host)
 
 	else:
 		# else use threading
@@ -156,11 +138,11 @@ if start_threads:
 			t = multiprocessing.Process(target=start_bots)
 			t.start()
 		if start_server:
-			DevCenterServer.start_server(host=host, app=app, jira_obj=jira_obj, crucible_obj=crucible_obj)
+			DevCenterServer.start_server(devflk=devflk, host=host)
 
 else:
 	# else only allow single thread/process
 	if start_server:
-		DevCenterServer.start_server(host=host, app=app, jira_obj=jira_obj, crucible_obj=crucible_obj)
+		DevCenterServer.start_server(devflk=devflk, host=host)
 	if start_bot:
 		start_bots()

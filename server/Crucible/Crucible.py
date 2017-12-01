@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import time
+import sys
 
 from CruciblePCR import CruciblePCR
 from CrucibleRepoBranch import CrucibleRepoBranch

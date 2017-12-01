@@ -448,6 +448,10 @@ export class ConfigService {
 			name: 'API Catalog',
 			link: 'http://apicatalog.web.att.com/'
 		},
+		{
+			name: 'Regex Explorer',
+			link: 'https://regex101.com/'
+		},
 	];
 
 }

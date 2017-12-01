@@ -2,6 +2,7 @@
 
 import re
 import math
+import sys
 
 from CrucibleAPI import CrucibleAPI
 

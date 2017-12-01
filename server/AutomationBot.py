@@ -7,20 +7,33 @@ import base64
 import logging
 import time
 import threading
+import sys
 
-from Jira.JiraFields import *
+sys.path.append('Common')
+sys.path.append('Crucible')
+sys.path.append('Jira')
+sys.path.append('Flask')
+
+from JiraFields import *
+from Jira import Jira
+from Crucible import Crucible
+from DevCenterSQL import DevCenterSQL
+from Chat import Chat
 
 
 class AutomationBot(object):
 	'''Handles Scraping data from Jira and Crucible to Store in DB and handle any ping notifications'''
 
-	def __init__(self, is_beta_week, beta_stat_ping_now, error_log, crucible_obj, jira_obj, sql_object, chat_obj):
+	def __init__(self, is_beta_week, beta_stat_ping_now, error_log, devbot, is_qa_pcr, merge_alerts):
 		'''
 
 		Args:
 			is_beta_week (boolean) 
 			beta_stat_ping_now (boolean) 
 			error_log (boolean) 
+			devbot (boolean) 
+			is_qa_pcr (boolean) 
+			merge_alerts (boolean) 
 
 		Returns:
 
@@ -34,10 +47,10 @@ class AutomationBot(object):
 		self.error_log = error_log
 		################################################################################
 		# create DB object and connect
-		self.sql_object = sql_object
-		self.jira_obj = jira_obj
-		self.crucible_obj = crucible_obj
-		self.chat_obj = chat_obj
+		self.sql_object = DevCenterSQL()
+		self.jira_obj = Jira()
+		self.crucible_obj = Crucible()
+		self.chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
 		################################################################################
 		self.beta_wait_time = 300 # how many times to wait for beta message
 		 # how many times we've waited for beta message - start off with a message
@@ -64,7 +77,7 @@ class AutomationBot(object):
 		Returns:
 			
 		'''
-
+		print('test')
 		try:
 			start_get = time.time()
 

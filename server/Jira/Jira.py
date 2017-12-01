@@ -1,10 +1,17 @@
 #!/usr/bin/python3
 
-from JiraStatusComponent import JiraStatusComponent
-import JiraFields
-import JiraUtils
-
 from time import gmtime, strftime
+import sys
+
+sys.path.append('Common')
+sys.path.append('Crucible')
+sys.path.append('Jira')
+sys.path.append('Flask')
+
+from JiraStatusComponent import JiraStatusComponent
+from JiraFields import *
+from JiraUtils import *
+
 
 class Jira(JiraStatusComponent):
 	'''Jira class for getting data from the Jira API'''
@@ -38,6 +45,7 @@ class Jira(JiraStatusComponent):
 		return {'status': True, 'data': response['data']['searchUrl'] }
 
 	def get_raw_jira_tickets(self, cred_hash, start_at=0, max_results=1000, fields='', jql='', filter_number=''):
+		print(cred_hash)
 		'''returns the raw data from the Jira API of all Jira tickets from a filter number
 
 		Args:
@@ -110,39 +118,39 @@ class Jira(JiraStatusComponent):
 			ticket = {}
 
 			# get key
-			ticket['key'] = JiraFields.get_key(issue)
+			ticket['key'] = get_key(issue)
 			# get msrp
-			ticket['msrp'] = JiraFields.get_msrp(issue)
+			ticket['msrp'] = get_msrp(issue)
 
 			# get summary
-			ticket['summary'] = JiraFields.get_summary(issue)
+			ticket['summary'] = get_summary(issue)
 			# get username
-			ticket['username'] = JiraFields.get_username(issue)
+			ticket['username'] = get_username(issue)
 
 			# get component
-			ticket['component'] = JiraFields.get_component(issue)
+			ticket['component'] = get_component(issue)
 			# get status
-			ticket['status'] = JiraFields.get_status(issue)
+			ticket['status'] = get_status(issue)
 
 			# get story points
-			ticket['story_point'] = JiraFields.get_story_point(issue)
+			ticket['story_point'] = get_story_point(issue)
 			# get sprint
-			ticket['sprint']  = JiraFields.get_sprint(issue)
+			ticket['sprint']  = get_sprint(issue)
 			
 			# get epic link
-			ticket['epic_link'] = JiraFields.get_epic_link(issue)
+			ticket['epic_link'] = get_epic_link(issue)
 			# get label
-			ticket['label'] = JiraFields.get_label(issue)
+			ticket['label'] = get_label(issue)
 
 			# get comments and QA steps
-			ticket['comments'] = JiraFields.get_comments(issue)
-			ticket['qa_steps'] = JiraFields.get_qa_steps(issue)
+			ticket['comments'] = get_comments(issue)
+			ticket['qa_steps'] = get_qa_steps(issue)
 
-			ticket['customer_details'] = JiraFields.get_customer_details(issue)
-			ticket['severity'] = JiraFields.get_severity(issue)
-			ticket['dates'] = JiraFields.get_dates(issue)
+			ticket['customer_details'] = get_customer_details(issue)
+			ticket['severity'] = get_severity(issue)
+			ticket['dates'] = get_dates(issue)
 
-			ticket['crucible_id'] = JiraFields.get_crucible_id(issue)
+			ticket['crucible_id'] = get_crucible_id(issue)
 
 			# add ticket to response
 			response['data'].append(ticket)
@@ -249,7 +257,7 @@ class Jira(JiraStatusComponent):
 		return self.post_json(url=f'{self.api_base}/issue/{key}/worklog', json_data={"timeSpent":time}, cred_hash=cred_hash)
 
 	def generate_qa_template(self, qa_steps, repos, crucible_id):
-		return JiraUtils.generate_qa_template(qa_steps, repos, crucible_id)
+		return generate_qa_template(qa_steps, repos, crucible_id)
 		
 	
 

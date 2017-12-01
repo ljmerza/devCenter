@@ -12,11 +12,33 @@ import base64
 import JiraRequests
 import CrucibleRequests
 
+from Jira import Jira
+from Crucible import Crucible
 
-def start_server(host, app, jira_obj, crucible_obj):
+
+def start_server(devflk, host):
 
 	app_name = 'dev_center'
 	port = 5858
+
+	##################################################
+	# create instance for DI
+	jira_obj = Jira()
+	crucible_obj = Crucible()
+	##################################################
+	# flask settings and start up
+	root_dir = os.path.dirname(os.getcwd())
+
+	app = Flask(__name__, template_folder=os.path.abspath('../templates'), static_folder=os.path.abspath('../'))
+	cors = CORS(app)
+
+	# set CORS headers
+	app.config['CORS_HEADERS'] = 'Content-Type'
+
+	# set debug if we want it
+	if devflk:
+		app.config['DEBUG'] = True
+		app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
 	@app.before_request

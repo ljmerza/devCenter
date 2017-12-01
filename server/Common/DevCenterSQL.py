@@ -5,7 +5,7 @@ import logging
 import sys
 import time
 
-from . import SQLModels
+from Common import SQLModels
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
