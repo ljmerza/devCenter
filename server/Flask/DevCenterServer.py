@@ -11,10 +11,11 @@ import base64
 
 import JiraRequests
 import CrucibleRequests
+import CommonRequests
 
 from Jira import Jira
 from Crucible import Crucible
-
+from DevCenterSQL import DevCenterSQL
 
 def start_server(devflk, host):
 
@@ -25,6 +26,7 @@ def start_server(devflk, host):
 	# create instance for DI
 	jira_obj = Jira()
 	crucible_obj = Crucible()
+	sql_object = DevCenterSQL()
 	##################################################
 	# flask settings and start up
 	root_dir = os.path.dirname(os.getcwd())
@@ -287,6 +289,21 @@ def start_server(devflk, host):
 		}
 
 		data = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+		return Response(data, mimetype='application/json')
+
+
+	@app.route(f'/{app_name}/chat/set_ping', methods=['POST'])
+	@cross_origin()
+	def update_ping():
+		post_data = request.get_json()
+		data = {
+			"cred_hash": g.cred_hash,
+			"key": post_data.get('key', ''),
+			"field": post_data.get('field', ''),
+			"value": post_data.get('value', '')
+		}
+
+		data = CommonRequests.update_ping(data=data, sql_object=sql_object)
 		return Response(data, mimetype='application/json')
 
 

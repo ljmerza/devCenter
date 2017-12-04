@@ -45,7 +45,6 @@ class Jira(JiraStatusComponent):
 		return {'status': True, 'data': response['data']['searchUrl'] }
 
 	def get_raw_jira_tickets(self, cred_hash, start_at=0, max_results=1000, fields='', jql='', filter_number=''):
-		print(cred_hash)
 		'''returns the raw data from the Jira API of all Jira tickets from a filter number
 
 		Args:

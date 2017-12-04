@@ -45,7 +45,7 @@ class DevCenterSQL():
 		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}', echo=self.debug)
 		self.inspector = inspect(engine)
 		# create DB session
-		self.Session = sessionmaker(bind=engine)
+		self.Session = sessionmaker(bind=engine, autoflush=False)
 
 	def login(self):
 		'''logs into the SQL DB
@@ -177,7 +177,10 @@ class DevCenterSQL():
 		row = session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
 		if row:
 			setattr(row, field, value)
-			return session.commit()
+			session.commit()
+			return {'status': True }
+		else:
+			{'status': False, 'data': f'DevCenterSQL::update_ping::Could not find key {key} to change {field} to {value}'}
 				
 	def get_user_ping_value(self, username, field, session):
 		'''get a user's ping value for a particular field type

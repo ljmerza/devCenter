@@ -77,7 +77,6 @@ class AutomationBot(object):
 		Returns:
 			
 		'''
-		print('test')
 		try:
 			start_get = time.time()
 

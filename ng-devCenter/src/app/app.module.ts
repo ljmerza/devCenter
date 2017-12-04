@@ -34,6 +34,7 @@ import { TimeLogComponent } from './time-log/time-log.component';
 import { LogoutComponent } from './logout/logout.component';
 import { TicketComponent } from './ticket/ticket.component';
 import { CommentFormatPipe } from './comment-format.pipe';
+import { SetPingsComponent } from './set-pings/set-pings.component';
 
 @NgModule({
 	declarations: [
@@ -50,7 +51,8 @@ import { CommentFormatPipe } from './comment-format.pipe';
 		TimeLogComponent,
 		LogoutComponent,
 		TicketComponent,
-		CommentFormatPipe
+		CommentFormatPipe,
+		SetPingsComponent
 	],
 	imports: [
 		BrowserModule,

@@ -1,0 +1,14 @@
+<ng-template #pingModal let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title">Reset Chat Pings</h4>
+		<button type="button" class="close" aria-label="Close" (click)="d()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-success" (click)="c('new_ping')">Reset New Ping</button>
+		<button type="button" class="btn btn-outline-success" (click)="c('merge_ping')">Reset Merge Ping</button>
+		<button type="button" class="btn btn-outline-danger" (click)="d()">Cancel</button>
+	</div>
+</ng-template>

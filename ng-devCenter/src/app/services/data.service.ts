@@ -42,7 +42,6 @@ export class DataService {
 	/*
 	*/
 	public postAPI(args): Observable<any> {
-		console.log('args: ', args);
 		return this.http.post(args.url, args.body, { headers: this.createHeaders() })
 	}
 

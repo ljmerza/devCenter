@@ -96,7 +96,6 @@ export class PcrModalComponent {
 	changeStatus(statusType) {
 		this.jira.changeStatus({key:this.key, status:statusType})
 		.subscribe(
-
 			() => {
 				this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
 				this.statusChangeEvent.emit({transitionType: statusType});

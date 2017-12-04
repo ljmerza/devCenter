@@ -8,6 +8,7 @@ import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 import { JiraCommentsComponent } from './../jira-comments/jira-comments.component';
 import { PcrModalComponent } from './../pcr-modal/pcr-modal.component';
 import { TimeLogComponent } from './../time-log/time-log.component';
+import { SetPingsComponent } from './../set-pings/set-pings.component';
 
 import { ToastrService } from './../services/toastr.service';
 import { JiraService } from './../services/jira.service';
@@ -39,6 +40,7 @@ export class TicketComponent implements AfterViewInit {
 	@ViewChild(JiraCommentsComponent) public jiraComments: JiraCommentsComponent;
 	@ViewChild(PcrModalComponent) public pcrModal: PcrModalComponent;
 	@ViewChild(TimeLogComponent) public logWork: TimeLogComponent;
+	@ViewChild(SetPingsComponent) public setPing: SetPingsComponent;
 
 	ngAfterViewInit(){
 
@@ -131,6 +133,14 @@ export class TicketComponent implements AfterViewInit {
 		}
 
 		this.rerender.emit();
+	}
+
+	resetPing(){
+		this.jira.setPing({
+			key: this.ticket.key,
+			field: 'new_ping',
+			value: 0
+		}).subscribe( response => console.log('response: ', response));
 	}
 
 }

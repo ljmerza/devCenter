@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import AutomationBot
-import multiprocessing
+import threading
 import os
 import time
 import datetime
@@ -21,7 +21,7 @@ from Common.DevCenterSQL import DevCenterSQL
 
 #################################### 
 error_log = False
-devflk = False
+devflk = True
 
 # default to dev chat and db
 devbot = True
@@ -73,11 +73,10 @@ if 'prod' in sys.argv:
 if 'error_log' in sys.argv:
 	error_log = True
 
-# only use flask server, one thread, debug mode for Flask
+# only use flask server on one thread
 if 'devserver' in sys.argv:
 	start_bot = False
 	start_threads = False
-	devflk = True
 
 # use prod flask server
 if 'prodflk':
@@ -135,10 +134,11 @@ if start_threads:
 	else:
 		# else use threading
 		if start_bot:
-			t = multiprocessing.Process(target=start_bots)
-			t.start()
+			thr = threading.Thread(target=start_bots)
+			thr.start()
 		if start_server:
-			DevCenterServer.start_server(devflk=devflk, host=host)
+			thr = threading.Thread(target=DevCenterServer.start_server, kwargs={'devflk':devflk, 'host':host})
+			thr.start()
 
 else:
 	# else only allow single thread/process

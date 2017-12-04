@@ -22,7 +22,6 @@ class Chat(object):
 		##########################################################
 		self.apex_chat = os.environ['CHAT_APEX']
 		self.dti_chat = os.environ['CHAT_DTI']
-		self.test_chat = os.environ['CHAT_TEST']
 		self.jira_chat = os.environ['CHAT_JIRA']
 		##########################################################
 		self.chat_url = os.environ['CHAT_URL']
@@ -343,8 +342,9 @@ class Chat(object):
 			None
 		'''
 		# if in debug mode then send all messages to me
-		if(self.debug):
+		if self.debug:
 			username = self.username
+			message = '--DEBUG--'+message
 		# make POST request
 		requests.post(f"{self.chat_api}/{username}", data=message, auth=HTTPBasicAuth(self.bot_name, self.bot_password))
 
@@ -360,7 +360,7 @@ class Chat(object):
 		'''
 		# if in debug mode then send all message to test chatroom
 		if self.debug:
-			chatroom = self.test_chat
+			message = '--DEBUG--'+message
 		# make POST request
 		requests.post(f"{self.chat_api_chatroom}{chatroom}", data=message, auth=HTTPBasicAuth(self.bot_name, self.bot_password))
 

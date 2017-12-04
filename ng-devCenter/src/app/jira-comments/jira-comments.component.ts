@@ -28,8 +28,12 @@ export class JiraCommentsComponent {
   	*/
 	openCommentModal(): void {
 
-		// open all panels
-		this.openPanelIds = this.comments.map((c,i) => `ngb-panel-${i}`);
+		// open all panels if less than 6 else open last three
+		this.openPanelIds = this.comments.map((c,i) => {
+			if(this.comments.length<6 || (this.comments.length>6 && i>this.comments.length-4)){
+				return `${this.key}${i}`;
+			}
+		});
 
 		// open modal
 		this.modalReference = this.modalService

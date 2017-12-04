@@ -1,10 +1,19 @@
 <td>
-	<a target="_blank" 
-		href="{{config.jiraUrl}}/browse/{{ticket.key}}"
-		title='Open ticket in Jira'
-	>
-		{{ticket.key}}
-	</a>
+	
+	<div class='float-left'>
+		<a target="_blank" 
+			href="{{config.jiraUrl}}/browse/{{ticket.key}}"
+			title='Open ticket in Jira'
+		>{{ticket.key}}
+		</a>
+	</div>
+	<div class="float-right">
+		<i 
+			(click)="setPing.openPingModel()" 
+			class="material-icons"
+			title='Reset pings'
+		>record_voice_over</i>
+	</div>
 </td>
 <td>
 	<div class='float-left'>{{ticket.msrp}}</div>
@@ -20,8 +29,6 @@
 			title='View comments'
 		>storage</i>
 	</div>
-	
-	
 </td>
 <td class='summary-format'>{{ticket.summary}}</td>
 <td>
@@ -88,3 +95,6 @@
 	[key]=ticket.key 
 	[comments]=ticket.comments>
 </app-jira-comments>
+
+<app-set-pings [key]=ticket.key>
+</app-set-pings>

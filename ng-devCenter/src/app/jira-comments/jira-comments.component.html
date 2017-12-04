@@ -9,7 +9,7 @@
 
 	<ngb-accordion #acc="ngbAccordion" activeIds='{{openPanelIds}}' [type]='danger' [destroyOnHide]='false'>
 
-		<ngb-panel *ngFor='let comment of comments'>
+		<ngb-panel *ngFor='let comment of comments; index as i' [id]="key+i">
 			<!-- title -->
 			<ng-template ngbPanelTitle>
 				{{comment.display_name}}
