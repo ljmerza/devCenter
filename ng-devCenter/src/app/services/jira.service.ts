@@ -202,4 +202,10 @@ export class JiraService extends DataService {
 		});
 	}
 
+	/*
+	*/
+	getProfile(): Observable<any> {
+		return super.getAPI(`${this.apiUrl}/jira/profile`);
+	}
+
 }

@@ -23,6 +23,9 @@ class JiraAPI(DevCenterAPI):
 		self.crcible_review = f'{self.crucible_url}/cru/'
 		self.api_base = f'{self.jira_url}/rest/api/2'
 
+		self.jira_search_url = f'{self.jira_url}/rest/api/2/search'
+		self.fields = 'customfield_10109,comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,label,fixVersions,duedate,created,updated,customfield_10108,customfield_10102,customfield_10175,customfield_10103,customfield_10602,timetracking,labels'
+
 	def post(self, url, cred_hash, data=''):
 		'''sends a POST request
 

@@ -1,6 +1,8 @@
 import { Component, AfterContentInit, ViewChild } from '@angular/core';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from './../services/user.service'
+import { JiraService } from './../services/jira.service';
+import { ToastrService } from './../services/toastr.service';
 
 @Component({
 	selector: 'app-user-settings',
@@ -15,7 +17,12 @@ export class UserSettingsComponent implements AfterContentInit {
 
 	@ViewChild('content') private content;
 
-	constructor(private modalService: NgbModal, private user: UserService) {
+	constructor(
+		private modalService: NgbModal, 
+		private user: UserService, 
+		private jira: JiraService, 
+		private toastr: ToastrService
+	) {
 		this.username = user.username
 		this.password = user.password
 		this.port = user.port
@@ -25,6 +32,14 @@ export class UserSettingsComponent implements AfterContentInit {
 	ngAfterContentInit() {
 		if( this.user.requireCredentials() ){
 			this.openUserSettings();
+		} else {
+			this.jira.getProfile().subscribe(
+				response => {
+					this.user.userData = response.data;
+					this.user.userPicture = response.data.avatarUrls['24x24'];
+			},
+				error => this.toastr.showToast(`Could not retrieve user profile ${error}`,'error')
+			)
 		}
 	}
 

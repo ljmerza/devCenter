@@ -24,7 +24,7 @@ from Chat import Chat
 class AutomationBot(object):
 	'''Handles Scraping data from Jira and Crucible to Store in DB and handle any ping notifications'''
 
-	def __init__(self, is_beta_week, beta_stat_ping_now, error_log, devbot, is_qa_pcr, merge_alerts):
+	def __init__(self, is_beta_week, beta_stat_ping_now, error_log, devbot, is_qa_pcr, merge_alerts, devdb, sql_echo):
 		'''
 
 		Args:
@@ -40,14 +40,11 @@ class AutomationBot(object):
 		'''
 		self.username = os.environ['USER']
 		self.password = os.environ['PASSWORD']
-		self.jira_url= os.environ['JIRA_URL']
 		self.filters = {'my_filter':"11502", 'beta':'11004', 'qa':'11019', 'cr':'11007', 'uct':'11014', 'all':'11002', 'pcr':'11128'}
-		self.bot_name = os.environ['BOT_NAME']
-		self.bot_password = os.environ['BOT_PASSWORD']
 		self.error_log = error_log
 		################################################################################
 		# create DB object and connect
-		self.sql_object = DevCenterSQL()
+		self.sql_object = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
 		self.jira_obj = Jira()
 		self.crucible_obj = Crucible()
 		self.chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)

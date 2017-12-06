@@ -8,7 +8,7 @@ def set_pcr_pass(data, crucible_obj):
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# add self as reviewer
 	response = crucible_obj.add_reviewer(username=data['username'], crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
@@ -36,7 +36,7 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['key', 'username', 'password', 'repos','cred_hash'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# get msrp of ticket from first branch
 	repo = data['repos'][0]
@@ -73,7 +73,7 @@ def get_repos(data, crucible_obj):
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# return data
 	return crucible_obj.get_repos(cred_hash=data['cred_hash'])
 
@@ -84,7 +84,7 @@ def get_branches(data, crucible_obj):
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'repo_name'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# return data
 	return crucible_obj.get_branches(cred_hash=data['cred_hash'], repo_name=data['repo_name'])
 
@@ -95,6 +95,6 @@ def ticket_branches(data, crucible_obj):
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'msrp'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# return data
 	return crucible_obj.ticket_branches(cred_hash=data['cred_hash'], msrp=data['msrp'])

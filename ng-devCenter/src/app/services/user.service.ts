@@ -12,6 +12,9 @@ export class UserService {
 	public emberLocal:string;
 	public emberPort:string;
 
+	public userData;
+	public userPicture;
+
 	emberBuilds:Array<Object> = [
 		{'label':'acoe', 'value':this.config.devUrl},
 		{'label':'localhost', 'value':'http://localhost'}

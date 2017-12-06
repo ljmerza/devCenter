@@ -7,6 +7,7 @@ import 'rxjs/add/observable/interval';
 import { UserService } from './../services/user.service';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
+import { WebSocketService } from './../services/web-socket.service';
 
 import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
@@ -23,7 +24,10 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	openTickets:Array<any>;
 
 	searchTicket$;
-	userReloadTickets$
+	webSock$;
+
+	ticketType;
+
 	repos;
 	dtTrigger:Subject<any> = new Subject();
 
@@ -52,7 +56,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		public jira:JiraService, 
 		private route:ActivatedRoute, 
 		private user:UserService,
-		public toastr: ToastrService, 
+		public toastr: ToastrService,
+		public webSock: WebSocketService, 
 		vcr: ViewContainerRef
 	) {
 		this.toastr.toastr.setRootViewContainerRef(vcr);
@@ -63,21 +68,20 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	ngOnInit():void {
 		this.route.paramMap
 		.subscribe( params => {
-			const ticket_type = params.get('filter');
+			this.ticketType = params.get('filter');
 
 			// if an ajax request is already being made then cancel it
 			if (this.searchTicket$) {
 	   			this.searchTicket$.unsubscribe();
 			}
 
-			// if an interval is already defined then stop it
-			if (this.userReloadTickets$) {
-	   			this.userReloadTickets$.unsubscribe();
+			if (this.webSock$) {
+	   			this.webSock$.unsubscribe();
 			}
 
 			// if required user info exists then get tickets and repos
 			if( !this.user.requireCredentials() ){
-				this.searchTicket$ = this.setFilterData(ticket_type);
+				this.searchTicket$ = this.setFilterData(this.ticketType);
 
 				// get list of repos once
 				this.jira.getRepos().subscribe( 
@@ -92,6 +96,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	*/
 	ngOnDestroy(){
 		this.searchTicket$.unsubscribe();
+		this.webSock$.unsubscribe();
 	}
 
 	/*
@@ -99,44 +104,27 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	setFilterData(jiraListType:string):Subscription {
 		this.ngProgress.start();
 		this.loadingTickets = true;
-		const self=this;
 
-		// every x milliseconds get latest tickets if last ajax call finished
-		// only update if different then last ajax -> start first time immediately
-		return Observable.interval(10000)
-		.startWith(0)
-		.exhaustMap(() => this.jira.getFilterData(jiraListType))
-		.distinctUntilChanged( (old_tickets, new_tickets) => {
 
-			if(!old_tickets){
-				return false;
-			}
+		// if pcr or qa tehn enable websockets
+		if( ['pcr','qa'].includes(this.ticketType) ) {
 
-			console.log('old_tickets, new_tickets: ', old_tickets, new_tickets);
-
-			// get old and new data we need to compare
-			const old_ticket_keys = old_tickets.data.map( ticket => ticket.key);
-			const new_ticket_keys = new_tickets.data.map( ticket => ticket.key);
-
-			const difference_old = old_ticket_keys.filter( x => !(new Set(new_ticket_keys).has(x)) );
-			const difference_new = new_ticket_keys.filter( x => !(new Set(old_ticket_keys).has(x)) );
-
-			console.log('difference_new, difference_old: ', difference_new, difference_old);
-
-			difference_old.forEach( key => {
-				self.toastr.showToast(`Ticket ${key} was removed`, 'info');
+			// create websocket to receive ticket updates
+			this.webSock$ = this.webSock.getTickets()
+			.map(data => this.ticketType == 'pcr' ? data.pcrs : data.qas)
+			.distinctUntilChanged( (old_tickets, new_tickets) => {
+				// if first time then ignore else compare data
+				if(!old_tickets) return true;
+				JSON.stringify(old_tickets) == JSON.stringify(new_tickets) 
+			})
+			.subscribe( data => {
+				// if got this far then data is different so sync with UI
+				this.openTickets = this._formatCommentCode({ data });
+				this.rerender();
 			});
+		}
 
-			difference_new.forEach( key => {
-				self.toastr.showToast(`Ticket ${key} was added`, 'info');
-			});
-
-			if(difference_new.length > 0 || difference_old.length > 0){
-				return false;
-			} else {
-				return true;
-			}
-		})
+		return this.jira.getFilterData(jiraListType)
 		.subscribe( 
 			issues => {
 				// save tickets and re-render data tables

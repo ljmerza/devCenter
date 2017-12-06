@@ -2,25 +2,26 @@
 
 import re
 import math
-import sys
 
-from CrucibleAPI import CrucibleAPI
+class CruciblePCR():
 
-class CruciblePCR(CrucibleAPI):
-	def __init__(self):
+	def __init__(self, crucible_api):
 		''' creates a CruciblePCR instance
+
 		Args:
 			None
 			
 		Returns:
 			a CruciblePCR instance
 		'''
-		CrucibleAPI.__init__(self)
+		
+		self.crucible_api = crucible_api
 		self.pcr_pass = "=#= PCR PASS =#="
 		self.pcr_pass_regex = re.compile(r"=#= PCR PASS =#=")
 
 	def get_pcr_estimate(self, story_point):
 		'''gets the PCR estimate off the story points of a Jira issue
+
 		Args:
 			story_point (str) the story points of the Jira issue
 			
@@ -49,6 +50,7 @@ class CruciblePCR(CrucibleAPI):
 
 	def add_reviewer(self, username, crucible_id, cred_hash):
 		'''adds a user to a Crucible review
+
 		Args:
 			username (str) the username of the user to process
 			crucible_id (str) the Crucible ID to user
@@ -57,10 +59,11 @@ class CruciblePCR(CrucibleAPI):
 		Returns:
 			response dict with status property
 		'''
-		return self.post(url=f'{self.crucible_api_review}/{crucible_id}/reviewers.json', data=username, cred_hash=cred_hash)
+		return self.crucible_api.post(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/reviewers.json', data=username, cred_hash=cred_hash)
 
 	def add_comment(self, comment, crucible_id, cred_hash):
 		'''adds a comment to a Crucible review
+
 		Args:
 			comment (str) the comment to add
 			crucible_id (str) the Crucible ID to user
@@ -79,10 +82,11 @@ class CruciblePCR(CrucibleAPI):
 			"permId" : { },
 			"parentCommentId" : { }
 		}
-		return self.post_json(url=f'{self.crucible_api_review}/{crucible_id}/comments.json', json_data=json_data, cred_hash=cred_hash)
+		return self.crucible_api.post_json(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/comments.json', json_data=json_data, cred_hash=cred_hash)
 
 	def add_pcr_pass(self, crucible_id, cred_hash):
 		'''adds a comment of PCR pass to a Crucible review
+
 		Args:
 			crucible_id (str) the Crucible ID to user
 			cred_hash (str) the user's basic auth hash
@@ -94,6 +98,7 @@ class CruciblePCR(CrucibleAPI):
 
 	def get_comments(self, crucible_id, cred_hash):
 		'''gets all comments of a Crucible review
+
 		Args:
 			crucible_id (str) the Crucible ID to user
 			cred_hash (str) the user's basic auth hash
@@ -101,10 +106,11 @@ class CruciblePCR(CrucibleAPI):
 		Returns:
 			response dict with status property
 		'''
-		return self.get(url=f'{self.crucible_api_review}/{crucible_id}/comments.json', cred_hash=cred_hash)
+		return self.crucible_api.get(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/comments.json', cred_hash=cred_hash)
 
 	def get_pcr_pass(self, crucible_id, cred_hash):
 		'''gets all comment of a Crucible review and see how many are PCR pass
+
 		Args:
 			crucible_id (str) the Crucible ID to user
 			cred_hash (str) the user's basic auth hash
@@ -127,6 +133,7 @@ class CruciblePCR(CrucibleAPI):
 
 	def complete_review(self, crucible_id, cred_hash):
 		'''sets a user's status on a Crucible review to 'complete'
+
 		Args:
 			crucible_id (str) the Crucible ID to user
 			cred_hash (str) the user's basic auth hash
@@ -134,6 +141,6 @@ class CruciblePCR(CrucibleAPI):
 		Returns:
 			response dict with status property
 		'''
-		return self.post(url=f'{self.crucible_api_review}/{crucible_id}/complete.json', cred_hash=cred_hash)
+		return self.crucible_api.post(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/complete.json', cred_hash=cred_hash)
 
 

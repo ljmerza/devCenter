@@ -14,7 +14,7 @@ from sqlalchemy import inspect, create_engine, or_, and_
 
 
 class DevCenterSQL():
-	def __init__(self):
+	def __init__(self, devdb, sql_echo):
 		'''gets parameters from ENV and creates Session object
 
 		Args:
@@ -24,7 +24,6 @@ class DevCenterSQL():
 			MySQL object
 		'''
 		self.project_managers = os.environ['PM'].split(',')
-		self.debug = False
 
 		drivername = 'mysql+pymysql'
 		username = os.environ['USER']
@@ -32,17 +31,15 @@ class DevCenterSQL():
 		host = os.environ['DEV_SERVER']
 		port = 3306
 
-		# try to get DB name  (default to dev DB)
+		# default dev DB unless debug false
 		database = 'dev_center_dev'
-		try:
-			database = os.environ['DC_DB']
-		except:
-			pass
+		if not devdb:
+			database = database = 'dev_center'
 
 		charset = 'utf8'
 
 		# create SQL engine and inspector
-		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}', echo=self.debug)
+		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}', echo=sql_echo)
 		self.inspector = inspect(engine)
 		# create DB session
 		self.Session = sessionmaker(bind=engine, autoflush=False)
@@ -107,12 +104,14 @@ class DevCenterSQL():
 		Returns:
 			the SQL response from inserting/updating the DB
 		'''
-		# copy comments to sue them later
+
+		# copy data to add them later
 		comments = jira_ticket['comments'][:]
+		customer_details = jira_ticket['customer_details'].copy()
+		dates = jira_ticket['dates'].copy()
+
 		# now delete comments to be able to add to Tickets object
 		del jira_ticket['comments']
-
-		# temp delete extra fields
 		del jira_ticket['customer_details']
 		del jira_ticket['dates']
 
@@ -133,6 +132,12 @@ class DevCenterSQL():
 
 		# add comments of ticket and commit
 		self._update_comments(comments=comments, session=session)
+
+		# add fields back to ticket
+		jira_ticket['comments'] = comments
+		jira_ticket['customer_details'] = customer_details
+		jira_ticket['dates'] = dates
+
 		session.commit()
 		
 
@@ -178,9 +183,9 @@ class DevCenterSQL():
 		if row:
 			setattr(row, field, value)
 			session.commit()
-			return {'status': True }
+			return {'status': True}
 		else:
-			{'status': False, 'data': f'DevCenterSQL::update_ping::Could not find key {key} to change {field} to {value}'}
+			return {'status': False, 'data': f'DevCenterSQL::update_ping::Could not find key {key} to change {field} to {value}'}
 				
 	def get_user_ping_value(self, username, field, session):
 		'''get a user's ping value for a particular field type
@@ -212,6 +217,27 @@ class DevCenterSQL():
 				session.add(row)
 				session.commit()
 				return 0
+
+	def get_user_ping_values(username, session):
+		'''
+		'''
+		row = session.query(SQLModels.Users).filter(SQLModels.Users.username == username).first()
+		if row:
+			return {'status': True, 'data': row}
+		else:
+			return {'status': False, 'data': f'DevCenterSQL::get_user_ping_values::Could not find {username}'}
+
+
+	def set_user_ping_value(self, username, field, value, session):
+		'''
+		'''
+		row = session.query(SQLModels.Users).filter(SQLModels.Users.username == username).first()
+		if row is not None:
+			setattr(row, field, value)
+			session.commit()
+			return {'status': True}
+		else:
+			return {'status': False, 'data': f'DevCenterSQL::set_user_ping_value::Could not find {username} to set {field} to {value}'}
 
 	def reset_pings(self, ping_type, key, session):
 		'''resets all pings of any kind of failed status

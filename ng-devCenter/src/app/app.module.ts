@@ -24,6 +24,7 @@ import { DataService } from './services/data.service';
 import { UserService } from './services/user.service';
 import { ToastrService } from './services/toastr.service';
 import { ConfigService } from './services/config.service';
+import { WebSocketService } from './services/web-socket.service';
 
 import { WorkTimePipe } from './work-time.pipe';
 import { FooterComponent } from './footer/footer.component';
@@ -67,7 +68,7 @@ import { SetPingsComponent } from './set-pings/set-pings.component';
 		ToastModule.forRoot(),
 		NgbModule.forRoot()
 	],
-	providers: [DataService, JiraService, UserService, ToastrService, ConfigService],
+	providers: [DataService, JiraService, UserService, ToastrService, ConfigService, WebSocketService],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

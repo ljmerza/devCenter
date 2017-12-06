@@ -1,19 +1,35 @@
 #!/usr/bin/python3
 
-from CrucibleAPI import CrucibleAPI
+class CrucibleRepoBranch():
+	'''
+	'''
 
-class CrucibleRepoBranch(CrucibleAPI):
-	def __init__(self):
-		CrucibleAPI.__init__(self)
+	def __init__(self, crucible_api):
+		'''
+
+		Args:
+			
+			
+		Returns:
+			
+		'''
+		self.crucible_api = crucible_api
 
 		# hard coded repos
 		self.repos = ["aqe","devtools","external_modules","modules","nightwatch","sasha","taskmaster","teamdb","teamdb_api","teamdb_ember","templates","tqi","ud","ud_api","ud_ember","upm","upm_api","wam","wam_api"]
 
 	def get_repos_of_review(self, crucible_id, cred_hash):
 		'''get all repos tied to a review
+
+		Args:
+			
+			
+		Returns:
+			
 		'''
+
 		# get crucible details
-		response = self.get(url=f'{self.crucible_api_review}/{crucible_id}/reviewitems.json', cred_hash=cred_hash)
+		response = self.crucible_api.get(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/reviewitems.json', cred_hash=cred_hash)
 		# if status false then return error
 		if not response['status']:
 			return response
@@ -26,6 +42,7 @@ class CrucibleRepoBranch(CrucibleAPI):
 
 	def get_repos(self, cred_hash, cached=True):
 		'''gets all repos a user can access
+
 		Args:
 			cred_hash - 
 			cached - (boolean) get hard coded repos or get all repos (default True)
@@ -39,7 +56,7 @@ class CrucibleRepoBranch(CrucibleAPI):
 				data.append({'name': repo})
 		else:
 			# get data from API
-			response = self.get(url=f'{self.crucible_api_repo}.json', cred_hash=cred_hash)
+			response = self.crucible_api.get(url=f'{self.crucible_api.crucible_api_repo}.json', cred_hash=cred_hash)
 			if not response['status']:
 				return response
 			# save all repo names and locations
@@ -58,7 +75,7 @@ class CrucibleRepoBranch(CrucibleAPI):
 		'''
 		branch_names = []
 		# get data from API
-		response = self.get(url=f'{self.crucible_api_changelog}/{repo_name}?q=&command=branches&limit=50', cred_hash=cred_hash)
+		response = self.crucible_api.get(url=f'{self.crucible_api.crucible_api_changelog}/{repo_name}?q=&command=branches&limit=50', cred_hash=cred_hash)
 
 		if not response['status']:
 			return response

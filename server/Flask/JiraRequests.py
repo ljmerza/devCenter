@@ -6,7 +6,7 @@ def set_pcr_complete(data, jira_obj):
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','key'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# PCR complete jira ticket
 	return jira_obj.set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
 
@@ -15,7 +15,7 @@ def set_status(data, jira_obj):
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','key'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	if data['status'] == 'inDev':
 		return jira_obj.set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
@@ -43,7 +43,7 @@ def transition_to_cr(data, jira_obj):
 	'''
 	missing_params = FlaskUtils.check_args(params=data, required=['key', 'crucible_id','repos', 'qa_steps', 'cred_hash'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# generate QA steps
 	qa_steps = jira_obj.generate_qa_template(qa_steps=data['qa_steps'], repos=data['repos'], crucible_id=data['crucible_id'])
@@ -89,7 +89,7 @@ def worklog(data, jira_obj):
 	'''
 	missing_params = FlaskUtils.check_args(params=data, required=['key', 'comment', 'cred_hash'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	comment_response = jira_obj.add_comment(key=data["key"], comment=data["comment"], cred_hash=data['cred_hash'])
 
@@ -125,7 +125,7 @@ def get_jira_tickets(data, jira_obj):
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'fields'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 		
 	# check if we have a filer number or JQL string
 	if 'filter_number' in data:
@@ -160,6 +160,16 @@ def find_key_by_msrp(data, jira_obj):
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','msrp'])
 	if missing_params:
-		return {"data": "Missing required parameters: "+ missing_params, "status": False}
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# get key from MSRP
 	return jira_obj.find_key_by_msrp(msrp=data['msrp'], cred_hash=data['cred_hash'])
+
+def get_profile(data, jira_obj):
+	'''
+	'''
+	# check for required data
+	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+	# get key from MSRP
+	return jira_obj.get_profile(cred_hash=data['cred_hash'])

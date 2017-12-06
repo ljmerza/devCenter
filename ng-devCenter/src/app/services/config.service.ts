@@ -380,8 +380,8 @@ export class ConfigService {
 					link: 'http://underscorejs.org/'
 				},
 				{
-					name: 'Jira API',
-					link: 'https://docs.atlassian.com/jira/REST/cloud'
+					name: 'Jira API 7.1.10',
+					link: 'https://docs.atlassian.com/jira/REST/7.1.10/'
 				},
 				{
 					name: 'Ember Power Select',

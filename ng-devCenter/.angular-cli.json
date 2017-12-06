@@ -19,6 +19,7 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
+        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
         "styles.css",
         "../node_modules/datatables.net-buttons-dt/css/buttons.dataTables.css",
         "../node_modules/ng2-toastr/bundles/ng2-toastr.min.css",
@@ -33,7 +34,8 @@
         "../node_modules/datatables.net-buttons/js/buttons.flash.js",
         "../node_modules/datatables.net-buttons/js/buttons.html5.js",
         "../node_modules/datatables.net-buttons/js/buttons.print.js",
-        "./assets/highlight.pack.js"
+        "./assets/highlight.pack.js",
+        "../node_modules/socket.io-client/dist/socket.io.slim.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

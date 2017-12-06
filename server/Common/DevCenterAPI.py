@@ -16,7 +16,7 @@ class DevCenterAPI():
 		Returns:
 			an API object
 		'''
-		self.session_obj = requests.session()
+		pass
 
 	def get(self, url, cred_hash=''):
 		'''makes a GET request with the given URL and returns the processed JSON
@@ -29,8 +29,9 @@ class DevCenterAPI():
 			returns a dict with status property and if success, a data property. 
 			If Proxy error returns dict with status 407
 		'''
+		session_obj = requests.session()
 		try:
-			filter_data = self.session_obj.get(url=url, headers={ 'Authorization': cred_hash })
+			filter_data = session_obj.get(url=url, headers={ 'Authorization': cred_hash })
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
@@ -46,8 +47,9 @@ class DevCenterAPI():
 			returns the raw text response from the GET request. 
 			If Proxy error returns dict with status 407
 		'''
+		session_obj = requests.session()
 		try:
-			filter_data = self.session_obj.get(url=url, headers={ 'Authorization': cred_hash })
+			filter_data = session_obj.get(url=url, headers={ 'Authorization': cred_hash })
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return filter_data
@@ -65,11 +67,12 @@ class DevCenterAPI():
 			returns a dict with status property and if success, a data property. 
 			If Proxy error returns dict with status 407.
 		'''
+		session_obj = requests.session()
 		try:
 			if data:
-				filter_data = self.session_obj.post(url=url, data=data, headers={ 'Authorization': cred_hash })
+				filter_data = session_obj.post(url=url, data=data, headers={ 'Authorization': cred_hash })
 			else:
-				filter_data = self.session_obj.post(url=url, headers={ 'Authorization': cred_hash })
+				filter_data = session_obj.post(url=url, headers={ 'Authorization': cred_hash })
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
@@ -87,9 +90,10 @@ class DevCenterAPI():
 			returns a dict with status property and if success, a data property. 
 			If Proxy error returns dict with status 407.
 		'''
+		session_obj = requests.session()
 		headers = { 'Content-Type': 'application/json', 'Authorization': cred_hash }
 		try:
-			filter_data = self.session_obj.post(url, json=json_data, headers=headers)
+			filter_data = session_obj.post(url, json=json_data, headers=headers)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
@@ -107,9 +111,10 @@ class DevCenterAPI():
 			returns a dict with status property and if success, a data property. 
 			If Proxy error returns dict with status 407.
 		'''
+		session_obj = requests.session()
 		headers = { 'Content-Type': 'application/json', 'Authorization': cred_hash }
 		try:
-			filter_data = self.session_obj.put(url, json=json_data, headers=headers)
+			filter_data = session_obj.put(url, json=json_data, headers=headers)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
