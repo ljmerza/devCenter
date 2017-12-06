@@ -105,7 +105,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
 
-		// if pcr or qa tehn enable websockets
+		// if pcr or qa then enable websockets
 		if( ['pcr','qa'].includes(this.ticketType) ) {
 			this.webSock$ = this.startWebSocket();
 		}
