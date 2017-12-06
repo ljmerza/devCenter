@@ -123,15 +123,15 @@ class AutomationBot(object):
 			# if we want to add beta stuff and enough time has passed then show beta stats
 			if self.is_beta_week and (self.beta_wait_time == self.beta_wait_count):
 				start_beta = time.time()
-				thr = multiprocessing.Process(target=self.beta_week_stats)
+				thr = threading.Thread(target=self.beta_week_stats)
 				thr.start()
 				end_beta = time.time()
 				self.beta_wait_count = self.beta_wait_count + 1
-				print('CRON processing end time: ', end_beta-start_beta)
+				print('Beta processing: ', end_beta-start_beta)
 
 			# print cron runtime 
 			end_cron = time.time()
-			print('CRON processing end time: ', end_cron-start_get)
+			print('CRON end time: ', end_cron-start_get)
 			print('-'*20)
 
 			return {'status': True, 'data': self.ticket_grouping(jira_tickets=jira_tickets)}
