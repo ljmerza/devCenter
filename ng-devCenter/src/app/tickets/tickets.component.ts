@@ -75,19 +75,14 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	   			this.searchTicket$.unsubscribe();
 			}
 
+			// if web socket is already being made then cancel it
 			if (this.webSock$) {
 	   			this.webSock$.unsubscribe();
 			}
 
 			// if required user info exists then get tickets and repos
 			if( !this.user.requireCredentials() ){
-				this.searchTicket$ = this.setFilterData(this.ticketType);
-
-				// get list of repos once
-				this.jira.getRepos().subscribe( 
-					branches => this.repos = branches.data,
-					error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-				);
+				this.syncData();
 			}
 		});
 	}
@@ -101,28 +96,43 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	setFilterData(jiraListType:string):Subscription {
-		this.ngProgress.start();
-		this.loadingTickets = true;
+	syncData() {
+		this.searchTicket$ = this.setFilterData(this.ticketType);
 
+		// get list of repos once
+		this.jira.getRepos().subscribe( 
+			branches => this.repos = branches.data,
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
 
 		// if pcr or qa tehn enable websockets
 		if( ['pcr','qa'].includes(this.ticketType) ) {
-
-			// create websocket to receive ticket updates
-			this.webSock$ = this.webSock.getTickets()
-			.map(data => this.ticketType == 'pcr' ? data.pcrs : data.qas)
-			.distinctUntilChanged( (old_tickets, new_tickets) => {
-				// if first time then ignore else compare data
-				if(!old_tickets) return true;
-				JSON.stringify(old_tickets) == JSON.stringify(new_tickets) 
-			})
-			.subscribe( data => {
-				// if got this far then data is different so sync with UI
-				this.openTickets = this._formatCommentCode({ data });
-				this.rerender();
-			});
+			this.webSock$ = this.startWebSocket();
 		}
+	}
+
+	/*
+	*/
+	startWebSocket() {
+		// create websocket to receive ticket updates - skip first to get 'old' data
+		return this.webSock.getTickets()
+		.map(data => this.ticketType == 'pcr' ? data.pcrs : data.qas)
+		.distinctUntilChanged( (old_tickets, new_tickets) => {
+			return JSON.stringify(old_tickets) === JSON.stringify(new_tickets) 
+		})
+		.skip(1)
+		.subscribe( data => {
+			// if got this far then data is different so sync with UI
+			this.openTickets = this._formatCommentCode({ data });
+			this.rerender();
+		});
+	}
+
+	/*
+	*/
+	setFilterData(jiraListType:string):Subscription {
+		this.ngProgress.start();
+		this.loadingTickets = true;
 
 		return this.jira.getFilterData(jiraListType)
 		.subscribe( 
@@ -176,10 +186,11 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		// if datatable already exists then destroy then render else just render
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-				dtInstance.destroy();
-				this.dtTrigger.next();
 				// make redraw on next event loop
-				// setTimeout(dtInstance.draw,0);
+				setTimeout(dtInstance.draw,0);
+
+				// this.dtInstance.destroy();
+				// this.dtTrigger.next();
 			});
 		} else {
 			this.dtTrigger.next();

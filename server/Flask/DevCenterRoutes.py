@@ -26,6 +26,9 @@ def define_routes(app, socketio, app_name, jira_obj, crucible_obj, sql_object):
 	def get_cred_hash():
 		'''
 		'''
+		# print url
+		print(request.url)
+		
 		# if web sockets then ignore
 		if 'socket_tickets' not in request.url:
 			cred_hash = request.headers.get('Authorization')
