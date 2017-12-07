@@ -71,14 +71,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			this.ticketType = params.get('filter');
 
 			// if an ajax request is already being made then cancel it
-			if (this.searchTicket$) {
-	   			this.searchTicket$.unsubscribe();
-			}
-
+			if(this.searchTicket$) this.searchTicket$.unsubscribe();
 			// if web socket is already being made then cancel it
-			if (this.webSock$) {
-	   			this.webSock$.unsubscribe();
-			}
+			if(this.webSock$) this.webSock$.unsubscribe();
 
 			// if required user info exists then get tickets and repos
 			if( !this.user.requireCredentials() ){
@@ -90,8 +85,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	ngOnDestroy(){
-		this.searchTicket$.unsubscribe();
-		this.webSock$.unsubscribe();
+		if(this.searchTicket$) this.searchTicket$.unsubscribe();
+		if(this.webSock$) this.webSock$.unsubscribe();
 	}
 
 	/*
@@ -186,11 +181,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		// if datatable already exists then destroy then render else just render
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-				// make redraw on next event loop
-				setTimeout(dtInstance.draw,0);
-
-				// this.dtInstance.destroy();
-				// this.dtTrigger.next();
+				dtInstance.destroy();
+				this.dtTrigger.next();
 			});
 		} else {
 			this.dtTrigger.next();
@@ -208,9 +200,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				dtInstance.draw();
 			});
 
-		} else {
-			
 		}
-		
 	}
 }

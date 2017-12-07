@@ -3,7 +3,7 @@
 from Flask import FlaskUtils
 
 
-def set_pcr_pass(data, crucible_obj):
+def complete_review(data, crucible_obj):
 
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
@@ -28,10 +28,9 @@ def set_pcr_pass(data, crucible_obj):
 	# return ok
 	return {"status": True}
 
-
-
-
 def crucible_create_review(data, crucible_obj, jira_obj):
+	'''creates a crucible review and returns the cru id created
+	'''
 
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['key', 'username', 'password', 'repos','cred_hash'])
@@ -53,18 +52,7 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	data['title'] = crucible_obj.create_crucible_title(story_point=qa_response['story_point'], key=qa_response["key"], msrp=msrp, summary=qa_response['summary'])
 
 	# create crucible
-	crucible_data = crucible_obj.create_crucible(data=data, cred_hash=data['cred_hash'])
-	# if error on create crucible close crucible and return error
-	if not crucible_data['status']:
-		return {"status": False, "data": 'Could not create Crucible review: '+crucible_data['data']}
-
-	# return data
-	return {"status": True, "data": {'key': qa_response["key"], 'crucible_id': crucible_data['data']}}
-	
-	
-
-	# return data
-	return {"status": True, "data": {'jira': qa_response["key"], 'crucible': crucible_data['data']}}
+	return crucible_obj.create_crucible(data=data, cred_hash=data['cred_hash'])
 
 
 def get_repos(data, crucible_obj):

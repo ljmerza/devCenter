@@ -7,12 +7,7 @@ import base64
 import logging
 import time
 import threading
-import sys
 
-sys.path.append('Common')
-sys.path.append('Crucible')
-sys.path.append('Jira')
-sys.path.append('Flask')
 
 from JiraFields import *
 from Jira import Jira

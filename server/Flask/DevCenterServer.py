@@ -23,7 +23,11 @@ def start_server(devflk, host, port, app_name, jira_obj, crucible_obj, sql_objec
 		app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 	# define all routes
-	define_routes(app=app, socketio=socketio, jira_obj=jira_obj, crucible_obj=crucible_obj, sql_object=sql_object, app_name=app_name)
+	define_routes(
+		app=app, devflk=devflk, socketio=socketio, 
+		jira_obj=jira_obj, crucible_obj=crucible_obj, 
+		sql_object=sql_object, app_name=app_name
+	)
 
 	# start server
 	socketio.run(app, host=host, port=port)

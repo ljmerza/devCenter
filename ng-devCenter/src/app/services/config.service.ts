@@ -129,7 +129,7 @@ export class ConfigService {
 			name: 'MIS140524001 (CTH)'
 		},
 		{
-			link: 'order/ethernet/MIS140524001',
+			link: 'order/ethernet/NCC326168001',
 			name: 'NCC326168001 (EVC)'
 		},
 		{
@@ -238,10 +238,6 @@ export class ConfigService {
 	];
 
 	beta_links = [
-		{
-			link: 'http://ud-beta.web.att.com/UD/cgi-bin/worklist.pl',
-			name: 'UD'
-		},
 		{
 			link: '/aqe/cgi-bin/index.pl',
 			name: 'AQE'

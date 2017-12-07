@@ -86,7 +86,7 @@ export class QaGeneratorComponent {
 				this.toastr.showToast(`
 					<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>
 					<br>
-					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
+					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
 				`, 'success');
 				this.newCrucible.emit({key: this.key, crucible_id: response.data.crucible_id, changedStatus})
 			},

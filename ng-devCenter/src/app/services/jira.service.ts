@@ -115,29 +115,6 @@ export class JiraService extends DataService {
 		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${this.config.fields}&filter=${filterNumber}`);
 	}
 
-	/*
-	*/
-	pcrPass(id, username): Observable<any> {
-		return super.postAPI({
-			url: `${this.apiUrl}/crucible/review/pcr_pass`,
-			body: {
-		        crucible_id: id,
-				username: username
-		    }
-		});
-	}
-
-	/*
-	*/
-	pcrComplete(id, username): Observable<any> {
-		return super.postAPI({
-			url: `${this.apiUrl}/crucible/review/pcr_complete`,
-			body: {
-		        key: id,
-				username: username
-		    }
-		});
-	}
 
 	setPing({key, field, value}): Observable<any> {
 		return super.postAPI({
@@ -172,10 +149,14 @@ export class JiraService extends DataService {
 		postData.username = this.user.username;
 		postData.password = this.user.password;
 
+		let sources = [];
+
+		// create crucible and post comment
+		
 		return super.postAPI({
-			url: `${this.apiUrl}/crucible/review/create`,
+			url: `${this.apiUrl}/crucible/create`,
 			body: postData
-		});
+		})
 	}
 
 	/*

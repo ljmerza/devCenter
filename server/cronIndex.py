@@ -8,6 +8,7 @@ import sys
 import requests
 
 sys.path.append('Common')
+sys.path.append('Chat')
 sys.path.append('Crucible')
 sys.path.append('Jira')
 sys.path.append('Flask')

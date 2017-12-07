@@ -118,7 +118,11 @@
 			<!-- beta links -->
 			<li ngbDropdown class="d-inline-block">
 				<a class="nav-link dropdown-toggle" id="betaDropdown" ngbDropdownToggle>Beta Links</a>
+
 				<div ngbDropdownMenu aria-labelledby="betaDropdown">
+					<a class="dropdown-item" target="_blank" 
+						href="http://ud-beta.web.att.com/UD/cgi-bin/worklist.pl"
+					>UD</a>
 					<a 
 						*ngFor='let navLink of config.beta_links'
 						class="dropdown-item" 

@@ -2,36 +2,42 @@
 from Flask import FlaskUtils
 
 
-def set_pcr_complete(data, jira_obj):
-	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','key'])
-	if missing_params:
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-	# PCR complete jira ticket
-	return jira_obj.set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
-
-
 def set_status(data, jira_obj):
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','key'])
+	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','key','status'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	if data['status'] == 'inDev':
 		return jira_obj.set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
+	if data['status'] == 'pcrNeeded':
+		return jira_obj.set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
+	if data['status'] == 'pcrComplete':
+		return jira_obj.set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
+	if data['status'] == 'cr':
+		return jira_obj.set_code_review(key=data['key'], cred_hash=data['cred_hash'])	
+
 	elif data['status'] == 'inQA':
 		return jira_obj.set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status'] == 'qaPass':
 		return jira_obj.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status'] == 'mergeCode':
 		return jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status'] == 'qaFail':
 		return jira_obj.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
+
+	elif data['status'] == 'inUct':
+		return jira_obj.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status'] == 'uctPass':
+		return jira_obj.set_uct_pass(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status'] == 'uctFail':
+		return jira_obj.set_uct_fail(key=data['key'], cred_hash=data['cred_hash'])
 	else:
 		return {"status": False, "data": 'Invalid status name'}
 
 
-def transition_to_cr(data, jira_obj):
-	'''
+def add_qa_comment(data, jira_obj):
+	'''creates a QA comment and posts it to a ticket
 
 	Args:
 		data (dict) object with properties:
@@ -44,44 +50,21 @@ def transition_to_cr(data, jira_obj):
 	missing_params = FlaskUtils.check_args(params=data, required=['key', 'crucible_id','repos', 'qa_steps', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
 	# generate QA steps
 	qa_steps = jira_obj.generate_qa_template(qa_steps=data['qa_steps'], repos=data['repos'], crucible_id=data['crucible_id'])
-	comment_response = jira_obj.add_comment(key=data["key"], comment=qa_steps, cred_hash=data['cred_hash'])
-
-	# check if Jira comment created
-	if not comment_response['status']:
-		return {"status": False, "data": 'Could not add comment to Jira: '+comment_response['data']}
-
-	# set PCR if needed
-	if 'autoPCR' in data and data['autoPCR']:
-		pcr_response = jira_obj.set_pcr_needed(key=data["key"], cred_hash=data['cred_hash'])
-		if not pcr_response['status']:
-			return {"status": False, "data": 'Could not set Jira to PCR Needed: '+pcr_response['data']}
-
-	# set CR if needed
-	if 'autoCR' in data and data['autoCR']:
-		cr_response = jira_obj.set_code_review(key=data["key"], cred_hash=data['cred_hash'])
-		if not cr_response['status']:
-			return {"status": False, "data": 'Could not set Jira ticket to Code Review: '+cr_response['data']}
-
-	if 'log_time' in data and data['log_time']:
-		log_response = jira_obj.add_work_log(key=data["key"], time=data['log_time'], cred_hash=data['cred_hash'])
-		if not log_response['status']:
-			return {"status": False, "data": 'Could not log time to Jira: '+log_response['data']}
-
-	return {'status': True}
+	data['comment'] = qa_steps
+	# add comment to Jira
+	return add_comment(data=data, jira_obj=jira_obj)
 
 
-def worklog(data, jira_obj):
-	'''Adds a comment to a ticket and updates the time log if given
+def add_comment(data, jira_obj):
+	'''adds a comment to a ticket
 
 	Args:
 		data (dict) object with properties:
 			cred_hash (str) Authorization header value
-			comment (str) the comment to add
 			key (str) the Jira key to post a comment to
-			log_time (str) the time to add to the work log (optional)
+			comment (str) the comment to add to the the ticket
 		jira_obj (Class instance) Jira class instance to connect to Jira
 
 	Returns:
@@ -90,21 +73,29 @@ def worklog(data, jira_obj):
 	missing_params = FlaskUtils.check_args(params=data, required=['key', 'comment', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+	# try to add comment an return
+	return jira_obj.add_comment(key=data["key"], comment=data["comment"], cred_hash=data['cred_hash'])
 
-	comment_response = jira_obj.add_comment(key=data["key"], comment=data["comment"], cred_hash=data['cred_hash'])
 
-	# check if Jira comment created
-	if not comment_response['status']:
-		return {"status": False, "data": 'Could not add comment to Jira: '+comment_response['data']}
+def add_worklog(data, jira_obj):
+	'''Adds a work log to a ticket
 
-		# check if log_time exist and log time if it does
-	if 'log_time' in data and data['log_time']:
-		log_response = jira_obj.add_work_log(key=data["key"], time=data['log_time'], cred_hash=data['cred_hash'])
-		if not log_response['status']:
-			return {"status": False, "data": 'Could not log time to Jira: '+log_response['data']}
+	Args:
+		data (dict) object with properties:
+			cred_hash (str) Authorization header value
+			key (str) the Jira key to post a comment to
+			log_time (str) the time to add to the work log
+		jira_obj (Class instance) Jira class instance to connect to Jira
 
-	return {'status': True}
+	Returns:
 
+	'''
+	missing_params = FlaskUtils.check_args(params=data, required=['key', 'log_time', 'cred_hash'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+	# try to add work log and return
+	return jira_obj.add_work_log(key=data["key"], time=data['log_time'], cred_hash=data['cred_hash'])
+	
 
 def get_jira_tickets(data, jira_obj):
 	'''gets a list of formatted Jira tickets given a filter or url (adds the Crucible id if it can)

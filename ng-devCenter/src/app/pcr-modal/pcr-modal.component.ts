@@ -49,9 +49,8 @@ export class PcrModalComponent {
 		this.modalService.open(this.content).result.then( () => {
 			switch(statusType){
 				case 'complete':
-					this.pcrComplete();
-				case 'pass':
-					this.pcrPass();
+					this.changeStatus('pcrPass');
+					this.changeStatus('pcrComplete');
 					break;
 				default:
 					this.changeStatus(statusType);
@@ -59,36 +58,6 @@ export class PcrModalComponent {
 			}
 
 		}, () => this.statusChangeEvent.emit({cancel:true}) );	
-	}
-
-	/*
-	*/
-	pcrPass() {
-		this.jira.pcrPass(this.crucible_id, this.user.username).subscribe( 
-			() => {
-				this.toastr.showToast('PCR Passed.', 'success');
-				this.statusChangeEvent.emit({transitionType: 'pass'});
-			},
-			error => {
-				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-				this.statusChangeEvent.emit({cancel:true});
-			}
-		);
-	}
-
-	/*
-	*/
-	pcrComplete() {
-		this.jira.pcrComplete(this.key, this.user.username).subscribe( 
-			() => {
-				this.toastr.showToast('PCR Completed.', 'success');
-				this.statusChangeEvent.emit({transitionType: 'complete'});
-			},
-			error => {
-				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-				this.statusChangeEvent.emit({cancel:true});
-			}
-		);
 	}
 
 	/*
