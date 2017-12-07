@@ -84,7 +84,8 @@ def define_routes(app, app_name, jira_obj, g):
 		}
 
 		# change status
-		status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+		if data['status'] != 'pcrPass':
+			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 
 		# if pcr pass and status change ok -> process Crucible review
 		if data['status'] == 'pcrPass' and status_response['status']:
