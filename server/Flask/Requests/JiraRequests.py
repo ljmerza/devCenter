@@ -4,40 +4,40 @@ from Flask import FlaskUtils
 
 def set_status(data, jira_obj):
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','key','status'])
+	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','key','status_type'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	if data['status'] == 'inDev':
+	if data['status_type'] == 'inDev':
 		return jira_obj.set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
-	if data['status'] == 'pcrNeeded':
+	if data['status_type'] == 'pcrNeeded':
 		return jira_obj.set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
-	if data['status'] == 'pcrComplete':
+	if data['status_type'] == 'pcrCompleted':
 		return jira_obj.set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
-	if data['status'] == 'cr':
+	if data['status_type'] == 'cr':
 		return jira_obj.set_code_review(key=data['key'], cred_hash=data['cred_hash'])	
 
-	elif data['status'] == 'inQA':
+	elif data['status_type'] == 'inQA':
 		return jira_obj.set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status'] == 'qaFail':
+	elif data['status_type'] == 'qaFail':
 		return jira_obj.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status'] == 'qaPass':
+	elif data['status_type'] == 'qaPass':
 		return jira_obj.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status'] == 'mergeCode':
+	elif data['status_type'] == 'mergeCode':
 		return jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status'] == 'mergeConflict':
+	elif data['status_type'] == 'mergeConflict':
 		return jira_obj.set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 
-	elif data['status'] == 'uctReady':
+	elif data['status_type'] == 'uctReady':
 		return jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status'] == 'inUct':
+	elif data['status_type'] == 'inUct':
 		return jira_obj.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status'] == 'uctPass':
+	elif data['status_type'] == 'uctPass':
 		return jira_obj.set_uct_pass(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status'] == 'uctFail':
+	elif data['status_type'] == 'uctFail':
 		return jira_obj.set_uct_fail(key=data['key'], cred_hash=data['cred_hash'])
 	else:
-		return {"status": False, "data": 'Invalid status name'}
+		return {"status": False, "data": 'Invalid status type'}
 
 
 def add_qa_comment(data, jira_obj):

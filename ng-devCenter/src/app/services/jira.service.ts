@@ -177,6 +177,8 @@ export class JiraService extends DataService {
 	/*
 	*/
 	changeStatus(postData): Observable<any> {
+		postData.username = this.user.username;
+		
 		return super.postAPI({
 			url: `${this.apiUrl}/jira/status`,
 			body: postData

@@ -4,8 +4,9 @@ from flask import request, Response
 from flask_cors import cross_origin
 
 import Requests.JiraRequests as JiraRequests
+import Requests.CrucibleRequests as CrucibleRequests
 
-def define_routes(app, app_name, jira_obj, g):
+def define_routes(app, app_name, jira_obj, crucible_obj, g):
 	'''
 	'''
 
@@ -78,24 +79,24 @@ def define_routes(app, app_name, jira_obj, g):
 		data = {
 			"cred_hash": g.cred_hash,
 			"key": post_data.get('key', ''),
-			"status": post_data.get('status', ''),
+			"status_type": post_data.get('statusType', ''),
 			"crucible_id": post_data.get('crucible_id', ''),
 			"username": post_data.get('username', '')
 		}
 
-		status_response = {}
+		status_response = {'status': False, 'data': 'status type not given'}
 
 		# change status
-		if data['status'] != 'pcrPass':
+		if data['status_type'] != 'pcrPass':
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 
 		# if pcr pass and status change ok -> process Crucible review
-		if data['status'] == 'pcrPass':
+		if data['status_type'] == 'pcrPass' or data['status'] == 'pcrCompleted':
 			status_response = CrucibleRequests.complete_review(data=data, crucible_obj=crucible_obj)
 
 		# if QA pass then add merge component
-		if data['status'] == 'qaPass':
-			data['status'] = 'mergeCode'
+		if data['status_type'] == 'qaPass':
+			data['status_type'] = 'mergeCode'
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 
 

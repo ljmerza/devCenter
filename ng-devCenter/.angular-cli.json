@@ -7,17 +7,21 @@
     {
       "root": "src",
       "outDir": "dist",
+
       "assets": [
         "assets",
         "favicon.ico"
       ],
+
       "index": "index.html",
       "main": "main.ts",
       "polyfills": "polyfills.ts",
       "test": "test.ts",
       "tsconfig": "tsconfig.app.json",
       "testTsconfig": "tsconfig.spec.json",
-      "prefix": "app",
+
+      "prefix": "dev-center",
+
       "styles": [
         "../node_modules/bootstrap/dist/css/bootstrap.min.css",
         "styles.css",
@@ -26,6 +30,7 @@
         "../node_modules/datatables.net-dt/css/jquery.dataTables.css",
         "../node_modules/highlight.js/styles/monokai-sublime.css"
       ],
+
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
         "../node_modules/datatables.net/js/jquery.dataTables.js",
@@ -37,12 +42,15 @@
         "./assets/highlight.pack.js",
         "../node_modules/socket.io-client/dist/socket.io.slim.js"
       ],
+
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
+        "prod": "environments/environment.prod.ts",
+        "beta": "environments/environment.beta.ts"
       }
     }
+    
   ],
   "e2e": {
     "protractor": {

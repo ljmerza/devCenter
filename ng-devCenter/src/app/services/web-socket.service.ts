@@ -3,6 +3,8 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import { map, catchError } from 'rxjs/operators';
 
+import { environment } from '../../environments/environment';
+
 export interface Socket {
 	on(event: string, callback: (data: any) => void );
 	emit(event: string, data: any);
@@ -21,7 +23,7 @@ export class WebSocketService {
 	/*
 	*/
 	public getTickets(): Observable<any> {
-		this.socket = io.connect('http://127.0.0.1:5858');
+		this.socket = io.connect(`${environment.apiUrl}:${environment.port}`);
 
 		this.socket.on('update_tickets', res => {
 			this.observer.next(res.data);

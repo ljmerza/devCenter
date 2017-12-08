@@ -18,7 +18,7 @@ def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_o
 	'''
 	'''
 
-	Routes.JiraRoutes.define_routes(app=app, app_name=app_name, jira_obj=jira_obj, g=g)
+	Routes.JiraRoutes.define_routes(app=app, app_name=app_name, jira_obj=jira_obj, crucible_obj=crucible_obj, g=g)
 	Routes.CrucibleRoutes.define_routes(app=app, app_name=app_name, jira_obj=jira_obj, crucible_obj=crucible_obj, g=g)
 	Routes.GitRoutes.define_routes(app=app, app_name=app_name, crucible_obj=crucible_obj, g=g)
 	Routes.ChatRoutes.define_routes(app=app, app_name=app_name, chat_obj=chat_obj, jira_obj=jira_obj, crucible_obj=crucible_obj, g=g)

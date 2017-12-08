@@ -28,10 +28,8 @@ export class StatusModalComponent {
 		private user: UserService, 
 		public toastr: ToastrService, 
 		public jira: JiraService, 
-		private modalService: NgbModal,
-		vcr: ViewContainerRef
+		private modalService: NgbModal
 	) {
-		this.toastr.toastr.setRootViewContainerRef(vcr);
 	}
 
 	/*
@@ -65,7 +63,7 @@ export class StatusModalComponent {
 	/*
 	*/
 	changeStatus(statusType) {
-		this.jira.changeStatus({key:this.key, status:statusType})
+		this.jira.changeStatus({key:this.key, statusType, crucible_id:this.crucible_id})
 		.subscribe(
 			() => this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success'),
 			error => {

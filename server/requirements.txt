@@ -3,5 +3,6 @@ requests==2.18.4
 Flask==0.12.2
 Flask-Cors==3.0.3
 flask-socketio==2.9.2
-eventlet==0.21.0
 PyMySQL==0.7.11
+gevent-websocket==0.10.1
+gevent==1.0.3

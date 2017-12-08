@@ -1,9 +1,9 @@
 
 
 def check_args(params, required):
-	missing_keys = [x for x in required if x not in params]
-	return ' '.join(missing_keys)
-
+	missing_keys = [x for x in required if not params.get(x)]
+	return ', '.join(missing_keys)
+	
 
 def check_parameters(params=[], required=[], one_required=[]):
 	'''checks for required parameters and parameters that you 
@@ -20,13 +20,13 @@ def check_parameters(params=[], required=[], one_required=[]):
 	missing = ''
 
 	# get any missing required keys
-	missing_keys = [x for x in required if x not in params]
+	missing_keys = [x for x in required if not params.get(x)]
 	if missing_keys:
 		missing = 'Missing the following required args: ' + ', '.join(missing_keys)
 
 	# see if at least one key is given
 	if one_required:
-		one_key_needed = [x for x in one_required if x in params]
+		one_key_needed = [x for x in one_required if not params.get(x)]
 		if not one_key_needed:
 			if missing:
 				missing += ', and at least one of the following optional args: '

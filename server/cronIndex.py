@@ -31,6 +31,9 @@ sql_echo = False
 host = '127.0.0.1'
 port = 5859
 
+if 'prodhost' in sys.argv:
+	host = '0.0.0.0'
+
 # allow pcr/qa pings and beta stats
 if 'beta' in sys.argv:
 	is_qa_pcr = True

@@ -1,5 +1,6 @@
 import { Component, ViewContainerRef } from '@angular/core';
 import { ToastrService } from './../services/toastr.service';
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 @Component({
 	selector: 'app-toastr',
@@ -8,7 +9,8 @@ import { ToastrService } from './../services/toastr.service';
 })
 export class ToastrComponent {
 
-	constructor(public toastr: ToastrService, private vcr: ViewContainerRef) {
-		this.toastr.toastr.setRootViewContainerRef(vcr);
+	constructor(public toastr: ToastsManager, public toastrService: ToastrService, private vcr: ViewContainerRef) {
+		toastr.setRootViewContainerRef(vcr);
+		toastrService.toastObject = toastr;
 	}
 }

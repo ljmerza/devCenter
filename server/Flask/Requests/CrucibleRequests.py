@@ -4,7 +4,6 @@ from Flask import FlaskUtils
 
 
 def complete_review(data, crucible_obj):
-
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
 	if missing_params:

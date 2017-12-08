@@ -24,6 +24,9 @@ port = 5859
 app_name = 'dev_center'
 devChat = True
 
+if 'prodhost' in sys.argv:
+	host = '0.0.0.0'
+
 
 if 'prod' in sys.argv:
 	devdb = False

@@ -10,20 +10,20 @@ export class ToastrService {
 		enableHTML: true
 	};
 
-	constructor(public toastr:ToastsManager) {}
+	toastObject: ToastsManager;
 
 	/*
 	*/
 	public showToast(message:string, message_type:string): void {
 
 		if(message_type === 'success'){
-			this.toastr.success(message, null, this.toastrOptions);
+			this.toastObject.success(message, null, this.toastrOptions);
 
 		} else if(message_type === 'error'){
-			this.toastr.error(message, null, this.toastrOptions);
+			this.toastObject.error(message, null, this.toastrOptions);
 			
 		} else if(message_type === 'info'){
-			this.toastr.info(message, null, this.toastrOptions);
+			this.toastObject.info(message, null, this.toastrOptions);
 		}
 		
 	}
