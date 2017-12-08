@@ -28,6 +28,8 @@ beta_stat_ping_now = False
 merge_alerts = False
 sql_echo = False
 ########################################################################
+host = '127.0.0.1'
+port = 5859
 
 # allow pcr/qa pings and beta stats
 if 'beta' in sys.argv:
@@ -48,6 +50,8 @@ if 'prod' in sys.argv:
 	devdb = False
 	devbot = False
 	error_log = True
+	host = '0.0.0.0'
+	port = 5858
 
 # allow error logging
 if 'error_log' in sys.argv:
@@ -79,7 +83,7 @@ while True:
 		else:
 			session = requests.session()
 			session.trust_env=False
-			response = session.post(url='http://127.0.0.1:5858/dev_center/socket_tickets', json=response)
+			response = session.post(url=f"http://{host}:{port}/dev_center/socket_tickets", json=response)
 
 
 	else:

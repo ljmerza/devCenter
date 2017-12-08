@@ -38,7 +38,7 @@ export class TicketComponent implements AfterViewInit {
 	ngAfterViewInit(){
 
 		// if current status not in list of statues then add to beginning
-		if( !this.ticketStates.includes(this.ticket.status) ){
+		if( !(this.ticketStates.filter(state => state.name == this.ticket.status).length > 0)){
 			this.ticketStates.unshift({name: this.ticket.status, id: ''});
 		}
 	}
@@ -80,7 +80,6 @@ export class TicketComponent implements AfterViewInit {
 		}
 
 		this.statusModal.openStatusModal(ticketState[0].id, ticketState[0].name);
-
 	}
 
 	/*

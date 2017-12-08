@@ -59,13 +59,7 @@ export class QaGeneratorComponent {
 			autoCR: formObj.value.codeReview,
 			autoPCR: formObj.value.pcrNeeded,
 			key: this.key,
-			repos: this.repoArray.map( (repo,index) => {
-				return {
-					baseBranch: formObj.value[`baseBranch-${index}`],
-					repositoryName: formObj.value[`repositoryName-${index}`],
-					reviewedBranch: formObj.value[`reviewedBranch-${index}`]
-				};
-			}),
+			repos: this.repoArray
 		};
 
 		// show informational toast
@@ -85,7 +79,6 @@ export class QaGeneratorComponent {
 					<br>
 					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
 				`, 'success');
-				this.newCrucible.emit({key: this.key, crucible_id: response.data.crucible_id, changedStatus})
 			},
 			error => error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
@@ -172,18 +165,14 @@ export class QaGeneratorComponent {
 
 	/*
 	*/
-	deleteDevBranch(branchName): void {
+	deleteDevBranch(idx:number): void {
 		// if only one left cant delete
 		if(this.repoArray.length == 1){
 			this.toastr.showToast('Must have at least one repo.', 'error');
 			return;
 		}
 
-		const index = this.repoArray.findIndex( branch => {
-			return branch.devBranch === branchName;
-		});
-
-		this.repoArray.splice(index,1);
+		this.repoArray.splice(idx,1);
 	}
 
 	/*
