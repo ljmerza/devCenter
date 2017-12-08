@@ -38,14 +38,15 @@ class ChatAPI():
 			message (str) - the message to send to the user
 			username (str) the username to send the ping to
 		Returns:
-			None
+			response from POST request
 		'''
 		# if in debug mode then send all messages to me
 		if self.debug:
 			username = self.username
 			message = '--DEBUG--'+message
 		# make POST request
-		requests.post(f"{self.chat_api}/{username}", data=message, auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+		response = requests.post(f"{self.chat_api}/{username}", data=message, auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+		return self._process_response(response=response)
 
 	def send_meeting_message(self, message, chatroom):
 		'''make a post request to the chat to send a message to a chat room
@@ -61,7 +62,8 @@ class ChatAPI():
 		if self.debug:
 			message = '--DEBUG--'+message
 		# make POST request
-		requests.post(f"{self.chat_api_chatroom}{chatroom}", data=message, auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+		response = requests.post(f"{self.chat_api_chatroom}{chatroom}", data=message, auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+		return self._process_response(response=response)
 
 	def set_z_menu(self, username):
 		'''
@@ -71,4 +73,15 @@ class ChatAPI():
 		Returns:
 			None
 		'''
-		requests.post(f"{self.chat_api_menu}{username}", data='', auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+		response = requests.post(f"{self.chat_api_menu}{username}", data='', auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+		return self._process_response(response=response)
+
+	def _process_response(self, response):
+		'''
+		'''
+		if response.status_code == 200:
+			return {'status': True, 'data': response.text}
+		else:
+			return {'status': False, 'data': response.text}
+
+

@@ -37,7 +37,11 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	# get msrp of ticket from first branch
+	# check for repos
+	if len(data['repos']) == 0:
+		return {"status": False, "data": 'No repos provided to create Crucible'}
+
+		# get msrp of ticket from first branch
 	repo = data['repos'][0]
 	branch = repo['reviewedBranch']
 	msrp = branch.split('-')[1]

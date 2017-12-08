@@ -43,7 +43,7 @@ class ChatMisc():
 		message = ChatUtils.build_message(data=data, msrp_message=True, jira_message=True, branch_message=True, summary_message=True, estimate_message=True, crucible_title_message=True)
 		# if username is not a PM then ping
 		if(username not in self.chat_api.project_managers):
-			self.chat_api.send_message(message=message, username=username)
+			return self.chat_api.send_message(message=message, username=username)
 			
 	def send_merge_needed(self, key, msrp, summary, username, sprint):
 		'''set user to send message, create message and send message for merge code
@@ -72,7 +72,7 @@ class ChatMisc():
 		message = ChatUtils.build_message(data=data, commit_message=True, jira_message=True, branch_message=True, sprint_message=True)
 		# if username is not a PM then ping
 		if(username not in self.chat_api.project_managers):
-			self.chat_api.send_message(message=message, username=username)
+			return self.chat_api.send_message(message=message, username=username)
 
 	def send_merge_alert(self, key, msrp, sprint, username, repos_merged, crucible_id, summary):
 		'''

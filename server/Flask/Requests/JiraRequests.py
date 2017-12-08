@@ -19,13 +19,17 @@ def set_status(data, jira_obj):
 
 	elif data['status'] == 'inQA':
 		return jira_obj.set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status'] == 'qaFail':
+		return jira_obj.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status'] == 'qaPass':
 		return jira_obj.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status'] == 'mergeCode':
 		return jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status'] == 'qaFail':
-		return jira_obj.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status'] == 'mergeConflict':
+		return jira_obj.set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 
+	elif data['status'] == 'uctReady':
+		return jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status'] == 'inUct':
 		return jira_obj.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status'] == 'uctPass':

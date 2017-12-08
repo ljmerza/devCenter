@@ -6,7 +6,7 @@ from flask_cors import CORS
 
 from DevCenterRoutes import *
 
-def start_server(devflk, host, port, app_name, jira_obj, crucible_obj, sql_object):
+def start_server(devflk, host, port, app_name, jira_obj, crucible_obj, sql_obj, chat_obj):
 	'''
 	'''
 
@@ -26,7 +26,8 @@ def start_server(devflk, host, port, app_name, jira_obj, crucible_obj, sql_objec
 	define_routes(
 		app=app, devflk=devflk, socketio=socketio, 
 		jira_obj=jira_obj, crucible_obj=crucible_obj, 
-		sql_object=sql_object, app_name=app_name
+		sql_obj=sql_obj, app_name=app_name,
+		chat_obj=chat_obj
 	)
 
 	# start server

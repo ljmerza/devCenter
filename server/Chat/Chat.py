@@ -6,7 +6,7 @@ from ChatPcrQa import ChatPcrQa
 
 class Chat(ChatMisc, ChatPcrQa, ChatAPI):
 
-	def __init__(self, debug, is_qa_pcr, merge_alerts):
+	def __init__(self, debug, is_qa_pcr=0, merge_alerts=0):
 
 		self.chat_api = ChatAPI(debug=debug)
 

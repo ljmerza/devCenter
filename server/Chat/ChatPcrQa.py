@@ -44,7 +44,7 @@ class ChatPcrQa():
 		# create message string
 		message = ''
 		# if BETA ticket then add beta string
-		if 'BETA' in label:
+		if label is not None and 'BETA' in label:
 			message += 'BETA '
 		# add messge type
 		message += 'QA Needed'

@@ -83,13 +83,21 @@ def define_routes(app, app_name, jira_obj, g):
 			"username": post_data.get('username', '')
 		}
 
+		status_response = {}
+
 		# change status
 		if data['status'] != 'pcrPass':
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 
 		# if pcr pass and status change ok -> process Crucible review
-		if data['status'] == 'pcrPass' and status_response['status']:
+		if data['status'] == 'pcrPass':
 			status_response = CrucibleRequests.complete_review(data=data, crucible_obj=crucible_obj)
+
+		# if QA pass then add merge component
+		if data['status'] == 'qaPass':
+			data['status'] = 'mergeCode'
+			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+
 
 		# return response
 		return Response(status_response, mimetype='application/json')

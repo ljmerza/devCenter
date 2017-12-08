@@ -22,7 +22,7 @@ class JiraAPI(DevCenterAPI):
 		self.crucible_url = os.environ['CRUCIBLE_URL']
 		self.crcible_review = f'{self.crucible_url}/cru/'
 		self.api_base = f'{self.jira_url}/rest/api/2'
-
+		self.all_open_tickets = 'project%20in%20(AQE%2C%20"Auto%20QM"%2C%20"Customer%20DB"%2C%20"Manager%20DB"%2C%20"Taskmaster%20Dashboard"%2C%20TeamDB%2C%20TQI%2C%20"Unified%20Desktop"%2C%20UPM%2C%20WAM%2C%20SASHA)%20AND%20status%20in%20("IN%20DEVELOPMENT"%2C%20"IN%20SPRINT"%2C%20"Ready%20for%20Release"%2C%20"Code%20Review"%2C%20"Ready%20For%20QA"%2C%20"IN%20QA"%2C%20"READY%20FOR%20UCT")%20OR%20assignee%20in%20(ep759g%2C%20wc591w)'
 		self.jira_search_url = f'{self.jira_url}/rest/api/2/search'
 		self.fields = 'customfield_10109,comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,label,fixVersions,duedate,created,updated,customfield_10108,customfield_10102,customfield_10175,customfield_10103,customfield_10602,timetracking,labels'
 
@@ -90,15 +90,31 @@ class JiraAPI(DevCenterAPI):
 			returns a dict with status/data property. 
 		'''
 		response = super(JiraAPI, self)._process_response(response=response)
-		# get error messages
+
+		# get error messages if status false
 		if not response['status']:
-			response['data'] = response.get('data')
+			errors = []
 
 			# if dict then get errorMessages value
 			if isinstance(response['data'], dict):
-				response['data'] = response['data'].get('errorMessages')
 
-			# if only one error message then dont leave in array
-			if len(response['data']) == 1:
-				response['data'] = response['data'][0]
+				# for each error add to response
+				for error_message in response['data'].values():
+
+					# if list then add all list items 
+					if isinstance(error_message, list):
+							errors=errors+error_message
+
+					elif isinstance(error_message, dict):
+						# else if dict then add values to errors
+						for message in error_message.values():
+							errors.append(message)
+
+			# if array instance then get errors
+			if isinstance(error_message, list):
+				errors = response['data']
+
+			# now merge all errors into one string
+			response['data'] = ','.join(errors)
+
 		return response

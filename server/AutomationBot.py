@@ -73,8 +73,7 @@ class AutomationBot(object):
 			start_get = time.time()
 
 			# get all open Jira tickets
-			jql = 'project+in+(AQE,+%22Auto+QM%22,+%22Customer+DB%22,+%22Manager+DB%22,+%22Taskmaster+Dashboard%22,+TeamDB,+TQI,+%22Unified+Desktop%22,+UPM,+WAM,+SASHA)+AND+status+in+(%22IN+DEVELOPMENT%22,+%22IN+SPRINT%22,+%22Ready+for+Release%22,+%22Code+Review%22,+%22Ready+For+QA%22,+%22IN+QA%22,+%22READY+FOR+UCT%22)+OR+assignee+%3D+ep759g+ORDER+BY+assignee+ASC,+status+ASC'
-			jira_tickets = self.jira_obj.get_jira_tickets(jql=jql, cred_hash=self.cred_hash)			
+			jira_tickets = self.jira_obj.get_jira_tickets(jql=self.jira_obj.jira_api.all_open_tickets, cred_hash=self.cred_hash)			
 
 			# make sure we have Jira tickets
 			if not jira_tickets['status']:

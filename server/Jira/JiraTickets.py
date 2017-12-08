@@ -70,6 +70,11 @@ class JiraTickets():
 			return response
 		return {'status': True, 'data': response['data']['issues']}
 
+
+	def get_full_ticket(self, key, cred_hash):
+		return self.get_jira_tickets(cred_hash=cred_hash, jql=f"key%3D%27{key}%27", fields=self.jira_api.fields)
+
+
 	def get_jira_tickets(self, cred_hash, max_results=1000, start_at=0, fields='', jql='', filter_number=''):
 		'''returns the formatted data from the Jira API of all Jira tickets from a filter number
 

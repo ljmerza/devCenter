@@ -3,9 +3,9 @@
 from flask import request, Response
 from flask_cors import cross_origin
 
-import Requests.CommonRequests as CommonRequests
+import Requests.ChatRequests as ChatRequests
 
-def define_routes(app, app_name, sql_object, g):
+def define_routes(app, app_name, chat_obj, jira_obj, crucible_obj, g):
 	'''
 	'''
 
@@ -13,12 +13,7 @@ def define_routes(app, app_name, sql_object, g):
 	@cross_origin()
 	def update_ping():
 		post_data = request.get_json()
-		data = {
-			"cred_hash": g.cred_hash,
-			"key": post_data.get('key', ''),
-			"field": post_data.get('field', ''),
-			"value": post_data.get('value', '')
-		}
+		post_data['cred_hash'] = g.cred_hash
 
-		data = CommonRequests.update_ping(data=data, sql_object=sql_object)
-		return Response(data, mimetype='application/json')
+		response = ChatRequests.update_ping(data=post_data, chat_obj=chat_obj, jira_obj=jira_obj, crucible_obj=crucible_obj)
+		return Response(response, mimetype='application/json')
