@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, ViewContainerRef } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { JiraService } from './../services/jira.service';
@@ -17,20 +17,18 @@ export class SetPingsComponent {
 	constructor(
 		public toastr: ToastrService, 
 		public jira: JiraService, 
-		private modalService: NgbModal,
-		vcr: ViewContainerRef
+		private modalService: NgbModal
 	) { }
 
 	openPingModel(){
 		this.modalService.open(this.content).result.then( (pingType) => {
 			this.jira.setPing({
-			key: this.key,
-			field: pingType,
-			value: 0
+				key: this.key,
+				ping_type: pingType
 			}).subscribe(
 				response => {
 					pingType = pingType.replace('_', ' ');
-					this.toastr.showToast(`${pingType} reset. You should get a ping within the next minute.`, 'success');
+					this.toastr.showToast(`${pingType} ping reset: ${response.data}`, 'success');
 				},
 				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 			);

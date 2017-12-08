@@ -1,12 +1,12 @@
 import { 
 	Component, Input, ViewChild, 
-	EventEmitter, Output, ViewContainerRef,
+	EventEmitter, Output,
 	AfterViewInit
 } from '@angular/core';
 
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 import { JiraCommentsComponent } from './../jira-comments/jira-comments.component';
-import { PcrModalComponent } from './../pcr-modal/pcr-modal.component';
+import { StatusModalComponent } from './../status-modal/status-modal.component';
 import { TimeLogComponent } from './../time-log/time-log.component';
 import { SetPingsComponent } from './../set-pings/set-pings.component';
 
@@ -24,21 +24,14 @@ export class TicketComponent implements AfterViewInit {
 	oldState; // old ticket state when changed
 	ticketDropdown; // ticket dropdown reference
 
-	constructor(
-		public toastr: ToastrService, 
-		private vcr: ViewContainerRef, 
-		public jira: JiraService, 
-		public config: ConfigService
-	) {
-		this.toastr.toastr.setRootViewContainerRef(vcr);
-	}
+	constructor(public toastr: ToastrService, public jira: JiraService, public config: ConfigService) {}
 
 	@Input() ticket;
 	@Input() repos;
 	@Input() rerender = new EventEmitter();
 	@ViewChild(QaGeneratorComponent) public qaGen: QaGeneratorComponent;
 	@ViewChild(JiraCommentsComponent) public jiraComments: JiraCommentsComponent;
-	@ViewChild(PcrModalComponent) public pcrModal: PcrModalComponent;
+	@ViewChild(StatusModalComponent) public statusModal: StatusModalComponent;
 	@ViewChild(TimeLogComponent) public logWork: TimeLogComponent;
 	@ViewChild(SetPingsComponent) public setPing: SetPingsComponent;
 
@@ -46,20 +39,24 @@ export class TicketComponent implements AfterViewInit {
 
 		// if current status not in list of statues then add to beginning
 		if( !this.ticketStates.includes(this.ticket.status) ){
-			this.ticketStates.unshift(this.ticket.status);
+			this.ticketStates.unshift({name: this.ticket.status, id: ''});
 		}
 	}
 
 	ticketStates = [
-		'In Development',
-		'PCR - Needed',
-		'PCR - Pass',
-		'PCR - Completed',
-		'In QA',
-		'QA Fail',
-		'QA Pass',
-		'In UCT',
-		'Ready for Release',
+		{name: 'In Development', id: 'inDev'},
+		{name: 'PCR - Needed', id: 'pcrNeeded'},
+		{name: 'PCR - Pass', id: 'pcrPass'},
+		{name: 'PCR - Completed', id: 'pcrCompleted'},
+		{name: 'In QA', id: 'inQa'},
+		{name: 'QA Fail', id: 'qaFail'},
+		{name: 'QA Pass', id: 'qaPass'},
+		{name: 'Merge Code', id: 'mergeCode'},
+		{name: 'Merge Conflict', id: 'mergeConflict'},
+		{name: 'Ready for UCT', id: 'uctReady'},
+		{name: 'In UCT', id: 'inUct'},
+		{name: 'UCT Pass', id: 'uctPass'},
+		{name: 'UCT Fail', id: 'uctFail'}
 	];
 
 	/*
@@ -69,34 +66,21 @@ export class TicketComponent implements AfterViewInit {
 		this.ticketDropdown = ticketDropdown;
 		this.oldState = this.ticket.component || this.ticket.status;
 
-
-		// open status change dialog with right settings
-		if(ticketDropdown.value == 'In Development'){
-			this.pcrModal.openStatusModal('inDev');
-
-		} else if(ticketDropdown.value == 'PCR - Needed'){
+		if(ticketDropdown.value == 'pcrNeeded'){
 			this.qaGen.openQAModal();
-			
-		} else if(ticketDropdown.value == 'PCR - Pass'){
-			ticketDropdown.value = 'PCR - Needed';
-			this.pcrModal.openStatusModal('pass');
-
-		} else if(ticketDropdown.value == 'PCR - Completed'){
-			this.pcrModal.openStatusModal('complete');
-
-		} else if(ticketDropdown.value == 'In QA'){
-			this.pcrModal.openStatusModal('inQA');
-
-		} else if(ticketDropdown.value == 'QA Pass'){
-			this.pcrModal.openStatusModal('qaPass');
-
-		} else if(ticketDropdown.value == 'QA Fail'){
-			this.pcrModal.openStatusModal('qaFail');
-
-		} else {
-			this.ticketDropdown.value = this.oldState;
-			this.toastr.showToast(`This status change has not been implemented.`, 'error');
+			return;
 		}
+
+
+		const ticketState = this.ticketStates.filter(state => state.id == ticketDropdown.value);
+
+		if(ticketState.length == 0){
+			this.toastr.showToast('Ticket status change not valid.','error');
+			return;
+		}
+
+		this.statusModal.openStatusModal(ticketState[0].id, ticketState[0].name);
+
 	}
 
 	/*
@@ -126,21 +110,10 @@ export class TicketComponent implements AfterViewInit {
 
 	/*
 	*/
-	statusChangeEvent({cancel=false}):void {
-		if(cancel) {
-			this.ticketDropdown.value = this.oldState;
-			this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
-		}
-
-		this.rerender.emit();
+	statusChangeCancel():void {
+		// get id for current ticket's state and reset it on dropdown
+		const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
+		this.ticketDropdown.value = ticketState[0].id;
+		this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
 	}
-
-	resetPing(){
-		this.jira.setPing({
-			key: this.ticket.key,
-			field: 'new_ping',
-			value: 0
-		}).subscribe( response => console.log('response: ', response));
-	}
-
 }

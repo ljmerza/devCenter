@@ -30,12 +30,13 @@ import { WorkTimePipe } from './work-time.pipe';
 import { FooterComponent } from './footer/footer.component';
 import { JiraCommentsComponent } from './jira-comments/jira-comments.component';
 import { SafehtmlPipe } from './safehtml.pipe';
-import { PcrModalComponent } from './pcr-modal/pcr-modal.component';
+import { StatusModalComponent } from './status-modal/status-modal.component';
 import { TimeLogComponent } from './time-log/time-log.component';
 import { LogoutComponent } from './logout/logout.component';
 import { TicketComponent } from './ticket/ticket.component';
 import { CommentFormatPipe } from './comment-format.pipe';
 import { SetPingsComponent } from './set-pings/set-pings.component';
+import { ToastrComponent } from './toastr/toastr.component';
 
 @NgModule({
 	declarations: [
@@ -48,12 +49,13 @@ import { SetPingsComponent } from './set-pings/set-pings.component';
 		FooterComponent,
 		JiraCommentsComponent,
 		SafehtmlPipe,
-		PcrModalComponent,
+		StatusModalComponent,
 		TimeLogComponent,
 		LogoutComponent,
 		TicketComponent,
 		CommentFormatPipe,
-		SetPingsComponent
+		SetPingsComponent,
+		ToastrComponent
 	],
 	imports: [
 		BrowserModule,

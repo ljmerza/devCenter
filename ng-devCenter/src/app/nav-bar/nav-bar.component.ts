@@ -1,4 +1,4 @@
-import { Component, AfterContentInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, AfterContentInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserService } from './../services/user.service';
@@ -32,8 +32,7 @@ export class NavBarComponent implements AfterContentInit {
 		private toastr: ToastrService,
 		public jira:JiraService,
 		private modalService:NgbModal,
-		public config:ConfigService, 
-		private vcr: ViewContainerRef
+		public config:ConfigService
 	) { }
 
 	/*

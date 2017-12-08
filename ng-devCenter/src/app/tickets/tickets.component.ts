@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, EventEmitter, ViewContainerRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, EventEmitter, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Subject, Observable, Subscription } from 'rxjs';
@@ -57,11 +57,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		private route:ActivatedRoute, 
 		private user:UserService,
 		public toastr: ToastrService,
-		public webSock: WebSocketService, 
-		vcr: ViewContainerRef
-	) {
-		this.toastr.toastr.setRootViewContainerRef(vcr);
-	}
+		public webSock: WebSocketService
+	) {}
 	
 	/*
 	*/

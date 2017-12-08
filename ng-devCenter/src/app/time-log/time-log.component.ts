@@ -1,7 +1,6 @@
 import { 
 	Component, ViewChild, EventEmitter,
-	ElementRef, ViewContainerRef, 
-	ViewEncapsulation, Output, Input
+	ElementRef, ViewEncapsulation, Output, Input
 } from '@angular/core';
 
 import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -33,11 +32,8 @@ export class TimeLogComponent	{
 	constructor(
 		public jira:JiraService,
 		public toastr: ToastrService,
-		private modalService:NgbModal,
-		public vcr: ViewContainerRef
-	) { 
-		this.toastr.toastr.setRootViewContainerRef(vcr);
-	}
+		private modalService:NgbModal
+	) {}
 
 	submitLog(formObj: NgForm) {
 

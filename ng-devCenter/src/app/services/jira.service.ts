@@ -116,10 +116,10 @@ export class JiraService extends DataService {
 	}
 
 
-	setPing({key, field, value}): Observable<any> {
+	setPing({key, ping_type}): Observable<any> {
 		return super.postAPI({
 			url: `${this.apiUrl}/chat/set_ping`,
-			body: { key, field, value }
+			body: { key, ping_type }
 		});
 	}
 

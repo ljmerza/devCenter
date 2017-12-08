@@ -1,6 +1,6 @@
 import { 
 	Component, ViewChild, ElementRef, 
-	ViewEncapsulation, ViewContainerRef, 
+	ViewEncapsulation, 
 	EventEmitter, Output, Input
 } from '@angular/core';
 
@@ -42,11 +42,8 @@ export class QaGeneratorComponent {
 		public jira:JiraService, 
 		private modalService:NgbModal, 
 		public toastr: ToastrService, 
-		public vcr: ViewContainerRef,
 		public config: ConfigService
-	) {
-		this.toastr.toastr.setRootViewContainerRef(vcr);
-	}
+	) {}
 
 	/*
 	*/

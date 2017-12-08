@@ -36,10 +36,10 @@
 		<select (change)="stateChange(ticketState)" #ticketState>
 			<option 
 				*ngFor='let state of ticketStates'
-				[attr.selected]="state==ticket.status ? 'true': null"
-				[value]="state"
+				[attr.selected]="state.name==ticket.status ? 'true': null"
+				[value]="state.id"
 			>
-				{{state}}
+				{{state.name}}
 			</option>
 		</select>
 	</div>
@@ -78,11 +78,11 @@
 	[key]=ticket.key>
 </app-time-log>
 
-<app-pcr-modal 
-	(statusChangeEvent)="statusChangeEvent($event)" 
+<app-status-modal 
+	(statusChangeCancel)="statusChangeCancel($event)" 
 	[crucible_id]=ticket.crucible_id 
 	[key]=ticket.key>
-</app-pcr-modal>
+</app-status-modal>
 
 <app-qa-generator 
 	(newCrucible)="newCrucible($event)"

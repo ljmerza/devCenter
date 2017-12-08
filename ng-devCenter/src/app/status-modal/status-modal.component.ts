@@ -11,17 +11,18 @@ import { JiraService } from './../services/jira.service';
 
 
 @Component({
-	selector: 'app-pcr-modal',
-	templateUrl: './pcr-modal.component.html',
-	styleUrls: ['./pcr-modal.component.scss']
+	selector: 'app-status-modal',
+	templateUrl: './status-modal.component.html',
+	styleUrls: ['./status-modal.component.scss']
 })
-export class PcrModalComponent {
+export class StatusModalComponent {
 
 	@ViewChild('statusModal') content: ElementRef;
-	@Output() statusChangeEvent = new EventEmitter();
+	@Output() statusChangeCancel = new EventEmitter();
 	@Input() crucible_id;
 	@Input() key;
 	statusType;
+	statusName;
 
 	constructor(
 		private user: UserService, 
@@ -35,13 +36,14 @@ export class PcrModalComponent {
 
 	/*
 	*/
-	openStatusModal(statusType): void {
+	openStatusModal(statusType, statusName): void {
 		this.statusType = statusType
+		this.statusName = statusName;
 
 		// check for crucible id first for pcr pass/complete
 		if(['pass', 'complete'].includes(statusType) && !this.crucible_id){
 			this.toastr.showToast(`Missing Crucible ID. Cannot transition ${this.key}`, 'error');
-			this.statusChangeEvent.emit({cancel:true});
+			this.statusChangeCancel.emit();
 			return;
 		}
 
@@ -57,7 +59,7 @@ export class PcrModalComponent {
 					break;
 			}
 
-		}, () => this.statusChangeEvent.emit({cancel:true}) );	
+		}, () => this.statusChangeCancel.emit() );	
 	}
 
 	/*
@@ -65,13 +67,10 @@ export class PcrModalComponent {
 	changeStatus(statusType) {
 		this.jira.changeStatus({key:this.key, status:statusType})
 		.subscribe(
-			() => {
-				this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
-				this.statusChangeEvent.emit({transitionType: statusType});
-			},
+			() => this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success'),
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-				this.statusChangeEvent.emit({cancel:true});
+				this.statusChangeCancel.emit();
 			}
 		);
 	}
