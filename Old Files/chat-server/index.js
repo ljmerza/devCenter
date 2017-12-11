@@ -9,14 +9,14 @@ const bot_registration_url = '';
 const botId = '';
 const secretKey = '';
 
-const attuid = ''
+const username = ''
 const sql_host = '';
 const sql_password = '';
 const sql_db = ''
 
 let pool = mysql.createPool({
   host     : sql_host,
-  user     : attuid,
+  user     : username,
   password : sql_password,
   database : sql_db
 });
@@ -51,14 +51,14 @@ let server = http.createServer( (request, response) => {
     // parse data to JSON
     let post = JSON.parse(body_data);
 
-    // get message and attuid
+    // get message and username
     let message = post.message;
-    let attuid = post.from;
+    let username = post.from;
     let meeting_room;
 
     // if we have a pound sign then we are in a chat room so split the data
-    if(attuid.includes('#')) {
-      [meeting_room, attuid] = attuid.split('#');
+    if(username.includes('#')) {
+      [meeting_room, username] = username.split('#');
       meeting_room = meeting_room.split(':')[1];
     }
 
@@ -70,14 +70,14 @@ let server = http.createServer( (request, response) => {
 
     // print out data we got so far
     console.log('meeting_room: ', meeting_room);
-    console.log('attuid: ', attuid);
+    console.log('username: ', username);
     console.log('message: ', message);
 
     // if message begins with hey bot then process message and return message back to requester
     if(/^hey bot,?/i.test(message)) {
 
       // get a message
-      process_message(message, attuid)
+      process_message(message, username)
       .then( (return_message) => {
 
         // print separator for next request
@@ -100,10 +100,10 @@ server.listen(Number(port));
 
 
 /********************************************************************
-* function process_message(message, attuid)
+* function process_message(message, username)
 *   processes the user's message to see what they want from the bot
 * *******************************************************************/
-function process_message(message, attuid) {
+function process_message(message, username) {
 
   return new Promise( (resolve, reject) => {
     // data we will return to requester
@@ -113,7 +113,7 @@ function process_message(message, attuid) {
 
     // object used to update SQL
     let updates = {
-      attuid: attuid,
+      username: username,
       all: 0,
       new: 0,
       conflict: 0,
@@ -129,7 +129,7 @@ function process_message(message, attuid) {
 
     // show user data by getting data -> wait for response then return promise
     else if(/show/i.test(message)){
-      return get_user_data(attuid)
+      return get_user_data(username)
       .then( (return_message) => {
         return resolve(return_message);
       });
@@ -208,9 +208,9 @@ function process_message(message, attuid) {
     let message_to_user = `You will ${is_not}recieve ${return_message} jira ticket messages`
 
     // if we need to update the db then do that
-    if(update_field && attuid) {
+    if(update_field && username) {
       // wait for user profile update then return message
-      modify_user(update_field, update_value, attuid)
+      modify_user(update_field, update_value, username)
       .then( (modify_user_message) => {
         console.log('modify_user_message: ', modify_user_message);
         return resolve(message_to_user);
@@ -225,10 +225,10 @@ function process_message(message, attuid) {
 }
 
 /********************************************************************
-* function modify_user(update_field, update_value, attuid)
+* function modify_user(update_field, update_value, username)
 *   modifies a user's settings in the db
 * *******************************************************************/
-function modify_user(update_field, update_value, attuid) {
+function modify_user(update_field, update_value, username) {
 
   return new Promise( (resolve, reject) => {
 
@@ -237,23 +237,23 @@ function modify_user(update_field, update_value, attuid) {
     .then( (connection) => {
     
       // see if user exists first
-      connection.query('SELECT * FROM `who_to_ping` WHERE attuid = ?', [attuid])
+      connection.query('SELECT * FROM `who_to_ping` WHERE username = ?', [username])
       .then( (results, fields) => {
         
         // if user exists then update row
-        if(results[0] && results[0].attuid == attuid) {
+        if(results[0] && results[0].username == username) {
 
-          connection.query(`UPDATE who_to_ping SET ${update_field}=? WHERE attuid = ?`, [update_value, attuid])
+          connection.query(`UPDATE who_to_ping SET ${update_field}=? WHERE username = ?`, [update_value, username])
           .then( (error, results, fields) => {
-            return resolve(`updated user ${attuid} with ${update_field} set to ${update_value}`);
+            return resolve(`updated user ${username} with ${update_field} set to ${update_value}`);
           }); // end update suer
 
         } else {
 
           // else add new user with requested row values
-          connection.query(`INSERT INTO who_to_ping (${update_field}, attuid) VALUES (?, "?")`, [update_value, attuid])
+          connection.query(`INSERT INTO who_to_ping (${update_field}, username) VALUES (?, "?")`, [update_value, username])
           .then( (results, fields) => {
-            return resolve(`added new ${attuid} with ${update_field} set to ${update_value}`);
+            return resolve(`added new ${username} with ${update_field} set to ${update_value}`);
           }); // end insert user data
         } // end else 
 
@@ -263,10 +263,10 @@ function modify_user(update_field, update_value, attuid) {
 }
 
 /********************************************************************
-* function get_user_data(attuid)
+* function get_user_data(username)
 *   gets a user's profile settings from the db
 * *******************************************************************/
-function get_user_data(attuid) {
+function get_user_data(username) {
 
   return new Promise( (resolve, reject) => {
     // get connection from pool
@@ -274,7 +274,7 @@ function get_user_data(attuid) {
     .then( (connection) => {
 
       // see if user exists first
-      connection.query('SELECT * FROM `who_to_ping` WHERE attuid = ?', [attuid])
+      connection.query('SELECT * FROM `who_to_ping` WHERE username = ?', [username])
       .then( (results, fields) => {
       
         // if user exists then get data
@@ -288,7 +288,7 @@ function get_user_data(attuid) {
           let never_ping = results[0].never_ping ? 'Yes' : 'No';
 
           return resolve(`
-            <br>attuid: ${attuid}<br>
+            <br>username: ${username}<br>
             all ping: ${all_ping}<br>
             new ping: ${new_ping}<br>
             conflict ping: ${conflict_ping}<br>

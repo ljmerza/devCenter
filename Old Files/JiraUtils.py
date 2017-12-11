@@ -1,47 +1,5 @@
-def show_jira_ascii_header(self):
-	'''print ASCII header
-	Args:
-		None
-
-	Returns:
-		None
-	'''
-	# {0:15.15} = use variable 0 ('Key') with 15 preallocated spaces, .15 means slice string after 15 characters
-	print('', '-'* dividers)
-	print(" | {0:10} | {1:7} | {2:20} | {3:22} | {4:50} | {5:52} | {6:6} |".format('Key', 'MSRP', 'Status', 'Component', 'Summary', 'URL', 'username'))
-	print('', '-'* dividers)
-
-
-def show_jira_ascii_footer(self):
-	'''print ASCII footer
-	Args:
-		None
-		
-	Returns:
-		None
-	'''
-	print('','-'* dividers)
-	print(" | TOTAL: {0:3.3} ".format(str(total_tickets)), " "*(dividers-16), "|")
-	print('','-'* dividers, '\n\n\n')
-
-def show_jira_ascii(self):
-	'''print ASCII of Jira data to console
-	Args:
-		issues
-		
-	Returns:
-		None
-	'''
-	# print header
-	show_jira_ascii_header(issues)
-	# for each issue print issue data in body
-	for issue in issues:
-		print( " | {0:10.10} | {1:7.7} | {2:20.20} | {3:22.22} | {4:50.50} | {5}/{6:15.15} | {7:6.6} |".format(issue['keys'], issue['msrp'], issue['status'], issue['component'], issue['summary'], ticket_base, issue['key'], issue['username']))
-		# every 4 issues print divider
-		if(idx % 4 == 0):
-			print('','-'* dividers)
-	# print footer
-	show_jira_ascii_footer()
+from openpyxl import Workbook
+from openpyxl.styles import Font, Fill, Border, Alignment, PatternFill
 
 
 def create_work_book():

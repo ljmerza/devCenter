@@ -11,9 +11,9 @@ from __future__ import division
 from __future__ import print_function
 
 class Jira(object):
-	'''iTrack class using an attuid and password'''
+	'''iTrack class using an username and password'''
 
-	def __init__(self, rsa_key_path, attuid, password, base_url):
+	def __init__(self, rsa_key_path, username, password, base_url):
 		'''setup user's credentials and paths, rsa file path, username, and password'''
 
 		##############################################################################
@@ -38,7 +38,7 @@ class Jira(object):
 		##############################################################################
 		self.rsa_key_path = rsa_key_path
 		self.payload = { # jira body payload
-			"os_username": attuid,
+			"os_username": username,
 			"os_password": password,
 			"login": "Log+In",
 			"os_destination" : "",
@@ -52,7 +52,7 @@ class Jira(object):
 		self.component_results = []
 		self.summary_results = []
 		self.estimate_results = []
-		self.attuid_results = []
+		self.username_results = []
 
 		self.rss_feed_actions = []
 		self.rss_feed_users = []
@@ -124,7 +124,7 @@ class Jira(object):
 		self.component_results = []
 		self.summary_results = []
 		self.estimate_results = []
-		self.attuid_results = []
+		self.username_results = []
 
 		# go through each ticket page in jira
 		for param in self.indexes:
@@ -136,7 +136,7 @@ class Jira(object):
 			components = []
 			summaries = []
 			estimates = []
-			attuids = []
+			usernames = []
 
 			# get html
 			session_data = self.session_obj.get( self.jira_filter_base_url+str(filter_id) + str(param) )
@@ -164,17 +164,17 @@ class Jira(object):
 				for a in el:
 					statuses.append(a.text)
 
-			# extract attuid data from html
+			# extract username data from html
 			parser_results = soup_data.find_all(attrs={'class':"assignee"})
 			for td in parser_results:
 				el = td.findAll('span')
 				for a in el:
-					# parse out the attuid
+					# parse out the username
 					text = a.text
 					text_index = text.index('(')+1
 					text = text[text_index:text_index+6]
-					# add attuid to array
-					attuids.append(text)
+					# add username to array
+					usernames.append(text)
 
 			# extract components data from html
 			parser_results = soup_data.find_all(attrs={'class':"components"})
@@ -205,7 +205,7 @@ class Jira(object):
 			self.component_results = self.component_results + components
 			self.summary_results = self.summary_results + summaries
 			self.estimate_results = self.estimate_results + estimates
-			self.attuid_results = self.attuid_results + attuids
+			self.username_results = self.username_results + usernames
 		
 			# jira shows 50 tickets at a time so if less than 50 are showing then we
 			# are at the end of list so print results and end loop
@@ -253,4 +253,4 @@ class Jira(object):
 
 	def return_jira_data(self):
 		'''return all jira data'''
-		return self.attuid_results, self.key_results, self.msrp_results, self.status_results, self.component_results, self.summary_results, self.estimate_results
+		return self.username_results, self.key_results, self.msrp_results, self.status_results, self.component_results, self.summary_results, self.estimate_results
