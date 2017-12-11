@@ -4,17 +4,25 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 @Injectable()
 export class ToastrService {
 
-	private toastrOptions: Object = {
+	private toastrOptions = {
 		showCloseButton: true, 
 		animate: 'fade', 
-		enableHTML: true
+		enableHTML: true,
+		toastLife: 5000
 	};
 
 	toastObject: ToastsManager;
 
 	/*
 	*/
-	public showToast(message:string, message_type:string): void {
+	public showToast(message:string, message_type:string, sticky=false, toastLife=0): void {
+
+		// if toastLife then set else if sticky then show 'forever'
+		if(toastLife){
+			this.toastrOptions.toastLife = toastLife;
+		} else if(sticky){
+			this.toastrOptions.toastLife = 9999999;
+		}
 
 		if(message_type === 'success'){
 			this.toastObject.success(message, null, this.toastrOptions);

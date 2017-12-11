@@ -80,7 +80,7 @@ export class QaGeneratorComponent {
 					<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>
 					<br>
 					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
-				`, 'success');
+				`, 'success', true);
 			},
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
