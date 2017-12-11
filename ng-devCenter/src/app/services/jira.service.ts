@@ -152,7 +152,6 @@ export class JiraService extends DataService {
 		let sources = [];
 
 		// create crucible and post comment
-		
 		return super.postAPI({
 			url: `${this.apiUrl}/crucible/create`,
 			body: postData

@@ -42,32 +42,35 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 
 		# add comment to Jira if QA step exist
 		if data['qa_steps']:
-			data['crucible_id'] = cru_response['data']
-			com_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
-			if not com_response['status']:
-				return Response(com_response, mimetype='application/json')
 
 			# add PCR needed component if wanted
 			if data['autoPCR']:
-				data['status'] = 'pcrNeeded'
+				data['status_type'] = 'pcrNeeded'
 				pcr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 				if not pcr_response['status']:
-					pcr_response['data'] += ' Crucible created: ' + com_response['data']
+					pcr_response['data'] += ' but Crucible created: ' + cru_response['data']
 					return Response(pcr_response, mimetype='application/json')
 
 			# add CR status if wanted
 			if data['autoCR']:
-				data['status'] = 'cr'
+				data['status_type'] = 'cr'
 				cr_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
 				if not cr_response['status']:
-					cr_response['data'] += ' Crucible created: ' + com_response['data']
+					cr_response['data'] += ' but Crucible created: ' + cru_response['data']
 					return Response(cr_response, mimetype='application/json')
+
+			# try to add comment now
+			data['crucible_id'] = cru_response['data']
+			com_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
+			if not com_response['status']:
+				com_response['data'] += ' but Crucible created: ' + cru_response['data']
+				return Response(com_response, mimetype='application/json')
 
 			# add worklog if wanted
 			if data['log_time']:
 				log_response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
 				if not log_response['status']:
-					log_response['data'] += ' Crucible created: ' + com_response['data']
+					log_response['data'] += ' but Jira log and Crucible created: ' + cru_response['data']
 					return Response(log_response, mimetype='application/json')
 
 		# return Crucible response with cru id

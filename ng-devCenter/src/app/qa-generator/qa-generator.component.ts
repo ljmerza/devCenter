@@ -21,6 +21,8 @@ export class QaGeneratorComponent {
 	modalReference; // reference to open modal
 	loadingBranches:boolean = true; // are we loading branches?
 
+	repoLookUp$;
+
 	// form fields
 	pcrNeeded:boolean = true;
 	codeReview:boolean = true;
@@ -33,7 +35,7 @@ export class QaGeneratorComponent {
 	branches; // loaded branches data
 
 	@ViewChild('qaModal') content:ElementRef;
-	@Output() newCrucible = new EventEmitter();
+	@Output() statusChangeCancel = new EventEmitter();
 	@Input() msrp;
 	@Input() key;
 	@Input() repos;
@@ -80,7 +82,10 @@ export class QaGeneratorComponent {
 					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
 				`, 'success');
 			},
-			error => error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+			error => {
+				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
+				this.statusChangeCancel.emit();
+			}
 		);
 	}
 
@@ -90,28 +95,36 @@ export class QaGeneratorComponent {
 
 		// open modal
 		this.modalReference = this.modalService
-			.open(this.content, { windowClass: 'qa-modal' })
+		.open(this.content, { windowClass: 'qa-modal' });
 
-		// once modal is closed if we just exited out then reset inputs
-		this.modalReference.result.then( 
-			() => null, 
-			() => this.newCrucible.emit({key: this.key})
-		);
-
-		// disabled submit button for QA gen
-		this.loadingBranches = true;
-
-		// get all branches associated with this msrp
-		this.jira.getTicketBranches(this.msrp).subscribe(
-			response => {
-				this.loadingBranches = false;
-				this.processBranches(response.data);
-			},
-			error => {
-				this.loadingBranches = false;
-				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
+		this.modalReference.result.then(
+			() => null,
+			() => {
+				// cancel repo look up and status change in UI
+				if(this.repoLookUp$){
+					this.repoLookUp$.unsubscribe();
+				}
+				this.statusChangeCancel.emit();
 			}
 		);
+
+		// if we don't have repos yet then load them now
+		if(!(this.repoArray.length > 0)){
+			// disabled submit button for QA gen
+			this.loadingBranches = true;
+
+			// get all branches associated with this msrp
+			this.repoLookUp$ = this.jira.getTicketBranches(this.msrp).subscribe(
+				response => {
+					this.loadingBranches = false;
+					this.processBranches(response.data);
+				},
+				error => {
+					this.loadingBranches = false;
+					this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
+				}
+			);
+		}		
 	}
 
 	/*

@@ -54,6 +54,7 @@ export class TicketComponent implements AfterViewInit {
 		{name: 'Merge Code', id: 'mergeCode'},
 		{name: 'Merge Conflict', id: 'mergeConflict'},
 		{name: 'Ready for UCT', id: 'uctReady'},
+		{name: 'UCT Not Ready', id: 'uctNotReady'},
 		{name: 'In UCT', id: 'inUct'},
 		{name: 'UCT Pass', id: 'uctPass'},
 		{name: 'UCT Fail', id: 'uctFail'}
@@ -80,25 +81,6 @@ export class TicketComponent implements AfterViewInit {
 		}
 
 		this.statusModal.openStatusModal(ticketState[0].id, ticketState[0].name);
-	}
-
-	/*
-	*/
-	newCrucible({key, crucible_id='', changedStatus}):void {
-
-		// if we changed status then save cru id and update ticket
-		if(changedStatus) {
-			this.ticket.crucible_id = crucible_id;
-			this.rerender.emit();
-			return;
-
-		} else if (!crucible_id){
-			// else if we didnt even get a cru id then we have an error
-			this.toastr.showToast(`Ticket status change cancelled for ${key}`, 'info');
-		}
-
-		// revert state if not updating jira
-		this.ticketDropdown.value = this.oldState;
 	}
 
 	/*

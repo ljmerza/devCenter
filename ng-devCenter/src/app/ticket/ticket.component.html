@@ -84,8 +84,8 @@
 	[key]=ticket.key>
 </app-status-modal>
 
-<app-qa-generator 
-	(newCrucible)="newCrucible($event)"
+<app-qa-generator
+	(statusChangeCancel)="statusChangeCancel()" 
 	[key]=ticket.key
 	[repos]=repos
 	[msrp]=ticket.msrp>

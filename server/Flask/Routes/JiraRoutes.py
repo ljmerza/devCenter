@@ -91,7 +91,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 
 		# if pcr pass and status change ok -> process Crucible review
-		if data['status_type'] == 'pcrPass' or data['status'] == 'pcrCompleted':
+		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
 			status_response = CrucibleRequests.complete_review(data=data, crucible_obj=crucible_obj)
 
 		# if QA pass then add merge component
