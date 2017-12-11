@@ -40,7 +40,7 @@ export class ConfigService {
 	}
 
 	mytickets(username){
-		return encodeURIComponent(`assignee = lm240n AND resolution = unresolved ORDER BY due DESC`);
+		return encodeURIComponent(`assignee = ${username} AND resolution = unresolved ORDER BY due DESC`);
 	}
 
 	jiraUrl = 'https://jira.web.att.com:8443';
