@@ -2,6 +2,7 @@
 
 from flask import request, Response
 from flask_cors import cross_origin
+import datetime
 
 import Requests.JiraRequests as JiraRequests
 import Requests.CrucibleRequests as CrucibleRequests
@@ -61,6 +62,13 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		'''
 		data=request.get_json()
 		data["cred_hash"] = g.cred_hash
+
+		# if UCT not ready then add to end of comment
+		if data['uctNotReady']:
+			comment = data['comment']
+			today = datetime.date.today()
+			uct_comment = today.strftime('h1. {color:red}UCT not ready as of %B %d, %Y %I:%M %p {color}')
+			data['comment'] = f"{comment}\n{uct_comment}"
 
 		# add comment
 		response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)

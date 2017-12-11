@@ -61,7 +61,8 @@ export class QaGeneratorComponent {
 			autoCR: formObj.value.codeReview,
 			autoPCR: formObj.value.pcrNeeded,
 			key: this.key,
-			repos: this.repoArray
+			repos: this.repoArray,
+			msrp: this.msrp
 		};
 
 		// show informational toast

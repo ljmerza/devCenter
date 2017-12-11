@@ -31,7 +31,8 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 			"qa_steps": post_data.get('qa_steps', ''),
 			"autoCR": post_data.get('autoCR', False),
 			"autoPCR": post_data.get('autoPCR', False),
-			"log_time": post_data.get('log_time', 0)
+			"log_time": post_data.get('log_time', 0),
+			"msrp": post_data.get('msrp', '')
 		}
 
 		# create crucible review

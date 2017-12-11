@@ -32,7 +32,7 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	'''
 
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['key', 'username', 'password', 'repos','cred_hash'])
+	missing_params = FlaskUtils.check_args(params=data, required=['key', 'msrp', 'username', 'password', 'repos','cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -40,24 +40,20 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	if len(data['repos']) == 0:
 		return {"status": False, "data": 'No repos provided to create Crucible'}
 
-	# get msrp of ticket from first branch
+	# check branch data
 	repo = data['repos'][0]
-
-	# check data
 	if 'reviewedBranch' not in repo:
 		return {"status": False, "data": 'No repos provided to create Crucible'}
-
 	branch = repo['reviewedBranch']
-	msrp = branch.split('-')[1]
 	
 	# get issue data from Crucible title
-	qa_response = jira_obj.find_crucible_title_data(msrp=msrp, cred_hash=data['cred_hash'])
+	qa_response = jira_obj.find_crucible_title_data(msrp=data['msrp'], cred_hash=data['cred_hash'])
 	if not qa_response['status']:
 		return {"status": False, "data": 'Could not get Crucible data to make title: '+qa_response['data']}
 
 	# save crucible title
 	qa_response = qa_response['data']
-	data['title'] = crucible_obj.create_crucible_title(story_point=qa_response['story_point'], key=qa_response["key"], msrp=msrp, summary=qa_response['summary'])
+	data['title'] = crucible_obj.create_crucible_title(story_point=qa_response['story_point'], key=qa_response["key"], msrp=data['msrp'], summary=qa_response['summary'])
 
 	# create crucible
 	return crucible_obj.create_crucible(data=data, cred_hash=data['cred_hash'])

@@ -40,11 +40,8 @@ export class TimeLogComponent	{
 		// close modal
 		this.modalReference.close();
 		
-		// check for comment
-		if(!formObj.value.comment){
-			this.toastr.showToast('Must enter a comment to update Jira', 'error');
-			return;
-		} else if (!formObj.value.logTime.hour && !formObj.value.logTime.minute){
+		// check for worklog or comment only
+		if (!formObj.value.logTime.hour && !formObj.value.logTime.minute){
 			this.toastr.showToast('Posting comment to Jira', 'info');
 		} else {
 			this.toastr.showToast('Posting comment and updating worklog to Jira', 'info');
@@ -52,7 +49,8 @@ export class TimeLogComponent	{
 
 		// create POST body
 		let postData = {
-			comment: formObj.value.comment,
+			comment: formObj.value.comment || '',
+			uctNotReady: formObj.value.uctNotReady || false,
 			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
 			key: this.key
 		};
@@ -67,7 +65,7 @@ export class TimeLogComponent	{
 				// then reset form
 				formObj.resetForm();
 			},
-			error => this.toastr.showToast(error.data, 'error')
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
 	}
 

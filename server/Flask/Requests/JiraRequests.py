@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import datetime
 from Flask import FlaskUtils
 
 
@@ -32,12 +31,6 @@ def set_status(data, jira_obj):
 
 	elif data['status_type'] == 'uctReady':
 		return jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'uctNotReady':
-		today = datetime.date.today()
-		comment = today.strftime('h1. {color:red}UCT not ready as of %B %d, %Y %I:%M %p {color}')
-		return jira_obj.add_comment(
-			key=data['key'], cred_hash=data['cred_hash'], 
-			comment=comment, private_comment=True)
 	elif data['status_type'] == 'inUct':
 		return jira_obj.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctPass':
