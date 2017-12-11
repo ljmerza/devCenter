@@ -54,7 +54,6 @@ export class TicketComponent implements AfterViewInit {
 		{name: 'Merge Code', id: 'mergeCode'},
 		{name: 'Merge Conflict', id: 'mergeConflict'},
 		{name: 'Ready for UCT', id: 'uctReady'},
-		{name: 'UCT Not Ready', id: 'uctNotReady'},
 		{name: 'In UCT', id: 'inUct'},
 		{name: 'UCT Pass', id: 'uctPass'},
 		{name: 'UCT Fail', id: 'uctFail'}

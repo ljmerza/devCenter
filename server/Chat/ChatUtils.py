@@ -31,7 +31,7 @@ def get_estimate_string(story_point):
 			days = story_point % 5
 			story_point = str(int(week)) + ' week'
 			if(days >= 1):
-				story_point = story_point + ' ' + str(days)
+				story_point = story_point + ' ' + str(int(days))
 				if days == 1:
 					story_point += ' day'
 				else:
