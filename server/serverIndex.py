@@ -31,7 +31,7 @@ if 'prodhost' in sys.argv:
 if 'prod' in sys.argv:
 	devdb = False
 	host = '0.0.0.0'
-	host = 5858
+	port = 5858
 	devflk = False
 	devChat = False
 
