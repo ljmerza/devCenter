@@ -37,7 +37,7 @@ def set_status(data, jira_obj):
 		comment = today.strftime('h1. {color:red}UCT not ready as of %B %d, %Y %I:%M %p {color}')
 		return jira_obj.add_comment(
 			key=data['key'], cred_hash=data['cred_hash'], 
-			comment='', private_comment=True)
+			comment=comment, private_comment=True)
 	elif data['status_type'] == 'inUct':
 		return jira_obj.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctPass':
