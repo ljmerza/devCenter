@@ -19,6 +19,7 @@ import { ToastrService } from './../services/toastr.service';
 export class TimeLogComponent	{
 	modalReference;
 
+	uctNotReady;
 	comments:string;
 	logTime = {hour: 0, minute: 0};
 
@@ -50,7 +51,8 @@ export class TimeLogComponent	{
 		// create POST body
 		let postData = {
 			comment: formObj.value.comment || '',
-			uctNotReady: formObj.value.uctNotReady || false,
+			uct_not_ready: formObj.value.uctNotReady || false,
+			uct_date: formObj.value.uctNotReady ? ((new Date).getTime())/1000 : 0,
 			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
 			key: this.key
 		};
@@ -77,7 +79,12 @@ export class TimeLogComponent	{
 
 		// open modal
 		this.modalReference = this.modalService
-			.open(this.content, { windowClass: 'log-modal' });
+			.open(this.content, { windowClass: 'log-modal' })
+			.result.then(
+				// always set this to false again
+				() => this.uctNotReady = false,
+				() => this.uctNotReady = false
+			);
 	}
 
 }

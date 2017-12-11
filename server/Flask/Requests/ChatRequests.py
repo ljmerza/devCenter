@@ -2,11 +2,11 @@
 
 from Flask import FlaskUtils
 
-def update_ping(data, chat_obj, jira_obj, crucible_obj):
+def send_ping(data, chat_obj, jira_obj, crucible_obj):
 	'''
 	'''
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['ping_type','cred_hash'])
+	missing_params = FlaskUtils.check_args(params=data, required=['username', 'ping_type','cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -17,6 +17,7 @@ def update_ping(data, chat_obj, jira_obj, crucible_obj):
 		return {"data": f"could not get Jira ticket: "+{jira_response['data']}, "status": False}
 
 	# merge results
+	username = data['username'] # save original username for who to ping
 	data = {**data, **jira_response['data'][0]}
 
 	if data['ping_type'] == 'new':
@@ -25,14 +26,14 @@ def update_ping(data, chat_obj, jira_obj, crucible_obj):
 
 		return chat_obj.send_new_ticket( 
 			key=data['key'], msrp=data['msrp'], summary=data['summary'], 
-			username=data['username'], story_point=data['story_point'], 
+			username=username, story_point=data['story_point'], 
 			pcr_estimate=pcr_estimate
 		)
 
 	elif data['ping_type'] == 'merge':
 		return chat_obj.send_merge_needed( 
 			key=data['key'], msrp=data['msrp'], summary=data['summary'], 
-			username=data['username'], sprint=data['sprint']
+			username=username, sprint=data['sprint']
 		)
 
 	# else send not implemented

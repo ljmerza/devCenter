@@ -39,7 +39,7 @@ class JiraComponent():
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-		json_data = {"update":{"components":[{"remove":[{"name":name}]}]}}
+		json_data = {"update":{"components":[{"remove":{"name":name}}]}}
 		return self.jira_api.put_json(url=f'{self.jira_api.api_base}/issue/{key}', json_data=json_data, cred_hash=cred_hash)
 
 	def set_pcr_needed(self, key, cred_hash):

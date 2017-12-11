@@ -75,11 +75,16 @@ def add_comment(data, jira_obj):
 	Returns:
 
 	'''
-	missing_params = FlaskUtils.check_args(params=data, required=['key', 'comment', 'cred_hash'])
+	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash', 'uct_date'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
 	# try to add comment an return
-	return jira_obj.add_comment(key=data["key"], comment=data["comment"], cred_hash=data['cred_hash'])
+	return jira_obj.add_comment(
+		key=data["key"], comment=data["comment"], 
+		cred_hash=data['cred_hash'],
+		uct_date=data['uct_date']
+	)
 
 
 def add_worklog(data, jira_obj):

@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import os
+import re
 from Common.DevCenterAPI import DevCenterAPI
 
 class JiraAPI(DevCenterAPI):
@@ -111,10 +112,10 @@ class JiraAPI(DevCenterAPI):
 							errors.append(message)
 
 			# if array instance then get errors
-			if isinstance(error_message, list):
+			elif isinstance(response['data'], list):
 				errors = response['data']
 
-			# now merge all errors into one string
-			response['data'] = ','.join(errors)
+			# now merge all errors into one string - new lines to breaks
+			response['data'] = re.sub(r'\n', r'<br>', ','.join(errors) )
 
 		return response

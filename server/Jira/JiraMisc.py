@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import datetime
 from time import gmtime, strftime
 from JiraUtils import *
 
@@ -75,7 +76,7 @@ class JiraMisc():
 			'story_point': search_response['fields']['customfield_10006']
 		}}
 
-	def add_comment(self, key, comment, cred_hash, private_comment=True):
+	def add_comment(self, key, comment, cred_hash, private_comment=True, uct_date=''):
 		'''adds a comment to a jira issue. By default the comment is
 		set to developer view only
 
@@ -84,10 +85,18 @@ class JiraMisc():
 			comment (str) the comment to post to the jira issue
 			cred_hash (str) Authorization header value
 			private_comment (boolean) is the comment developer only or public? (default true)
+			uct_date (str) if uct ready string added then user date from client timezone
 
 		Returns:
 			dict: status boolean and/or data hash
 		'''
+
+		# add uct not ready if wanted 
+		if uct_date:
+			uct_date = datetime.datetime.fromtimestamp(uct_date)
+			uct_comment = uct_date.strftime('h1. {color:red}UCT not ready as of %B %d, %Y %I:%M %p {color}')
+			comment = f"{comment}\n{uct_comment}"
+
 		json_data = {"body": comment}
 		if private_comment:
 			json_data['visibility'] = {'type': 'role', 'value': 'Developers'}
