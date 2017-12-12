@@ -70,20 +70,26 @@ def add_comment(data, jira_obj):
 			cred_hash (str) Authorization header value
 			key (str) the Jira key to post a comment to
 			comment (str) the comment to add to the the ticket
+			uct_date (str) the date to use for UCT not ready (optional)
 		jira_obj (Class instance) Jira class instance to connect to Jira
 
 	Returns:
 
 	'''
-	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash', 'uct_date'])
+	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+	# set uct date if given
+	uct_date = 0
+	if 'uct_date' in data:
+		uct_date = data['uct_date']
 
 	# try to add comment an return
 	return jira_obj.add_comment(
 		key=data["key"], comment=data["comment"], 
 		cred_hash=data['cred_hash'],
-		uct_date=data['uct_date']
+		uct_date=uct_date
 	)
 
 

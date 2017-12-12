@@ -56,7 +56,7 @@ export class JiraService extends DataService {
 				break;
 
 			case 'allmy':
-				jql = this.config.allmy(this.user.username);
+				jql = this.config.allmy;
 				filterNumber = '11418';
 				this.title = 'All My';
 				break;
@@ -106,7 +106,7 @@ export class JiraService extends DataService {
 				break;
 
 			default:
-				jql = this.config.mytickets(this.user.username);
+				jql = this.config.mytickets;
 				this.title = 'My Open';
 				break;
 		}

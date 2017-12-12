@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class ConfigService {
+	username = localStorage.getItem('devCenter.username') || '';
 
 	constructor() { }
 
@@ -35,13 +36,9 @@ export class ConfigService {
 
 	pmTickets = encodeURIComponent('resolution = Unresolved AND assignee in (ep759g, wc591w, lk2973)');
 
-	allmy(username){
-		return encodeURIComponent(`assignee = ${username} ORDER BY updated DESC`);
-	}
+	allmy = encodeURIComponent(`assignee = ${this.username} ORDER BY updated DESC`);
 
-	mytickets(username){
-		return encodeURIComponent(`assignee = ${username} AND resolution = unresolved ORDER BY due DESC`);
-	}
+	mytickets = encodeURIComponent(`assignee = ${this.username} AND resolution = unresolved ORDER BY due DESC`);
 
 	jiraUrl = 'https://jira.web.att.com:8443';
 	crucibleUrl = 'https://icode3.web.att.com';
@@ -234,7 +231,7 @@ export class ConfigService {
 			name: 'AQE'
 		},
 		{
-			link: 'http://teamdb.web.att.com/teamdb/teams.php?ATTuid=',
+			link: `http://teamdb.web.att.com/teamdb/teams.php?ATTuid=${this.username}`,
 			name: 'TeamDB'
 		},
 		{

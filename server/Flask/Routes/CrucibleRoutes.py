@@ -40,9 +40,19 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		if not cru_response['status']:
 			return Response(cru_response, mimetype='application/json')
 
+		# save cru id on data
+		data['crucible_id'] = cru_response['data']
+
 
 		# add comment to Jira if QA step exist
 		if data['qa_steps']:
+
+			# try to add comment now
+			data['crucible_id'] = cru_response['data']
+			com_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
+			if not com_response['status']:
+				com_response['data'] += ' but Crucible created: ' + cru_response['data']
+				return Response(com_response, mimetype='application/json')
 
 			# add PCR needed component if wanted
 			if data['autoPCR']:
@@ -59,13 +69,6 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 				if not cr_response['status']:
 					cr_response['data'] += ' but Crucible created: ' + cru_response['data']
 					return Response(cr_response, mimetype='application/json')
-
-			# try to add comment now
-			data['crucible_id'] = cru_response['data']
-			com_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
-			if not com_response['status']:
-				com_response['data'] += ' but Crucible created: ' + cru_response['data']
-				return Response(com_response, mimetype='application/json')
 
 			# add worklog if wanted
 			if data['log_time']:

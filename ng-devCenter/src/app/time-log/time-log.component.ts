@@ -79,12 +79,13 @@ export class TimeLogComponent	{
 
 		// open modal
 		this.modalReference = this.modalService
-			.open(this.content, { windowClass: 'log-modal' })
-			.result.then(
-				// always set this to false again
-				() => this.uctNotReady = false,
-				() => this.uctNotReady = false
-			);
+			.open(this.content, { windowClass: 'log-modal' });
+
+		this.modalReference.result.then(
+			// always set this to false again
+			() => this.uctNotReady = false,
+			() => this.uctNotReady = false
+		);
 	}
 
 }
