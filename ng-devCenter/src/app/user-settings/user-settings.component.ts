@@ -34,7 +34,7 @@ export class UserSettingsComponent implements AfterContentInit {
 			this.jira.getProfile().subscribe(
 				response => {
 					this.user.userData = response.data;
-					this.user.userPicture = response.data.avatarUrls['24x24'];
+					this.user.userPicture = response.data.avatarUrls['48x48'];
 			},
 				error => this.toastr.showToast(`Could not retrieve user profile ${error}`,'error')
 			)
