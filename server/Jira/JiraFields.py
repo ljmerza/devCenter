@@ -154,8 +154,8 @@ def get_sprint(issue):
 	'''
 	# get sprint
 	sprint = ''
-	if len( issue.get('fields', {}).get('fixVersions', []) ):
-			sprint = issue.get('fields', {}).get('fixVersions')[0].get('name', '')
+	if 'fixVersions' in issue['fields'] and len(issue['fields']['fixVersions']):
+			sprint = issue['fields']['fixVersions'][0]['name']
 	return sprint
 
 def get_epic_link(issue):
@@ -222,10 +222,13 @@ def get_comments(issue):
 			'comment': _format_comment( comment=comment.get('body', ''), issue=issue ),
 			'id': comment.get('id', ''),
 			'key': issue.get('key', ''),
-			'username': comment.get('author', {}).get('name', ''),
-			'email': comment.get('author', {}).get('emailAddress', ''),
-			'display_name': comment.get('author', {}).get('displayName', ''),
-			'comment_type': comment_type
+			'username': comment.get('updateAuthor', {}).get('name', ''),
+			'email': comment.get('updateAuthor', {}).get('emailAddress', ''),
+			'display_name': comment.get('updateAuthor', {}).get('displayName', ''),
+			'comment_type': comment_type,
+			'created': comment.get('created', ''),
+			'updated': comment.get('updated', ''),
+			'visibility': 'Developers' if 'visibility' in comment else ''
 
 		})
 	return comments

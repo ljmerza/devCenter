@@ -66,6 +66,11 @@ def get_branch_name(username, msrp, summary):
 			branch_name += f'-{msrp}'
 	return branch_name
 
+def build_commit_message(key, msrp, summary):
+	'''
+	'''
+	return f"[{key}] Ticket #{msrp} {summary}"
+
 def build_message(data, commit_message=False, jira_message=False, branch_message=False, crucible_message=False, sprint_message=False, msrp_message=False, summary_message=False, crucible_title_message=False, estimate_message=False):
 	'''builds a custom HTML message to send
 	Args:
@@ -95,14 +100,13 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 			color = td_alt_style
 		else:
 			color = ''
-		# get data
-		msrp = data['msrp']
-		key = data['key']
-		summary = data['summary']
+		# build commit message
+		commit_message = build_commit_message(data['msrp'], data['msrp'], data['summary'])
+		# create message piece
 		message += f"\
 		<tr> \
 			<td style='{td_style} {color}'>Commit Message</td> \
-			<td style='{td_style} {color}'>[{key}] Ticket #{msrp} {summary}</td> \
+			<td style='{td_style} {color}'>{commit_message}</td> \
 		</tr>" 
 	# add Jira link
 	if jira_message:

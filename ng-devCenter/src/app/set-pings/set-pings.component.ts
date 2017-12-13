@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
 
@@ -11,7 +11,14 @@ import { ToastrService } from './../services/toastr.service';
 })
 export class SetPingsComponent {
 
+	options: NgbModalOptions = {
+		size: 'lg'
+	}
+
 	@Input() key;
+	@Input() commit;
+	@Input() branch;
+	@Input() sprint;
 	@ViewChild('pingModal') content: ElementRef;
 
 	constructor(
@@ -21,7 +28,7 @@ export class SetPingsComponent {
 	) { }
 
 	openPingModel(){
-		this.modalService.open(this.content).result.then( (pingType) => {
+		this.modalService.open(this.content, this.options).result.then( (pingType) => {
 			this.jira.setPing({
 				key: this.key,
 				ping_type: pingType
@@ -33,6 +40,11 @@ export class SetPingsComponent {
 				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 			);
 		}, () => null);
+	}
+
+	copyText(text){
+		text.select();
+		document.execCommand("copy");
 	}
 
 }

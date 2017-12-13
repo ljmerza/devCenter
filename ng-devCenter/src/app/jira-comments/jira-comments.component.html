@@ -12,7 +12,14 @@
 		<ngb-panel *ngFor='let comment of comments; index as i' [id]="key+i">
 			<!-- title -->
 			<ng-template ngbPanelTitle>
-				{{comment.display_name}}
+				<div class='comment-header' data-id={{comment.id}}>
+					<span>
+						{{comment.display_name}}
+						<img src="http://presence.q.att.com/presence/{{comment.username}}.gif">
+					</span>
+					<span class="float-right">{{comment.created | amDateFormat:'MM/D/YY h:mm A'}}</span>
+					
+				</div>
 			</ng-template>
 			
 			<!-- body -->

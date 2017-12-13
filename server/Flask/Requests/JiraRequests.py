@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from Flask import FlaskUtils
+import ChatUtils
 
 
 def set_status(data, jira_obj):
@@ -147,6 +148,11 @@ def get_jira_tickets(data, jira_obj):
 
 	if not jira_data['status']:
 		return {'status': False, 'data': f'Could not get Jira tickets for filter number {filter_number}: '+jira_data['data'] }
+
+	# add commit messages and branch names
+	for ticket in jira_data['data']:
+		ticket['commit'] = ChatUtils.build_commit_message(ticket['key'], ticket['msrp'], ticket['summary']) 
+		ticket['branch'] = ChatUtils.get_branch_name(ticket['username'], ticket['msrp'], ticket['summary'])
 
 	# return results
 	return jira_data

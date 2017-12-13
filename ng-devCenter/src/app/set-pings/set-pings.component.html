@@ -6,6 +6,37 @@
 		</button>
 	</div>
 
+	<div class="modal-body">
+		<table class="table">
+			<tbody>
+				<tr>
+					<td>Sprint</td>
+					<td>
+						<i class="material-icons" title='Copy to clipboard' (click)="copyText(sprintInput)">note</i>
+						{{sprint}} 
+						<input class='hidden-clip' type="text" #sprintInput value={{sprint}}>
+					</td>
+				</tr>
+				<tr>
+					<td>Branch</td>
+					<td>
+						<i class="material-icons" title='Copy to clipboard' (click)="copyText(branchInput)">note</i>
+						{{branch}} 
+						<input class='hidden-clip' type="text" #branchInput value={{branch}}>
+					</td>
+				</tr>
+				<tr>
+					<td>Commit</td>
+					<td>
+						<i class="material-icons" title='Copy to clipboard' (click)="copyText(commitInput)">note</i>
+						{{commit}} 
+						<input class='hidden-clip' type="text" #commitInput value={{commit}}>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
 	<div class="modal-footer">
 		<button type="button" class="btn btn-outline-success" (click)="c('new')">Reset New Ping</button>
 		<button type="button" class="btn btn-outline-success" (click)="c('merge')">Reset Merge Ping</button>

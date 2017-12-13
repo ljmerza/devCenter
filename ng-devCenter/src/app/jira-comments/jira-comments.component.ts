@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 
 import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
+import { JiraService } from './../services/jira.service';
 
 declare var hljs :any;
 declare var $ :any;
@@ -22,7 +23,7 @@ export class JiraCommentsComponent {
 	@Input() key;
 	@Input() comments;
 
-	constructor(private modalService:NgbModal, config: NgbAccordionConfig) {}
+	constructor(private modalService:NgbModal, config: NgbAccordionConfig, public jira:JiraService) {}
 
   	/*
   	*/

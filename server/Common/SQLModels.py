@@ -53,6 +53,9 @@ class Comments(Modal):
 	display_name = Column(VARCHAR(50))
 	tickets = relationship("Tickets", back_populates="comments")
 	comment_type = Column(VARCHAR(30))
+	created = Column(DateTime)
+	updated = Column(DateTime)
+	visibility = Column(VARCHAR(15))
 
 
 class ErrorLogs(Modal):

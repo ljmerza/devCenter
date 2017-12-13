@@ -96,5 +96,9 @@
 	[comments]=ticket.comments>
 </app-jira-comments>
 
-<app-set-pings [key]=ticket.key>
+<app-set-pings 
+	[key]=ticket.key
+	[sprint]=ticket.sprint
+	[branch]=ticket.branch
+	[commit]=ticket.commit>
 </app-set-pings>
