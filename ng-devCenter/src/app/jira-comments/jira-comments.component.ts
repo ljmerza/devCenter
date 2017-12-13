@@ -18,8 +18,6 @@ declare var $ :any;
 export class JiraCommentsComponent implements OnInit {
 	modalReference;
 	openPanelIds = [];
-	isEditing = false;
-	closeText = 'Close';
 
 	@ViewChild('commentModal') content:ElementRef;
 	@Input() key;
@@ -33,6 +31,7 @@ export class JiraCommentsComponent implements OnInit {
 		// add isEditing boolean to each comments
 		this.comments = this.comments.map(comment => {
 			comment.isEditing = false;
+			comment.closeText = 'Edit Comment';
 			return comment;
 		});
 	}
@@ -63,21 +62,8 @@ export class JiraCommentsComponent implements OnInit {
 
 	/*
 	*/
-	startEditing(){
-		this.isEditing = true;
-		this.closeText = 'Cancel Editing';
-	}
-
-	/*
-	*/
-	closeModal(closeType){
-		this.closeText = 'Close';
-
-		if(closeType === 'Close'){
-			this.modalReference.close();
-		} else {
-			this.isEditing = false;
-		}
-
+	toggleEditing(comment){
+		comment.isEditing = !comment.isEditing;
+		comment.closeText = comment.closeText == 'Cancel Editing' ? 'Edit Comment' : 'Cancel Editing';
 	}
 }

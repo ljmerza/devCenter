@@ -5,6 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class CommentFormatPipe implements PipeTransform {
 
+	stepNumber = 1;
+
 	/*
 	*/
 	transform(comment:any, attachments:any, isEditing): any {
@@ -29,12 +31,18 @@ export class CommentFormatPipe implements PipeTransform {
 		// for each code piece if inside pre-format block then add pre element
 		// else just return unchanged comment piece
 		// finally join all pieces back to one comment and set on current comment
-		return comment.split(/{code}|{noformat}/).map( (commentPiece, index) => {
+		return comment.split(/{code}|{noformat}/)
+		.filter(comment => comment)
+		.map( (commentPiece, index) => {
+
+			if(!commentPiece){
+				return '';
+			}
 			
 			if(index%2==1){
 				// if inside code block then wrap in pre element and
 				// remove all new line elements
-				return `<pre class='code'>${commentPiece}</pre>`.replace(/<br>/g, '');
+				return `<pre class='code'>${commentPiece}</pre>`.replace(/<br>/g, '\n');
 			} else {
 				return commentPiece;
 			}
@@ -45,13 +53,11 @@ export class CommentFormatPipe implements PipeTransform {
 	/*
 	*/
 	_formatLines(comment, attachments){
-
-		let stepNumber = 1;
 		let tableStart = false;
 
 		return comment.split('\n').map( commentPiece => {
 
-			commentPiece = this._format_list_headers(commentPiece, stepNumber);
+			commentPiece = this._format_list_headers(commentPiece);
 			commentPiece = this._formatTable(commentPiece, tableStart);
 			commentPiece = this._format_colors(commentPiece);
 			commentPiece = this._format_images(commentPiece, attachments);
@@ -64,22 +70,39 @@ export class CommentFormatPipe implements PipeTransform {
 
 	/*
 	*/
-	_format_list_headers(commentPiece, stepNumber) {
+	_format_list_headers(commentPiece) {
 
 		// replace any lists
-		if(/#* /.test(commentPiece)){
-			commentPiece = commentPiece.replace('# ', `${stepNumber}. `);
-			stepNumber++;
-		}
-		if (/#. /.test(commentPiece)) {
+		if(/# /.test(commentPiece)){
+			commentPiece = commentPiece.replace('# ', `${this.stepNumber}. `);
+			this.stepNumber++;
+		} else if(/#\* /.test(commentPiece)) {
 			commentPiece = commentPiece.replace('#* ', `	- `);
 		}
 
 		// replace any headers
-		if (/^h[0-9]{1}./.test(commentPiece)) {
+		else if(/^h[0-9]{1}./.test(commentPiece)) {
 			let number = commentPiece[1];
 			commentPiece = commentPiece.replace(`h${number}.`, `<h${number}>`);
 			commentPiece += `</h${number}>`;
+		}
+
+		// replace any lines
+		else if(/----/.test(commentPiece)){
+			commentPiece = '<hr>';
+		}
+
+		// add any bolded comments
+		const commentBolds = commentPiece.split('*');
+		if(commentBolds.length > 1){
+		console.log('commentBolds: ', commentBolds);
+			commentPiece = commentBolds.map( (comment, index) => {
+				if(index+1===commentBolds.length) return `${comment}</b>`; 
+				return index%2==0 ? `${comment}<b>` : `${comment}</b>`;
+			}).join('');
+
+			console.log('commentPiece: ', commentPiece);
+			
 		}
 
 		return commentPiece;
