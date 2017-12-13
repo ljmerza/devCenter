@@ -144,6 +144,7 @@ class JiraTickets():
 			ticket['dates'] = get_dates(issue)
 
 			ticket['crucible_id'] = get_crucible_id(issue)
+			ticket['attachments'] = get_attachments(issue)
 
 			# add ticket to response
 			response['data'].append(ticket)

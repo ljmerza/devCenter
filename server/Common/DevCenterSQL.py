@@ -110,10 +110,11 @@ class DevCenterSQL():
 		customer_details = jira_ticket['customer_details'].copy()
 		dates = jira_ticket['dates'].copy()
 
-		# now delete comments to be able to add to Tickets object
+		# delete data that we don't store in tickets table
 		del jira_ticket['comments']
 		del jira_ticket['customer_details']
 		del jira_ticket['dates']
+		del jira_ticket['attachments']
 
 		# set active marker
 		jira_ticket['is_active'] = 1

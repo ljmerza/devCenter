@@ -219,7 +219,7 @@ def get_comments(issue):
 			comment_type = True
 
 		comments.append({
-			'comment': _format_comment( comment=comment.get('body', ''), issue=issue ),
+			'comment': comment.get('body', ''),
 			'id': comment.get('id', ''),
 			'key': issue.get('key', ''),
 			'username': comment.get('updateAuthor', {}).get('name', ''),
@@ -232,135 +232,6 @@ def get_comments(issue):
 
 		})
 	return comments
-
-def _format_comment(comment, issue):
-	'''formats a comment into HTML view
-
-	Args:
-		comment (str) Jira comment to format
-		issue (dict) a Jira issue object
-
-	Returns:
-		formatted comment
-	'''
-	i=1
-	new_comments = []
-	table_start = False
-	new_line = True
-
-	# for each comment line format line
-	for line in comment.split('\n'):
-
-		# if QA step then increment
-		if '# ' in line:
-			line = line.replace('# ', str(i)+'.&nbsp;')
-			i+=1
-
-		# else if sub QA step add spacing
-		if '#* ' in line:
-			line = line.replace('#* ', '&nbsp;&nbsp;&nbsp;-&nbsp;')
-
-		# replace any images
-		
-
-		# if attachments exist then search for images in comments
-		if 'attachment' in issue['fields']:
-			image_urls = [ x['content'] for x in issue['fields']['attachment'] ]
-
-			# find image placeholder in comment line
-			match = re.search(r'!(.*?)!', line)
-			if match:
-				# if found split by thumbnail and replace
-				# image placeholders with image elements
-				m=match.group(0).split('|')
-
-				# for each filename found go through each image and find match
-				for filename in m:
-					filename = filename.replace('!', '')
-					for image_url in image_urls:
-						# if matc hthen replace image placeholder with image element
-						if filename in image_url:
-							line = line.replace(match.group(0), f'<img class="rounded mx-auto d-block comment-image" src="{image_url}">')
-
-		# else if heading add header element
-		match = re.search(r'h[0-9]{1}. ', line)
-		if match:
-			header = match.group(0)
-			line = line.replace(header, '')
-			line = f'<h{header[1]}>{line}</h{header[1]}>'
-
-		# if table start table header
-		if line.startswith('||'):
-			table_start = True
-			th = line.split('||')
-			start = '<table class="table"><thead><tr>'
-			for thline in th:
-				start +='<th>'+thline+'<th>'
-			start+='</tr><thead><tbody>'
-			line = start
-
-		# else if table row add table row
-		elif line.startswith('|'):
-			table_start = True
-			th = line.split('|')
-			start = '<tr>'
-			for thline in th:
-				start +='<td>'+thline+'<td>'
-			start+='</tr>'
-			line = start
-
-		# else check if we were working on a table if so then close table
-		else:
-			if table_start:
-				table_start = False
-				line+='<tbody></table>'
-
-		# if crucible link then create link
-		if line.startswith('[Crucible'):
-			links = line.replace('[', '').replace(']', '').split('|')
-			if len(links) == 2:
-				title = links[0]
-				link = links[1]
-				line = f'<a href="{link}" target="_blank">{title}</a>'
-
-		# replace all hex colors
-		match = re.findall(r'{color:#[a-z0-9]+}', line)
-		for m in match:
-			hex_color = m[7:-1]
-			line = line.replace(m, f'<span style="color: {hex_color}">')
-
-		# replace all standard colors
-		match = re.findall(r'{color:\w+}', line)
-		for m in match:
-			std_color = m[7:-1]
-			line = line.replace(m, f'<span style="color: {std_color}">')
-
-		# replace all closing colors
-		match = re.findall(r'{color}', line)
-		for m in match:
-			line = line.replace(m, '</span>')
-
-
-		# replace any crucible links
-		link_match = re.match(r"^.*\[https://icode(.*)\].*$", line)
-		if link_match:
-			link_match_format = '[https://icode'+link_match.group(1)+']'
-			line = line.replace(link_match_format, f'<a href="https://icode{link_match.group(1)}">Crucible</a>')
-
-		# check if we are in preformatted code to add br or not
-		if not re.match(r"{code}", line):
-			new_line = not new_line
-
-		if new_line:
-			line+='<br>'
-
-		# append everything we did to this comment's line
-		new_comments.append(line)
-
-	
-
-	# return a string of the entire formatted comment
-	return '<div class="container">'+ '\n'.join(new_comments) + '</div>'
 
 def get_qa_steps(issue):
 	'''finds an issue's QA steps in the comments if they exist
@@ -461,3 +332,23 @@ def get_dates(issue):
 		'updated': issue.get('fields', {}).get('updated', ''),
 		'started': issue.get('fields', {}).get('customfield_10109', '')
 	}
+
+def get_attachments(issue):
+	'''gets an issue's attachments
+
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		list of hashes with filename and link properties
+	'''
+	attachments = []
+	if 'attachment' in issue['fields']:
+		for attachment in issue['fields']['attachment']:
+			attachments.append({
+				'filename': attachment['filename'],
+				'link': attachment['content']
+			})
+	return attachments
+
+

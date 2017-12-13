@@ -69,6 +69,23 @@
 					</option>
 				</select>
 			</div>
+			<div class="form-group">
+				<label for="emberSetting">TeamDB Ember Url</label>
+				<span class='text-danger'>*</span>
+				<select 
+					[(ngModel)]="teamUrl" 
+					name="emberSetting"
+					class='form-control'
+				>
+					<option disabled>Please choose...</option>
+					<option *ngFor="let emberBuild of user.emberBuilds"
+						[ngValue]="emberBuild.value"
+						[attr.selected]="emberBuild.value === teamUrl ? true : null"
+					>
+						{{emberBuild.label}}
+					</option>
+				</select>
+			</div>
 
 			<div class="form-group text-danger text-center" *ngIf='!emberUrl || !password || !port || !username'>
 				Username, Password, Port, and Ember Url are required to continue.

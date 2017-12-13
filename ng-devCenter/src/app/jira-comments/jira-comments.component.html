@@ -24,13 +24,14 @@
 			
 			<!-- body -->
 			<ng-template ngbPanelContent>
-				<div [innerHTML]="comment.comment | safehtml"></div>
+				<div [innerHTML]="comment.comment | commentFormat:attachments:comment.isEditing | safehtml"></div>
 			</ng-template>
 		</ngb-panel>
 
 	</ngb-accordion>
 		
 	<div class="modal-footer">
-		<button type="button" class="btn btn-outline-success" (click)="c('close')">Close</button>
+		<button type="button" class="btn btn-outline-success" (click)="startEditing()">Edit Comment</button>
+		<button type="button" class="btn btn-outline-success" (click)="closeModal('closeText')">{{closeText}}</button>
 	</div>
 </ng-template>

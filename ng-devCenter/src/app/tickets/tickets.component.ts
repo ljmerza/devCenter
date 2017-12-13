@@ -115,7 +115,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		.skip(1)
 		.subscribe( data => {
 			// if got this far then data is different so sync with UI
-			this.openTickets = this._formatCommentCode({ data });
+			this.openTickets = data;
 			this.rerender();
 		});
 	}
@@ -130,45 +130,13 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		.subscribe( 
 			issues => {
 				// save tickets and re-render data tables
-				this.openTickets = this._formatCommentCode(issues);
+				this.openTickets = issues.data;
 				this.rerender();
 				this.ngProgress.done();
 				this.loadingTickets = false;
 			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
-	}
-
-	/*
-	*/
-	_formatCommentCode(issues){
-
-		// for each issue get comments
-		return issues.data.map( issue => {
-
-			// for each comment get code pieces
-			issue.comments = issue.comments.map( comment => {
-
-				// for each code piece if inside pre-format block then add pre element
-				// else just return unchanged comment piece
-				// finally join all pieces back to one comment and set on current comment
-				comment.comment = comment.comment.split(/{code}|{noformat}/).map( (commentPiece, index) => {
-					
-					if(index%2==1){
-						// if inside code block then wrap in pre element and
-						// remove all new line elements
-						return `<pre class='code'>${commentPiece}</pre>`.replace(/<br>/g, '');
-					} else {
-						return commentPiece;
-					}
-					
-				}).join('');
-
-				return comment;
-			});
-
-			return issue;
-		});
 	}
 
 	/*

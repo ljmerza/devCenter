@@ -14,6 +14,7 @@ export class UserSettingsComponent implements AfterContentInit {
 	password;
 	port;
 	emberUrl;
+	teamUrl;
 
 	@ViewChild('content') private content;
 
@@ -23,10 +24,7 @@ export class UserSettingsComponent implements AfterContentInit {
 		private jira: JiraService, 
 		private toastr: ToastrService
 	) {
-		this.username = user.username
-		this.password = user.password
-		this.port = user.port
-		this.emberUrl = user.emberUrl
+		this._sync_settings();
 	}
 
 	ngAfterContentInit() {
@@ -44,10 +42,7 @@ export class UserSettingsComponent implements AfterContentInit {
 	}
 
 	openUserSettings() {
-		this.username = this.user.username
-		this.password = this.user.password
-		this.port = this.user.port
-		this.emberUrl = this.user.emberUrl
+		this._sync_settings();
 
 		this.modalService.open(this.content, {keyboard:false,backdrop:false}).result.then((result) => {
 			// if save action then save new data
@@ -56,11 +51,20 @@ export class UserSettingsComponent implements AfterContentInit {
 				this.user.setUserData('password', this.password);
 				this.user.setUserData('port', this.port);
 				this.user.setUserData('emberUrl', this.emberUrl);
+				this.user.setUserData('teamUrl', this.teamUrl);
 
 				// refresh window
 				location.reload();
 			}
 		});
+	}
+
+	_sync_settings(){
+		this.username = this.user.username;
+		this.password = this.user.password;
+		this.port = this.user.port;
+		this.emberUrl = this.user.emberUrl;
+		this.teamUrl = this.user.teamUrl;
 	}
 
 }

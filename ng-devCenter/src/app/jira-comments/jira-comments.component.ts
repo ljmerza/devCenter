@@ -1,6 +1,6 @@
 import { 
 	Component, ViewChild, ElementRef, 
-	ViewEncapsulation, Input
+	ViewEncapsulation, Input, OnInit
 } from '@angular/core';
 
 import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -15,15 +15,27 @@ declare var $ :any;
 	styleUrls: ['./jira-comments.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class JiraCommentsComponent {
+export class JiraCommentsComponent implements OnInit {
 	modalReference;
 	openPanelIds = [];
+	isEditing = false;
+	closeText = 'Close';
 
 	@ViewChild('commentModal') content:ElementRef;
 	@Input() key;
 	@Input() comments;
+	@Input() attachments;
 
 	constructor(private modalService:NgbModal, config: NgbAccordionConfig, public jira:JiraService) {}
+
+	ngOnInit() {
+
+		// add isEditing boolean to each comments
+		this.comments = this.comments.map(comment => {
+			comment.isEditing = false;
+			return comment;
+		});
+	}
 
   	/*
   	*/
@@ -47,5 +59,25 @@ export class JiraCommentsComponent {
 				hljs.highlightBlock(block);
 			});
 		},0);
+	}
+
+	/*
+	*/
+	startEditing(){
+		this.isEditing = true;
+		this.closeText = 'Cancel Editing';
+	}
+
+	/*
+	*/
+	closeModal(closeType){
+		this.closeText = 'Close';
+
+		if(closeType === 'Close'){
+			this.modalReference.close();
+		} else {
+			this.isEditing = false;
+		}
+
 	}
 }
