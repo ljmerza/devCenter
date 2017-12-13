@@ -20,6 +20,7 @@ export class TimeLogComponent	{
 	modalReference;
 
 	uctNotReady;
+	mergedCode;
 	comments:string;
 	logTime = {hour: 0, minute: 0};
 
@@ -36,6 +37,8 @@ export class TimeLogComponent	{
 		private modalService:NgbModal
 	) {}
 
+	/*
+	*/
 	submitLog(formObj: NgForm) {
 
 		// close modal
@@ -51,7 +54,7 @@ export class TimeLogComponent	{
 		// create POST body
 		let postData = {
 			comment: formObj.value.comment || '',
-			uct_not_ready: formObj.value.uctNotReady || false,
+			remove_merge: formObj.value.mergedCode || false,
 			uct_date: formObj.value.uctNotReady ? ((new Date).getTime())/1000 : 0,
 			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
 			key: this.key
@@ -71,6 +74,8 @@ export class TimeLogComponent	{
 		);
 	}
 
+	/*
+	*/
 	openLogModal():void {
 
 		// set values
@@ -82,10 +87,18 @@ export class TimeLogComponent	{
 			.open(this.content, { windowClass: 'log-modal' });
 
 		this.modalReference.result.then(
-			// always set this to false again
-			() => this.uctNotReady = false,
-			() => this.uctNotReady = false
+			// always reset form
+			() => this._resetForm(),
+			() => this._resetForm()
 		);
+	}
+
+	/*
+	*/
+	_resetForm(){
+		this.uctNotReady = false;
+		this.mergedCode = false;
+
 	}
 
 }

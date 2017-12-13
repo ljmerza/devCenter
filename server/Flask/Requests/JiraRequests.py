@@ -30,8 +30,6 @@ def set_status(data, jira_obj):
 	elif data['status_type'] == 'mergeConflict':
 		return jira_obj.set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 
-	elif data['status_type'] == 'uctReady':
-		return jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'inUct':
 		return jira_obj.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctPass':
@@ -82,9 +80,10 @@ def add_comment(data, jira_obj):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# set uct date if given
-	uct_date = 0
-	if 'uct_date' in data:
-		uct_date = data['uct_date']
+	uct_date = data['uct_date']
+
+	if data['remove_merge']:
+		jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 
 	# try to add comment an return
 	return jira_obj.add_comment(
