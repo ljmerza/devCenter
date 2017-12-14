@@ -36,16 +36,16 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	dtOptions = {
 		order: [4, 'desc'],
-		columnDefs: [{targets: [4,5,8,9], type: 'date'}],
-		dom: 'Bfrtip',
+		columnDefs: [
+			{targets: [8,9], visible: false},
+			{targets: [4,5,8,9], type: 'date'}
+		],
+		dom: 'BfRtip',
 		pageLength: 20,
 		buttons: [
-			{
-				extend: 'colvis',
-				columns: ':gt(0)'
-			}
+			'colvis',
+			'excel'
 		],
-		colReorder: true,
 		stateSave: true
 	};
 
