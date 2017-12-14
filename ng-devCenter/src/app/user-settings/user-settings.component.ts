@@ -16,6 +16,8 @@ export class UserSettingsComponent implements AfterContentInit {
 	emberUrl;
 	teamUrl;
 
+	cache;
+
 	@ViewChild('content') private content;
 
 	constructor(
@@ -45,16 +47,28 @@ export class UserSettingsComponent implements AfterContentInit {
 		this._sync_settings();
 
 		this.modalService.open(this.content, {keyboard:false,backdrop:false}).result.then((result) => {
+
 			// if save action then save new data
 			if(result === 'save'){
+
+				let sync = false;
+				// if changing username or password then refresh
+				if(this.username != this.user.username || this.password != this.user.password) {
+					sync = true;
+				}
+
 				this.user.setUserData('username', this.username);
 				this.user.setUserData('password', this.password);
 				this.user.setUserData('port', this.port);
 				this.user.setUserData('emberUrl', this.emberUrl);
 				this.user.setUserData('teamUrl', this.teamUrl);
+				this.user.setUserData('cache', this.cache);
 
-				// refresh window
-				location.reload();
+				// if we need a sync then reload page now
+				if(sync){
+					location.reload();
+				}
+
 			}
 		});
 	}
@@ -65,6 +79,7 @@ export class UserSettingsComponent implements AfterContentInit {
 		this.port = this.user.port;
 		this.emberUrl = this.user.emberUrl;
 		this.teamUrl = this.user.teamUrl;
+		this.cache = this.user.cache;
 	}
 
 }

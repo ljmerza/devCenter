@@ -4,6 +4,7 @@ from time import gmtime, strftime
 import sys
 
 from JiraComponent import JiraComponent
+from JiraComments import JiraComments
 from JiraStatus import JiraStatus
 from JiraMisc import JiraMisc
 from JiraTickets import JiraTickets
@@ -11,7 +12,7 @@ from JiraTickets import JiraTickets
 from JiraAPI import JiraAPI
 
 
-class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets):
+class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments):
 	'''Jira class for creating a Jira parent class'''
 
 	def __init__(self):
@@ -29,3 +30,4 @@ class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets):
 		JiraStatus.__init__(self, self.jira_api)
 		JiraMisc.__init__(self, self.jira_api)
 		JiraTickets.__init__(self, self.jira_api)
+		JiraComments.__init__(self, self.jira_api)

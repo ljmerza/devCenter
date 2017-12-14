@@ -65,7 +65,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 			# add CR status if wanted
 			if data['autoCR']:
 				data['status_type'] = 'cr'
-				cr_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
+				cr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 				if not cr_response['status']:
 					cr_response['data'] += ' but Crucible created: ' + cru_response['data']
 					return Response(cr_response, mimetype='application/json')

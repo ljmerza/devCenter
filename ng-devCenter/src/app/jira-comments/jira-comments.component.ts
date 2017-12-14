@@ -5,6 +5,8 @@ import {
 
 import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { JiraService } from './../services/jira.service';
+import { ToastrService } from './../services/toastr.service';
+import { UserService } from './../services/user.service';
 
 declare var hljs :any;
 declare var $ :any;
@@ -24,7 +26,13 @@ export class JiraCommentsComponent implements OnInit {
 	@Input() comments;
 	@Input() attachments;
 
-	constructor(private modalService:NgbModal, config: NgbAccordionConfig, public jira:JiraService) {}
+	constructor(
+		private modalService:NgbModal, 
+		private toastr: ToastrService, 
+		config: NgbAccordionConfig, 
+		public jira:JiraService,
+		public user:UserService
+	) {}
 
 	ngOnInit() {
 
@@ -32,6 +40,7 @@ export class JiraCommentsComponent implements OnInit {
 		this.comments = this.comments.map(comment => {
 			comment.isEditing = false;
 			comment.closeText = 'Edit Comment';
+			comment.editId = 'E'+comment.id.toString();
 			return comment;
 		});
 	}
@@ -65,5 +74,44 @@ export class JiraCommentsComponent implements OnInit {
 	toggleEditing(comment){
 		comment.isEditing = !comment.isEditing;
 		comment.closeText = comment.closeText == 'Cancel Editing' ? 'Edit Comment' : 'Cancel Editing';
+	}
+
+	/*
+	*/
+	editComment(comment){
+
+		// toggle editing text
+		this.toggleEditing(comment);
+
+
+		const newComment = $(`#${comment.editId}`).val();
+
+		// make sure we have a change
+		if(newComment == comment.comment){
+			this.toastr.showToast(`No changes to comment ${comment.id} made.`, 'info');
+			return;
+		}
+
+		const postData = {
+			key: this.key,
+			comment_id: comment.id,
+			comment: newComment
+		};
+
+		// save old comment if error and replace new comment with old
+		const oldComment = comment.comment;
+		comment.comment = postData.comment;
+
+		this.jira.editComment(postData).subscribe(
+			() => {
+				this.toastr.showToast('Comment Edited Successfully', 'success');
+			},
+			error => {
+				// if error revert comment and show error
+				comment.comment = oldComment;
+				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
+
+			}
+		)
 	}
 }

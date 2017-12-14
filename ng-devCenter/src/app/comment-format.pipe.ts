@@ -9,18 +9,10 @@ export class CommentFormatPipe implements PipeTransform {
 
 	/*
 	*/
-	transform(comment:any, attachments:any, isEditing): any {
-
-		// if not editing then format comment
-		if(!isEditing){
-			comment = this._formatLines(comment, attachments);
-			comment = this._formatCode(comment);
-			comment = `<div class="container"> ${comment} </div>`
-
-		} else {
-			comment = `<textarea class='edit-area'cols="100" value=${comment}>`;
-		}
-
+	transform(comment:any, attachments:any,): any {
+		comment = this._formatLines(comment, attachments);
+		comment = this._formatCode(comment);
+		comment = `<div class="container"> ${comment} </div>`
 		return comment;
 	}
 
@@ -95,14 +87,10 @@ export class CommentFormatPipe implements PipeTransform {
 		// add any bolded comments
 		const commentBolds = commentPiece.split('*');
 		if(commentBolds.length > 1){
-		console.log('commentBolds: ', commentBolds);
 			commentPiece = commentBolds.map( (comment, index) => {
 				if(index+1===commentBolds.length) return `${comment}</b>`; 
 				return index%2==0 ? `${comment}<b>` : `${comment}</b>`;
-			}).join('');
-
-			console.log('commentPiece: ', commentPiece);
-			
+			}).join('');			
 		}
 
 		return commentPiece;

@@ -26,11 +26,41 @@
 			
 			<!-- body -->
 			<ng-template ngbPanelContent>
-				<!-- <button type="button" class="btn btn-outline-success" (click)="toggleEditing(comment)">{{comment.closeText}}</button> -->
-				<div [innerHTML]="comment.comment | commentFormat:attachments:comment.isEditing | safehtml"></div>
-			</ng-template>
-		</ngb-panel>
 
+				<!-- editing buttons -->
+				<span class='edit-buttons'>
+					<button 
+					type="button" 
+					class="btn btn-outline-danger" 
+					*ngIf='comment.username == user.username'
+					(click)="toggleEditing(comment)">
+							{{comment.closeText}}
+					</button>
+
+					<button 
+						[hidden]="!comment.isEditing" 
+						type="button" 
+						class="btn btn-outline-success"
+						*ngIf='comment.username == user.username'
+						(click)="editComment(comment)">
+							Save Edit
+					</button>
+				</span>
+				
+				<div [hidden]="comment.isEditing" [innerHTML]="comment.comment | commentFormat:attachments | safehtml"></div>
+				<textarea
+					[id]=comment.editId
+					*ngIf='comment.username == user.username' 
+					[hidden]="!comment.isEditing" 
+					class='edit-area' 
+					cols="100" rows=25 
+					value={{comment.comment}}
+					>
+				</textarea>
+
+			</ng-template>
+
+		</ngb-panel>
 	</ngb-accordion>
 		
 	<div class="modal-footer">

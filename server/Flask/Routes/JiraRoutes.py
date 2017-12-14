@@ -70,6 +70,25 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		# return response
 		return Response(response, mimetype='application/json')
 
+	@app.route(f'/{app_name}/jira/comment', methods=['PUT'])
+	@cross_origin()
+	def edit_comment():
+		'''Updates a Jira ticket with a comment and optional time log
+
+		Args:
+
+
+		Returns:
+			
+		'''
+		data=request.get_json()
+		data["cred_hash"] = g.cred_hash
+		# add comment
+		response = JiraRequests.edit_comment(data=data, jira_obj=jira_obj)
+		# return response
+		return Response(response, mimetype='application/json')
+
+
 	@app.route(f'/{app_name}/jira/status', methods=['POST'])
 	@cross_origin()
 	def change_status():

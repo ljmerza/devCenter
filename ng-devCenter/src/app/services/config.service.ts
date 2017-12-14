@@ -97,107 +97,129 @@ export class ConfigService {
 			link: 'asset/history?asset=TEST&UAT=0&usertimezone=America/New_York&usertimeformat=12HR'
 		},
 		{
+			name: 'Asset Inventory',
+			link: 'asset/inventory?asset=TEST&UAT=0&usertimezone=America/New_York&usertimeformat=12HR'
+		},
+		{
 			name: 'Group Ticket',
-			link: 'group-lead?lead_ticket=WTXIV000724'
+			link: `group-lead?lead_ticket=WTXIV000724?cache=`
 		},
 		{
 			name: 'WFA Ticket',
-			link: 'ticket/ethernet/WTXIV000892'
+			link: `ticket/ethernet/WTXIV000892?cache=`
 		},
 		{
 			name: 'Admin Panel',
-			link: 'administration?attuid='
+			link: `administration?attuid=${this.username}&cache=`
 		},
 		{
 			name: 'BMP Ticket',
-			link: 'order/ethernet/BAS539606001'
+			link: `order/ethernet/7O2402151?cache=`
 		},
 		{
 			name: 'ELD',
-			link: 'order/ethernet/BAS539606001'
+			link: `order/ethernet/BAS539606001?cache=`
 		},
 		{
 			name: 'AOTS Advanced Search',
-			link: 'ticketing-system/aots/advanced-search'
+			link: `ticketing-system/aots/advanced-search?cache=`
+		},
+		{
+			name: 'Worklist',
+			link: `worklist?cache=`
+		},
+		{
+			name: 'Backup Restore',
+			link: `task/backup-restore/123`
+		}
+		,
+		{
+			name: 'Backup Request',
+			link: `task/backup-request/123`
+		}
+		,
+		{
+			name: 'Backup Validation',
+			link: `task/backup-validation/123`
 		}
 	];
 
 	order_links = [
 		{
-			link: 'order/ethernet/GAS544770001',
+			link: `order/ethernet/GAS544770001?cache=`,
 			name: 'GAS544770001 (EAN)'
 		},
 		{
-			link: 'order/ethernet/OKS433527001',
+			link: `order/ethernet/OKS433527001?cache=`,
 			name: 'OKS433527001 (Word Doc)'
 		},
 		{
-			link: 'order/ethernet/HOC574865001',
+			link: `order/ethernet/HOC574865001?cache=`,
 			name: 'HOC574865001 (Juniper)'
 		},
 		{
-			link: 'order/ethernet/BAS539606001',
+			link: `order/ethernet/BAS539606001?cache=`,
 			name: 'BAS539606001 (Inventory)'
 		},
 		{
-			link: 'order/ethernet/MIS140524001',
+			link: `order/ethernet/MIS140524001?cache=`,
 			name: 'MIS140524001 (CTH)'
 		},
 		{
-			link: 'order/ethernet/NCC326168001',
+			link: `order/ethernet/NCC326168001?cache=`,
 			name: 'NCC326168001 (EVC)'
 		},
 		{
-			link: 'order/ethernet/WTS252430001',
+			link: `order/ethernet/WTS252430001?cache=`,
 			name: 'WTS252430001 (Canopi)'
 		},
 		{
-			link: 'order/ethernet/DLS186977001',
+			link: `order/ethernet/DLS186977001?cache=`,
 			name: 'DLS186977001 (Force/Edge)'
 		},
 		{
-			link: 'order/ethernet/SWC246312001',
+			link: `order/ethernet/SWC246312001?cache=`,
 			name: 'SWC246312001 (xlata)'
 		},
 		{
-			link: 'order/ethernet/LBS065263001',
+			link: `order/ethernet/LBS065263001?cache=`,
 			name: 'LBS065263001 (EvcMultiPointSite)'
 		},
 		{
-			link: 'order/ethernet/ORC338494001',
+			link: `order/ethernet/ORC338494001?cache=`,
 			name: 'ORC338494001 (timeline)'
 		},
 		{
-			link: 'order/ethernet/SAS118018001',
+			link: `order/ethernet/SAS118018001?cache=`,
 			name: 'SAS118018001 (OSSCN)'
 		},
 		{
-			link: 'order/ethernet/ARC167777001',
+			link: `order/ethernet/ARC167777001?cache=`,
 			name: 'ARC167777001'
 		},
 		{
-			link: 'order/ethernet/TNS268897001',
+			link: `order/ethernet/TNS268897001?cache=`,
 			name: 'TNS268897001'
 		},
 		{
-			link: 'order/ethernet/SLS817036001',
+			link: `order/ethernet/SLS817036001?cache=`,
 			name: 'SLS817036001'
 		},
 		{
-			link: 'order/ethernet/SWS230192001',
+			link: `order/ethernet/SWS230192001?cache=`,
 			name: 'SWS230192001'
 		},
 		{
-			link: 'order/ethernet/SFS016277001',
+			link: `order/ethernet/SFS016277001?cache=`,
 			name: 'SFS016277001'
 		},
 		{
-			link: 'order/ethernet/NOS193664001',
+			link: `order/ethernet/NOS193664001?cache=`,
 			name: 'NOS193664001'
 		}
 		,
 		{
-			link: 'order/ethernet/LBS065460001',
+			link: `order/ethernet/LBS065460001?cache=`,
 			name: 'LBS065460001'
 		}
 	];
@@ -205,19 +227,19 @@ export class ConfigService {
 	teamdb_ember_links = [
 		{
 			name: 'Teams',
-			link: '/teamdb/teams',
+			link: `/teamdb/teams?cache=`,
 		},
 		{
 			name: 'Edit Team',
-			link: '/teamdb/teams/227',
+			link: `/teamd/teams/227?cache=`,
 		},
 		{
 			name: 'Edit Profile',
-			link: '/teamdb/users/',
+			link: `/teamdb/users/?cache=`,
 		},
 		{
 			name: 'Workgroup',
-			link: '/teamdb/workgroup',
+			link: `/teamdb/workgroup?cache=`,
 		}
 	];
 

@@ -80,9 +80,9 @@ def add_comment(data, jira_obj):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# set uct date if given
-	uct_date = data['uct_date']
+	uct_date = data.get('uct_date', 0)
 
-	if data['remove_merge']:
+	if data.get('remove_merge', False):
 		jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 
 	# try to add comment an return
@@ -92,6 +92,31 @@ def add_comment(data, jira_obj):
 		uct_date=uct_date
 	)
 
+def edit_comment(data, jira_obj):
+	'''adds a comment to a ticket
+
+	Args:
+		data (dict) object with properties:
+			cred_hash (str) Authorization header value
+			key (str) the Jira key to post a comment to
+			comment (str) the comment to add to the the ticket
+			uct_date (str) the date to use for UCT not ready (optional)
+		jira_obj (Class instance) Jira class instance to connect to Jira
+
+	Returns:
+
+	'''
+	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash', 'comment_id', 'comment'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+
+	# try to add comment an return
+	return jira_obj.edit_comment(
+		key=data["key"], comment=data["comment"], 
+		cred_hash=data['cred_hash'],
+		comment_id=data['comment_id']
+	)
 
 def add_worklog(data, jira_obj):
 	'''Adds a work log to a ticket

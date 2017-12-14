@@ -47,6 +47,12 @@ export class DataService {
 
 	/*
 	*/
+	public putAPI(args): Observable<any> {
+		return this.http.put(args.url, args.body, { headers: this.createHeaders() })
+	}
+
+	/*
+	*/
 	private createHeaders() {
 		return new HttpHeaders()
 			.set('Authorization', this.authorizationHeader() )

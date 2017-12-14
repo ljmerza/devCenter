@@ -12,13 +12,19 @@ export class UserService {
 	public emberUrl:string;
 	public emberLocal:string;
 	public emberPort:string;
+	public emberLocalPort:string = '4200';
+	public emberApiPort:string = '3';
 
 	public teamUrl:string;
 	public teamLocal:string;
 	public teamPort:string;
+	public teamLocalPort:string = '4200';
+	public teamApiPort:string = '5';
+
 
 	public userData;
 	public userPicture;
+	public cache;
 
 	emberBuilds:Array<Object> = [
 		{'label':'Dev Server', 'value':this.config.devUrl},
@@ -31,6 +37,7 @@ export class UserService {
 		this.password = localStorage.getItem('devCenter.password') || '';
 		this.emberUrl = localStorage.getItem('devCenter.emberUrl') || '';
 		this.teamUrl = localStorage.getItem('devCenter.teamUrl') || '';
+		this.cache = localStorage.getItem('devCenter.cache') || '';
 
 		this.setUrls();
 	}
@@ -38,11 +45,15 @@ export class UserService {
 	/*
 	*/
 	public setUserData(data:string, value): void {
-		if(value){
-			localStorage.setItem(`devCenter.${data}`, value);
-			this[data] = value;
-			this.setUrls();
+
+		// if cache then true is 1 else false is empty string
+		if(data == 'cache'){
+			value = value ? '1' : '';
 		}
+
+		localStorage.setItem(`devCenter.${data}`, value);
+		this[data] = value;
+		this.setUrls();
 	}
 
 	/*
@@ -53,6 +64,7 @@ export class UserService {
 		localStorage.removeItem(`devCenter.password`);
 		localStorage.removeItem(`devCenter.port`);
 		localStorage.removeItem(`devCenter.username`);
+		localStorage.removeItem(`devCenter.cache`);
 	}
 
 	/*
@@ -61,7 +73,7 @@ export class UserService {
 		// set emberUrl based on if localhost or not
 		if(this.emberUrl && this.emberUrl.match(/local/i)){
 			this.emberLocal = '#/';
-			this.emberPort = '4200';
+			this.emberPort = this.emberLocalPort;
 		} else {
 			this.emberLocal = '';
 			this.emberPort = this.port;
@@ -70,10 +82,10 @@ export class UserService {
 		// set teamUrl based on if localhost or not
 		if(this.teamUrl && this.teamUrl.match(/local/i)){
 			this.teamLocal = '#/';
-			this.teamPort = '4200';
+			this.teamPort = this.teamLocalPort;
 		} else {
 			this.teamLocal = '';
-			this.teamPort = 5 + this.port;
+			this.teamPort = this.teamApiPort+this.port;
 		}
 
 	}

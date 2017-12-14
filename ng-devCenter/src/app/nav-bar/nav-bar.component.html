@@ -59,7 +59,7 @@
 											*ngFor='let navLink of config.order_links'
 											class="dropdown-item" 
 											target="_blank" 
-											href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
+											href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}"
 										>{{navLink.name}}
 									</a></li>
 								</ul>
@@ -70,7 +70,7 @@
 									*ngFor='let navLink of config.ember_links'
 									class="dropdown-item" 
 									target="_blank" 
-									href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
+									href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}"
 								>{{navLink.name}}
 							</a></li>
 						</ul>
@@ -84,7 +84,7 @@
 									*ngFor='let navLink of config.teamdb_ember_links'
 									class="dropdown-item" 
 									target="_blank" 
-									href="{{user.emberUrl}}:5{{user.emberPort}}{{navLink.link}}"
+									href="{{user.teamUrl}}:{{user.teamPort}}{{navLink.link}}{{user.cache}}"
 								>{{navLink.name}}
 							</a></li>
 						</ul>

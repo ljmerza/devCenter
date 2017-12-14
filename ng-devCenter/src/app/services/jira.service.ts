@@ -175,6 +175,15 @@ export class JiraService extends DataService {
 
 	/*
 	*/
+	editComment(postData): Observable<any> {
+		return super.putAPI({
+			url: `${this.apiUrl}/jira/comment`,
+			body: postData
+		});
+	}
+
+	/*
+	*/
 	changeStatus(postData): Observable<any> {
 		postData.username = this.user.username;
 		
