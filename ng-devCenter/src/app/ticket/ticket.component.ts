@@ -89,10 +89,18 @@ export class TicketComponent implements AfterViewInit {
 
 	/*
 	*/
-	statusChangeCancel():void {
+	statusChangeCancel(manualStatus?:string, showCancelMessage:boolean=true):void {
 		// get id for current ticket's state and reset it on dropdown
-		const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
-		this.ticketDropdown.value = ticketState[0].id;
-		this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
+
+		if(manualStatus){
+			this.ticketDropdown.value = manualStatus;
+		} else {
+			const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
+			this.ticketDropdown.value = ticketState[0].id;
+		}
+
+		if(showCancelMessage){
+			this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
+		}
 	}
 }

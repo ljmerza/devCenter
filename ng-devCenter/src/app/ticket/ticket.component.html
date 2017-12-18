@@ -81,6 +81,7 @@
 
 <!-- modals for this ticket -->
 <app-time-log 
+	(statusChangeCancel)="statusChangeCancel()"
 	(logTimeEvent)="logTimeEvent($event)" 
 	[key]=ticket.key>
 </app-time-log>

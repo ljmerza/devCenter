@@ -30,6 +30,7 @@ export class TimeLogComponent	{
 
 	@ViewChild('logModal') content:ElementRef;
 	@Output() logTimeEvent = new EventEmitter();
+	@Output() statusChangeCancel = new EventEmitter();
 	@Input() key:string;
 
 	constructor(
@@ -45,12 +46,23 @@ export class TimeLogComponent	{
 		// close modal
 		this.modalReference.close();
 		
-		// check for worklog or comment only
-		if (!formObj.value.logTime.hour && !formObj.value.logTime.minute){
-			this.toastr.showToast('Posting comment to Jira', 'info');
-		} else {
-			this.toastr.showToast('Posting comment and updating worklog to Jira', 'info');
+		// check for change type
+		let message = [];
+		if (formObj.value.logTime.hour || formObj.value.logTime.minute){
+			message.push('adding time log');
 		}
+		if(formObj.value.mergedCode || formObj.value.conflictCode){
+			message.push('removing component(s)');
+		} 
+		if(formObj.value.comment){
+			message.push('posting comment');
+		}
+		if(formObj.value.uctNotReady){
+			message.push('posting UCT Not Ready comment');
+		}
+
+		// show composed info message
+		this.toastr.showToast(`Running the following tasks: ${message.join(', ')}`, 'info');
 
 		// create POST body
 		let postData = {
