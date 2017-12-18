@@ -75,6 +75,7 @@ def add_comment(data, jira_obj):
 	Returns:
 
 	'''
+	response = ''
 	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -83,14 +84,20 @@ def add_comment(data, jira_obj):
 	uct_date = data.get('uct_date', 0)
 
 	if data.get('remove_merge', False):
-		jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
+		response = jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
+
+	if data.get('remove_conflict', False):
+		response = jira_obj.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 
 	# try to add comment an return
-	return jira_obj.add_comment(
-		key=data["key"], comment=data["comment"], 
-		cred_hash=data['cred_hash'],
-		uct_date=uct_date
-	)
+	if data["comment"]:
+		response = jira_obj.add_comment(
+			key=data["key"], comment=data["comment"], 
+			cred_hash=data['cred_hash'],
+			uct_date=uct_date
+		)
+
+	return response
 
 def edit_comment(data, jira_obj):
 	'''adds a comment to a ticket

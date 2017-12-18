@@ -64,6 +64,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 
 		# add comment
 		response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
+		
 		# if wants work log then add it
 		if data['log_time']:
 			response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)

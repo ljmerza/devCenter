@@ -102,6 +102,18 @@ class JiraComponent():
 		'''
 		return self._remove_component(key=key, name='Merge Code', cred_hash=cred_hash)
 
+	def remove_merge_conflict(self, key, cred_hash):
+		'''removes a jira issue's Merge Code component
+
+		Args:
+			key (str) the jira issue key to update
+			cred_hash (str) Authorization header value
+
+		Returns:
+			dict: status boolean and/or data hash
+		'''
+		return self._remove_component(key=key, name='Merge Conflict', cred_hash=cred_hash)
+
 	def set_merge_conflict(self, key, cred_hash):
 		'''sets a jira issue to the Merge Conflict component
 

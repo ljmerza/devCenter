@@ -21,6 +21,7 @@ export class TimeLogComponent	{
 
 	uctNotReady;
 	mergedCode;
+	conflictCode;
 	comments:string;
 	logTime = {hour: 0, minute: 0};
 
@@ -55,6 +56,7 @@ export class TimeLogComponent	{
 		let postData = {
 			comment: formObj.value.comment || '',
 			remove_merge: formObj.value.mergedCode || false,
+			remove_conflict: formObj.value.conflictCode || false,
 			uct_date: formObj.value.uctNotReady ? ((new Date).getTime())/1000 : 0,
 			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
 			key: this.key
@@ -98,6 +100,7 @@ export class TimeLogComponent	{
 	_resetForm(){
 		this.uctNotReady = false;
 		this.mergedCode = false;
+		this.conflictCode = false;
 
 	}
 
