@@ -90,10 +90,17 @@ def get_user_details(issue):
 	Returns:
 		the username, email, and display name of the user assigned to the Jira ticket
 	'''
+	# try to get name only instead of username with it
+	display_name = issue.get('fields', {}).get('assignee', {}).get('displayName', '')
+	name_only = display_name.split(' (')
+	if(len(name_only) == 2):
+		display_name = name_only[0]
+
+	# return all data
 	return {
 		'username': issue.get('fields', {}).get('assignee', {}).get('name', ''),
-		'emailAddress': issue.get('fields', {}).get('assignee', {}).get('emailAddress', ''),
-		'displayName': issue.get('fields', {}).get('assignee', {}).get('displayName', '')
+		'email_address': issue.get('fields', {}).get('assignee', {}).get('emailAddress', ''),
+		'display_name': display_name
 	}
 
 def get_linked_issues(issue):

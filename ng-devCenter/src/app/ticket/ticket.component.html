@@ -63,20 +63,34 @@
 
 <!-- user data -->
 <td>
-	<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open Q chat window with {{ticket.username}}">{{ticket.user_details.username}}</a>
-	<img src="http://presence.q.att.com/presence/{{ticket.username}}.gif">
-</td>
-<td>
-	{{ticket.user_details.displayName}}
+	<div>
+		<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open Q chat window with {{ticket.username}}">
+			{{ticket.user_details.username}}
+		</a>		
+	</div>
+	<div>
+		<img src="http://presence.q.att.com/presence/{{ticket.username}}.gif">
+		<a href="mailto:{{ticket.user_details.email_address}}?Subject=MSRP%20{{ticket.msrp}}" target="_top">
+			{{ticket.user_details.display_name}}
+		</a>
+	</div>
 </td>
 
 <!-- customer data -->
 <td>
-	<a [href]="jira.chatUrlSanitize(ticket.customer_details.username)" title="Open Q chat window with {{ticket.customer_details.display_name}}">
-		{{ticket.customer_details.username}}
-	</a>
-	<img src="http://presence.q.att.com/presence/{{ticket.customer_details.username}}.gif">
+	<div>
+		<a [href]="jira.chatUrlSanitize(ticket.customer_details.username)" title="Open Q chat window with {{ticket.customer_details.display_name}}">
+			{{ticket.customer_details.username}}
+		</a>
+	</div>
+	<div>
+		<a href="mailto:{{ticket.customer_details.email_address}}?Subject=MSRP%20{{ticket.msrp}}" target="_top">
+			{{ticket.customer_details.display_name}}
+		</a>
+		<img src="http://presence.q.att.com/presence/{{ticket.customer_details.username}}.gif">
+	</div>
 </td>
+	
 
 
 <!-- modals for this ticket -->
