@@ -65,7 +65,7 @@ export class ConfigService {
 			name: 'AQE'
 		},
 		{
-			link: '/teamdb/teams.php?ATTuid=',
+			link: `/teamdb/teams.php?ATTuid=${this.username}`,
 			name: 'TeamDB'
 		},
 		{
@@ -186,6 +186,10 @@ export class ConfigService {
 			name: 'LBS065263001 (EvcMultiPointSite)'
 		},
 		{
+			link: `order/ethernet/WTS252804001?cache=`,
+			name: 'WTS252804001 (multi-evc)'
+		},
+		{
 			link: `order/ethernet/ORC338494001?cache=`,
 			name: 'ORC338494001 (timeline)'
 		},
@@ -195,7 +199,7 @@ export class ConfigService {
 		},
 		{
 			link: `order/ethernet/ARC167777001?cache=`,
-			name: 'ARC167777001'
+			name: 'ARC167777001 (EXACT)'
 		},
 		{
 			link: `order/ethernet/TNS268897001?cache=`,
@@ -368,6 +372,10 @@ export class ConfigService {
 					link: 'https://emberjs.com/api/ember-data/2.14/modules/ember-data'
 				},
 				{
+					name: 'Component Lifecycle',
+					link: 'https://guides.emberjs.com/v2.5.0/components/the-component-lifecycle/'
+				},
+				{
 					name: 'Ember Acceptance Test',
 					link: 'https://guides.emberjs.com/v2.14.0/testing/acceptance/'
 				},
@@ -488,6 +496,10 @@ export class ConfigService {
 		{
 			name: 'Regex Explorer',
 			link: 'https://regex101.com/'
+		},
+		{
+			name: 'My Apex',
+			link: 'https://myapex.apexsystemsinc.com/psp/MYAPEX/'
 		},
 	];
 

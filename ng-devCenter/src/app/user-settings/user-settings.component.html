@@ -16,12 +16,12 @@
 
 		<form>
 			<div class="form-group">
-				<label for="attuidSetting">Username</label>
+				<label for="usernameSettings">Username</label>
 				<span class='text-danger'>*</span>
 				<input 
 					type="text" 
 					class="form-control" 
-					id="attuidSetting" 
+					id="usernameSettings" 
 					aria-describedby="emailHelp" 
 					placeholder="Enter username"
 					[ngModelOptions]="{standalone: true}"
@@ -117,7 +117,7 @@
 		</button>
 		<button 
 			type="button"
-			[attr.title]='(!emberUrl || !password || !port || !username) ? "ATTuid, Password, Port, and Ember Url are required." : "Cancel Changes"'
+			[attr.title]='(!emberUrl || !password || !port || !username) ? "Username, Password, Port, and Ember Url are required." : "Cancel Changes"'
 			[attr.disabled]="(!emberUrl || !password || !port || !username) ? true : null"
 			class="btn btn-outline-danger" 
 			(click)="c()"

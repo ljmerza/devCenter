@@ -27,7 +27,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	webSock$;
 
 	ticketType;
-
 	repos;
 	dtTrigger:Subject<any> = new Subject();
 
@@ -35,7 +34,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	@ViewChild(DataTableDirective) private dtElement: DataTableDirective;
 
 	dtOptions = {
-		order: [4, 'desc'],
+		order: [[4, 'desc']],
 		columnDefs: [
 			{targets: [8,9], visible: false},
 			{targets: [4,5,8,9], type: 'date'}
@@ -127,7 +126,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		this.loadingTickets = true;
 
 		return this.jira.getFilterData(jiraListType)
-		.subscribe( 
+		.subscribe(
 			issues => {
 				// save tickets and re-render data tables
 				this.openTickets = issues.data;
@@ -145,7 +144,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 		// if datatable already exists then destroy then render else just render
 		if(this.dtElement && this.dtElement.dtInstance){
-			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
 				dtInstance.destroy();
 				this.dtTrigger.next();
 			});

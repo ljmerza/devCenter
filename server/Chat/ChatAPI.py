@@ -45,7 +45,7 @@ class ChatAPI():
 			username = self.username
 			message = '--DEBUG--'+message
 		# make POST request
-		response = requests.post(f"{self.chat_api}/{username}", data=message, auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+		response = requests.post(f"{self.chat_api}/{username}", data=message.encode('latin-1', "ignore"), auth=HTTPBasicAuth(self.bot_name, self.bot_password))
 		return self._process_response(response=response)
 
 	def send_meeting_message(self, message, chatroom):
@@ -62,7 +62,7 @@ class ChatAPI():
 		if self.debug:
 			message = '--DEBUG--'+message
 		# make POST request
-		response = requests.post(f"{self.chat_api_chatroom}{chatroom}", data=message, auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+		response = requests.post(f"{self.chat_api_chatroom}{chatroom}", data=message.encode('latin-1', "ignore"), auth=HTTPBasicAuth(self.bot_name, self.bot_password))
 		return self._process_response(response=response)
 
 	def set_z_menu(self, username):

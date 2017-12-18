@@ -48,6 +48,9 @@ def get_status(issue):
 		status = 'PCR - Needed'
 	elif 'PCR - Completed' in all_components:
 		status = 'PCR - Completed'
+	elif 'Merge Conflict' in all_components:
+		status = 'Merge Conflict'
+
 
 	return status
 

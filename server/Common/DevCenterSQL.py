@@ -34,7 +34,7 @@ class DevCenterSQL():
 		# default dev DB unless debug false
 		database = 'dev_center_dev'
 		if not devdb:
-			database = database = 'dev_center'
+			database = 'dev_center'
 
 		charset = 'utf8'
 
@@ -115,6 +115,8 @@ class DevCenterSQL():
 		del jira_ticket['customer_details']
 		del jira_ticket['dates']
 		del jira_ticket['attachments']
+		del jira_ticket['user_details']
+
 
 		# set active marker
 		jira_ticket['is_active'] = 1

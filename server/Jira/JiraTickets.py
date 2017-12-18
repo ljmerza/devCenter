@@ -118,7 +118,9 @@ class JiraTickets():
 			# get summary
 			ticket['summary'] = get_summary(issue)
 			# get username
-			ticket['username'] = get_username(issue)
+			ticket['user_details'] = get_user_details(issue)
+			ticket['username'] = ticket['user_details']['username']
+
 
 			# get component
 			ticket['component'] = get_component(issue)

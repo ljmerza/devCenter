@@ -60,10 +60,17 @@
 		</a>
 	</div>
 </td>
+
+<!-- user data -->
 <td>
-	<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open Q chat window with {{ticket.username}}">{{ticket.username}}</a>
+	<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open Q chat window with {{ticket.username}}">{{ticket.user_details.username}}</a>
 	<img src="http://presence.q.att.com/presence/{{ticket.username}}.gif">
 </td>
+<td>
+	{{ticket.user_details.displayName}}
+</td>
+
+<!-- customer data -->
 <td>
 	<a [href]="jira.chatUrlSanitize(ticket.customer_details.username)" title="Open Q chat window with {{ticket.customer_details.display_name}}">
 		{{ticket.customer_details.username}}
