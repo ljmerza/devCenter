@@ -66,13 +66,11 @@ export class QaGeneratorComponent {
 		};
 
 		// show informational toast
-		let changedStatus = false;
 		if(!formObj.value.qaSteps){
 			this.toastr.showToast('Creating Crucible but not updating to Jira', 'info');
 			this.statusChangeCancel.emit();
 		} else {
 			this.toastr.showToast('Creating Crucible and updating Jira', 'info');
-			changedStatus = true;
 		}
 
 		// send POST request and notify results
