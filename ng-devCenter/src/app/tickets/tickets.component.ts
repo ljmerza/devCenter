@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Subject, Observable, Subscription } from 'rxjs';
@@ -30,7 +30,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	repos;
 	dtTrigger:Subject<any> = new Subject();
 
-	@Input() reloadTicketsEvent = new EventEmitter();
 	@ViewChild(DataTableDirective) private dtElement: DataTableDirective;
 
 	dtOptions = {

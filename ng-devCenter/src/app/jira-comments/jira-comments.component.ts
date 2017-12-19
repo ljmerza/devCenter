@@ -1,6 +1,6 @@
 import { 
-	Component, ViewChild, ElementRef, 
-	ViewEncapsulation, Input, OnInit
+	Component, ViewChild, ElementRef, EventEmitter,
+	ViewEncapsulation, Input, Output, OnInit
 } from '@angular/core';
 
 import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -26,6 +26,7 @@ export class JiraCommentsComponent implements OnInit {
 	@Input() key;
 	@Input() comments;
 	@Input() attachments;
+	@Output() commentChangeEvent = new EventEmitter();
 
 	constructor(
 		private modalService:NgbModal, 
@@ -88,6 +89,7 @@ export class JiraCommentsComponent implements OnInit {
 
 			this.jira.deleteComment(comment_id, this.key).subscribe(
 				() => {
+					this.commentChangeEvent.emit({postData: this.comments});
 					this.toastr.showToast('Comment Deleted Successfully', 'success');
 				},
 				error => {
@@ -127,6 +129,7 @@ export class JiraCommentsComponent implements OnInit {
 
 		this.jira.editComment(postData).subscribe(
 			() => {
+				this.commentChangeEvent.emit({postData: this.comments});
 				this.toastr.showToast('Comment Edited Successfully', 'success');
 			},
 			error => {

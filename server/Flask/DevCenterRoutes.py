@@ -62,7 +62,6 @@ def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_o
 		if request.method == 'OPTIONS' or 'socket_tickets' in request.url:
 			return Response(status=200)
 
-		print(response)
 		# if 401 then invalid password
 		if response.status_code == 401:
 			return Response(json.dumps({'status': False, 'data': 'Invalid username and/or password'}), status=401, mimetype='application/json')

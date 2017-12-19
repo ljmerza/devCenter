@@ -83,7 +83,7 @@
 <!-- modals for this ticket -->
 <app-time-log 
 	(statusChangeCancel)="statusChangeCancel()"
-	(logTimeEvent)="logTimeEvent($event)" 
+	(commentChangeEvent)="commentChangeEvent($event)" 
 	[key]=ticket.key>
 </app-time-log>
 
@@ -101,6 +101,7 @@
 </app-qa-generator>
 
 <app-jira-comments 
+	(commentChangeEvent)="commentChangeEvent($event)" 
 	[key]=ticket.key 
 	[attachments]=ticket.attachments
 	[comments]=ticket.comments>

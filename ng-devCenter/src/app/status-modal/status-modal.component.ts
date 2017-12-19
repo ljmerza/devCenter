@@ -1,7 +1,6 @@
 import { 
-	Component, OnInit, ViewContainerRef, 
-	EventEmitter, Input, Output, ViewChild, 
-	ElementRef 
+	Component, OnInit, ElementRef,
+	EventEmitter, Input, Output, ViewChild
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 

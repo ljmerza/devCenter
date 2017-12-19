@@ -1,7 +1,6 @@
 import { 
 	Component, Input, ViewChild, 
-	EventEmitter, Output,
-	AfterViewInit
+	EventEmitter, Output, AfterViewInit
 } from '@angular/core';
 
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
@@ -25,11 +24,16 @@ export class TicketComponent implements AfterViewInit {
 	oldState; // old ticket state when changed
 	ticketDropdown; // ticket dropdown reference
 
-	constructor(public toastr: ToastrService, public jira: JiraService, public config: ConfigService, public user: UserService) {}
+	constructor(
+		public toastr: ToastrService, 
+		public jira: JiraService, 
+		public config: ConfigService, 
+		public user: UserService
+	) {}
 
 	@Input() ticket;
 	@Input() repos;
-	@Input() rerender = new EventEmitter();
+	@Output() rerender = new EventEmitter();
 
 	@ViewChild(QaGeneratorComponent) public qaGen: QaGeneratorComponent;
 	@ViewChild(JiraCommentsComponent) public jiraComments: JiraCommentsComponent;
@@ -85,21 +89,31 @@ export class TicketComponent implements AfterViewInit {
 
 	/*
 	*/
-	logTimeEvent({postData, response}):void {
+	commentChangeEvent({postData, response}):void {
+
+		// get around check detection for now until DoCheck is implemented
+
 		// if comment added the push comment onto comment array
-		if(response.data.body){
+		if(response && response.data.body){
 			this.ticket.comments.push({
 				comment: response.data.body,
 				created: response.data.created,
 				id: response.data.id,
 				updated: response.data.updated,
 				username: this.user.username,
-				key: postData.key
+				display_name: this.user.userData.displayName,
+				key: postData.key,
+				isEditing: false,
+				closeText: 'Edit Comment',
+				comment_type: 'info',
+				editId: `E${response.data.id}`,
+				email: this.user.userData.emailAddress,
+				visibility: 'Developers'
 			});
+			this.ticket.comments = this.ticket.comments.slice(0);
+		} else if(postData) {
+			this.ticket.comments = postData;
 		}
-
-		// rerender datatable
-		this.rerender.emit();
 	}
 
 	/*
