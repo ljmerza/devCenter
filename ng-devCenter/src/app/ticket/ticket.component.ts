@@ -86,17 +86,16 @@ export class TicketComponent implements AfterViewInit {
 	/*
 	*/
 	logTimeEvent({postData, response}):void {
-
 		// if comment added the push comment onto comment array
 		if(response.data.body){
 			this.ticket.comments.push({
-				commment: response.data.body,
+				comment: response.data.body,
 				created: response.data.created,
 				id: response.data.id,
 				updated: response.data.updated,
 				username: this.user.username,
 				key: postData.key
-			})
+			});
 		}
 
 		// rerender datatable
