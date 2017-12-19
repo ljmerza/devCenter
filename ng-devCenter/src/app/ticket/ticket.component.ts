@@ -13,6 +13,7 @@ import { SetPingsComponent } from './../set-pings/set-pings.component';
 import { ToastrService } from './../services/toastr.service';
 import { JiraService } from './../services/jira.service';
 import { ConfigService } from './../services/config.service'
+import { UserService } from './../services/user.service'
 
 
 @Component({
@@ -24,11 +25,12 @@ export class TicketComponent implements AfterViewInit {
 	oldState; // old ticket state when changed
 	ticketDropdown; // ticket dropdown reference
 
-	constructor(public toastr: ToastrService, public jira: JiraService, public config: ConfigService) {}
+	constructor(public toastr: ToastrService, public jira: JiraService, public config: ConfigService, public user: UserService) {}
 
 	@Input() ticket;
 	@Input() repos;
 	@Input() rerender = new EventEmitter();
+
 	@ViewChild(QaGeneratorComponent) public qaGen: QaGeneratorComponent;
 	@ViewChild(JiraCommentsComponent) public jiraComments: JiraCommentsComponent;
 	@ViewChild(StatusModalComponent) public statusModal: StatusModalComponent;
@@ -83,7 +85,21 @@ export class TicketComponent implements AfterViewInit {
 
 	/*
 	*/
-	logTimeEvent(logTime):void {
+	logTimeEvent({postData, response}):void {
+
+		// if comment added the push comment onto comment array
+		if(response.data.body){
+			this.ticket.comments.push({
+				commment: response.data.body,
+				created: response.data.created,
+				id: response.data.id,
+				updated: response.data.updated,
+				username: this.user.username,
+				key: postData.key
+			})
+		}
+
+		// rerender datatable
 		this.rerender.emit();
 	}
 

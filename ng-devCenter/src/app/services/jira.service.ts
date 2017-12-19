@@ -168,7 +168,7 @@ export class JiraService extends DataService {
 	*/
 	workLog(postData): Observable<any> {
 		return super.postAPI({
-			url: `${this.apiUrl}/jira/worklog`,
+			url: `${this.apiUrl}/jira/comment`,
 			body: postData
 		});
 	}

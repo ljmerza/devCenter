@@ -130,7 +130,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			issues => {
 				// save tickets and re-render data tables
 				this.openTickets = issues.data;
-				this.rerender();
+				this.rerender(true);
 				this.ngProgress.done();
 				this.loadingTickets = false;
 			},
@@ -140,13 +140,18 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	rerender():void {
+	rerender(forceDestory:boolean=false):void {
 
-		// if datatable already exists then destroy then render else just render
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
-				dtInstance.destroy();
-				this.dtTrigger.next();
+
+				// do we want to force reset datatables or just redraw it?
+				if(forceDestory) {
+					dtInstance.destroy();
+					this.dtTrigger.next();
+				} else {
+					setTimeout(dtInstance.draw,0);
+				}
 			});
 		} else {
 			this.dtTrigger.next();
@@ -161,7 +166,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		if(isTransitioned){
 			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
 				dtInstance.row( $(`#${key}`)[0] ).remove();
-				dtInstance.draw();
+				this.rerender();
 			});
 
 		}

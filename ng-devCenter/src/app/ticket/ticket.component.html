@@ -1,62 +1,51 @@
+
+<!-- key -->
 <td>
 	
 	<div class='float-left'>
-		<a target="_blank" 
-			href="{{config.jiraUrl}}/browse/{{ticket.key}}"
-			title='Open ticket in Jira'
-		>{{ticket.key}}
-		</a>
+		<a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira'>{{ticket.key}}</a>
 	</div>
 	<div class="float-right">
-		<i 
-			(click)="setPing.openPingModel()" 
-			class="material-icons"
-			title='Reset pings'
-		>record_voice_over</i>
+		<i (click)="setPing.openPingModel()" class="material-icons"title='Reset pings'>record_voice_over</i>
 	</div>
 </td>
+
+<!-- msrp -->
 <td>
 	<div class='float-left'>{{ticket.msrp}}</div>
 	<div class="float-right">
-		<i 
-			(click)="logWork.openLogModal()" 
-			class="material-icons"
-			title='Add comment/time log'
-		>alarm_add</i>
-		<i 
-			(click)="jiraComments.openCommentModal()" 
-			class="material-icons"
-			title='View comments'
-		>storage</i>
+		<i (click)="logWork.openLogModal()" class="material-icons" title='Add comment/time log'>alarm_add</i>
+		<i (click)="jiraComments.openCommentModal()" class="material-icons"title='View comments'>storage</i>
 	</div>
 </td>
+
+<!-- summary/state -->
 <td class='summary-format'>{{ticket.summary}}</td>
 <td>
 	<div class='float-left'>
 		<select (change)="stateChange(ticketState)" #ticketState>
 			<option 
-				*ngFor='let state of ticketStates'
-				[attr.selected]="state.name==ticket.status ? 'true': null"
-				[value]="state.id"
-			>
-				{{state.name}}
+				*ngFor='let state of ticketStates' [value]="state.id"
+				[attr.selected]="state.name==ticket.status ? 'true': null">
+					{{state.name}}
 			</option>
 		</select>
 	</div>
 </td>
+
+<!-- dates -->
 <td>{{ticket.dates.started | amDateFormat:'LL'}}</td>
 <td>{{ticket.dates.duedate | amDateFormat:'LL'}}</td>
 <td>{{ticket.dates.estimate | worktime }}</td>
 <td>{{ticket.dates.logged | worktime}}</td>
 <td>{{ticket.dates.updated | amDateFormat:'LL'}}</td>
 <td>{{ticket.dates.created | amDateFormat:'LL'}}</td>
+
+<!-- cru id -->
 <td>
 	<div *ngIf='ticket.crucible_id'>
-		<a 
-			target="_blank" 
-			class='float-left'
-			href="{{config.crucibleUrl}}/cru/{{ticket.crucible_id}}">
-				{{ticket.crucible_id}}
+		<a target="_blank" class='float-left' href="{{config.crucibleUrl}}/cru/{{ticket.crucible_id}}">
+			{{ticket.crucible_id}}
 		</a>
 	</div>
 </td>
@@ -64,12 +53,12 @@
 <!-- user data -->
 <td>
 	<div>
-		<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open Q chat window with {{ticket.username}}">
+		<img src="http://presence.q.att.com/presence/{{ticket.username}}.gif">
+		<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open chat with {{ticket.username}}">
 			{{ticket.user_details.username}}
 		</a>		
 	</div>
 	<div>
-		<img src="http://presence.q.att.com/presence/{{ticket.username}}.gif">
 		<a href="mailto:{{ticket.user_details.email_address}}?Subject=MSRP%20{{ticket.msrp}}" target="_top">
 			{{ticket.user_details.display_name}}
 		</a>
@@ -79,7 +68,8 @@
 <!-- customer data -->
 <td>
 	<div>
-		<a [href]="jira.chatUrlSanitize(ticket.customer_details.username)" title="Open Q chat window with {{ticket.customer_details.display_name}}">
+		<img src="http://presence.q.att.com/presence/{{ticket.customer_details.username}}.gif">
+		<a [href]="jira.chatUrlSanitize(ticket.customer_details.username)" title="Open chat with {{ticket.customer_details.display_name}}">
 			{{ticket.customer_details.username}}
 		</a>
 	</div>
@@ -87,7 +77,6 @@
 		<a href="mailto:{{ticket.customer_details.email_address}}?Subject=MSRP%20{{ticket.msrp}}" target="_top">
 			{{ticket.customer_details.display_name}}
 		</a>
-		<img src="http://presence.q.att.com/presence/{{ticket.customer_details.username}}.gif">
 	</div>
 </td>
 	

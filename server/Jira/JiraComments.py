@@ -19,7 +19,7 @@ class JiraComments():
 		'''
 		self.jira_api = jira_api
 
-	def add_comment(self, key, comment, cred_hash, private_comment=True, uct_date=''):
+	def add_comment(self, key, cred_hash, comment='', private_comment=True, uct_date=''):
 		'''adds a comment to a jira issue. By default the comment is
 		set to developer view only
 
@@ -49,7 +49,8 @@ class JiraComments():
 		json_data = self._set_json(comment=comment, private_comment=private_comment)
 		return self.jira_api.put_json(url=f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}', json_data=json_data, cred_hash=cred_hash)
 
-
+	def delete_comment(self, key, comment_id, cred_hash):
+		return self.jira_api.delete(url=f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}', cred_hash=cred_hash)
 
 	def _set_json(self, comment, private_comment):
 		'''

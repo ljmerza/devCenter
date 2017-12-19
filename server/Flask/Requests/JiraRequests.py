@@ -29,6 +29,9 @@ def set_status(data, jira_obj):
 		return jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'mergeConflict':
 		return jira_obj.set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status_type'] == 'removeMergeCode':
+		return jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
+
 
 	elif data['status_type'] == 'inUct':
 		return jira_obj.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
@@ -76,26 +79,19 @@ def add_comment(data, jira_obj):
 
 	'''
 	response = ''
-	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash'])
+	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash', 'comment'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# set uct date if given
 	uct_date = data.get('uct_date', 0)
 
-	if data.get('remove_merge', False):
-		response = jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-
-	if data.get('remove_conflict', False):
-		response = jira_obj.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
-
 	# try to add comment an return
-	if data["comment"]:
-		response = jira_obj.add_comment(
-			key=data["key"], comment=data["comment"], 
-			cred_hash=data['cred_hash'],
-			uct_date=uct_date
-		)
+	response = jira_obj.add_comment(
+		key=data["key"], comment=data["comment"], 
+		cred_hash=data['cred_hash'],
+		uct_date=uct_date
+	)
 
 	return response
 
@@ -107,6 +103,7 @@ def edit_comment(data, jira_obj):
 			cred_hash (str) Authorization header value
 			key (str) the Jira key to post a comment to
 			comment (str) the comment to add to the the ticket
+			comment_id (str) the comment id to edit
 			uct_date (str) the date to use for UCT not ready (optional)
 		jira_obj (Class instance) Jira class instance to connect to Jira
 
@@ -120,7 +117,33 @@ def edit_comment(data, jira_obj):
 
 	# try to add comment an return
 	return jira_obj.edit_comment(
-		key=data["key"], comment=data["comment"], 
+		key=data["key"], 
+		comment=data["comment"], 
+		cred_hash=data['cred_hash'],
+		comment_id=data['comment_id']
+	)
+
+def delete_comment(data, jira_obj):
+	'''adds a comment to a ticket
+
+	Args:
+		data (dict) object with properties:
+			cred_hash (str) Authorization header value
+			key (str) the Jira key to post a comment to
+			comment_id (str) the comment id to delete
+		jira_obj (Class instance) Jira class instance to connect to Jira
+
+	Returns:
+
+	'''
+	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash', 'comment_id'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+
+	# try to add comment an return
+	return jira_obj.delete_comment(
+		key=data["key"], 
 		cred_hash=data['cred_hash'],
 		comment_id=data['comment_id']
 	)

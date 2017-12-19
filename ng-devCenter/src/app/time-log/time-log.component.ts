@@ -76,11 +76,11 @@ export class TimeLogComponent	{
 
 		// log work and show results
 		this.jira.workLog(postData).subscribe( 
-			() => {
+			(response) => {
 
 				// show success and notify table to update time
 				this.toastr.showToast('Work Log updated', 'success');
-				this.logTimeEvent.emit({key: this.key, logTime: postData.log_time});
+				this.logTimeEvent.emit({postData, response});
 				// then reset form
 				formObj.resetForm();
 			},

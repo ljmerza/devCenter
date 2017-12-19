@@ -119,6 +119,24 @@ class DevCenterAPI():
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
 
+	def delete(self, url, cred_hash=''):
+		'''makes a DELETE request with the given URL. Returns the raw response.
+
+		Args:
+			url (str) the URL to make a POST request
+			cred_hash (string) optional Authorization header value
+
+		Returns:
+			returns a dict with status property and if success, a data property. 
+			If Proxy error returns dict with status 407.
+		'''
+		session_obj = requests.session()
+		try:
+			filter_data = session_obj.delete(url, json=json_data, headers={ 'Authorization': cred_hash })
+		except ProxyError:
+			return { "status": False, 'data': "Proxy error 407" }
+		return self._process_json(filter_data=filter_data)
+
 	def _process_json(self, filter_data):
 		'''internal method to parse JSON from responses and return status/data dict format
 

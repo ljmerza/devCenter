@@ -48,10 +48,11 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		}, jira_obj=jira_obj)
 		return Response(data, mimetype='application/json')
 
-	@app.route(f'/{app_name}/jira/worklog', methods=['POST'])
+	@app.route(f'/{app_name}/jira/comment', methods=['PUT', 'DELETE', 'POST'])
 	@cross_origin()
-	def worklog():
-		'''Updates a Jira ticket with a comment and optional time log
+	def jira_comment():
+		''' PUT request edit comment, POST request add comment (and worklog)
+			DELETE request deletes a comment
 
 		Args:
 
@@ -61,31 +62,29 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		'''
 		data=request.get_json()
 		data["cred_hash"] = g.cred_hash
+		response = ''
 
-		# add comment
-		response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
-		
-		# if wants work log then add it
-		if data['log_time']:
-			response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
-		# return response
-		return Response(response, mimetype='application/json')
+		if request.method == 'PUT':
+			response = JiraRequests.edit_comment(data=data, jira_obj=jira_obj)
 
-	@app.route(f'/{app_name}/jira/comment', methods=['PUT'])
-	@cross_origin()
-	def edit_comment():
-		'''Updates a Jira ticket with a comment and optional time log
+		elif request.method == 'POST':
+			if data.get('log_time', False): 
+				response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
 
-		Args:
+			if data.get('remove_conflict', False):
+				data['status_type'] = 'mergeConflict'
+				response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 
+			if data.get('remove_merge', False):
+				data['status_type'] = 'removeMergeCode'
+				response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 
-		Returns:
-			
-		'''
-		data=request.get_json()
-		data["cred_hash"] = g.cred_hash
-		# add comment
-		response = JiraRequests.edit_comment(data=data, jira_obj=jira_obj)
+			if data.get('comment', False) or data.get('uct_date', False):
+				response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
+
+		elif request.method == 'DELETE':
+			response = JiraRequests.delete_comment(data=data, jira_obj=jira_obj)
+
 		# return response
 		return Response(response, mimetype='application/json')
 
