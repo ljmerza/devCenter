@@ -22,6 +22,7 @@ export class JiraCommentsComponent implements OnInit {
 	openPanelIds = [];
 
 	@ViewChild('commentModal') content:ElementRef;
+	@ViewChild('deleteModal') deleteModal: ElementRef;
 	@Input() key;
 	@Input() comments;
 	@Input() attachments;
@@ -29,7 +30,7 @@ export class JiraCommentsComponent implements OnInit {
 	constructor(
 		private modalService:NgbModal, 
 		private toastr: ToastrService, 
-		config: NgbAccordionConfig, 
+		public config: NgbAccordionConfig, 
 		public jira:JiraService,
 		public user:UserService
 	) {}
@@ -78,6 +79,28 @@ export class JiraCommentsComponent implements OnInit {
 
 	/*
 	*/
+	deleteComment(comment_id) {
+		this.modalService.open(this.deleteModal).result.then( () => {
+
+			// get index of comment and remove it there
+			const pos = this.comments.map(comm =>  comm.id).indexOf(comment_id);
+			const deletedComment = this.comments.splice(pos, 1);
+
+			this.jira.deleteComment(comment_id, this.key).subscribe(
+				() => {
+					this.toastr.showToast('Comment Deleted Successfully', 'success');
+				},
+				error => {
+					// if error revert comment and show error
+					this.comments.splice(pos, 0, ...deletedComment);
+					this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
+				}
+			);
+		});
+	}
+
+	/*
+	*/
 	editComment(comment){
 
 		// toggle editing text
@@ -112,6 +135,6 @@ export class JiraCommentsComponent implements OnInit {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
 
 			}
-		)
+		);
 	}
 }

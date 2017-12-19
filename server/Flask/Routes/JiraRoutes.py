@@ -60,8 +60,10 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		Returns:
 			
 		'''
-		data=request.get_json()
-		data["cred_hash"] = g.cred_hash
+
+		if(request.method == 'POST' or request.method == 'PUT'):
+			data=request.get_json()
+			data["cred_hash"] = g.cred_hash
 		response = ''
 
 		if request.method == 'PUT':
@@ -70,19 +72,20 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		elif request.method == 'POST':
 			if data.get('log_time', False): 
 				response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
-
 			if data.get('remove_conflict', False):
 				data['status_type'] = 'mergeConflict'
 				response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-
 			if data.get('remove_merge', False):
 				data['status_type'] = 'removeMergeCode'
 				response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-
 			if data.get('comment', False) or data.get('uct_date', False):
 				response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
-
-		elif request.method == 'DELETE':
+		else:
+			data = {
+				"comment_id": request.args.get('comment_id'),
+				"key": request.args.get('key'),
+				"cred_hash": g.cred_hash
+			}
 			response = JiraRequests.delete_comment(data=data, jira_obj=jira_obj)
 
 		# return response

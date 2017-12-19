@@ -113,9 +113,13 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		})
 		.skip(1)
 		.subscribe( data => {
+			console.log('data: ', data,);
+			console.log('this.openTickets: ', this.openTickets);
 			// if got this far then data is different so sync with UI
-			this.openTickets = data;
-			this.rerender();
+			if( ['pcr','qa'].includes(this.ticketType) ) {
+				this.openTickets = data;
+				this.rerender();
+			}
 		});
 	}
 

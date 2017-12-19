@@ -132,7 +132,7 @@ class DevCenterAPI():
 		'''
 		session_obj = requests.session()
 		try:
-			filter_data = session_obj.delete(url, json=json_data, headers={ 'Authorization': cred_hash })
+			filter_data = session_obj.delete(url, headers={ 'Authorization': cred_hash })
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)

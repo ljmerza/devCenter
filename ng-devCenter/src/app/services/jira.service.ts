@@ -184,6 +184,14 @@ export class JiraService extends DataService {
 
 	/*
 	*/
+	deleteComment(comment_id, key): Observable<any> {
+		return super.deleteAPI({
+			url: `${this.apiUrl}/jira/comment?comment_id=${comment_id}&key=${key}`
+		});
+	}
+
+	/*
+	*/
 	changeStatus(postData): Observable<any> {
 		postData.username = this.user.username;
 		

@@ -53,6 +53,12 @@ export class DataService {
 
 	/*
 	*/
+	public deleteAPI(args): Observable<any> {
+		return this.http.delete(args.url, { headers: this.createHeaders() })
+	}
+
+	/*
+	*/
 	private createHeaders() {
 		return new HttpHeaders()
 			.set('Authorization', this.authorizationHeader() )

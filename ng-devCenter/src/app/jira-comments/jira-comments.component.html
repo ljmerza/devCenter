@@ -30,10 +30,10 @@
 				<!-- editing buttons -->
 				<span class='edit-buttons'>
 					<button 
-					type="button" 
-					class="btn btn-outline-danger" 
-					*ngIf='comment.username == user.username' 
-					(click)="toggleEditing(comment)">
+						type="button" 
+						class="btn btn-outline-info" 
+						*ngIf='comment.username == user.username' 
+						(click)="toggleEditing(comment)">
 							{{comment.closeText}}
 					</button>
 
@@ -44,6 +44,14 @@
 						
 						(click)="editComment(comment)">
 							Save Edit
+					</button>
+
+					<button 
+						type="button" 
+						class="btn btn-outline-danger" 
+						*ngIf='!comment.isEditing && comment.username == user.username' 
+						(click)="deleteComment(comment.id)">
+							Delete Comment
 					</button>
 				</span>
 				
@@ -66,3 +74,30 @@
 		<button type="button" class="btn btn-outline-success" (click)="c()">Close</button>
 	</div>
 </ng-template>
+
+
+
+
+<ng-template #deleteModal let-c="close" let-d="dismiss">
+
+	<div class="modal-header">
+		<h4 class="modal-title">Delete {{comment_id}}</h4>
+
+		<button type="button" class="close" aria-label="Close" (click)="d()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<div class="modal-body">
+		<p>Are you sure you want to delete comment {{comment_id}}?</p>
+	</div>
+
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-success" (click)="c()">
+			Delete Comment
+		</button>
+		<button type="button" class="btn btn-outline-danger" (click)="d()">Cancel</button>
+	</div>
+
+</ng-template>
+

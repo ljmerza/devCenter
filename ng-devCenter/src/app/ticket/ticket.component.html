@@ -53,14 +53,14 @@
 <!-- user data -->
 <td>
 	<div>
-		<img src="http://presence.q.att.com/presence/{{ticket.username}}.gif">
-		<a [href]="jira.chatUrlSanitize(ticket.username)" title="Open chat with {{ticket.username}}">
-			{{ticket.user_details.username}}
+		<img src="http://presence.q.att.com/presence/{{ticket.user_details?.username}}.gif">
+		<a [href]="jira.chatUrlSanitize(ticket.user_details?.username)" title="Open chat with {{ticket.user_details?.username}}">
+			{{ticket.user_details?.username}}
 		</a>		
 	</div>
 	<div>
-		<a href="mailto:{{ticket.user_details.email_address}}?Subject=MSRP%20{{ticket.msrp}}" target="_top">
-			{{ticket.user_details.display_name}}
+		<a href="mailto:{{ticket.user_details?.email_address}}?Subject=MSRP%20{{ticket.msrp}}" target="_top">
+			{{ticket.user_details?.display_name}}
 		</a>
 	</div>
 </td>
@@ -68,14 +68,14 @@
 <!-- customer data -->
 <td>
 	<div>
-		<img src="http://presence.q.att.com/presence/{{ticket.customer_details.username}}.gif">
-		<a [href]="jira.chatUrlSanitize(ticket.customer_details.username)" title="Open chat with {{ticket.customer_details.display_name}}">
-			{{ticket.customer_details.username}}
+		<img src="http://presence.q.att.com/presence/{{ticket.customer_details?.username}}.gif">
+		<a [href]="jira.chatUrlSanitize(ticket.customer_details?.username)" title="Open chat with {{ticket.customer_details?.display_name}}">
+			{{ticket.customer_details?.username}}
 		</a>
 	</div>
 	<div>
-		<a href="mailto:{{ticket.customer_details.email_address}}?Subject=MSRP%20{{ticket.msrp}}" target="_top">
-			{{ticket.customer_details.display_name}}
+		<a href="mailto:{{ticket.customer_details?.email_address}}?Subject=MSRP%20{{ticket.msrp}}" target="_top">
+			{{ticket.customer_details?.display_name}}
 		</a>
 	</div>
 </td>
