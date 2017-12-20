@@ -8,6 +8,7 @@ class ChatAPI():
 	def __init__(self, debug, no_pings):
 		'''
 		'''
+		
 		self.crucible_url = os.environ['CRUCIBLE_URL']
 		self.crucible_ticket_base = f'{self.crucible_url}/cru'
 		self.jira_url = os.environ['JIRA_URL']
@@ -45,7 +46,7 @@ class ChatAPI():
 		if self.debug:
 			username = self.username
 			message = '--DEBUG--'+message
-			
+
 		# make POST request
 		if self.no_pings:
 			return {'status': True, 'data': 'OKAY'}
