@@ -503,4 +503,6 @@ export class ConfigService {
 		},
 	];
 
+
+	logHours = 'https://myapex.apexsystemsinc.com/psp/MYAPEX/';
 }

@@ -21,7 +21,6 @@ export class UserService {
 	public teamLocalPort:string = '4200';
 	public teamApiPort:string = '5';
 
-
 	public userData;
 	public userPicture;
 	public cache;
@@ -35,10 +34,15 @@ export class UserService {
 		this.username = localStorage.getItem('devCenter.username') || '';
 		this.port = localStorage.getItem('devCenter.port') || '';
 		this.password = localStorage.getItem('devCenter.password') || '';
+
+		// if we have a password then decode it
+		if(this.password){
+			this.password = atob(this.password);
+		}
+		
 		this.emberUrl = localStorage.getItem('devCenter.emberUrl') || '';
 		this.teamUrl = localStorage.getItem('devCenter.teamUrl') || '';
 		this.cache = localStorage.getItem('devCenter.cache') || '';
-
 		this.setUrls();
 	}
 
@@ -49,6 +53,10 @@ export class UserService {
 		// if cache then true is 1 else false is empty string
 		if(data == 'cache'){
 			value = value ? '1' : '';
+		}
+
+		if(data === 'password'){
+			value = btoa(value);
 		}
 
 		localStorage.setItem(`devCenter.${data}`, value);

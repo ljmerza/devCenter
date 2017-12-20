@@ -19,6 +19,7 @@ declare var $ :any;
 })
 export class NavBarComponent implements AfterContentInit {
 	ticketValue:string;
+	isFriday:boolean;
 
 	@ViewChild('userSetting') private userSetting;
 	@ViewChild(LogoutComponent) private logout: LogoutComponent;
@@ -33,7 +34,16 @@ export class NavBarComponent implements AfterContentInit {
 		public jira:JiraService,
 		private modalService:NgbModal,
 		public config:ConfigService
-	) { }
+	) { 
+
+		this.isFriday = (new Date()).getDay() == 6;
+
+		// check every two hours
+		setTimeout( () => {
+			this.isFriday = (new Date()).getDay() == 6;
+		}, 60*60*2)
+		
+	}
 
 	/*
 	*/

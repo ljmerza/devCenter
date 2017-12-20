@@ -3,8 +3,8 @@
 		<h4 class="modal-title">User Settings</h4>
 		<button 
 			type="button"
-			[attr.title]='(!emberUrl || !password || !port || !username) ? "username, Password, Port, and Ember Url are required." : "Cancel Changes"'
-			[attr.disabled]="(!emberUrl || !password || !port || !username) ? true : null"
+			[attr.title]='(!teamUrl || !emberUrl || !password || !port || !username) ? "username, Password, Port, and Ember Url are required." : "Cancel Changes"'
+			[attr.disabled]="(!teamUrl || !emberUrl || !password || !port || !username) ? true : null"
 			class="close" 
 			aria-label="Close" 
 			(click)="c()"
@@ -108,8 +108,8 @@
 	<div class="modal-footer">
 		<button 
 			type="button" 
-			[attr.title]='(!emberUrl || !password || !port || !username) ? "Username, Password, Port, and Ember Url are required." : "Save Changes"'
-			[attr.disabled]="(!emberUrl || !port || !username) ? true : null"
+			[attr.title]='(!teamUrl || !emberUrl || !password || !port || !username) ? "Username, Password, Port, and Ember Url are required." : "Save Changes"'
+			[attr.disabled]="(!teamUrl || !emberUrl || !port || !username) ? true : null"
 			class="btn btn-outline-success" 
 			(click)="c('save')"
 		>
@@ -117,8 +117,8 @@
 		</button>
 		<button 
 			type="button"
-			[attr.title]='(!emberUrl || !password || !port || !username) ? "Username, Password, Port, and Ember Url are required." : "Cancel Changes"'
-			[attr.disabled]="(!emberUrl || !password || !port || !username) ? true : null"
+			[attr.title]='(!teamUrl || !emberUrl || !password || !port || !username) ? "Username, Password, Port, and Ember Url are required." : "Cancel Changes"'
+			[attr.disabled]="(!teamUrl || !emberUrl || !password || !port || !username) ? true : null"
 			class="btn btn-outline-danger" 
 			(click)="c()"
 		>

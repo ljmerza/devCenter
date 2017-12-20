@@ -151,13 +151,18 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				// save new tickets locally if my tickets
 				if(!this.ticketType || this.ticketType == 'mytickets'){
 					this.jira.setItem('mytickets', JSON.stringify(this.openTickets));
-					setTimeout(() => this.rerender(true),0);
+				}
+				
+				// if cached data set we need to push rerender 
+				// to end of event loop else force full rerender
+				if(issues.cached){
+					setTimeout(() => this.rerender(), 0)
 				} else {
 					this.rerender(true);
 				}
 
-				// if pcr or qa then enable websockets
-				if( ['pcr','qa','cr','allopen','my'].includes(this.ticketType) ) {
+				// enable websockets
+				if( !this.ticketType || ['pcr','qa','cr','allopen','mytickets'].includes(this.ticketType) ) {
 					this.webSock$ = this.startWebSocket();
 				}
 			},
