@@ -18,7 +18,7 @@ export class ConfigService {
 
 	uctready = encodeURIComponent(this.projects + ' AND status != closed AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND labels != NewGUI');
 
-	allopen = encodeURIComponent(this.projects+' AND status in ("IN DEVELOPMENT", "IN SPRINT", "Ready for Release", "Code Review", "Ready For QA", "IN QA", "IN UCT", "READY FOR UCT") OR assignee in (wc591w, ep759g)');
+	allopen = encodeURIComponent(this.projects+' AND status in ("ON HOLD", "IN DEVELOPMENT", "IN SPRINT", "Ready for Release", "Code Review", "Ready For QA", "IN QA", "IN UCT", "READY FOR UCT") OR assignee in (wc591w)');
 
 	teamdb_ember = encodeURIComponent(' labels = NewGUI');
 
@@ -34,7 +34,7 @@ export class ConfigService {
 
 	starship = encodeURIComponent('"epic%20link"%3D%20starship');
 
-	pmTickets = encodeURIComponent('resolution = Unresolved AND assignee in (ep759g, wc591w, lk2973)');
+	pmTickets = encodeURIComponent('resolution = Unresolved AND assignee in ( wc591w, lk2973)');
 
 	allmy = encodeURIComponent(`assignee = ${this.username} ORDER BY updated DESC`);
 

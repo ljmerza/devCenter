@@ -61,15 +61,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	ngOnInit():void {
-		this.route.paramMap
-		.subscribe( params => {
-			this.ticketType = params.get('filter');
 
-			// if an ajax request is already being made then cancel it
-			if(this.searchTicket$) this.searchTicket$.unsubscribe();
-			// if web socket is already being made then cancel it
-			if(this.webSock$) this.webSock$.unsubscribe();
-
+		this.route.paramMap.subscribe( params => {
+			// default to my tickets
+			this.ticketType = params.get('filter') || 'mytickets';
+			// destroy any existing subscriptions
+			this.destorySubscritions();
 			// if required user info exists then get tickets and repos
 			if( !this.user.requireCredentials() ){
 				this.syncData();
@@ -80,6 +77,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	ngOnDestroy(){
+		this.destorySubscritions();
+	}
+
+	/*
+	*/
+	private destorySubscritions() {
 		if(this.searchTicket$) this.searchTicket$.unsubscribe();
 		if(this.webSock$) this.webSock$.unsubscribe();
 	}
@@ -99,6 +102,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	startWebSocket() {
+
 		// create websocket to receive ticket updates - skip first to get 'old' data
 		return this.webSock.getTickets()
 		.map(data => {
@@ -128,7 +132,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			}
 
 			this.openTickets = data;
-			this.rerender();
+			this.rerender(true);
 
 		});
 	}

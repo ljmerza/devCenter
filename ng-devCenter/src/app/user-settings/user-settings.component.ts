@@ -78,6 +78,7 @@ export class UserSettingsComponent implements AfterContentInit {
 		// force users to reset their password as of version 3.4
 		if(!this.jira.getItem('3.4') && this.user.password){
 			this.jira.removeItem('password');
+			this.jira.setItem('3.4', true);
 		}
 
 		this.username = this.user.username;

@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
+import urllib.parse
 import os
 import re
 from Common.DevCenterAPI import DevCenterAPI
+import JiraConfig
 
 class JiraAPI(DevCenterAPI):
 	'''used as an adapter for Jira API requests'''
@@ -18,16 +20,17 @@ class JiraAPI(DevCenterAPI):
 			An instance of JiraAPI
 		'''
 		DevCenterAPI.__init__(self)
+		
 		self.jira_url = os.environ['JIRA_URL']
 		self.jira_ticket = f'{self.jira_url}/browse'
+		self.jira_search_url = f'{self.jira_url}/rest/api/2/search'
+
 		self.crucible_url = os.environ['CRUCIBLE_URL']
 		self.crcible_review = f'{self.crucible_url}/cru/'
 		self.api_base = f'{self.jira_url}/rest/api/2'
-		self.all_open_tickets = 'project%20in%20(AQE%2C%20"Auto%20QM"%2C%20"Customer%20DB"%2C%20"Manager%20DB"%2C%20"Taskmaster%20Dashboard"%2C%20TeamDB%2C%20TQI%2C%20"Unified%20Desktop"%2C%20UPM%2C%20WAM%2C%20SASHA)%20AND%20status%20in%20("IN%20DEVELOPMENT"%2C%20"IN%20SPRINT"%2C%20"Ready%20for%20Release"%2C%20"Code%20Review"%2C%20"Ready%20For%20QA"%2C%20"IN%20QA"%2C%20"READY%20FOR%20UCT")%20OR%20assignee%20in%20(ep759g%2C%20wc591w)'
-		self.jira_search_url = f'{self.jira_url}/rest/api/2/search'
 
-
-		self.fields = 'customfield_10109,comment,status,customfield_10212,summary,assignee,components,customfield_10006,customfield_10001,customfield_10002,label,fixVersions,duedate,created,updated,customfield_10108,customfield_10102,customfield_10175,customfield_10103,customfield_10602,timetracking,labels,attachment'
+		self.all_open_tickets = urllib.parse.quote(JiraConfig.all_Open_tickets)
+		self.fields = JiraConfig.fields
 
 	def post(self, url, cred_hash, data=''):
 		'''sends a POST request

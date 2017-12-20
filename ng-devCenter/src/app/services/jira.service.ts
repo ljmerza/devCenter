@@ -101,10 +101,11 @@ export class JiraService extends DataService {
 				if(this.firstLoad){
 					this.firstLoad = false;
 					const data = this.getItem('mytickets');
+
 					if(data){
-						return Observable.create(function(observer) {
-	  						observer.next({data:JSON.parse(data), cached: true});
-	  					});
+						// first load locally then call for fresh data as well
+						return Observable.of({data:JSON.parse(data), cached: true})
+	  					.concat(super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${this.config.fields}&filter=${filterNumber}`));
 					}
 				}
 		}
