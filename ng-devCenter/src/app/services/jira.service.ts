@@ -95,21 +95,21 @@ export class JiraService extends DataService {
 			default:
 				jql = this.config.mytickets;
 				this.title = 'My Open';
-				break;
+
+				// if loading for the first time and 
+				// loading my ticket then just try to load locally
+				if(this.firstLoad ){
+					this.firstLoad = false;
+					const data = this.getItem('mytickets');
+					if(data){
+						return Observable.create(function(observer) {
+	  						observer.next({data:JSON.parse(data)});
+	  					});
+					}
+				}
 		}
 
-		// if loading for the first time and loading my ticket then just try to load locally
-		if(this.firstLoad ){
-			this.firstLoad = false;
-			if(this.title == 'My Open') {
-				const data = this.getItem('mytickets');
-				if(data){
-					return Observable.create(function(observer) {
-  						observer.next({data:JSON.parse(data)});
-  					});
-				}
-			}
-		}
+		
 		
 		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${this.config.fields}&filter=${filterNumber}`);
 	}

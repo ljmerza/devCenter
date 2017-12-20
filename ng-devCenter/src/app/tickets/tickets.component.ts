@@ -122,10 +122,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		.skip(1)
 		.subscribe( data => {
 
-			console.log('data: ', data);
-
 			// save new tickets locally if my tickets
-			if(this.ticketType == 'mytickets'){
+			if(!this.ticketType || this.ticketType == 'mytickets'){
 				this.jira.setItem('mytickets', JSON.stringify(data));
 			}
 
@@ -151,7 +149,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				this.loadingTickets = false;
 
 				// save new tickets locally if my tickets
-				if(this.ticketType == 'mytickets'){
+				if(!this.ticketType || this.ticketType == 'mytickets'){
 					this.jira.setItem('mytickets', JSON.stringify(this.openTickets));
 					setTimeout(() => this.rerender(true),0);
 				} else {
