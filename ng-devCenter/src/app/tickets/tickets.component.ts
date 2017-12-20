@@ -109,15 +109,15 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 			switch(this.ticketType){
 				case 'pcr':
-					return data.pcrs;
+					return data.filter(ticket => ticket.status === 'PCR - Needed');
 				case 'qa':
-					return data.qas;
+					return data.filter(ticket => ['Ready for QA', 'In QA'].includes(ticket.status) );
 				case 'mytickets':
-					return data.all.filter(ticket => ticket.username === this.user.username);
+					return data.filter(ticket => ticket.username === this.user.username);
 				case 'allopen':
-					return data.all;
+					return data;
 				case 'cr':
-					return data.all.filter(ticket => ['PCR - Completed', 'Code Review - Working'].includes(ticket.status) )
+					return data.filter(ticket => ['PCR - Completed', 'Code Review - Working'].includes(ticket.status) );
 			}
 		})
 		.distinctUntilChanged( (old_tickets, new_tickets) => {

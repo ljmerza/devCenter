@@ -46,7 +46,7 @@ def get_status(issue):
 		status = 'Merge Code'
 	elif 'PCR - Needed' in all_components:
 		status = 'PCR - Needed'
-	elif 'PCR - Completed' in all_components:
+	elif 'PCR - Completed' in all_components and status != 'Ready for QA':
 		status = 'PCR - Completed'
 	elif 'Merge Conflict' in all_components:
 		status = 'Merge Conflict'

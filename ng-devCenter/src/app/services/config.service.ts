@@ -14,7 +14,7 @@ export class ConfigService {
 
 	cr = encodeURIComponent(this.projects + ' AND component in ("PCR - Completed") AND type != "Technical task" AND Status = "code review"');
 
-	qa = encodeURIComponent(this.projects + 'AND status != closed AND status in ("Ready for QA", "IN QA")');
+	qa = encodeURIComponent(this.projects + 'AND status in ("Ready for QA", "IN QA")');
 
 	uctready = encodeURIComponent(this.projects + ' AND status != closed AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND labels != NewGUI');
 

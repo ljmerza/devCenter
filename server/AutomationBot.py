@@ -128,7 +128,7 @@ class AutomationBot(object):
 			print('CRON end time: ', end_cron-start_get)
 			print('-'*20)
 
-			return {'status': True, 'data': self.ticket_grouping(jira_tickets=jira_tickets)}
+			return jira_tickets
 
 		except Exception as err:
 			# log error and stack trace
@@ -143,22 +143,6 @@ class AutomationBot(object):
 				return {'status': False, 'data': str(err)}
 			else:
 				exit(1)
-
-	def ticket_grouping(self, jira_tickets):
-		'''groups ticket by qa and pcr for websockets
-
-		Args:
-			jira_ticket (list) list of formatted Jira ticket objects
-
-		Returns:
-
-		'''
-		return {
-			'qas': [x for x in jira_tickets['data'] if x['status'] in ('QA Ready', 'In QA')],
-			'pcrs': [x for x in jira_tickets['data'] if 'PCR - Needed' in x['component']],
-			'all': jira_tickets['data'],
-			'status': True
-		}
 
 	def beta_week_stats(self):
 		'''gets beta week stats and pings them
