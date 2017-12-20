@@ -132,7 +132,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			}
 
 			this.openTickets = data;
-			this.rerender(true);
+			this.rerender();
 
 		});
 	}
@@ -162,7 +162,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				if(issues.cached){
 					setTimeout(() => this.rerender(), 0)
 				} else {
-					this.rerender(true);
+					this.rerender();
 				}
 
 				// enable websockets
@@ -176,17 +176,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	rerender(forceDestory:boolean=false):void {
+	rerender():void {
 
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
-				// do we want to force reset datatables or just redraw it?
-				if(forceDestory) {
-					dtInstance.destroy();
-					this.dtTrigger.next();
-				} else {
-					setTimeout(dtInstance.draw,0);
-				}
+				dtInstance.destroy();
+				this.dtTrigger.next();
 			});
 		} else {
 			this.dtTrigger.next();
