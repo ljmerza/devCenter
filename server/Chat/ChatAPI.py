@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 import os
 
 class ChatAPI():	
-	def __init__(self, debug):
+	def __init__(self, debug, no_pings):
 		'''
 		'''
 		self.crucible_url = os.environ['CRUCIBLE_URL']
@@ -15,6 +15,7 @@ class ChatAPI():
 		##########################################################
 		self.username = os.environ['USER']
 		self.debug = debug
+		self.no_pings = no_pings
 		##########################################################
 		self.bot_name = os.environ['BOT_NAME']
 		self.bot_password = os.environ['BOT_PASSWORD']
@@ -44,9 +45,13 @@ class ChatAPI():
 		if self.debug:
 			username = self.username
 			message = '--DEBUG--'+message
+			
 		# make POST request
-		response = requests.post(f"{self.chat_api}/{username}", data=message.encode('latin-1', "ignore"), auth=HTTPBasicAuth(self.bot_name, self.bot_password))
-		return self._process_response(response=response)
+		if self.no_pings:
+			return {'status': True, 'data': 'OKAY'}
+		else:
+			response = requests.post(f"{self.chat_api}/{username}", data=message.encode('latin-1', "ignore"), auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+			return self._process_response(response=response)
 
 	def send_meeting_message(self, message, chatroom):
 		'''make a post request to the chat to send a message to a chat room
@@ -61,9 +66,13 @@ class ChatAPI():
 		# if in debug mode then send all message to test chatroom
 		if self.debug:
 			message = '--DEBUG--'+message
+
 		# make POST request
-		response = requests.post(f"{self.chat_api_chatroom}{chatroom}", data=message.encode('latin-1', "ignore"), auth=HTTPBasicAuth(self.bot_name, self.bot_password))
-		return self._process_response(response=response)
+		if self.no_pings:
+			return {'status': True, 'data': 'OKAY'}
+		else:
+			response = requests.post(f"{self.chat_api_chatroom}{chatroom}", data=message.encode('latin-1', "ignore"), auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+			return self._process_response(response=response)
 
 	def set_z_menu(self, username):
 		'''

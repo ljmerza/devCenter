@@ -19,7 +19,7 @@ from Chat import Chat
 class AutomationBot(object):
 	'''Handles Scraping data from Jira and Crucible to Store in DB and handle any ping notifications'''
 
-	def __init__(self, is_beta_week, beta_stat_ping_now, error_log, devbot, is_qa_pcr, merge_alerts, devdb, sql_echo):
+	def __init__(self, is_beta_week, beta_stat_ping_now, error_log, devbot, is_qa_pcr, merge_alerts, devdb, sql_echo, no_pings):
 		'''
 
 		Args:
@@ -42,7 +42,7 @@ class AutomationBot(object):
 		self.sql_object = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
 		self.jira_obj = Jira()
 		self.crucible_obj = Crucible()
-		self.chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts)
+		self.chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts, no_pings=no_pings)
 		################################################################################
 		self.beta_wait_time = 300 # how many times to wait for beta message
 		 # how many times we've waited for beta message - start off with a message

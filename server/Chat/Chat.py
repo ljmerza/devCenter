@@ -6,9 +6,9 @@ from ChatPcrQa import ChatPcrQa
 
 class Chat(ChatMisc, ChatPcrQa, ChatAPI):
 
-	def __init__(self, debug, is_qa_pcr=0, merge_alerts=0):
+	def __init__(self, debug, no_pings, is_qa_pcr=0, merge_alerts=0):
 
-		self.chat_api = ChatAPI(debug=debug)
+		self.chat_api = ChatAPI(debug=debug, no_pings=no_pings)
 
 		ChatMisc.__init__(self, chat_api=self.chat_api, merge_alerts=merge_alerts)
 		ChatPcrQa.__init__(self, chat_api=self.chat_api, is_qa_pcr=is_qa_pcr)

@@ -51,7 +51,7 @@ if 'prodChat':
 jira_obj = Jira()
 crucible_obj = Crucible()
 sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
-chat_obj = Chat(debug=devChat)
+chat_obj = Chat(debug=devChat, no_pings=False)
 
 # start flask server
 DevCenterServer.start_server(

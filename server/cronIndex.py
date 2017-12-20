@@ -27,6 +27,7 @@ is_qa_pcr = False
 beta_stat_ping_now = False
 merge_alerts = False
 sql_echo = False
+no_pings = False
 ########################################################################
 host = '127.0.0.1'
 port = 5859
@@ -63,11 +64,14 @@ if 'error_log' in sys.argv:
 # allow echoing of SQL
 if 'sql' in sys.argv:
 	sql_echo = True
+
+if 'nopings' in sys.argv:
+	no_pings = True
 ########################################################################
 
 # start CRON instance
 automationBot = AutomationBot.AutomationBot(
-	is_beta_week=is_beta_week, beta_stat_ping_now=beta_stat_ping_now, error_log=error_log,
+	is_beta_week=is_beta_week, beta_stat_ping_now=beta_stat_ping_now, error_log=error_log, no_pings=no_pings,
 	devbot=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts, devdb=devdb, sql_echo=sql_echo
 )
 
