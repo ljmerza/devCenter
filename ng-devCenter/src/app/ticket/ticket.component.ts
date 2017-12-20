@@ -1,6 +1,6 @@
 import { 
 	Component, Input, ViewChild, 
-	EventEmitter, Output, AfterViewInit
+	EventEmitter, Output, OnInit
 } from '@angular/core';
 
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
@@ -20,9 +20,10 @@ import { UserService } from './../services/user.service'
 	templateUrl: './ticket.component.html',
 	styleUrls: ['./ticket.component.scss']
 })
-export class TicketComponent implements AfterViewInit {
+export class TicketComponent implements OnInit {
 	oldState; // old ticket state when changed
 	ticketDropdown; // ticket dropdown reference
+	ticketStates = [];
 
 	constructor(
 		public toastr: ToastrService, 
@@ -41,7 +42,42 @@ export class TicketComponent implements AfterViewInit {
 	@ViewChild(TimeLogComponent) public logWork: TimeLogComponent;
 	@ViewChild(SetPingsComponent) public setPing: SetPingsComponent;
 
-	ngAfterViewInit(){
+	ngOnInit(){
+
+		// set valid transitions
+		if(this.ticket.status === 'Ready for QA'){
+			this.ticketStates = this.allTransistions.filter(state => ['In QA','In Development'].includes(state.name));
+		
+		} else if(this.ticket.status === 'PCR - Needed'){
+			this.ticketStates = this.allTransistions.filter(state => ['In Development','PCR - Pass','PCR - Completed'].includes(state.name));
+		
+		} else if(this.ticket.status === 'In QA'){
+			this.ticketStates = this.allTransistions.filter(state => ['In Development','QA Fail','QA Pass'].includes(state.name));
+		
+		} else if(this.ticket.status === 'In UCT'){
+			this.ticketStates = this.allTransistions.filter(state => ['In Development','UCT Fail','UCT Pass'].includes(state.name));
+		
+		} else if(this.ticket.status === 'Ready for UCT'){
+			this.ticketStates = this.allTransistions.filter(state => ['In Development','In UCT'].includes(state.name));
+		
+		} else if(this.ticket.status === 'In Development'){
+			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
+
+		} else if(['In Sprint','On Hold'].includes(this.ticket.status)){
+			this.ticketStates = this.allTransistions.filter(state => ['In Development'].includes(state.name));
+		
+		} else if(['Ready for Release','Merge Code','Merge Conflict','Code Review - Working'].includes(this.ticket.status)){
+			this.ticketStates = [];
+		
+		} else if(this.ticket.status === 'PCR - Completed'){
+			this.ticketStates = this.allTransistions.filter(state => ['Code Review - Working'].includes(state.name));
+		
+		} else if(this.ticket.status === 'Code Review - Working'){
+			this.ticketStates = this.allTransistions.filter(state => ['Ready for QA', 'Code Review - Fail'].includes(state.name));
+		
+		} else {
+			this.ticketStates = this.allTransistions;
+		}
 
 		// if current status not in list of statues then add to beginning
 		if( !(this.ticketStates.filter(state => state.name == this.ticket.status).length > 0)){
@@ -49,11 +85,18 @@ export class TicketComponent implements AfterViewInit {
 		}
 	}
 
-	ticketStates = [
+	
+
+	allTransistions = [
 		{name: 'In Development', id: 'inDev'},
 		{name: 'PCR - Needed', id: 'pcrNeeded'},
+		{name: 'Remove PCR Needed', id: 'removePcrNeeded'},
 		{name: 'PCR - Pass', id: 'pcrPass'},
 		{name: 'PCR - Completed', id: 'pcrCompleted'},
+		{name: 'Remove PCR Completed', id: 'removePcrCompleted'},
+		{name: 'Code Review - Working', id: 'crWorking'},
+		{name: 'Code Review - Fail', id: 'crFail'},
+		{name: 'Ready for QA', id: 'qaReady'},
 		{name: 'In QA', id: 'inQa'},
 		{name: 'QA Fail', id: 'qaFail'},
 		{name: 'QA Pass', id: 'qaPass'},
@@ -61,7 +104,8 @@ export class TicketComponent implements AfterViewInit {
 		{name: 'Merge Conflict', id: 'mergeConflict'},
 		{name: 'In UCT', id: 'inUct'},
 		{name: 'UCT Pass', id: 'uctPass'},
-		{name: 'UCT Fail', id: 'uctFail'}
+		{name: 'UCT Fail', id: 'uctFail'},
+		{name: 'Ready for Release', id: 'releaseReady'}
 	];
 
 	/*

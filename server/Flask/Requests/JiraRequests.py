@@ -12,23 +12,34 @@ def set_status(data, jira_obj):
 
 	if data['status_type'] == 'inDev':
 		return jira_obj.set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
+
 	if data['status_type'] == 'pcrNeeded':
 		return jira_obj.set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
+	if data['status_type'] == 'removePcrNeeded':
+		return jira_obj.remove_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
 	if data['status_type'] == 'pcrCompleted':
 		return jira_obj.set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
+	if data['status_type'] == 'removePcrCompleted':
+		return jira_obj.remove_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
+
 	if data['status_type'] == 'cr':
 		return jira_obj.set_code_review(key=data['key'], cred_hash=data['cred_hash'])	
 
+	elif data['status_type'] == 'qaReady':
+		return jira_obj.set_ready_for_qa(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'inQa':
 		return jira_obj.set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'qaFail':
 		return jira_obj.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'qaPass':
 		return jira_obj.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
+	
 	elif data['status_type'] == 'mergeCode':
 		return jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'mergeConflict':
 		return jira_obj.set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status_type'] == 'removeMergeConflict':
+		return jira_obj.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'removeMergeCode':
 		return jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 

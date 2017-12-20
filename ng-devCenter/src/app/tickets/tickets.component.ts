@@ -135,7 +135,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			}
 
 			this.openTickets = data;
-			this.rerender();
+			setTimeout(() => this.rerender(), 0);
 
 		});
 	}
@@ -163,7 +163,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				// if cached data set we need to push rerender 
 				// to end of event loop else force full rerender
 				if(issues.cached){
-					setTimeout(() => this.rerender(), 0)
+					setTimeout(() => this.rerender(), 0);
 				} else {
 					this.rerender();
 				}
