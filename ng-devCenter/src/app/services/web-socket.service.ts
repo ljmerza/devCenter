@@ -41,10 +41,9 @@ export class WebSocketService {
 	}
 
 	private handleError(error) {
-		console.error('server error:', error);
 		if (error.error instanceof Error) {
-				let errMessage = error.error.message;
-				return Observable.throw(errMessage);
+			let errMessage = error.error.message;
+			return Observable.throw(errMessage);
 		}
 		return Observable.throw(error || 'Socket.io server error');
 	}

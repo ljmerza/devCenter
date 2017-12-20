@@ -156,6 +156,7 @@ class AutomationBot(object):
 		return {
 			'qas': [x for x in jira_tickets['data'] if x['status'] in ('QA Ready', 'In QA')],
 			'pcrs': [x for x in jira_tickets['data'] if 'PCR - Needed' in x['component']],
+			'all': jira_tickets['data'],
 			'status': True
 		}
 
@@ -322,11 +323,11 @@ class AutomationBot(object):
 		# if ready in uct, has no merge code component, ticket has already been pinged for merge code and hasnt been pinged for code merged then ping
 		elif("Ready for UCT" in status and "Merge Code" not in component and pings.merge_ping and not pings.uct_ping):
 			# notify of repo update
-			repos_merged = self.crucible_obj.get_repos_of_review(crucible_id=crucible_id, cred_hash=self.cred_hash)
-			if repos_merged['status']:
-				self.chat_obj.send_merge_alert(key=key, msrp=msrp, sprint=sprint, username=username, repos_merged=repos_merged['data'], crucible_id=crucible_id, summary=summary)
-			else:
-				self.sql_object.log_error(message='Could not retrieve repos for repo update ping: '+repos_merged['data'], session=session)
+			# repos_merged = self.crucible_obj.get_repos_of_review(crucible_id=crucible_id, cred_hash=self.cred_hash)
+			# if repos_merged['status']:
+			# 	self.chat_obj.send_merge_alert(key=key, msrp=msrp, sprint=sprint, username=username, repos_merged=repos_merged['data'], crucible_id=crucible_id, summary=summary)
+			# else:
+			# 	self.sql_object.log_error(message='Could not retrieve repos for repo update ping: '+repos_merged['data'], session=session)
 			# update DB
 			self.sql_object.update_ping(key=key, field='uct_ping', value=1, session=session)
 

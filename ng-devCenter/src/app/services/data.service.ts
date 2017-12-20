@@ -27,6 +27,25 @@ export class DataService {
 		public sanitizer: DomSanitizer
 	) { }
 
+
+	/*
+	*/
+	setItem(data, value) {
+		localStorage.setItem(`devCenter.${data}`, value);
+	}
+
+	/*
+	*/
+	getItem(data) {
+		return localStorage.getItem(`devCenter.${data}`);
+	}
+
+	/*
+	*/
+	removeItem(data) {
+		localStorage.removeItem(`devCenter.${data}`);
+	}
+
 	/*
 	*/
 	public chatUrlSanitize(username:string): SafeUrl {

@@ -1,5 +1,5 @@
 import { 
-	Component, ViewChild, EventEmitter,
+	Component, ViewChild, EventEmitter, ChangeDetectionStrategy,
 	ElementRef, ViewEncapsulation, Output, Input
 } from '@angular/core';
 
@@ -14,7 +14,8 @@ import { ToastrService } from './../services/toastr.service';
 	selector: 'app-time-log',
 	templateUrl: './time-log.component.html',
 	styleUrls: ['./time-log.component.scss'],
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimeLogComponent	{
 	modalReference;

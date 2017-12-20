@@ -1,4 +1,4 @@
-import { Component, ViewContainerRef, ViewEncapsulation } from '@angular/core';
+import { Component, ViewContainerRef, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { ToastrService } from './../services/toastr.service';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
@@ -6,7 +6,8 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 	selector: 'app-toastr',
 	templateUrl: './toastr.component.html',
 	styleUrls: ['./toastr.component.scss'],
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToastrComponent {
 

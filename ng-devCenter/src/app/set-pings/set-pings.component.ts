@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { JiraService } from './../services/jira.service';
@@ -7,7 +7,8 @@ import { ToastrService } from './../services/toastr.service';
 @Component({
 	selector: 'app-set-pings',
 	templateUrl: './set-pings.component.html',
-	styleUrls: ['./set-pings.component.scss']
+	styleUrls: ['./set-pings.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SetPingsComponent {
 

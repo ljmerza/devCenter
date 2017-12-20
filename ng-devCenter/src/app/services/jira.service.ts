@@ -10,6 +10,7 @@ import { ConfigService } from './config.service'
 @Injectable()
 export class JiraService extends DataService {
 	title:string = '';
+	firstLoad = true;
 
 	/*
 	*/
@@ -34,68 +35,55 @@ export class JiraService extends DataService {
 				jql = this.config.pcr;
 				this.title = 'Peer Code Review';
 				break;
-
 			case 'beta':
 				jql=this.config.beta;
 				this.title = 'Beta';
 				break;
-
 			case 'cr':
 				jql=this.config.cr;
 				this.title = 'Code Review';
 				break;
-
 			case 'qa':
 				jql=this.config.qa;
 				this.title = 'QA';
 				break;
-
 			case 'uctready':
 				jql=this.config.uctready;
 				this.title = 'UCT Ready';
 				break;
-
 			case 'allmy':
 				jql = this.config.allmy;
 				filterNumber = '11418';
 				this.title = 'All My';
 				break;
-
 			case 'allopen':
 				jql=this.config.allopen;
 				this.title = 'All Open';
 				break;
-
 			case 'teamdb_ember':
 				jql=this.config.teamdb_ember;
 				this.title = 'TeamDB Ember';
 				break;
-
 			case 'apollo':
 				jql=this.config.apollo;
 				this.title = 'Apollo';
 				break;
-
 			case 'sme':
 				jql=this.config.sme;
 				this.title = 'SME';
 				break;
-
 			case 'scrum':
 				jql=this.config.scrum;
 				this.title = 'Scrum Board';
 				break;
-
 			case 'fullscrum':
 				jql=this.config.fullScrum;
 				this.title = 'Full Scrum Board';
 				break;
-
 			case 'rocc':
 				jql=this.config.rocc;
 				this.title = 'ROCC Automation';
 				break;
-
 			case 'starship':
 				jql=this.config.starship;
 				this.title = 'Starship';
@@ -104,14 +92,25 @@ export class JiraService extends DataService {
 				jql=this.config.pmTickets;
 				this.title = 'PM';
 				break;
-
 			default:
 				jql = this.config.mytickets;
 				this.title = 'My Open';
 				break;
 		}
 
-
+		// if loading for the first time and loading my ticket then just try to load locally
+		if(this.firstLoad ){
+			this.firstLoad = false;
+			if(this.title == 'My Open') {
+				const data = this.getItem('mytickets');
+				if(data){
+					return Observable.create(function(observer) {
+  						observer.next({data:JSON.parse(data)});
+  					});
+				}
+			}
+		}
+		
 		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${this.config.fields}&filter=${filterNumber}`);
 	}
 

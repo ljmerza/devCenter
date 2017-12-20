@@ -89,30 +89,32 @@ export class TicketComponent implements AfterViewInit {
 
 	/*
 	*/
-	commentChangeEvent({postData, response}):void {
-
-		// get around check detection for now until DoCheck is implemented
+	commentChangeEvent({newComment, response}):void {
 
 		// if comment added the push comment onto comment array
 		if(response && response.data.body){
-			this.ticket.comments.push({
+			const newCommentBody = [{
 				comment: response.data.body,
 				created: response.data.created,
 				id: response.data.id,
 				updated: response.data.updated,
 				username: this.user.username,
 				display_name: this.user.userData.displayName,
-				key: postData.key,
+				key: newComment.key,
 				isEditing: false,
 				closeText: 'Edit Comment',
 				comment_type: 'info',
 				editId: `E${response.data.id}`,
 				email: this.user.userData.emailAddress,
 				visibility: 'Developers'
-			});
-			this.ticket.comments = this.ticket.comments.slice(0);
-		} else if(postData) {
-			this.ticket.comments = postData;
+			}];
+
+			// merge comments to new array ref
+			this.ticket.comments = [...this.ticket.comments, ...newCommentBody];
+
+		} else if(newComment) {
+			// else just replace comment ref to trigger change detection
+			this.ticket.comments = newComment;
 		}
 	}
 

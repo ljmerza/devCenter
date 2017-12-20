@@ -1,6 +1,6 @@
 import { 
 	Component, ViewChild, ElementRef, 
-	ViewEncapsulation, 
+	ViewEncapsulation, ChangeDetectionStrategy,
 	EventEmitter, Output, Input
 } from '@angular/core';
 
@@ -15,7 +15,8 @@ import { ConfigService } from './../services/config.service'
 	selector: 'app-qa-generator',
 	templateUrl: './qa-generator.component.html',
 	styleUrls: ['./qa-generator.component.scss'],
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QaGeneratorComponent {
 	modalReference; // reference to open modal

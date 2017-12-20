@@ -87,18 +87,13 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	syncData() {
-		this.searchTicket$ = this.setFilterData(this.ticketType);
+		this.searchTicket$ = this.getTickets();
 
 		// get list of repos once
 		this.jira.getRepos().subscribe( 
 			branches => this.repos = branches.data,
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
-
-		// if pcr or qa then enable websockets
-		if( ['pcr','qa'].includes(this.ticketType) ) {
-			this.webSock$ = this.startWebSocket();
-		}
 	}
 
 	/*
@@ -106,36 +101,67 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	startWebSocket() {
 		// create websocket to receive ticket updates - skip first to get 'old' data
 		return this.webSock.getTickets()
-		.map(data => this.ticketType == 'pcr' ? data.pcrs : data.qas)
+		.map(data => {
+
+			switch(this.ticketType){
+				case 'pcr':
+					return data.pcrs;
+				case 'qa':
+					return data.qas;
+				case 'mytickets':
+					return data.all.filter(ticket => ticket.username === this.user.username);
+				case 'allopen':
+					return data.all;
+				case 'cr':
+					return data.all.filter(ticket => ['PCR - Completed', 'Code Review - Working'].includes(ticket.status) )
+			}
+		})
 		.distinctUntilChanged( (old_tickets, new_tickets) => {
 			return JSON.stringify(old_tickets) === JSON.stringify(new_tickets) 
 		})
 		.skip(1)
 		.subscribe( data => {
-			console.log('data: ', data,);
-			console.log('this.openTickets: ', this.openTickets);
-			// if got this far then data is different so sync with UI
-			if( ['pcr','qa'].includes(this.ticketType) ) {
-				this.openTickets = data;
-				this.rerender();
+
+			console.log('data: ', data);
+
+			// save new tickets locally if my tickets
+			if(this.ticketType == 'mytickets'){
+				this.jira.setItem('mytickets', JSON.stringify(data));
 			}
+
+			this.openTickets = data;
+			this.rerender();
+
 		});
 	}
 
 	/*
 	*/
-	setFilterData(jiraListType:string):Subscription {
+	getTickets():Subscription {
 		this.ngProgress.start();
 		this.loadingTickets = true;
 
-		return this.jira.getFilterData(jiraListType)
-		.subscribe(
-			issues => {
+		return this.jira.getFilterData(this.ticketType)
+		.subscribe(issues => {
+
 				// save tickets and re-render data tables
 				this.openTickets = issues.data;
-				this.rerender(true);
+				
 				this.ngProgress.done();
 				this.loadingTickets = false;
+
+				// save new tickets locally if my tickets
+				if(this.ticketType == 'mytickets'){
+					this.jira.setItem('mytickets', JSON.stringify(this.openTickets));
+					setTimeout(() => this.rerender(true),0);
+				} else {
+					this.rerender(true);
+				}
+
+				// if pcr or qa then enable websockets
+				if( ['pcr','qa','cr','allopen','my'].includes(this.ticketType) ) {
+					this.webSock$ = this.startWebSocket();
+				}
 			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
@@ -147,7 +173,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
-
 				// do we want to force reset datatables or just redraw it?
 				if(forceDestory) {
 					dtInstance.destroy();

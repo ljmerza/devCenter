@@ -1,5 +1,5 @@
 import { 
-	Component, OnInit, ElementRef,
+	Component, OnInit, ElementRef, ChangeDetectionStrategy,
 	EventEmitter, Input, Output, ViewChild
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,7 +12,8 @@ import { JiraService } from './../services/jira.service';
 @Component({
 	selector: 'app-status-modal',
 	templateUrl: './status-modal.component.html',
-	styleUrls: ['./status-modal.component.scss']
+	styleUrls: ['./status-modal.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusModalComponent {
 

@@ -1,7 +1,7 @@
 import { 
 	Component, ViewChild,
 	ElementRef, ViewContainerRef, 
-	ViewEncapsulation 
+	ViewEncapsulation, ChangeDetectionStrategy
 } from '@angular/core';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,7 +10,8 @@ import { UserService } from './../services/user.service';
 @Component({
 	selector: 'app-logout',
 	templateUrl: './logout.component.html',
-	styleUrls: ['./logout.component.scss']
+	styleUrls: ['./logout.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LogoutComponent {
 	@ViewChild('logoutModal') content:ElementRef;

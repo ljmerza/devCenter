@@ -1,6 +1,6 @@
 import { 
 	Component, ViewChild, ElementRef, EventEmitter,
-	ViewEncapsulation, Input, Output, OnInit
+	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy
 } from '@angular/core';
 
 import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -15,7 +15,8 @@ declare var $ :any;
 	selector: 'app-jira-comments',
 	templateUrl: './jira-comments.component.html',
 	styleUrls: ['./jira-comments.component.scss'],
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class JiraCommentsComponent implements OnInit {
 	modalReference;
