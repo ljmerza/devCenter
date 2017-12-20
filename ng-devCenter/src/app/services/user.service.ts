@@ -33,13 +33,14 @@ export class UserService {
 	constructor(public config:ConfigService) { 
 		this.username = localStorage.getItem('devCenter.username') || '';
 		this.port = localStorage.getItem('devCenter.port') || '';
-		this.password = localStorage.getItem('devCenter.password') || '';
 
-		// if we have a password then decode it
-		if(this.password){
-			this.password = atob(this.password);
+		// try to decode password if not okay then set to empty
+		try {
+			this.password = atob(localStorage.getItem('devCenter.password') || '');
+		} catch(err) {
+			this.password = '';
 		}
-		
+
 		this.emberUrl = localStorage.getItem('devCenter.emberUrl') || '';
 		this.teamUrl = localStorage.getItem('devCenter.teamUrl') || '';
 		this.cache = localStorage.getItem('devCenter.cache') || '';
