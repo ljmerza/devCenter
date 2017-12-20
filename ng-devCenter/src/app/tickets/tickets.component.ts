@@ -121,10 +121,13 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			}
 		})
 		.distinctUntilChanged( (old_tickets, new_tickets) => {
+			console.log('new_tickets: ', new_tickets);
+			console.log('old_tickets: ', old_tickets, JSON.stringify(old_tickets) === JSON.stringify(new_tickets));
 			return JSON.stringify(old_tickets) === JSON.stringify(new_tickets) 
 		})
 		.skip(1)
 		.subscribe( data => {
+			console.log('data: ', data);
 
 			// save new tickets locally if my tickets
 			if(!this.ticketType || this.ticketType == 'mytickets'){
