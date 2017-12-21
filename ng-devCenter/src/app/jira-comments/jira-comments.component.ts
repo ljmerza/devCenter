@@ -90,7 +90,7 @@ export class JiraCommentsComponent implements OnInit {
 
 			this.jira.deleteComment(comment_id, this.key).subscribe(
 				() => {
-					this.commentChangeEvent.emit({postData: this.comments});
+					this.commentChangeEvent.emit({allComments: this.comments});
 					this.toastr.showToast('Comment Deleted Successfully', 'success');
 				},
 				error => {
@@ -130,7 +130,7 @@ export class JiraCommentsComponent implements OnInit {
 
 		this.jira.editComment(postData).subscribe(
 			() => {
-				this.commentChangeEvent.emit({postData: this.comments});
+				this.commentChangeEvent.emit({allComments: this.comments});
 				this.toastr.showToast('Comment Edited Successfully', 'success');
 			},
 			error => {

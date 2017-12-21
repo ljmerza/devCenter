@@ -18,7 +18,6 @@ import AutomationBot
 from Common.DevCenterSQL import DevCenterSQL
 
 ########################################################################
-error_log = False
 devbot = True
 devdb = True
 time_shift = 0
@@ -53,13 +52,8 @@ if 'prod' in sys.argv:
 	time_shift = 4
 	devdb = False
 	devbot = False
-	error_log = True
 	host = '0.0.0.0'
 	port = 5858
-
-# allow error logging
-if 'error_log' in sys.argv:
-	error_log = True
 
 # allow echoing of SQL
 if 'sql' in sys.argv:
@@ -71,7 +65,7 @@ if 'nopings' in sys.argv:
 
 # start CRON instance
 automationBot = AutomationBot.AutomationBot(
-	is_beta_week=is_beta_week, beta_stat_ping_now=beta_stat_ping_now, error_log=error_log, no_pings=no_pings,
+	is_beta_week=is_beta_week, beta_stat_ping_now=beta_stat_ping_now, no_pings=no_pings,
 	devbot=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts, devdb=devdb, sql_echo=sql_echo
 )
 

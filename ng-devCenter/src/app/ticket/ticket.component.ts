@@ -111,29 +111,26 @@ export class TicketComponent implements OnInit {
 		this.ticketDropdown = ticketDropdown;
 		this.oldState = this.ticket.component || this.ticket.status;
 
-		// change valid transitions dropdown
-		// this.validTransitions();
-
 		// if pcr needed open qa gen
 		if(ticketDropdown.value == 'pcrNeeded'){
 			this.qaGen.openQAModal();
 			return;
 		}
-
-		console.log('ticketDropdown: ', ticketDropdown);
-
+		
 		// get ticket state info and open status modal
 		const ticketState = this.ticketStates.filter(state => state.id == ticketDropdown.value);
-		console.log('ticketState: ', ticketState);
 		this.statusModal.openStatusModal(ticketState[0].id, ticketState[0].name);
+
+		// change valid transitions dropdown
+		this.validTransitions();
 	}
 
 	/*
 	*/
-	commentChangeEvent({newComment, response}):void {
+	commentChangeEvent({allComments, postData, newComment, response}):void {
 
 		// if comment added the push comment onto comment array
-		if(response && response.data.body){
+		if(postData.data && postData.data.body){
 			const newCommentBody = [{
 				comment: response.data.body,
 				created: response.data.created,
@@ -153,15 +150,25 @@ export class TicketComponent implements OnInit {
 			// merge comments to new array ref
 			this.ticket.comments = [...this.ticket.comments, ...newCommentBody];
 
-		} else if(newComment) {
+		} else if(allComments) {
 			// else just replace comment ref to trigger change detection
-			this.ticket.comments = newComment;
+			this.ticket.comments = allComments;
+		}
+
+		// check for removal of components
+		if(postData.remove_merge){
+			this.ticket.status = 'Ready for UCT';
+			this.statusChangeCancel(false);
+			
+		} else if(postData.remove_conflict){
+			this.ticket.status = 'QA Ready';
+			this.statusChangeCancel(false);
 		}
 	}
 
 	/*
 	*/
-	statusChangeCancel():void {
+	statusChangeCancel(showMessage:boolean=true):void {
 
 		// get id for current ticket's state and reset it on dropdown
 		const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
@@ -169,7 +176,10 @@ export class TicketComponent implements OnInit {
 
 		// reset valid transitions and show message
 		this.validTransitions();
-		this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
+
+		if(showMessage){
+			this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
+		}
 	}
 
 	/*

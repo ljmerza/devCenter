@@ -19,16 +19,18 @@ from Chat import Chat
 class AutomationBot(object):
 	'''Handles Scraping data from Jira and Crucible to Store in DB and handle any ping notifications'''
 
-	def __init__(self, is_beta_week, beta_stat_ping_now, error_log, devbot, is_qa_pcr, merge_alerts, devdb, sql_echo, no_pings):
+	def __init__(self, is_beta_week, beta_stat_ping_now, devbot, is_qa_pcr, merge_alerts, devdb, sql_echo, no_pings):
 		'''
 
 		Args:
 			is_beta_week (boolean) 
 			beta_stat_ping_now (boolean) 
-			error_log (boolean) 
 			devbot (boolean) 
 			is_qa_pcr (boolean) 
 			merge_alerts (boolean) 
+			devdb (boolean) do we use dev db or prod?
+			sql_echo (boolean) do we echo all sSQL statements?
+			no_pings (boolean) disable all pings from chat
 
 		Returns:
 
@@ -36,7 +38,6 @@ class AutomationBot(object):
 		self.username = os.environ['USER']
 		self.password = os.environ['PASSWORD']
 		self.filters = {'my_filter':"11502", 'beta':'11004', 'qa':'11019', 'cr':'11007', 'uct':'11014', 'all':'11002', 'pcr':'11128'}
-		self.error_log = error_log
 		################################################################################
 		# create DB object and connect
 		self.sql_object = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
@@ -134,13 +135,8 @@ class AutomationBot(object):
 			# log error and stack trace
 			message = sys.exc_info()[0]
 			logging.exception(message)
-
-			# if error_log mode then just die else log error and continue
-			if self.error_log:
-				self.sql_object.log_error( message=str(err) )
-				return {'status': False, 'data': str(err)}
-			else:
-				exit(1)
+			self.sql_object.log_error( message=str(err) )
+			return {'status': False, 'data': str(err)}
 
 	def beta_week_stats(self):
 		'''gets beta week stats and pings them
@@ -179,7 +175,7 @@ class AutomationBot(object):
 			None
 		'''
 		# log into SQL
-		session = sql_object.login()
+		session = self.sql_object.login()
 		# if user not pinged yet then try
 		if( not self.sql_object.get_ping(field='new_ping', key=jira_ticket['key'], session=session) ):
 			self.check_for_new_ping(jira_ticket=jira_ticket, session=session)
