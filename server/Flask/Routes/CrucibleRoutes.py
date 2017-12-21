@@ -12,7 +12,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 
 	@app.route(f'/{app_name}/crucible/create', methods=['POST'])
 	@cross_origin()
-	def crucible_create_review():
+	def create_review():
 		'''creates a Crucible review with the proper header and branches passed in the body of the request
 
 		Args:
@@ -78,4 +78,21 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 					return Response(log_response, mimetype='application/json')
 
 		# return Crucible response with cru id
+		return Response(cru_response, mimetype='application/json')
+
+
+	@app.route(f'/{app_name}/crucible/add_reviewer', methods=['POST'])
+	@cross_origin()
+	def add_reviewer():
+		'''
+		'''
+		post_data = request.get_json()
+		data = {
+			"cred_hash": g.cred_hash,
+			"crucible_id": post_data.get('crucible_id', ''),
+			"username": post_data.get('username', '')
+		}
+		
+		# add reviewer and return response
+		cru_response = CrucibleRequests.add_reviewer(data=data, crucible_obj=crucible_obj)
 		return Response(cru_response, mimetype='application/json')

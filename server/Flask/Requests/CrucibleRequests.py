@@ -3,21 +3,37 @@
 from Flask import FlaskUtils
 
 
-def complete_review(data, crucible_obj):
+def add_reviewer(data, crucible_obj):
 	# check for required data
 	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# add self as reviewer
-	response = crucible_obj.add_reviewer(username=data['username'], crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
-	if not response['status']:
-		return {"data": "Could not add "+data['username']+" as a reviewer", "status": False}
+	return crucible_obj.add_reviewer(username=data['username'], crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
+
+
+def complete_review(data, crucible_obj):
+	# check for required data
+	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# complete review
-	response = crucible_obj.complete_review(crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
-	if not response['status']:
-		return {"data": "Could not complete review", "status": False}
+	return crucible_obj.complete_review(crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
+
+
+def pass_review(data, crucible_obj):
+	# check for required data
+	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+	# add user to review without checking if worked or not
+	add_response = add_reviewer(data=data, crucible_obj=crucible_obj)
+
+	# complete review without checking if worked or not
+	complete_response = complete_review(data=data, crucible_obj=crucible_obj)
 
 	# add PCR pass comment
 	response = crucible_obj.add_pcr_pass(crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])

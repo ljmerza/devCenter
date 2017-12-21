@@ -108,19 +108,22 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 
 		status_response = {'status': False, 'data': 'status type not given'}
 
-		# change status
-		if data['status_type'] != 'pcrPass':
+		# change status on Jira if not pcr pass/add (they are 'fake' statuses)
+		if data['status_type'] != 'pcrPass' and data['status_type'] != 'pcrAdd':
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 
-		# if pcr pass and status change ok -> process Crucible review
-		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
-			status_response = CrucibleRequests.complete_review(data=data, crucible_obj=crucible_obj)
+		# elif pcr pass/complete -> add user, complete review, add comment to Crucible
+		elif data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
+			status_response = CrucibleRequests.pass_review(data=data, crucible_obj=crucible_obj)
 
-		# if QA pass then add merge component
-		if data['status_type'] == 'qaPass':
+		# elif pcrAdd then add user to review
+		elif data['status_type'] == 'pcrAdd':
+			status_response = CrucibleRequests.add_reviewer(data=data, crucible_obj=crucible_obj)
+
+		# elif QA pass then add merge component
+		elif data['status_type'] == 'qaPass':
 			data['status_type'] = 'mergeCode'
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-
 
 		# return response
 		return Response(status_response, mimetype='application/json')

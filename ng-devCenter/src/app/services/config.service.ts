@@ -382,7 +382,11 @@ export class ConfigService {
 				{
 					name: 'Ember Twiddle',
 					link: 'https://ember-twiddle.com'
-				}
+				},
+				{
+					name: 'Ember Power Select',
+					link: 'http://www.ember-power-select.com/docs/how-to-use-it'
+				},
 			]
 		},
 		{
@@ -428,10 +432,7 @@ export class ConfigService {
 					name: 'Jira API 7.1.10',
 					link: 'https://docs.atlassian.com/jira/REST/7.1.10/'
 				},
-				{
-					name: 'Ember Power Select',
-					link: 'http://www.ember-power-select.com/docs/how-to-use-it'
-				},
+				
 			]
 		},
 		{

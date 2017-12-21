@@ -41,10 +41,15 @@
 
 <!-- cru id -->
 <td>
-	<div *ngIf='ticket.crucible_id'>
-		<a target="_blank" class='float-left' href="{{config.crucibleUrl}}/cru/{{ticket.crucible_id}}">
+	<div class='float-left' *ngIf='ticket.crucible_id'>
+		<a target="_blank" href="{{config.crucibleUrl}}/cru/{{ticket.crucible_id}}">
 			{{ticket.crucible_id}}
 		</a>
+	</div>
+	<div class='float-right' *ngIf='ticket.crucible_id'>
+		<i title='Open Crucible as Reviewer' class="material-icons float-right" (click)="addReviewer()">
+			history
+		</i>
 	</div>
 </td>
 

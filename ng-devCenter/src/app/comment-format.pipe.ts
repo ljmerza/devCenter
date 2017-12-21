@@ -5,12 +5,16 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class CommentFormatPipe implements PipeTransform {
 
-	stepNumber = 1;
+	
 
 	/*
 	*/
 	transform(comment:any, attachments:any,): any {
-		comment = this._formatLines(comment, attachments);
+
+		// make an array so reference is persisted through functions (i know...)
+		let stepNumber = [1];
+
+		comment = this._formatLines(comment, attachments, stepNumber);
 		comment = this._formatCode(comment);
 		comment = `<div class="container"> ${comment} </div>`
 		return comment;
@@ -44,12 +48,12 @@ export class CommentFormatPipe implements PipeTransform {
 
 	/*
 	*/
-	_formatLines(comment, attachments){
+	_formatLines(comment, attachments, stepNumber){
 		let tableStart = false;
 
 		return comment.split('\n').map( commentPiece => {
 
-			commentPiece = this._format_list_headers(commentPiece);
+			commentPiece = this._format_list_headers(commentPiece, stepNumber);
 			commentPiece = this._formatTable(commentPiece, tableStart);
 			commentPiece = this._format_colors(commentPiece);
 			commentPiece = this._format_images(commentPiece, attachments);
@@ -62,12 +66,12 @@ export class CommentFormatPipe implements PipeTransform {
 
 	/*
 	*/
-	_format_list_headers(commentPiece) {
+	_format_list_headers(commentPiece, stepNumber) {
 
 		// replace any lists
 		if(/# /.test(commentPiece)){
-			commentPiece = commentPiece.replace('# ', `${this.stepNumber}. `);
-			this.stepNumber++;
+			commentPiece = commentPiece.replace('# ', `${stepNumber[0]}. `);
+			stepNumber[0]++;
 		} else if(/#\* /.test(commentPiece)) {
 			commentPiece = commentPiece.replace('#* ', `	- `);
 		}

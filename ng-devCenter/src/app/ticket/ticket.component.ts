@@ -43,37 +43,32 @@ export class TicketComponent implements OnInit {
 	@ViewChild(SetPingsComponent) public setPing: SetPingsComponent;
 
 	ngOnInit(){
+		this.validTransitions();
+	}
 
+	validTransitions() {
 		// set valid transitions
-		if(this.ticket.status === 'Ready for QA'){
-			this.ticketStates = this.allTransistions.filter(state => ['In QA','In Development'].includes(state.name));
-		
-		} else if(this.ticket.status === 'PCR - Needed'){
-			this.ticketStates = this.allTransistions.filter(state => ['In Development','PCR - Pass','PCR - Completed'].includes(state.name));
-		
-		} else if(this.ticket.status === 'In QA'){
-			this.ticketStates = this.allTransistions.filter(state => ['In Development','QA Fail','QA Pass'].includes(state.name));
-		
-		} else if(this.ticket.status === 'In UCT'){
-			this.ticketStates = this.allTransistions.filter(state => ['In Development','UCT Fail','UCT Pass'].includes(state.name));
-		
-		} else if(this.ticket.status === 'Ready for UCT'){
-			this.ticketStates = this.allTransistions.filter(state => ['In Development','In UCT'].includes(state.name));
-		
+		if(['In Sprint','On Hold'].includes(this.ticket.status)){
+			this.ticketStates = this.allTransistions.filter(state => ['In Development'].includes(state.name));
 		} else if(this.ticket.status === 'In Development'){
 			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
-
-		} else if(['In Sprint','On Hold'].includes(this.ticket.status)){
-			this.ticketStates = this.allTransistions.filter(state => ['In Development'].includes(state.name));
-		
-		} else if(['Ready for Release','Merge Code','Merge Conflict','Code Review - Working'].includes(this.ticket.status)){
-			this.ticketStates = [];
-		
+		} else if(this.ticket.status === 'PCR - Needed'){
+			this.ticketStates = this.allTransistions.filter(state => ['PCR - Pass','PCR - Completed'].includes(state.name));
 		} else if(this.ticket.status === 'PCR - Completed'){
 			this.ticketStates = this.allTransistions.filter(state => ['Code Review - Working'].includes(state.name));
-		
 		} else if(this.ticket.status === 'Code Review - Working'){
 			this.ticketStates = this.allTransistions.filter(state => ['Ready for QA', 'Code Review - Fail'].includes(state.name));
+		} else if(this.ticket.status === 'Ready for QA'){
+			this.ticketStates = this.allTransistions.filter(state => ['In QA'].includes(state.name));
+		} else if(this.ticket.status === 'In QA'){
+			this.ticketStates = this.allTransistions.filter(state => ['QA Fail','QA Pass'].includes(state.name));
+		
+		} else if(this.ticket.status === 'Ready for UCT'){
+			this.ticketStates = this.allTransistions.filter(state => ['In UCT'].includes(state.name));
+		} else if(this.ticket.status === 'In UCT'){
+			this.ticketStates = this.allTransistions.filter(state => ['UCT Fail','UCT Pass'].includes(state.name));
+		} else if(['Ready for Release','Merge Code','Merge Conflict','Code Review - Working'].includes(this.ticket.status)){
+			this.ticketStates = [];
 		
 		} else {
 			this.ticketStates = this.allTransistions;
@@ -111,23 +106,25 @@ export class TicketComponent implements OnInit {
 	/*
 	*/
 	stateChange(ticketDropdown){
+
 		// save select element reference and old status
 		this.ticketDropdown = ticketDropdown;
 		this.oldState = this.ticket.component || this.ticket.status;
 
+		// change valid transitions dropdown
+		// this.validTransitions();
+
+		// if pcr needed open qa gen
 		if(ticketDropdown.value == 'pcrNeeded'){
 			this.qaGen.openQAModal();
 			return;
 		}
 
+		console.log('ticketDropdown: ', ticketDropdown);
 
+		// get ticket state info and open status modal
 		const ticketState = this.ticketStates.filter(state => state.id == ticketDropdown.value);
-
-		if(ticketState.length == 0){
-			this.toastr.showToast('Ticket status change not valid.','error');
-			return;
-		}
-
+		console.log('ticketState: ', ticketState);
 		this.statusModal.openStatusModal(ticketState[0].id, ticketState[0].name);
 	}
 
@@ -164,18 +161,30 @@ export class TicketComponent implements OnInit {
 
 	/*
 	*/
-	statusChangeCancel(manualStatus?:string, showCancelMessage:boolean=true):void {
+	statusChangeCancel():void {
+
 		// get id for current ticket's state and reset it on dropdown
+		const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
+		this.ticketDropdown.value = ticketState[0].id;
 
-		if(manualStatus){
-			this.ticketDropdown.value = manualStatus;
-		} else {
-			const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
-			this.ticketDropdown.value = ticketState[0].id;
-		}
+		// reset valid transitions and show message
+		this.validTransitions();
+		this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
+	}
 
-		if(showCancelMessage){
-			this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
-		}
+	/*
+	*/
+	addReviewer(){
+
+  		// change 'status' (add user to crucible then open crucible)
+  		this.jira.changeStatus({key:this.ticket.key, statusType:'pcrAdd', crucible_id:this.ticket.crucible_id})
+		.subscribe(
+			() => {
+				// open crucible if successfully joined
+				let win = window.open(`${this.config.crucibleUrl}/cru/${this.ticket.crucible_id}`, '_blank');
+		  		win.focus();
+			},
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
 	}
 }

@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 
 import os
-import logging
 import sys
-import time
+import datetime
 
 from Common import SQLModels
 
@@ -299,29 +298,31 @@ class DevCenterSQL():
 		return session.query(SQLModels.Tickets).filter(SQLModels.Tickets.key == key).first()
 
 
-	def log_error(self, message, session):
+	def log_error(self, message):
 		'''logs an error message in the DB. If message already exist then just replaces it
 			to avoid duplicate entries
 
 		Args:
 			message (str) the message to add to the log
-			session (Session instance) the session to close
 
 		Returns:
-			The response from the SQL query execution
+			None
 		'''
 		# try to get existing Jira ticket
 		try:
+			session = self.login()
 			row = session.query(SQLModels.ErrorLogs).filter(SQLModels.ErrorLogs.message == message).first()
 			# if existing error doesn't exist then add to DB
 			if row is None:
 				row = SQLModels.ErrorLogs(message=message)
-			return session.commit()
+				session.add(row)
+			else:
+				row.timestamp = datetime.datetime.now()
+			session.commit()
 		except SQLAlchemyError as e:
-			# if log error causes an exception then just die
-			message = sys.exc_info()[0]
-			logging.exception(message)
+			print('ERROR: COuld not log error: ', message)
 			exit(1)
+		self.logout(session=session)
 
 	def get_tickets(self, type_of_tickets, session, username=''):
 		'''gets all tickets of a certain type
