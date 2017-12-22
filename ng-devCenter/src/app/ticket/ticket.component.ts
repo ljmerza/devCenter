@@ -130,7 +130,7 @@ export class TicketComponent implements OnInit {
 	commentChangeEvent({allComments, postData, newComment, response}):void {
 
 		// if comment added the push comment onto comment array
-		if(postData.data && postData.data.body){
+		if(postData && postData.comment){
 			const newCommentBody = [{
 				comment: response.data.body,
 				created: response.data.created,
@@ -138,7 +138,7 @@ export class TicketComponent implements OnInit {
 				updated: response.data.updated,
 				username: this.user.username,
 				display_name: this.user.userData.displayName,
-				key: newComment.key,
+				key: postData.key,
 				isEditing: false,
 				closeText: 'Edit Comment',
 				comment_type: 'info',
@@ -156,11 +156,11 @@ export class TicketComponent implements OnInit {
 		}
 
 		// check for removal of components
-		if(postData.remove_merge){
+		if(postData && postData.remove_merge){
 			this.ticket.status = 'Ready for UCT';
 			this.statusChangeCancel(false);
 			
-		} else if(postData.remove_conflict){
+		} else if(postData && postData.remove_conflict){
 			this.ticket.status = 'QA Ready';
 			this.statusChangeCancel(false);
 		}

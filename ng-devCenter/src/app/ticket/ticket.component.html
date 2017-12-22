@@ -20,15 +20,13 @@
 <!-- summary/state -->
 <td class='summary-format'>{{ticket.summary}}</td>
 <td>
-	<div class='float-left'>
-		<select (change)="stateChange(ticketState)" #ticketState>
-			<option 
-				*ngFor='let state of ticketStates' [value]="state.id"
-				[attr.selected]="state.name==ticket.status ? 'true': null">
-					{{state.name}}
-			</option>
-		</select>
-	</div>
+	<select (change)="stateChange(ticketState)" #ticketState>
+		<option 
+			*ngFor='let state of ticketStates' [value]="state.id"
+			[attr.selected]="state.name==ticket.status ? 'true': null">
+				{{state.name}}
+		</option>
+	</select>
 </td>
 
 <!-- dates -->
