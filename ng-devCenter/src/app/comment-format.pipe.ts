@@ -16,7 +16,7 @@ export class CommentFormatPipe implements PipeTransform {
 
 		comment = this._formatLines(comment, attachments, stepNumber);
 		comment = this._formatCode(comment);
-		comment = `<div class="container"> ${comment} </div>`
+		comment = `<div class="container"> ${comment} </div>`;
 		return comment;
 	}
 
@@ -61,7 +61,6 @@ export class CommentFormatPipe implements PipeTransform {
 
 			// return new comment line
 			return commentPiece + '<br>';
-
 		}).join('');
 	}
 
@@ -108,23 +107,25 @@ export class CommentFormatPipe implements PipeTransform {
 		// create tables
 		if(commentPiece.startsWith('||')){
 			tableStart = true;
-			commentPiece = '<table class="table"><thead><tr>' + commentPiece.split('||')
-			.map(t => '<th>'+t+'<th>').join('') + '</tr><thead><tbody>';
+			commentPiece = '<table class="table table-striped table-bordered"><thead><tr>' + 
+			commentPiece.split('||')
+			.filter(t => !!t.trim())
+			.map(t => '<th>'+t+'</th>')
+			.join('') + '</tr><thead><tbody>';
 
 		} else if(commentPiece.startsWith('|')){
-			commentPiece = '<tr>' + commentPiece.split('|').map(t => '<td>'+t+'<td>').join('') + '</tr>';
+			commentPiece = '<tr>' + commentPiece
+			.split('|')
+			.filter(t => !!t.trim())
+			.map(t => '<td>'+t+'</td>')
+			.join('') + '</tr>';
 
 		} else if(tableStart) {
 			tableStart = false;
 			commentPiece = '<tbody></table>';
 		}
 
-		// replace links
-		return commentPiece.replace(/\[(.*)\|(.*)\]/, function(a,b) {
-			const links = commentPiece.replace('[', '').replace(']', '').split('|');
-			const link = links[1].replace(/\ .*/,'')
-			return `<a href="${link}" target="_blank">${b}</a>`;
-		});
+		return commentPiece;
 	}
 
 	/*
@@ -155,6 +156,15 @@ export class CommentFormatPipe implements PipeTransform {
 	}
 
 	_format_links(commentPiece){
+
+		// replace markdown links
+		commentPiece = commentPiece.replace(/\[(.*)\|(.*)\]/, function(a,b) {
+			const links = commentPiece.replace('[', '').replace(']', '').split('|');
+			const link = links[1].replace(/\ .*/,'')
+			return `<a href="${link}" target="_blank">${b}</a>`;
+		});
+
+		// replace general links
 		return commentPiece.replace(/https?:\/\/(\w|.)*/, function(a,b) {
 
 			if( a.includes('target="_blank"') ){
