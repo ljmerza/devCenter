@@ -65,7 +65,10 @@ export class StatusModalComponent {
 	changeStatus(statusType) {
 		this.jira.changeStatus({key:this.key, statusType, crucible_id:this.crucible_id})
 		.subscribe(
-			() => this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success'),
+			() => {
+				this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
+				this.statusChange.emit({cancelled: false});
+			},
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
 				this.statusChange.emit();

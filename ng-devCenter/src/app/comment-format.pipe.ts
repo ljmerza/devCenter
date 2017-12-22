@@ -59,8 +59,8 @@ export class CommentFormatPipe implements PipeTransform {
 			commentPiece = this._format_list_headers(commentPiece, stepNumber);
 			commentPiece = this._formatTable(commentPiece, tableStart);
 			commentPiece = this._format_colors(commentPiece);
-			commentPiece = this._format_images(commentPiece, attachments);
 			commentPiece = this._format_links(commentPiece);
+			commentPiece = this._format_images(commentPiece, attachments);
 
 			// return new comment line
 			return commentPiece + '<br>';
@@ -160,6 +160,11 @@ export class CommentFormatPipe implements PipeTransform {
 
 	_format_links(commentPiece){
 
+		// replace Jira keys with links
+		commentPiece = commentPiece.replace(/^[A-Z]{1,10}-(\d){1,4}/, (a,b) => {
+			return `<a href="${this.config.jiraUrl}/browse/${a}" target="_blank">${a}</a>`;
+		});
+
 		// replace markdown links
 		commentPiece = commentPiece.replace(/\[(.*)\|(.*)\]/, function(a,b) {
 			const links = commentPiece.replace('[', '').replace(']', '').split('|');
@@ -183,10 +188,9 @@ export class CommentFormatPipe implements PipeTransform {
 			}
 		});
 
-		// replace Jira keys with links
-		return commentPiece.replace(/[A-Z]{1,10}-(\d){1,4}/, a => {
-			return `<a href="${this.config.jiraUrl}/browse/${a}" target="_blank">${a}</a>`;
-		});
+		
+
+		return commentPiece;
 	}
 
 }

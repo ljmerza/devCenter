@@ -120,9 +120,6 @@ export class TicketComponent implements OnInit {
 		// get ticket state info and open status modal
 		const ticketState = this.ticketStates.filter(state => state.id == ticketDropdown.value);
 		this.statusModal.openStatusModal(ticketState[0].id, ticketState[0].name);
-
-		// change valid transitions dropdown
-		// this.validTransitions();
 	}
 
 	/*
