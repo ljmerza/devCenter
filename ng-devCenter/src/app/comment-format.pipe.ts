@@ -1,11 +1,14 @@
 import { Pipe, PipeTransform } from '@angular/core';
+ import { ConfigService } from './services/config.service'
 
 @Pipe({
 	name: 'commentFormat'
 })
 export class CommentFormatPipe implements PipeTransform {
-
-	
+	config;
+	constructor(config: ConfigService) {
+		this.config = config;
+	}
 
 	/*
 	*/
@@ -165,7 +168,7 @@ export class CommentFormatPipe implements PipeTransform {
 		});
 
 		// replace general links
-		return commentPiece.replace(/https?:\/\/(\w|.)*/, function(a,b) {
+		commentPiece =  commentPiece.replace(/https?:\/\/(\w|.)*/, function(a,b) {
 
 			if( a.includes('target="_blank"') ){
 				return a;
@@ -178,6 +181,11 @@ export class CommentFormatPipe implements PipeTransform {
 					return a;
 				}
 			}
+		});
+
+		// replace Jira keys with links
+		return commentPiece.replace(/[A-Z]{1,10}-(\d){1,4}/, a => {
+			return `<a href="${this.config.jiraUrl}/browse/a" target="_blank">${a}</a>`
 		});
 	}
 
