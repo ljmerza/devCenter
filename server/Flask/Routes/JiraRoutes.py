@@ -122,7 +122,6 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 
 		# elif QA pass then add merge component
 		elif data['status_type'] == 'qaPass':
-			data['status_type'] = 'mergeCode'
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 
 		# return response
