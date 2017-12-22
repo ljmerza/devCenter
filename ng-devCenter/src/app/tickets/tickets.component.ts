@@ -36,6 +36,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		order: [[4, 'desc']],
 		columnDefs: [
 			{targets: [8,9], visible: false},
+			{targets: 3, width: '10%'},
 			{targets: [4,5,8,9], type: 'date'}
 		],
 		dom: 'BfRtip',

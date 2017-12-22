@@ -18,7 +18,7 @@ import { JiraService } from './../services/jira.service';
 export class StatusModalComponent {
 
 	@ViewChild('statusModal') content: ElementRef;
-	@Output() statusChangeCancel = new EventEmitter();
+	@Output() statusChange = new EventEmitter();
 	@Input() crucible_id;
 	@Input() key;
 	statusType;
@@ -41,7 +41,7 @@ export class StatusModalComponent {
 		// check for crucible id first for pcr pass/complete
 		if(['pass', 'complete'].includes(statusType) && !this.crucible_id){
 			this.toastr.showToast(`Missing Crucible ID. Cannot transition ${this.key}`, 'error');
-			this.statusChangeCancel.emit();
+			this.statusChange.emit();
 			return;
 		}
 
@@ -57,7 +57,7 @@ export class StatusModalComponent {
 					break;
 			}
 
-		}, () => this.statusChangeCancel.emit() );	
+		}, () => this.statusChange.emit() );	
 	}
 
 	/*
@@ -68,7 +68,7 @@ export class StatusModalComponent {
 			() => this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success'),
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-				this.statusChangeCancel.emit();
+				this.statusChange.emit();
 			}
 		);
 	}

@@ -88,6 +88,10 @@ export class JiraService extends DataService {
 				jql=this.config.starship;
 				this.title = 'Starship';
 				break;
+			case 'rds':
+				jql=this.config.rds;
+				this.title = 'RDS';
+				break;
 			case 'pm':
 				jql=this.config.pmTickets;
 				this.title = 'PM';

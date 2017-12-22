@@ -36,11 +36,11 @@ export class NavBarComponent implements AfterContentInit {
 		public config:ConfigService
 	) { 
 
-		this.isFriday = (new Date()).getDay() == 6;
+		this.isFriday = (new Date()).getDay() == 5;
 
 		// check every two hours
 		setTimeout( () => {
-			this.isFriday = (new Date()).getDay() == 6;
+			this.isFriday = (new Date()).getDay() == 5;
 		}, 60*60*2)
 		
 	}

@@ -36,7 +36,7 @@ export class QaGeneratorComponent {
 	branches; // loaded branches data
 
 	@ViewChild('qaModal') content:ElementRef;
-	@Output() statusChangeCancel = new EventEmitter();
+	@Output() statusChange = new EventEmitter();
 	@Input() msrp;
 	@Input() key;
 	@Input() repos;
@@ -69,7 +69,7 @@ export class QaGeneratorComponent {
 		// show informational toast
 		if(!formObj.value.qaSteps){
 			this.toastr.showToast('Creating Crucible but not updating to Jira', 'info');
-			this.statusChangeCancel.emit();
+			this.statusChange.emit();
 		} else {
 			this.toastr.showToast('Creating Crucible and updating Jira', 'info');
 		}
@@ -85,7 +85,7 @@ export class QaGeneratorComponent {
 			},
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-				this.statusChangeCancel.emit();
+				this.statusChange.emit();
 			}
 		);
 	}
@@ -105,7 +105,7 @@ export class QaGeneratorComponent {
 				if(this.repoLookUp$){
 					this.repoLookUp$.unsubscribe();
 				}
-				this.statusChangeCancel.emit();
+				this.statusChange.emit();
 			}
 		);
 

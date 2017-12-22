@@ -122,7 +122,7 @@ export class TicketComponent implements OnInit {
 		this.statusModal.openStatusModal(ticketState[0].id, ticketState[0].name);
 
 		// change valid transitions dropdown
-		this.validTransitions();
+		// this.validTransitions();
 	}
 
 	/*
@@ -158,21 +158,24 @@ export class TicketComponent implements OnInit {
 		// check for removal of components
 		if(postData && postData.remove_merge){
 			this.ticket.status = 'Ready for UCT';
-			this.statusChangeCancel(false);
+			this.statusChange(false);
 			
 		} else if(postData && postData.remove_conflict){
 			this.ticket.status = 'QA Ready';
-			this.statusChangeCancel(false);
+			this.statusChange(false);
 		}
 	}
 
 	/*
 	*/
-	statusChangeCancel(showMessage:boolean=true):void {
+	statusChange(showMessage:boolean=true, cancelled:boolean=true):void {
 
-		// get id for current ticket's state and reset it on dropdown
-		const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
-		this.ticketDropdown.value = ticketState[0].id;
+		// if we are canceling a status then reset dropdown
+		if(cancelled){
+			// get id for current ticket's state and reset it on dropdown
+			const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
+			this.ticketDropdown.value = ticketState[0].id;
+		}
 
 		// reset valid transitions and show message
 		this.validTransitions();

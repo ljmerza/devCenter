@@ -30,7 +30,7 @@ export class TimeLogComponent	{
 	minuteStep = 15;
 
 	@ViewChild('logModal') content:ElementRef;
-	@Output() commentChangeEvent = new EventEmitter();
+	@Output() commentChange = new EventEmitter();
 	@Output() statusChangeCancel = new EventEmitter();
 	@Input() key:string;
 
@@ -81,7 +81,7 @@ export class TimeLogComponent	{
 
 				// show success and notify table to update time
 				this.toastr.showToast('Work Log updated', 'success');
-				this.commentChangeEvent.emit({postData, response});
+				this.commentChange.emit({postData, response});
 				// then reset form
 				formObj.resetForm();
 			},

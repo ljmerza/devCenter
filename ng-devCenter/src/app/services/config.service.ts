@@ -34,6 +34,8 @@ export class ConfigService {
 
 	starship = encodeURIComponent('"epic%20link"%3D%20starship');
 
+	rds = encodeURIComponent('text ~ "RDS"');
+
 	pmTickets = encodeURIComponent('resolution = Unresolved AND assignee in ( wc591w, lk2973)');
 
 	allmy = encodeURIComponent(`assignee = ${this.username} ORDER BY updated DESC`);
