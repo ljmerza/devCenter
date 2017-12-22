@@ -143,7 +143,13 @@ export class CommentFormatPipe implements PipeTransform {
 		return commentPiece.replace(/!(.*?)!/, function(a,b) {
 			const filenames = a.replace('!', '').split('|');
 			const filePath = attachments.filter(file => file.filename === filenames[0]);
-			return `<img class="rounded mx-auto d-block comment-image" src="${filePath[0].link}">`;
+
+			if(filePath.length){
+				return `<img class="rounded mx-auto d-block comment-image" src="${filePath[0].link}">`;
+			} else {
+				return a;
+			}
+			
 		});
 	}
 
