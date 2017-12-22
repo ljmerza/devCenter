@@ -163,7 +163,7 @@ export class CommentFormatPipe implements PipeTransform {
 		// replace markdown links
 		commentPiece = commentPiece.replace(/\[(.*)\|(.*)\]/, function(a,b) {
 			const links = commentPiece.replace('[', '').replace(']', '').split('|');
-			const link = links[1].replace(/\ .*/,'')
+			const link = links[1].replace(/\ .*/,'');
 			return `<a href="${link}" target="_blank">${b}</a>`;
 		});
 
@@ -176,7 +176,7 @@ export class CommentFormatPipe implements PipeTransform {
 				const pieces = a.split(' ');
 
 				if(pieces.length > 0){
-					return `<a href="${pieces[0]}" target="_blank">${pieces[0]}</a>`
+					return `<a href="${pieces[0]}" target="_blank">${pieces[0]}</a>`;
 				} else {
 					return a;
 				}
@@ -185,7 +185,7 @@ export class CommentFormatPipe implements PipeTransform {
 
 		// replace Jira keys with links
 		return commentPiece.replace(/[A-Z]{1,10}-(\d){1,4}/, a => {
-			return `<a href="${this.config.jiraUrl}/browse/a" target="_blank">${a}</a>`
+			return `<a href="${this.config.jiraUrl}/browse/${a}" target="_blank">${a}</a>`;
 		});
 	}
 
