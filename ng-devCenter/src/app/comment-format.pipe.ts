@@ -57,6 +57,7 @@ export class CommentFormatPipe implements PipeTransform {
 			commentPiece = this._formatTable(commentPiece, tableStart);
 			commentPiece = this._format_colors(commentPiece);
 			commentPiece = this._format_images(commentPiece, attachments);
+			commentPiece = this._format_links(commentPiece);
 
 			// return new comment line
 			return commentPiece + '<br>';
@@ -150,6 +151,23 @@ export class CommentFormatPipe implements PipeTransform {
 				return a;
 			}
 			
+		});
+	}
+
+	_format_links(commentPiece){
+		return commentPiece.replace(/https?:\/\/(\w|.)*/, function(a,b) {
+
+			if( a.includes('target="_blank"') ){
+				return a;
+			} else {
+				const pieces = a.split(' ');
+
+				if(pieces.length > 0){
+					return `<a href="${pieces[0]}" target="_blank">${pieces[0]}</a>`
+				} else {
+					return a;
+				}
+			}
 		});
 	}
 
