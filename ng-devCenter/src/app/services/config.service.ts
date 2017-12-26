@@ -42,7 +42,7 @@ export class ConfigService {
 
 	mytickets = encodeURIComponent(`assignee = ${this.username} AND resolution = unresolved ORDER BY due DESC`);
 
-	jiraUrl = 'https://jira.web.att.com:8443';
+	jiraUrl = 'http://jira.web.att.com';
 	crucibleUrl = 'https://icode3.web.att.com';
 	codeCloudUrl = 'https://codecloud.web.att.com';
 
