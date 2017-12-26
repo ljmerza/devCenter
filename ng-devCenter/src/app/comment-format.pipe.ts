@@ -30,21 +30,13 @@ export class CommentFormatPipe implements PipeTransform {
 		// for each code piece if inside pre-format block then add pre element
 		// else just return unchanged comment piece
 		// finally join all pieces back to one comment and set on current comment
-		return comment.split(/{code}|{noformat}/)
+		return comment.split(/{code((.|:|=|\.)*?)}|{noformat}/)
 		.filter(comment => comment)
 		.map( (commentPiece, index) => {
 
-			if(!commentPiece){
-				return '';
-			}
-			
-			if(index%2==1){
-				// if inside code block then wrap in pre element and
-				// remove all new line elements
-				return `<pre class='code'>${commentPiece}</pre>`.replace(/<br>/g, '\n');
-			} else {
-				return commentPiece;
-			}
+			console.log('commentPiece: ', commentPiece);
+
+			return index%2==1 ? `<pre>${commentPiece}</pre>`.replace(/<br>/g, '\n') : commentPiece;
 			
 		}).join('');
 	}
@@ -161,7 +153,7 @@ export class CommentFormatPipe implements PipeTransform {
 	_format_links(commentPiece){
 
 		// replace Jira keys with links
-		commentPiece = commentPiece.replace(/^[A-Z]{1,10}-(\d){1,4}/, (a,b) => {
+		commentPiece = commentPiece.replace(/[A-Z]{1,10}-(\d){2,4}/g, (a,b) => {
 			return `<a href="${this.config.jiraUrl}/browse/${a}" target="_blank">${a}</a>`;
 		});
 
