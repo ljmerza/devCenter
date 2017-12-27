@@ -17,21 +17,24 @@ export class ToastrService {
 	*/
 	public showToast(message:string, message_type:string, sticky=false, toastLife=0): void {
 
-		// if toastLife then set else if sticky then show 'forever'
+		let toastrOptions = Object.assign( {}, this.toastrOptions);
+
+		// set custom life of the toast if geiven
 		if(toastLife){
-			this.toastrOptions.toastLife = toastLife;
+			toastrOptions = Object.assign( {}, toastrOptions, {toastLife} );
 		} else if(sticky){
-			this.toastrOptions.toastLife = 9999999;
+			// if sticky then show 'forever'
+			toastrOptions = Object.assign( {}, toastrOptions, {toastLife:9999999} );
 		}
 
 		if(message_type === 'success'){
-			this.toastObject.success(message, null, this.toastrOptions);
+			this.toastObject.success(message, null, toastrOptions);
 
 		} else if(message_type === 'error'){
-			this.toastObject.error(message, null, this.toastrOptions);
+			this.toastObject.error(message, null, toastrOptions);
 			
 		} else if(message_type === 'info'){
-			this.toastObject.info(message, null, this.toastrOptions);
+			this.toastObject.info(message, null, toastrOptions);
 		}
 		
 	}

@@ -21,7 +21,6 @@ import { UserService } from './../services/user.service'
 	styleUrls: ['./ticket.component.scss']
 })
 export class TicketComponent implements OnInit {
-	oldState; // old ticket state when changed
 	ticketDropdown; // ticket dropdown reference
 	ticketStates = [];
 
@@ -109,7 +108,6 @@ export class TicketComponent implements OnInit {
 
 		// save select element reference and old status
 		this.ticketDropdown = ticketDropdown;
-		this.oldState = this.ticket.component || this.ticket.status;
 
 		// if pcr needed open qa gen
 		if(ticketDropdown.value == 'pcrNeeded'){
@@ -165,17 +163,20 @@ export class TicketComponent implements OnInit {
 
 	/*
 	*/
-	statusChange(showMessage:boolean=true, cancelled:boolean=true):void {
-
+	statusChange({showMessage=true, cancelled=true}):void {
 		// if we are canceling a status then reset dropdown
+		// else update ticket state and dropdown values
 		if(cancelled){
-			// get id for current ticket's state and reset it on dropdown
+			// reset dropdown to ticket's old state
 			const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
 			this.ticketDropdown.value = ticketState[0].id;
+			
+		} else {
+			// else set ticket state with new dropdown value and reload valid transitions
+			const ticketState = this.ticketStates.filter(state => state.id == this.ticketDropdown.value);
+			this.ticket.status = ticketState[0].name;
+			this.validTransitions();
 		}
-
-		// reset valid transitions and show message
-		this.validTransitions();
 
 		if(showMessage){
 			this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');

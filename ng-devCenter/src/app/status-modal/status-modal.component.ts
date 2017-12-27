@@ -41,23 +41,25 @@ export class StatusModalComponent {
 		// check for crucible id first for pcr pass/complete
 		if(['pass', 'complete'].includes(statusType) && !this.crucible_id){
 			this.toastr.showToast(`Missing Crucible ID. Cannot transition ${this.key}`, 'error');
-			this.statusChange.emit();
+			this.statusChange.emit({cancelled: true, showMessage: true});
 			return;
 		}
 
 		// open modal then on close process result
-		this.modalService.open(this.content).result.then( () => {
-			switch(statusType){
-				case 'complete':
-					this.changeStatus('pcrPass');
-					this.changeStatus('pcrComplete');
-					break;
-				default:
-					this.changeStatus(statusType);
-					break;
-			}
-
-		}, () => this.statusChange.emit() );	
+		this.modalService.open(this.content).result.then( 
+			() => {
+				switch(statusType){
+					case 'complete':
+						this.changeStatus('pcrPass');
+						this.changeStatus('pcrComplete');
+						break;
+					default:
+						this.changeStatus(statusType);
+						break;
+				}
+			}, 
+			() => this.statusChange.emit({cancelled: true, showMessage: true}) 
+		);	
 	}
 
 	/*
@@ -67,7 +69,7 @@ export class StatusModalComponent {
 		.subscribe(
 			() => {
 				this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
-				this.statusChange.emit({cancelled: false, showMessage: !['pass', 'qaPass'].includes(statusType)});
+				this.statusChange.emit({cancelled: false, showMessage:['pcrPass', 'qaPass'].includes(statusType)});
 			},
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');

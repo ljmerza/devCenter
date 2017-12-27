@@ -85,19 +85,19 @@
 
 <!-- modals for this ticket -->
 <app-time-log 
-	(statusChange)="statusChange()"
+	(statusChange)="statusChange($event)"
 	(commentChangeEvent)="commentChangeEvent($event)" 
 	[key]=ticket.key>
 </app-time-log>
 
 <app-status-modal 
-	(statusChange)="statusChange()" 
+	(statusChange)="statusChange($event)" 
 	[crucible_id]=ticket.crucible_id 
 	[key]=ticket.key>
 </app-status-modal>
 
 <app-qa-generator
-	(statusChange)="statusChange()" 
+	(statusChange)="statusChange($event)" 
 	[key]=ticket.key
 	[repos]=repos
 	[msrp]=ticket.msrp>

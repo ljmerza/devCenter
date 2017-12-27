@@ -69,7 +69,7 @@ export class QaGeneratorComponent {
 		// show informational toast
 		if(!formObj.value.qaSteps){
 			this.toastr.showToast('Creating Crucible but not updating to Jira', 'info');
-			this.statusChange.emit();
+			this.statusChange.emit({cancelled: true, showMessage: false});
 		} else {
 			this.toastr.showToast('Creating Crucible and updating Jira', 'info');
 		}
@@ -82,10 +82,20 @@ export class QaGeneratorComponent {
 					<br>
 					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
 				`, 'success', true);
+
+				// only update status if we are updating Jira
+				if(formObj.value.qaSteps){
+					this.statusChange.emit({cancelled: false, showMessage: false});
+				}
+				
 			},
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-				this.statusChange.emit();
+				
+				// only update status if we are updating Jira
+				if(formObj.value.qaSteps){
+					this.statusChange.emit({cancelled: true, showMessage: true});
+				}
 			}
 		);
 	}
@@ -105,7 +115,7 @@ export class QaGeneratorComponent {
 				if(this.repoLookUp$){
 					this.repoLookUp$.unsubscribe();
 				}
-				this.statusChange.emit();
+				this.statusChange.emit({cancelled: true, showMessage: true});
 			}
 		);
 
