@@ -3,6 +3,7 @@
 import datetime
 from time import gmtime, strftime
 from JiraUtils import *
+from JiraFields import *
 
 
 class JiraMisc():
@@ -49,31 +50,25 @@ class JiraMisc():
 			dict of status/data properties with the error message or a dict with keys: summary', 'key', 'story_point'
 		'''
 		# get ticket data based off MSRP and check for status
-		search_response = self.jira_api.get(url=f'{self.jira_api.api_base}/search?jql=MSRP_Number~{msrp}', cred_hash=cred_hash)
+		search_response = self.jira_api.get(
+			url=f'{self.jira_api.api_base}/search?jql=MSRP_Number~{msrp}&fields=timeoriginalestimate,summary', 
+			cred_hash=cred_hash
+			)
+
 		if not search_response['status']:
 			return search_response
 
 		if not search_response['data']['issues']:
 			return {'status':False, 'data': 'Could not find MSRP from branch name'}
 
-		# get issue found
-		search_response = search_response['data']['issues'][0]
-
-		# check story points
-		if 'customfield_10006' not in search_response['fields']:
-			return {'status': False, 'data': 'Missing story point'}
-		# check key
-		if not search_response['key']:
-			return {'status': False, 'data': 'Missing key'}
-		# check summary
-		if 'summary' not in search_response['fields']:
-			return {'status': False, 'data': 'Missing summary'}
+		# get first issue found
+		issue = search_response['data']['issues'][0]
 
 		# return data
 		return { 'status': True, 'data':{
-			'summary': search_response['fields']['summary'],
-			'key': search_response['key'],
-			'story_point': search_response['fields']['customfield_10006']
+			'summary': get_summary(issue),
+			'key': get_key(issue),
+			'story_point': get_story_point(issue)
 		}}
 
 	def add_work_log(self, time, key, cred_hash, private_log=True):
