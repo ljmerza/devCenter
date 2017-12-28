@@ -439,7 +439,7 @@ export class ConfigService {
 				},
 				{
 					name: 'Jira API 7.1.10',
-					link: 'https://docs.atlassian.com/jira/REST/7.1.10/'
+					link: 'https://docs.atlassian.com/software/jira/docs/api/REST/7.6.1/'
 				},
 				
 			]

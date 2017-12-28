@@ -197,7 +197,7 @@ def get_jira_tickets(data, jira_obj):
 	'''
 
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'fields'])
+	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 		

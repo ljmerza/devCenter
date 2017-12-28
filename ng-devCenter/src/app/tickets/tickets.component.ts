@@ -63,6 +63,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	*/
 	ngOnInit():void {
 		this.route.paramMap.subscribe( params => {
+
 			// default to my tickets
 			this.ticketType = params.get('filter') || 'mytickets';
 			// destroy any existing subscriptions
@@ -135,7 +136,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			}
 
 			this.openTickets = data;
-			setTimeout(() => this.rerender(), 0);
+			this.rerender();
 
 		});
 	}
@@ -160,13 +161,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 					this.jira.setItem('mytickets', JSON.stringify(this.openTickets));
 				}
 				
-				// if cached data set we need to push rerender 
-				// to end of event loop else force full rerender
-				if(issues.cached){
-					setTimeout(() => this.rerender(), 0);
-				} else {
-					this.rerender();
-				}
+				this.rerender(true);
 
 				// enable websockets
 				if( !this.ticketType || ['pcr','qa','cr','allopen','mytickets'].includes(this.ticketType) ) {
@@ -179,12 +174,20 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	rerender():void {
+	rerender(forceRender=false):void {
 
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
-				dtInstance.destroy();
-				this.dtTrigger.next();
+
+				// do we destroy the whole table and start over 
+				// or just redraw? (destroy if we have all new data)
+				if(forceRender){
+					dtInstance.destroy();
+					this.dtTrigger.next();
+				} else {
+					dtInstance.draw();
+				}
+				
 			});
 		} else {
 			this.dtTrigger.next();

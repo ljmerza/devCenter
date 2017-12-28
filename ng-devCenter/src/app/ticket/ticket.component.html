@@ -17,8 +17,13 @@
 	</div>
 </td>
 
-<!-- summary/state -->
-<td class='summary-format'>{{ticket.summary}}</td>
+<!-- summary -->
+<td class='summary-format'>
+	<i class="material-icons" title='View Additional Data' (click)="additionalDataEvent()">live_help</i>
+	{{ticket.summary}}
+</td>
+
+<!-- state dropdown -->
 <td>
 	<select (change)="stateChange(ticketState)" #ticketState>
 		<option 
@@ -116,3 +121,7 @@
 	[branch]=ticket.branch
 	[commit]=ticket.commit>
 </app-set-pings>
+
+<app-ticket-details 
+[ticketDetails]=ticketDetails>
+</app-ticket-details>

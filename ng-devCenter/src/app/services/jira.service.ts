@@ -10,6 +10,7 @@ import { ConfigService } from './config.service'
 @Injectable()
 export class JiraService extends DataService {
 	title:string = '';
+	jql:string=''
 	firstLoad = true;
 
 	/*
@@ -27,77 +28,74 @@ export class JiraService extends DataService {
 	/*
 	*/
 	getFilterData(jiraListType:string): Observable<any> {
-		let filterNumber:string = '';
-		let jql:string = '';
 
 		switch(jiraListType) {
 			case 'pcr':
-				jql = this.config.pcr;
+				this.jql = this.config.pcr;
 				this.title = 'Peer Code Review';
 				break;
 			case 'beta':
-				jql=this.config.beta;
+				this.jql = this.config.beta;
 				this.title = 'Beta';
 				break;
 			case 'cr':
-				jql=this.config.cr;
+				this.jql = this.config.cr;
 				this.title = 'Code Review';
 				break;
 			case 'qa':
-				jql=this.config.qa;
+				this.jql = this.config.qa;
 				this.title = 'QA';
 				break;
 			case 'uctready':
-				jql=this.config.uctready;
+				this.jql = this.config.uctready;
 				this.title = 'UCT Ready';
 				break;
 			case 'allmy':
-				jql = this.config.allmy;
-				filterNumber = '11418';
+				this.jql = this.config.allmy;
 				this.title = 'All My';
 				break;
 			case 'allopen':
-				jql=this.config.allopen;
+				this.jql = this.config.allopen;
 				this.title = 'All Open';
 				break;
 			case 'teamdb_ember':
-				jql=this.config.teamdb_ember;
+				this.jql = this.config.teamdb_ember;
 				this.title = 'TeamDB Ember';
 				break;
 			case 'apollo':
-				jql=this.config.apollo;
+				this.jql = this.config.apollo;
 				this.title = 'Apollo';
 				break;
 			case 'sme':
-				jql=this.config.sme;
+				this.jql = this.config.sme;
 				this.title = 'SME';
 				break;
 			case 'scrum':
-				jql=this.config.scrum;
+				this.jql = this.config.scrum;
 				this.title = 'Scrum Board';
 				break;
 			case 'fullscrum':
-				jql=this.config.fullScrum;
+				this.jql = this.config.fullScrum;
 				this.title = 'Full Scrum Board';
 				break;
 			case 'rocc':
-				jql=this.config.rocc;
+				this.jql = this.config.rocc;
 				this.title = 'ROCC Automation';
 				break;
 			case 'starship':
-				jql=this.config.starship;
+				this.jql = this.config.starship;
 				this.title = 'Starship';
 				break;
 			case 'rds':
-				jql=this.config.rds;
+				this.jql = this.config.rds;
 				this.title = 'RDS';
 				break;
 			case 'pm':
-				jql=this.config.pmTickets;
+				this.jql = this.config.pmTickets;
 				this.title = 'PM';
 				break;
 			default:
-				jql = this.config.mytickets;
+				this.jql = this.config.mytickets;
 				this.title = 'My Open';
 
 				// if loading for the first time and 
@@ -109,21 +107,29 @@ export class JiraService extends DataService {
 					if(data){
 						// first load locally then call for fresh data as well
 						return Observable.of({data:JSON.parse(data), cached: true})
-	  					.concat(super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${this.config.fields}&filter=${filterNumber}`));
+	  					.concat(super.getAPI(`${this.apiUrl}/jira/tickets?jql=${this.jql}&fields=${this.config.fields}`));
 					}
 				}
 		}
 
 		this.firstLoad = false;
-		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}&fields=${this.config.fields}&filter=${filterNumber}`);
+		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${this.jql}&fields=${this.config.fields}`);
 	}
 
-
+	/*
+	*/
 	setPing({key, ping_type}): Observable<any> {
 		return super.postAPI({
 			url: `${this.apiUrl}/chat/send_ping`,
 			body: { key, ping_type, username: this.user.username }
 		});
+	}
+
+	/*
+	*/
+	getATicketDetails(key){
+		const jql = `key%3D%20${key}`
+		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}`);
 	}
 
 	/*

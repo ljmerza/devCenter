@@ -96,36 +96,22 @@ def get_user_details(issue):
 
 	if assignee_data is None:
 		assignee_data = {}
-	
-	display_name = assignee_data.get('displayName', '')
-	name_only = display_name.split(' (')
-	if(len(name_only) == 2):
-		display_name = name_only[0]		
 
 	# return all data
 	return {
 		'username': assignee_data.get('name', ''),
 		'email_address': assignee_data.get('emailAddress', ''),
-		'display_name': display_name
+		'display_name': _get_display_name(assignee_data.get('displayName', ''))
 	}
 
-def get_linked_issues(issue):
-	'''gets an issue's linked issues details
 
-	Args:
-		issue (dict) a Jira issue object
-
-	Returns:
-		a list of linked issues with their key, summary, and status
+def _get_display_name(display_name):
 	'''
-	link = []
-	for link in issue.get('fields', {}).get('issuelinks', []):
-		link.append({
-			'key': link.get('inwardIssue', {}).get('key', ''),
-			'summary': link.get('inwardIssue', {}).get('fields', {}).get('summary', ''),
-			'status': link.get('inwardIssue', {}).get('fields', {}).get('status', {}).get('name', '')
-		})
-	return link
+	'''
+	name_only = display_name.split(' (')
+	if(len(name_only) == 2):
+		display_name = name_only[0]
+	return display_name
 
 def get_component(issue):
 	'''gets an issue's components in a space delimited string
@@ -370,3 +356,74 @@ def get_attachments(issue):
 	return attachments
 
 
+def get_watchers(issue):
+	'''gets an issue's watchers
+
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		list of hashes with username and displayName properties
+	'''
+	watchers = []
+	if 'customfield_10300' in issue['fields'] and len(issue['fields']['customfield_10300']):
+		for watcher in issue['fields']['customfield_10300']:
+			watchers.append({
+				'username': watcher['name'],
+				'displayName': _get_display_name(watcher.get('displayName',''))
+			})
+	return watchers
+
+def get_priority(issue):
+	'''
+	'''
+	priority = ''
+	if 'priority' in issue['fields']:
+		priority = issue['fields']['priority'].get('name', '')
+	return priority
+
+def get_severity(issue):
+	'''
+	'''
+	severity = ''
+	if 'customfield_10108' in issue['fields']:
+		severity = issue['fields']['customfield_10108'].get('value', '')
+	return severity
+
+def get_code_reviewer(issue):
+	'''gets an issue's assigned code reviwer
+
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		list of hashes with username and displayName properties
+	'''
+	code_reviewer = {
+		'username': '',
+		'displayName': ''
+	}
+	if 'customfield_10812' in issue['fields'] and issue['fields']['customfield_10812'] is not None:
+		code_reviewer = {
+			'username': issue['fields']['customfield_10812'].get('name', ''),
+			'displayName': _get_display_name(issue['fields']['customfield_10812'].get('displayName',''))
+		}
+	return code_reviewer
+
+def get_issue_type(issue):
+	'''
+	'''
+	issue_type = ''
+	if 'issuetype' in issue['fields'] and issue['fields']['issuetype'] is not None:
+		issue_type = issue['fields']['issuetype'].get('name', '')
+	return issue_type
+
+def get_environment(issue):
+	'''
+	'''
+	return issue['fields'].get('environment','')
+
+def get_issue_links(issue):
+	'''
+	'''
+	return issue['fields'].get('issuelinks',[])

@@ -1,0 +1,86 @@
+<ng-template #detailsModal let-d="dismiss">
+	
+	<div class="modal-header">
+		<h4 class="modal-title">Ticket Details</h4>
+		<button type="button" class="close" aria-label="Close" (click)="d()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<div class="modal-body">
+		<table class="table table-striped">
+			<tbody>
+				<tr>
+					<td>Environment</td>
+					<td>{{ticketDetails.environment}}</td>
+				</tr>
+				<tr>
+					<td>Issue Type</td>
+					<td>{{ticketDetails.issue_type}}</td>
+				</tr>
+				<tr>
+					<td>Priority</td>
+					<td>{{ticketDetails.priority}}</td>
+				</tr>
+				<tr>
+					<td>Severity</td>
+					<td>{{ticketDetails.severity}}</td>
+				</tr>
+				<tr>
+					<td>Code Reviewer</td>
+					<td>
+						{{ticketDetails.code_reviewer?.username}}
+						{{ticketDetails.code_reviewer?.displayName}}
+					</td>
+				</tr>
+				<tr>
+					<td>Label</td>
+					<td>{{ticketDetails.label}}</td>
+				</tr>
+				<tr><td colspan='2'>Links:</td></tr>
+				<tr>
+					<td colspan='2'>
+						<table class="table table-striped">
+							<tbody>
+								<tr *ngFor='let link of links'>
+									<td>
+										<span *ngIf='link.inwardIssue'>Blocked By:</span>
+										<span *ngIf='link.outwardIssue'>Blocks:</span>
+									</td>
+									<td>
+										<a 
+											*ngIf='link.inwardIssue'
+											target="_blank" 
+											href="{{config.jiraUrl}}/browse/{{link.inwardIssue?.key}}" 
+											title='Open in Jira'>
+											{{link.inwardIssue?.key}}
+										</a>
+										<a 
+											*ngIf='link.outwardIssue'
+											target="_blank" 
+											href="{{config.jiraUrl}}/browse/{{link.outwardIssue?.key}}" 
+											title='Open in Jira'>
+											{{link.outwardIssue?.key}}
+										</a>
+									</td>
+									<td>
+										{{link.outwardIssue?.fields.summary}}
+										{{link.inwardIssue?.fields.summary}}
+									</td>
+									<td>
+										{{link.outwardIssue?.fields.status.name}}
+										{{link.inwardIssue?.fields.status.name}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-danger" (click)="d()">Close</button>
+	</div>
+</ng-template>

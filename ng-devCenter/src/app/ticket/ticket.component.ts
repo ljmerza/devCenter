@@ -8,6 +8,7 @@ import { JiraCommentsComponent } from './../jira-comments/jira-comments.componen
 import { StatusModalComponent } from './../status-modal/status-modal.component';
 import { TimeLogComponent } from './../time-log/time-log.component';
 import { SetPingsComponent } from './../set-pings/set-pings.component';
+import { TicketDetailsComponent } from './../ticket-details/ticket-details.component';
 
 import { ToastrService } from './../services/toastr.service';
 import { JiraService } from './../services/jira.service';
@@ -40,6 +41,7 @@ export class TicketComponent implements OnInit {
 	@ViewChild(StatusModalComponent) public statusModal: StatusModalComponent;
 	@ViewChild(TimeLogComponent) public logWork: TimeLogComponent;
 	@ViewChild(SetPingsComponent) public setPing: SetPingsComponent;
+	@ViewChild(TicketDetailsComponent) public detailsModal: TicketDetailsComponent;
 
 	ngOnInit(){
 		this.validTransitions();
@@ -197,5 +199,24 @@ export class TicketComponent implements OnInit {
 			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
+	}
+
+	/*
+	*/
+	ticketDetails;
+	additionalDataEvent(){
+
+		// if we dont have additional data then load first
+		if(!this.ticketDetails){
+			this.jira.getATicketDetails(this.ticket.key)
+			.subscribe(issue => {
+				// save data then open modal
+				this.ticketDetails = issue.data[0];
+				this.detailsModal.openDetailsModel();
+			});
+		} else {
+			// else we already have data so just open modal
+			this.detailsModal.openDetailsModel();
+		}
 	}
 }

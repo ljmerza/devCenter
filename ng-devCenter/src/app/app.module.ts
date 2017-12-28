@@ -37,6 +37,7 @@ import { TicketComponent } from './ticket/ticket.component';
 import { CommentFormatPipe } from './comment-format.pipe';
 import { SetPingsComponent } from './set-pings/set-pings.component';
 import { ToastrComponent } from './toastr/toastr.component';
+import { TicketDetailsComponent } from './ticket-details/ticket-details.component';
 
 @NgModule({
 	declarations: [
@@ -55,7 +56,8 @@ import { ToastrComponent } from './toastr/toastr.component';
 		TicketComponent,
 		CommentFormatPipe,
 		SetPingsComponent,
-		ToastrComponent
+		ToastrComponent,
+		TicketDetailsComponent
 	],
 	imports: [
 		BrowserModule,

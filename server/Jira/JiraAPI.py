@@ -29,7 +29,7 @@ class JiraAPI(DevCenterAPI):
 		self.crcible_review = f'{self.crucible_url}/cru/'
 		self.api_base = f'{self.jira_url}/rest/api/2'
 
-		self.all_open_tickets = urllib.parse.quote(JiraConfig.all_Open_tickets)
+		self.all_open_tickets = urllib.parse.quote(JiraConfig.all_open_tickets)
 		self.fields = JiraConfig.fields
 
 	def post(self, url, cred_hash, data=''):
