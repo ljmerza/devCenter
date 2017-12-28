@@ -30,7 +30,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	repos;
 	dtTrigger:Subject<any> = new Subject();
 
-	@ViewChild(DataTableDirective) private dtElement: DataTableDirective;
+	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
 
 	dtOptions = {
 		order: [[4, 'desc']],
@@ -62,7 +62,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	ngOnInit():void {
-
 		this.route.paramMap.subscribe( params => {
 			// default to my tickets
 			this.ticketType = params.get('filter') || 'mytickets';
@@ -170,9 +169,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				}
 
 				// enable websockets
-				// if( !this.ticketType || ['pcr','qa','cr','allopen','mytickets'].includes(this.ticketType) ) {
-				// 	this.webSock$ = this.startWebSocket();
-				// }
+				if( !this.ticketType || ['pcr','qa','cr','allopen','mytickets'].includes(this.ticketType) ) {
+					this.webSock$ = this.startWebSocket();
+				}
 			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);

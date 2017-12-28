@@ -103,14 +103,6 @@ export class ConfigService {
 			link: 'asset/inventory?asset=TEST&UAT=0&usertimezone=America/New_York&usertimeformat=12HR'
 		},
 		{
-			name: 'Group Ticket',
-			link: `group-lead?lead_ticket=WTXIV000724?cache=`
-		},
-		{
-			name: 'WFA Ticket',
-			link: `ticket/ethernet/WTXIV000892?cache=`
-		},
-		{
 			name: 'Admin Panel',
 			link: `administration?attuid=${this.username}&cache=`
 		},
@@ -144,6 +136,21 @@ export class ConfigService {
 			name: 'Backup Validation',
 			link: `task/backup-validation/123`
 		}
+	];
+
+	wfa_links = [
+		{
+			name: 'Group Ticket',
+			link: `group-lead?lead_ticket=WTXIV000724?cache=`
+		},
+		{
+			name: 'WFA Ticket',
+			link: `ticket/ethernet/WTXIV000892?cache=`
+		},
+		{
+			name: 'Referrals',
+			link: `ticket/ethernet/WILTP177929?cache=`
+		},
 	];
 
 	order_links = [
