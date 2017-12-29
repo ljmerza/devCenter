@@ -126,6 +126,8 @@ export class TicketComponent implements OnInit {
 	*/
 	commentChangeEvent({allComments, postData, newComment, response}):void {
 
+		console.log('allComments, postData, newComment, response: ', allComments, postData, newComment, response);
+
 		// if comment added the push comment onto comment array
 		if(postData && postData.comment){
 			const newCommentBody = [{
@@ -155,11 +157,11 @@ export class TicketComponent implements OnInit {
 		// check for removal of components
 		if(postData && postData.remove_merge){
 			this.ticket.status = 'Ready for UCT';
-			this.statusChange(false);
+			this.statusChange({showMessage:false, cancelled:false});
 			
 		} else if(postData && postData.remove_conflict){
 			this.ticket.status = 'QA Ready';
-			this.statusChange(false);
+			this.statusChange({showMessage:false, cancelled:false});
 		}
 	}
 
@@ -205,18 +207,14 @@ export class TicketComponent implements OnInit {
 	*/
 	ticketDetails;
 	additionalDataEvent(){
+		// open modal
+		this.detailsModal.openDetailsModel();
 
-		// if we dont have additional data then load first
-		if(!this.ticketDetails){
-			this.jira.getATicketDetails(this.ticket.key)
-			.subscribe(issue => {
-				// save data then open modal
-				this.ticketDetails = issue.data[0];
-				this.detailsModal.openDetailsModel();
-			});
-		} else {
-			// else we already have data so just open modal
-			this.detailsModal.openDetailsModel();
-		}
+		// load new or refresh ticket details
+		this.jira.getATicketDetails(this.ticket.key)
+		.subscribe(
+			issue => this.ticketDetails = issue.data[0],
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
 	}
 }

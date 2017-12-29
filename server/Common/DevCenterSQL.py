@@ -104,20 +104,11 @@ class DevCenterSQL():
 			the SQL response from inserting/updating the DB
 		'''
 
-		# copy data to add them later
-		comments = jira_ticket['comments'][:]
-
-		customer_details = jira_ticket['customer_details'].copy()
-		dates = jira_ticket['dates'].copy()
-		attachments = jira_ticket['attachments'].copy()
-		user_details = jira_ticket['user_details'].copy()
-
-		# delete data that we don't store in tickets table
-		del jira_ticket['comments']
-		del jira_ticket['customer_details']
-		del jira_ticket['dates']
-		del jira_ticket['attachments']
-		del jira_ticket['user_details']
+		jira_ticket= {
+			'msrp': jira_ticket['msrp'],
+			'key': jira_ticket['key'],
+			'username': jira_ticket['username']
+		}
 
 		# set active marker
 		jira_ticket['is_active'] = 1
@@ -135,14 +126,8 @@ class DevCenterSQL():
 				setattr(row, key, val)
 
 		# add comments of ticket and commit
-		self._update_comments(comments=comments, session=session)
+		# self._update_comments(comments=comments, session=session)
 
-		# add fields back to ticket
-		jira_ticket['comments'] = comments
-		jira_ticket['customer_details'] = customer_details
-		jira_ticket['dates'] = dates
-		jira_ticket['attachments'] = attachments
-		jira_ticket['user_details'] = user_details
 
 		session.commit()
 		

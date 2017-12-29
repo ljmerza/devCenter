@@ -74,21 +74,12 @@ export class UserSettingsComponent implements AfterContentInit {
 	}
 
 	_sync_settings(){
-
-		// force users to reset their password as of version 3.4
-		if(!this.jira.getItem('3.4') && this.user.password){
-			this.jira.removeItem('password');
-			this.jira.setItem('3.4', true);
-		}
-
 		this.username = this.user.username;
 		this.password = this.user.password;
 		this.port = this.user.port;
 		this.emberUrl = this.user.emberUrl;
 		this.teamUrl = this.user.teamUrl;
 		this.cache = this.user.cache;
-
-
 	}
 
 }

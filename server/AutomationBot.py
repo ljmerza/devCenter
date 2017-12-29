@@ -95,17 +95,17 @@ class AutomationBot(object):
 				self.check_for_pings(jira_ticket=jira_ticket)
 			end_bot = time.time()
 			print('Check for pings:          ', end_bot-start_bot)
-			# start_update = time.time()
+			start_update = time.time()
 
-			# # for each jira ticket update DB table
-			# session = self.sql_object.login()
-			# for jira_ticket  in jira_tickets['data']:
-			# 	self.sql_object.update_ticket(jira_ticket=jira_ticket, session=session)
-			# self.sql_object.logout(session=session)
+			# for each jira ticket update DB table
+			session = self.sql_object.login()
+			for jira_ticket  in jira_tickets['data']:
+				self.sql_object.update_ticket(jira_ticket=jira_ticket, session=session)
+			self.sql_object.logout(session=session)
 
-			# # print time to update tickets in DB
-			# end_update = time.time()
-			# print('Updated Tickets:          ', end_update-start_update)
+			# print time to update tickets in DB
+			end_update = time.time()
+			print('Updated Tickets:          ', end_update-start_update)
 			start_commit = time.time()
 
 			# set all inactive tickets and print time it took

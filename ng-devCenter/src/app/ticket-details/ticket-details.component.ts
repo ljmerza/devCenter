@@ -17,6 +17,7 @@ import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 export class TicketDetailsComponent implements OnChanges{
 
 	options: NgbModalOptions = {size: 'lg'}
+	loading:boolean = true;
 
 	@Input() ticketDetails;
 	@ViewChild('detailsModal') content: ElementRef;
@@ -30,6 +31,8 @@ export class TicketDetailsComponent implements OnChanges{
 
 		// if we have link values finally then we need to sort them
 		if(changes.ticketDetails.currentValue && changes.ticketDetails.currentValue.links.length > 0){
+			this.loading = false
+
 			this.links = changes.ticketDetails.currentValue.links.sort( (a,b)=> {
 				return a.inwardIssue ? 1: 0;
 			});

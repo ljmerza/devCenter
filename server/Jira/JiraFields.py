@@ -302,17 +302,6 @@ def get_customer_details(issue):
 		'phone_number': issue.get('fields', {}).get('customfield_10602', '')
 	}
 
-def get_severity(issue):
-	'''gets an issue's severity
-
-	Args:
-		issue (dict) a Jira issue object
-
-	Returns:
-		the severity or an empty string
-	'''
-	return issue.get('fields', {}).get('customfield_10108', {}).get('value', '')
-
 def get_dates(issue):
 	'''gets an issue's dates
 
