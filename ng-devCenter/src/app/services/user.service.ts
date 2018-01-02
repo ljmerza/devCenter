@@ -99,7 +99,9 @@ export class UserService {
 
 	}
 
-	public requireCredentials() {
+	/*
+	*/
+	public needRequiredCredentials() {
 		return !(this.username && this.password && this.port && this.emberUrl && this.teamUrl);
 	}
 }

@@ -19,7 +19,6 @@ declare var $ :any;
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class JiraCommentsComponent implements OnInit {
-	modalReference;
 	openPanelIds = [];
 
 	@ViewChild('commentModal') content:ElementRef;
@@ -60,8 +59,7 @@ export class JiraCommentsComponent implements OnInit {
 		});
 
 		// open modal
-		this.modalReference = this.modalService
-			.open(this.content, { windowClass: 'qa-modal' });
+		this.modalService.open(this.content, { windowClass: 'qa-modal' });
 
 		// highlight code needs to be triggered after modal opens
 		// so set call to initializer to back of event loop

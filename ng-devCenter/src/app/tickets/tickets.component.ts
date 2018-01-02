@@ -69,7 +69,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			// destroy any existing subscriptions
 			this.destorySubscritions();
 			// if required user info exists then get tickets and repos
-			if( !this.user.requireCredentials() ){
+			if( !this.user.needRequiredCredentials() ){
 				this.syncData();
 			}
 		});

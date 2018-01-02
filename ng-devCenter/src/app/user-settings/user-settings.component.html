@@ -1,65 +1,44 @@
-<ng-template #content let-c="close">
+<ng-template #userModal let-c="close" let-d='dismiss'>
 	<div class="modal-header">
 		<h4 class="modal-title">User Settings</h4>
-		<button 
-			type="button"
-			[attr.title]='(!teamUrl || !emberUrl || !password || !port || !username) ? "username, Password, Port, and Ember Url are required." : "Cancel Changes"'
-			[attr.disabled]="(!teamUrl || !emberUrl || !password || !port || !username) ? true : null"
-			class="close" 
-			aria-label="Close" 
-			(click)="c()"
-		>
+		<button type="button" class="close" aria-label="Close" (click)="submit()">
 			<span aria-hidden="true">&times;</span>
 		</button>
 	</div>
-	<div class="modal-body">
 
-		<form>
+	<form [formGroup]="userSettingsForm">
+
+		<div class="modal-body">
+			<!-- username -->
 			<div class="form-group">
-				<label for="usernameSettings">Username</label>
-				<span class='text-danger'>*</span>
-				<input 
-					type="text" 
-					class="form-control" 
-					id="usernameSettings" 
-					aria-describedby="emailHelp" 
-					placeholder="Enter username"
-					[ngModelOptions]="{standalone: true}"
-					[(ngModel)]="username"
-				>
+				<label for="username">Username:</label>
+				<input formControlName="username" type="text" class="form-control" placeholder="Enter username">
+				<div class='text-danger' *ngIf='username.invalid'>
+					<span *ngIf="username.errors.required">Username required</span>
+					<span *ngIf="!username.errors.required && username.errors.usernameValidator">Invalid username</span>
+				</div>
 			</div>
+			<!-- password -->
 			<div class="form-group">
-				<label for="passwordSetting">Password</label>
-				<span class='text-danger'>*</span>
-				<input 
-					type="password" 
-					class="form-control" 
-					id="passwordSetting" 
-					placeholder="Password"
-					[ngModelOptions]="{standalone: true}"
-					[(ngModel)]="password"
-				>
+				<label for="password">Password:</label>
+				<input type="password" class="form-control" formControlName='password' placeholder="Password">
+				<div class='text-danger' *ngIf='password.invalid'>
+					<span *ngIf="password.errors.required">Password required</span>
+				</div>
 			</div>
+			<!-- port -->
 			<div class="form-group">
-				<label for="portSetting">Port</label>
-				<span class='text-danger'>*</span>
-				<input 
-					type="text" 
-					class="form-control" 
-					id="portSetting" 
-					placeholder="Port"
-					[ngModelOptions]="{standalone: true}"
-					[(ngModel)]="port"
-				>
+				<label for="port">Port:</label>
+				<input type="text" class="form-control" formControlName='port' placeholder="Port">
+				<div class='text-danger' *ngIf='port.invalid'>
+					<span *ngIf="port.errors.required">Port required</span>
+					<span *ngIf="!port.errors.required && port.errors.portValidator">Invalid port</span>
+				</div>
 			</div>
+			<!-- ember url -->
 			<div class="form-group">
-				<label for="emberSetting">Ember Url</label>
-				<span class='text-danger'>*</span>
-				<select 
-					[(ngModel)]="emberUrl" 
-					name="emberSetting"
-					class='form-control'
-				>
+				<label for="emberUrl">Ember Url:</label>
+				<select formControlName="emberUrl" class='form-control'>
 					<option disabled>Please choose...</option>
 					<option *ngFor="let emberBuild of user.emberBuilds"
 						[ngValue]="emberBuild.value"
@@ -68,61 +47,45 @@
 						{{emberBuild.label}}
 					</option>
 				</select>
+				<div class='text-danger' *ngIf='emberUrl.invalid'>
+					<span *ngIf="emberUrl.errors.required">Ember URL required</span>
+				</div>
 			</div>
+
+			<!-- team ember url -->
 			<div class="form-group">
-				<label for="emberSetting">TeamDB Ember Url</label>
-				<span class='text-danger'>*</span>
-				<select 
-					[(ngModel)]="teamUrl" 
-					name="emberSetting"
-					class='form-control'
-				>
+				<label for="teamUrl">TeamDB Ember Url:</label>
+				<select formControlName="teamUrl" class='form-control'>
 					<option disabled>Please choose...</option>
 					<option *ngFor="let emberBuild of user.emberBuilds"
 						[ngValue]="emberBuild.value"
-						[attr.selected]="emberBuild.value === teamUrl ? true : null"
-					>
+						[attr.selected]="emberBuild.value === teamUrl ? true : null">
 						{{emberBuild.label}}
 					</option>
 				</select>
+				<div class='text-danger' *ngIf='teamUrl.invalid'>
+					<span *ngIf="teamUrl.errors.required">Team URL required</span>
+				</div>
 			</div>
 
+			<!-- cache query param -->
 			<div class="form-group">
 				<div class="row">
 					<div class="col">
 						<div class="form-check">
-							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" name='cache' [(ngModel)]="cache">
+							<label class="form-check-label" for='cache'>
+								<input class="form-check-input" type="checkbox" name='cache' formControlName="cache">
 								Cache Ember Routes
 							</label>
 						</div>
 					</div>
 				</div>
 			</div>
+		</div>
 
-			<div class="form-group text-danger text-center" *ngIf='!teamUrl || !emberUrl || !password || !port || !username'>
-				Username, Password, Port, Ember Url, and Team Url are required to continue.
-			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<button 
-			type="button" 
-			[attr.title]='(!teamUrl || !emberUrl || !password || !port || !username) ? "Username, Password, Port, and Ember Url are required." : "Save Changes"'
-			[attr.disabled]="(!teamUrl || !emberUrl || !port || !username) ? true : null"
-			class="btn btn-outline-success" 
-			(click)="c('save')"
-		>
-			Save
-		</button>
-		<button 
-			type="button"
-			[attr.title]='(!teamUrl || !emberUrl || !password || !port || !username) ? "Username, Password, Port, and Ember Url are required." : "Cancel Changes"'
-			[attr.disabled]="(!teamUrl || !emberUrl || !password || !port || !username) ? true : null"
-			class="btn btn-outline-danger" 
-			(click)="c()"
-		>
-			Cancel
-		</button>
-	</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-outline-success"  (click)="submit('save')">Save</button>
+			<button type="submit" class="btn btn-outline-danger"  (click)="submit()">Cancel</button>
+		</div>
+	</form>
 </ng-template>

@@ -30,9 +30,10 @@ export class TicketDetailsComponent implements OnChanges{
 	ngOnChanges(changes: SimpleChanges) {
 
 		// if we have link values finally then we need to sort them
-		if(changes.ticketDetails.currentValue && changes.ticketDetails.currentValue.links.length > 0){
+		if(changes.ticketDetails.currentValue){
 			this.loading = false
 
+			// sort by inward issues first
 			this.links = changes.ticketDetails.currentValue.links.sort( (a,b)=> {
 				return a.inwardIssue ? 1: 0;
 			});
