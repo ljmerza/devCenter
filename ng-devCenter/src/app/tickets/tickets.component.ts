@@ -136,7 +136,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			}
 
 			this.openTickets = data;
-			this.rerender();
+			this.rerender(true);
 
 		});
 	}

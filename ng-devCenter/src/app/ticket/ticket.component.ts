@@ -101,6 +101,7 @@ export class TicketComponent implements OnInit {
 		{name: 'In UCT', id: 'inUct'},
 		{name: 'UCT Pass', id: 'uctPass'},
 		{name: 'UCT Fail', id: 'uctFail'},
+		{name: 'Ready for UCT', id: 'uctReady'},
 		{name: 'Ready for Release', id: 'releaseReady'}
 	];
 
@@ -157,27 +158,36 @@ export class TicketComponent implements OnInit {
 		// check for removal of components
 		if(postData && postData.remove_merge){
 			this.ticket.status = 'Ready for UCT';
-			this.statusChange({showMessage:false, cancelled:false});
+			this.statusChange({showMessage:false, cancelled:false, statusName:this.ticket.status});
 			
 		} else if(postData && postData.remove_conflict){
-			this.ticket.status = 'QA Ready';
-			this.statusChange({showMessage:false, cancelled:false});
+			this.ticket.status = 'Ready for QA';
+			this.statusChange({showMessage:false, cancelled:false, statusName:this.ticket.status});
 		}
 	}
 
 	/*
 	*/
-	statusChange({showMessage=true, cancelled=true}):void {
+	statusChange({showMessage=true, cancelled=true, statusName=''}):void {
+
 		// if we are canceling a status then reset dropdown
-		// else update ticket state and dropdown values
 		if(cancelled){
-			// reset dropdown to ticket's old state
 			const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
 			this.ticketDropdown.value = ticketState[0].id;
 			
+		} else if(statusName) {
+			// if given the status then set status at that
+			console.log('statusName: ', statusName);
+			const ticketState = this.allTransistions.filter(state => state.name == statusName);
+			console.log('ticketState: ', ticketState);
+
+			this.ticket.status = ticketState[0].name;
+			this.validTransitions();
+
 		} else {
 			// else set ticket state with new dropdown value and reload valid transitions
-			const ticketState = this.ticketStates.filter(state => state.id == this.ticketDropdown.value);
+			const ticketState = this.allTransistions.filter(state => state.id == this.ticketDropdown.value);
+			console.log('ticketState: ', ticketState);
 			this.ticket.status = ticketState[0].name;
 			this.validTransitions();
 		}

@@ -119,23 +119,20 @@ export class QaGeneratorComponent {
 			}
 		);
 
-		// if we don't have repos yet then load them now
-		if(!(this.repoArray.length > 0)){
-			// disabled submit button for QA gen
-			this.loadingBranches = true;
+		// disabled submit button for QA gen
+		this.loadingBranches = true;
 
-			// get all branches associated with this msrp
-			this.repoLookUp$ = this.jira.getTicketBranches(this.msrp).subscribe(
-				response => {
-					this.loadingBranches = false;
-					this.processBranches(response.data);
-				},
-				error => {
-					this.loadingBranches = false;
-					this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-				}
-			);
-		}		
+		// get all branches associated with this msrp
+		this.repoLookUp$ = this.jira.getTicketBranches(this.msrp).subscribe(
+			response => {
+				this.loadingBranches = false;
+				this.processBranches(response.data);
+			},
+			error => {
+				this.loadingBranches = false;
+				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
+			}
+		);	
 	}
 
 	/*
