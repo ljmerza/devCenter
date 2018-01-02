@@ -5,7 +5,10 @@ import {
 } from '@angular/core';
 
 import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
-import { NgForm } from '@angular/forms';
+import { 
+	NgForm,FormGroup, FormControl, Validators, FormBuilder,
+	AbstractControl, ValidationErrors, FormArray
+} from '@angular/forms';
 
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
@@ -21,18 +24,12 @@ import { ConfigService } from './../services/config.service'
 export class QaGeneratorComponent {
 	modalReference; // reference to open modal
 	loadingBranches:boolean = true; // are we loading branches?
-
 	repoLookUp$;
+	qaForm;
 
-	// form fields
-	pcrNeeded:boolean = true;
-	codeReview:boolean = true;
-	qaSteps:string;
-	logTime = {hour: 0, minute: 0};
 	hourStep = 1;
 	minuteStep = 15;
 	repoArray = [];
-
 	branches; // loaded branches data
 
 	@ViewChild('qaModal') content:ElementRef;
@@ -45,59 +42,108 @@ export class QaGeneratorComponent {
 		public jira:JiraService, 
 		private modalService:NgbModal, 
 		public toastr: ToastrService, 
-		public config: ConfigService
-	) {}
+		public config: ConfigService,
+		private fb: FormBuilder
+	) {
+		this.qaForm = fb.group({
+			checkBoxes: fb.group({
+				pcrNeeded: new FormControl(),
+				codeReview: new FormControl()
+			}),
+			qaSteps: new FormControl(),
+			logTime: new FormControl({hour: 0, minute: 0}),
+			branches: new FormArray([])
+		})
+	}
 
 	/*
 	*/
-	submitQA(formObj: NgForm): void {
+	addBranch(){
+		// create empty repo selection
+		const selection = {
+			allRepos: this.repos,
+			allBranches: [],
+
+			repositoryName: '',
+			reviewedBranch: '',
+			baseBranch: '',
+		};
+
+		// add to branches form array
+		(this.qaForm.get('branches') as FormArray).push(new FormControl(selection));
+	}
+
+	/*
+	*/
+	removeBranch(branchIndex:number): void {
+		// if only one left cant delete
+		if((this.qaForm.get('branches') as FormArray).length == 1){
+			this.toastr.showToast('Must have at least one repo.', 'error');
+			return;
+		}
+
+		(this.qaForm.get('branches') as FormArray).removeAt(branchIndex);
+	}
+
+	/*
+	*/
+	submitQA(isSaving): void {
+
+		console.log('isSaving: ', isSaving);
 
 		// close modal
 		this.modalReference.close();
 
-		// create POST data structure
-		let postData = {
-			qa_steps: formObj.value.qaSteps,
-			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
-			autoCR: formObj.value.codeReview,
-			autoPCR: formObj.value.pcrNeeded,
-			key: this.key,
-			repos: this.repoArray,
-			msrp: this.msrp
-		};
-
-		// show informational toast
-		if(!formObj.value.qaSteps){
-			this.toastr.showToast('Creating Crucible but not updating to Jira', 'info');
-			this.statusChange.emit({cancelled: true, showMessage: false});
-		} else {
-			this.toastr.showToast('Creating Crucible and updating Jira', 'info');
+		// end here if we are just closing modal
+		if(!isSaving){
+			return;
 		}
 
-		// send POST request and notify results
-		this.jira.generateQA(postData).subscribe(
-			response => {
-				this.toastr.showToast(`
-					<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>
-					<br>
-					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
-				`, 'success', true);
+		console.log('qaForm: ', this.qaForm);
 
-				// only update status if we are updating Jira
-				if(formObj.value.qaSteps){
-					this.statusChange.emit({cancelled: false, showMessage: false});
-				}
+		// create POST data structure
+		// let postData = {
+		// 	qa_steps: formObj.value.qaSteps,
+		// 	log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
+		// 	autoCR: formObj.value.codeReview,
+		// 	autoPCR: formObj.value.pcrNeeded,
+		// 	key: this.key,
+		// 	repos: this.repoArray,
+		// 	msrp: this.msrp
+		// };
+
+		// // show informational toast
+		// if(!formObj.value.qaSteps){
+		// 	this.toastr.showToast('Creating Crucible but not updating to Jira', 'info');
+		// 	this.statusChange.emit({cancelled: true, showMessage: false});
+		// } else {
+		// 	this.toastr.showToast('Creating Crucible and updating Jira', 'info');
+		// }
+
+		// // send POST request and notify results
+		// this.jira.generateQA(postData).subscribe(
+		// 	response => {
+		// 		this.toastr.showToast(`
+		// 			<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>
+		// 			<br>
+		// 			<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
+		// 		`, 'success', true);
+
+		// 		// only update status if we are updating Jira
+		// 		if(formObj.value.qaSteps){
+		// 			this.statusChange.emit({cancelled: false, showMessage: false});
+		// 		}
 				
-			},
-			error => {
-				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
+		// 	},
+		// 	error => {
+		// 		this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
 				
-				// only update status if we are updating Jira
-				if(formObj.value.qaSteps){
-					this.statusChange.emit({cancelled: true, showMessage: true});
-				}
-			}
-		);
+		// 		// only update status if we are updating Jira
+		// 		if(formObj.value.qaSteps){
+		// 			this.statusChange.emit({cancelled: true, showMessage: true});
+		// 		}
+		// 	}
+		// );
 	}
 
 	/*

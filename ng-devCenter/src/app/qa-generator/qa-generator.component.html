@@ -1,10 +1,10 @@
 <!-- QA Generator Model -->
-<ng-template #qaModal let-c="close" let-d='dismiss'>
-	<form class="form-group" #qaGenForm="ngForm" (ngSubmit)="submitQA(qaGenForm)">
+<ng-template #qaModal>
+	<form [formGroup]="qaForm">
 
 		<div class="modal-header">
 			<h2 class="modal-title">QA Generator</h2>
-			<button type="button" class="close" aria-label="Close" (click)="d()">
+			<button type="button" class="close" aria-label="Close" (click)="submitQA()">
 				<span aria-hidden="true">&times;</span>
 			</button>
 		</div>
@@ -26,7 +26,7 @@
 			</div>
 
 			<ng-template #ticketTable>
-				<div class="repoDropdownParent" *ngFor=' let repo of repoArray; index as idx'>
+				<div class="repoDropdownParent" *ngFor="let repo of this.get('qaForm').controls; index as idx">
 					<div class="form-group">
 						<div class="row">
 							<div class='col-2'>
@@ -34,7 +34,7 @@
 								<select 
 									class="form-control repositoryName" 
 									name="repositoryName-{{idx}}" 
-									[(ngModel)]='repo.repositoryName'
+									formControlName='repo.repositoryName'
 									(change)='getBranches($event.target.value, idx)'
 								>
 									<option *ngFor='let allRepo of repo.allRepos'>{{allRepo.name}}</option>
@@ -42,13 +42,13 @@
 							</div>
 							<div class='col-6'>
 								<label for="reviewedBranch" *ngIf='idx == 0'>Branch:</label>
-								<select class="form-control reviewedBranch" name="reviewedBranch-{{idx}}" [(ngModel)]='repo.reviewedBranch'>
+								<select class="form-control reviewedBranch" name="reviewedBranch-{{idx}}" formControlName='repo.reviewedBranch'>
 									<option *ngFor='let branch of repo.allBranches'>{{branch}}</option>
 								</select>
 							</div>
 							<div class='col-3'>
 								<label for="baseBranch" *ngIf='idx == 0'>Branched From:</label>
-								<select class="form-control baseBranch" name="baseBranch-{{idx}}" [(ngModel)]='repo.baseBranch'>
+								<select class="form-control baseBranch" name="baseBranch-{{idx}}" formControlName='repo.baseBranch'>
 									<option *ngFor='let branch of repo.allBranches'>{{branch}}</option>
 								</select>
 							</div>
@@ -71,7 +71,7 @@
 			<!-- QA steps -->
 			<h4>QA Steps:</h4>
 			<div class="form-group">
-				 <textarea class="form-control" name="qaSteps" id="qaSteps" rows=15 [(ngModel)]="qaSteps"></textarea>
+				 <textarea class="form-control" name="qaSteps" id="qaSteps" rows=15 formControlName="qaSteps"></textarea>
 			</div>
 
 			<!-- checkboxes -->
@@ -80,13 +80,13 @@
 					<div class="col">
 						<div class="form-check">
 							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" name='pcrNeeded' [(ngModel)]="pcrNeeded">
+								<input class="form-check-input" type="checkbox" name='pcrNeeded' formControlName="pcrNeeded">
 								Auto set to "PCR - Needed" component
 							</label>
 						</div>
 						<div class="form-check">
 							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" name='codeReview' [(ngModel)]="codeReview">
+								<input class="form-check-input" type="checkbox" name='codeReview' formControlName="codeReview">
 								Auto set to "Code Review" status
 							</label>
 						</div>
@@ -97,7 +97,7 @@
 							<ngb-timepicker
 								class='float-right button-border'
 								name="logTime"
-								[(ngModel)]="logTime"
+								formControlName="logTime"
 								[hourStep]="hourStep" 
 								[minuteStep]="minuteStep">
 							</ngb-timepicker>
@@ -109,12 +109,13 @@
 
 		<div class="modal-footer">
 			<button 
-				type="submit" 
+				type="submit"
+				(click)="submitQA('save')"
 				[disabled]="loadingBranches"
 				class="btn btn-outline-success"
 			>Generate
 			</button>
-			<button type="button" class="btn btn-outline-danger" (click)="d()">Cancel</button>
+			<button type="button" class="btn btn-outline-danger" (click)="submitQA()">Cancel</button>
 		</div>
 	</form>
 </ng-template>
