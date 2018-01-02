@@ -111,17 +111,17 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		# change status on Jira if not pcr pass/add (they are 'fake' statuses)
 		if data['status_type'] != 'pcrPass' and data['status_type'] != 'pcrAdd':
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-
+			
 		# elif pcr pass/complete -> add user, complete review, add comment to Crucible
-		elif data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
+		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
 			status_response = CrucibleRequests.pass_review(data=data, crucible_obj=crucible_obj)
 
 		# elif pcrAdd then add user to review
-		elif data['status_type'] == 'pcrAdd':
+		if data['status_type'] == 'pcrAdd':
 			status_response = CrucibleRequests.add_reviewer(data=data, crucible_obj=crucible_obj)
 
 		# elif QA pass then add merge component
-		elif data['status_type'] == 'qaPass':
+		if data['status_type'] == 'qaPass':
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 
 		# return response

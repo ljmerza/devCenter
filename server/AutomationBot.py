@@ -211,8 +211,8 @@ class AutomationBot(object):
 			# get pcr estimate
 			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point)
 			# send new ticket ping to user and update ping
-			self.chat_obj.send_new_ticket(key=key, msrp=msrp, summary=summary, username=username, story_point=story_point, pcr_estimate=pcr_estimate)
 			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
+			self.chat_obj.send_new_ticket(key=key, msrp=msrp, summary=summary, username=username, story_point=story_point, pcr_estimate=pcr_estimate)
 			# send me new ticket if it's not my ticket
 			# even if ive already been pinged (like for pm ticket)
 			if(username != self.username):
@@ -221,16 +221,17 @@ class AutomationBot(object):
 		# else if project manager then ping me if not my ticket 
 		# but do not update ping user and update my ping so I don't get it again
 		elif(wants_ping == 2):
+			self.sql_object.update_ping(key=key, field='me_ping', value=1, session=session)
 			if(username != self.username and not self.sql_object.get_ping(key=key, field='me_ping', session=session)):
 				# then ping me that a new user has been assigned
 				self.chat_obj.send_me_ticket_info(key=key, summary=summary, username=username, ping_message='New Ticket')
-			self.sql_object.update_ping(key=key, field='me_ping', value=1, session=session)
+			
 
 		# else user doesn't want ping so update new ping and send me ticket
 		else:
+			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
 			if(username != self.username):
 				self.chat_obj.send_me_ticket_info(key=key, summary=summary, username=username, ping_message='New Ticket')
-			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
 
 
 	def check_for_status_pings(self, jira_ticket, session):
