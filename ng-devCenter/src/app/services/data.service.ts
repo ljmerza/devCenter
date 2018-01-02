@@ -42,6 +42,13 @@ export class DataService {
 
 	/*
 	*/
+	copyText(text){
+		text.select();
+		document.execCommand("copy");
+	}
+
+	/*
+	*/
 	removeItem(data) {
 		localStorage.removeItem(`devCenter.${data}`);
 	}

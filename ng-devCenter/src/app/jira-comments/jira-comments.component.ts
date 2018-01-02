@@ -61,12 +61,22 @@ export class JiraCommentsComponent implements OnInit {
 		// open modal
 		this.modalService.open(this.content, { windowClass: 'qa-modal' });
 
-		// highlight code needs to be triggered after modal opens
-		// so set call to initializer to back of event loop
+
+		// set all of this at back of event loop for after modal opens
+		let self=this;
 		setTimeout( () => {
+			// highlight code needs to be triggered after modal opens
 			$('pre').each(function(i, block) {
 				hljs.highlightBlock(block);
 			});
+
+			// for each table item add click event for copying text
+			$('.tableCopy').each(function(i, block) {
+				$(this).click(function(){
+					self.jira.copyText( $(this).children('input').get(0) );
+				});
+			});
+
 		},0);
 	}
 

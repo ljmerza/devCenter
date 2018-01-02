@@ -37,3 +37,14 @@
 	margin-bottom: 10px;
 	float: right;
 }
+
+.tableCopy {
+	span {
+		cursor: pointer;
+	}
+
+	input {
+		position: absolute;
+		right: 10000px;
+	}
+}

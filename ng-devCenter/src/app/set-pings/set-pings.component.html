@@ -12,7 +12,7 @@
 				<tr>
 					<td>Sprint</td>
 					<td>
-						<i class="material-icons" title='Copy to clipboard' (click)="copyText(sprintInput)">note</i>
+						<i class="material-icons" title='Copy to clipboard' (click)="jira.copyText(sprintInput)">note</i>
 						{{sprint}} 
 						<input class='hidden-clip' type="text" #sprintInput value={{sprint}}>
 					</td>
@@ -20,7 +20,7 @@
 				<tr>
 					<td>Branch</td>
 					<td>
-						<i class="material-icons" title='Copy to clipboard' (click)="copyText(branchInput)">note</i>
+						<i class="material-icons" title='Copy to clipboard' (click)="jira.copyText(branchInput)">note</i>
 						{{branch}} 
 						<input class='hidden-clip' type="text" #branchInput value={{branch}}>
 					</td>
@@ -28,7 +28,7 @@
 				<tr>
 					<td>Commit</td>
 					<td>
-						<i class="material-icons" title='Copy to clipboard' (click)="copyText(commitInput)">note</i>
+						<i class="material-icons" title='Copy to clipboard' (click)="jira.copyText(commitInput)">note</i>
 						{{commit}} 
 						<input class='hidden-clip' type="text" #commitInput value={{commit}}>
 					</td>

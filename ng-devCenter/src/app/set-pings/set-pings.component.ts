@@ -28,6 +28,8 @@ export class SetPingsComponent {
 		private modalService: NgbModal
 	) { }
 
+	/*
+	*/
 	openPingModel(){
 		this.modalService.open(this.content, this.options).result.then( (pingType) => {
 			this.jira.setPing({
@@ -42,10 +44,4 @@ export class SetPingsComponent {
 			);
 		}, () => null);
 	}
-
-	copyText(text){
-		text.select();
-		document.execCommand("copy");
-	}
-
 }

@@ -10,14 +10,16 @@ export class CommentFormatPipe implements PipeTransform {
 		this.config = config;
 	}
 
+	ids = 1928378475;
+
 	/*
 	*/
 	transform(comment:any, attachments:any,): any {
 
 		// make an array so reference is persisted through functions (i know...)
-		let stepNumber = [1];
+		let stepNumber = 1;
 
-		comment = this._formatLines(comment, attachments, stepNumber);
+		[comment, stepNumber] = this._formatLines(comment, attachments, stepNumber);
 		comment = this._formatCode(comment);
 		comment = `<div class="container"> ${comment} </div>`;
 		return comment;
@@ -32,41 +34,39 @@ export class CommentFormatPipe implements PipeTransform {
 		// finally join all pieces back to one comment and set on current comment
 		return comment.split(/{code((.|:|=|\.)*?)}|{noformat}/)
 		.filter(comment => comment)
-		.map( (commentPiece, index) => {
-
-			console.log('commentPiece: ', commentPiece);
-
-			return index%2==1 ? `<pre>${commentPiece}</pre>`.replace(/<br>/g, '\n') : commentPiece;
-			
-		}).join('');
+		.map( (commentPiece, index) => index%2==1 ? `<pre>${commentPiece}</pre>`.replace(/<br>/g, '\n') : commentPiece)
+		.join('');
 	}
 
 	/*
 	*/
-	_formatLines(comment, attachments, stepNumber){
+	_formatLines(comment:string, attachments, stepNumber){
 		let tableStart = false;
 
-		return comment.split('\n').map( commentPiece => {
+		comment = comment.split('\n').map( commentPiece => {
 
-			commentPiece = this._format_list_headers(commentPiece, stepNumber);
-			commentPiece = this._formatTable(commentPiece, tableStart);
+			[commentPiece, stepNumber] = this._format_list_headers(commentPiece, stepNumber);
+			[commentPiece, tableStart] = this._formatTable(commentPiece, tableStart);
 			commentPiece = this._format_colors(commentPiece);
 			commentPiece = this._format_links(commentPiece);
 			commentPiece = this._format_images(commentPiece, attachments);
 
 			// return new comment line
-			return commentPiece + '<br>';
+			const newLine = tableStart ? '' : '<br>';
+			return commentPiece + newLine;
 		}).join('');
+
+		return [comment, stepNumber];
 	}
 
 	/*
 	*/
-	_format_list_headers(commentPiece, stepNumber) {
+	_format_list_headers(commentPiece:string, stepNumber) {
 
 		// replace any lists
 		if(/# /.test(commentPiece)){
-			commentPiece = commentPiece.replace('# ', `${stepNumber[0]}. `);
-			stepNumber[0]++;
+			commentPiece = commentPiece.replace('# ', `${stepNumber}. `);
+			stepNumber++;
 		} else if(/#\* /.test(commentPiece)) {
 			commentPiece = commentPiece.replace('#* ', `	- `);
 		}
@@ -92,13 +92,13 @@ export class CommentFormatPipe implements PipeTransform {
 			}).join('');			
 		}
 
-		return commentPiece;
+		return [commentPiece, stepNumber];
 
 	}
 
 	/*
 	*/
-	_formatTable(commentPiece, tableStart){
+	_formatTable(commentPiece:string, tableStart){
 		// create tables
 		if(commentPiece.startsWith('||')){
 			tableStart = true;
@@ -112,7 +112,16 @@ export class CommentFormatPipe implements PipeTransform {
 			commentPiece = '<tr>' + commentPiece
 			.split('|')
 			.filter(t => !!t.trim())
-			.map(t => '<td>'+t+'</td>')
+			.map(t => {
+				return `
+				<td>
+					<span class='tableCopy'>
+						<span class="material-icons" title="Copy to clipboard">note</span>
+						<input value='${t}'>
+					</span>
+					${t}
+				</td>`;
+			})
 			.join('') + '</tr>';
 
 		} else if(tableStart) {
@@ -120,12 +129,12 @@ export class CommentFormatPipe implements PipeTransform {
 			commentPiece = '<tbody></table>';
 		}
 
-		return commentPiece;
+		return [commentPiece, tableStart];
 	}
 
 	/*
 	*/
-	_format_colors(commentPiece){
+	_format_colors(commentPiece:string){
 		// replace colors
 		commentPiece = commentPiece.replace(/{color:((\w+)|(#[A-Za-z0-9]{3,6}))(.*?)}/, function(a,b) {
 			return `<span style="color: ${b}">`
@@ -136,7 +145,7 @@ export class CommentFormatPipe implements PipeTransform {
 
 	/*
 	*/
-	_format_images(commentPiece, attachments){
+	_format_images(commentPiece:string, attachments){
 		return commentPiece.replace(/!(.*?)!/, function(a,b) {
 			const filenames = a.replace('!', '').split('|');
 			const filePath = attachments.filter(file => file.filename === filenames[0]);
@@ -150,11 +159,11 @@ export class CommentFormatPipe implements PipeTransform {
 		});
 	}
 
-	_format_links(commentPiece){
+	_format_links(commentPiece:string){
 
 		// replace Jira keys with links
 		commentPiece = commentPiece.replace(/[A-Z]{1,10}-(\d){2,4}/g, (a,b) => {
-			return `<a href="${this.config.jiraUrl}/browse/${a}" target="_blank">${a}</a>`;
+			return (/(\<\/a>)|http/.test(commentPiece)) ? a : `<a href="${this.config.jiraUrl}/browse/${a}" target="_blank">${a}</a>`;
 		});
 
 		// replace markdown links
@@ -166,8 +175,8 @@ export class CommentFormatPipe implements PipeTransform {
 
 		// replace general links
 		commentPiece =  commentPiece.replace(/https?:\/\/(\w|.)*/, function(a,b) {
-
-			if( a.includes('target="_blank"') ){
+			// if already has a link then ignore
+			if( commentPiece.includes('<a href') ){
 				return a;
 			} else {
 				const pieces = a.split(' ');
