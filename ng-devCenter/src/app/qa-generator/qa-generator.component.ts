@@ -46,31 +46,28 @@ export class QaGeneratorComponent {
 		private fb: FormBuilder
 	) {
 		this.qaForm = fb.group({
-			checkBoxes: fb.group({
+			selections: fb.group({
 				pcrNeeded: new FormControl(),
-				codeReview: new FormControl()
+				codeReview: new FormControl(),
+				logTime: new FormControl({hour: 0, minute: 0}),
 			}),
 			qaSteps: new FormControl(),
-			logTime: new FormControl({hour: 0, minute: 0}),
-			branches: new FormArray([])
-		})
+			branches: fb.array([])
+		});
 	}
 
 	/*
 	*/
-	addBranch(){
-		// create empty repo selection
-		const selection = {
-			allRepos: this.repos,
-			allBranches: [],
+	addBranch(newBranch){
+		const branch = new FormGroup({
+			allRepos: this.fb.array(this.repos),
+			allBranches: this.fb.array(newBranch.allBranches || []),
+			repositoryName: new FormControl(newBranch.repositoryName || ''),
+			reviewedBranch: new FormControl(newBranch.reviewedBranch || ''),
+			baseBranch: new FormControl(newBranch.baseBranch || '')
+		});
 
-			repositoryName: '',
-			reviewedBranch: '',
-			baseBranch: '',
-		};
-
-		// add to branches form array
-		(this.qaForm.get('branches') as FormArray).push(new FormControl(selection));
+		(this.qaForm.get('branches') as FormArray).push(branch);
 	}
 
 	/*
@@ -88,9 +85,6 @@ export class QaGeneratorComponent {
 	/*
 	*/
 	submitQA(isSaving): void {
-
-		console.log('isSaving: ', isSaving);
-
 		// close modal
 		this.modalReference.close();
 
@@ -185,11 +179,10 @@ export class QaGeneratorComponent {
 	*/
 	processBranches(branches): void {
 
-		// for each repo found create arrays of data needed
-		this.repoArray = branches.map( (repo, index) => {
+		branches.forEach( (repo, index) => {
 
 			// for each matching dev branch found get list of branches
-			return repo.branches.map( devBranch => {
+			const newBranch = repo.branches.map( devBranch => {
 				let selection = {
 					allRepos: this.repos,
 					allBranches: repo.all,
@@ -210,7 +203,10 @@ export class QaGeneratorComponent {
 				selection.baseBranch = baseBranch.length == 1 ? baseBranch[0] : '';
 
 				return selection;
-			})[0];	
+			})[0];
+
+
+			this.addBranch(newBranch);
 		});
 	}
 
