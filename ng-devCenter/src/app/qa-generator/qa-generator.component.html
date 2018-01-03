@@ -26,49 +26,59 @@
 			</div>
 
 			<ng-template #ticketTable>
-		<!-- 		<div 
-					class="repoDropdownParent" 
-					*ngFor="let repo of this.get('qaForm').controls.branches.controls; index as idx"
-				>
-					<div class="form-group">
-						<div class="row">
-							<div class='col-2'>
-								<label for="repositoryName" *ngIf='idx == 0'>Repo:</label>
-								<select 
-									class="form-control repositoryName" 
-									name="repositoryName-{{idx}}" 
-									formControlName='repo.repositoryName'
-									(change)='getBranches($event.target.value, idx)'
-								>
-									<option *ngFor='let allRepo of repo.allRepos'>{{allRepo.name}}</option>
-								</select>
-							</div>
-							<div class='col-6'>
-								<label for="reviewedBranch" *ngIf='idx == 0'>Branch:</label>
-								<select class="form-control reviewedBranch" name="reviewedBranch-{{idx}}" formControlName='repo.reviewedBranch'>
-									<option *ngFor='let branch of repo.allBranches'>{{branch}}</option>
-								</select>
-							</div>
-							<div class='col-3'>
-								<label for="baseBranch" *ngIf='idx == 0'>Branched From:</label>
-								<select class="form-control baseBranch" name="baseBranch-{{idx}}" formControlName='repo.baseBranch'>
-									<option *ngFor='let branch of repo.allBranches'>{{branch}}</option>
-								</select>
-							</div>
-							<div class='col-1'>
-								<i 
-									class="material-icons" 
-									[ngClass]="{'delete-icon': idx == 0, 'delete-icon-next': idx != 0}" 
-									(click)='deleteDevBranch(idx)'
-								>delete</i>
+				<div formArrayName='branches'>
+					<div class="repoDropdownParent" *ngFor="let repo of branches.controls; index as i" [formGroupName]="i">
+						<div class="form-group">
+							<div class="row">
+								<!-- all repos -->
+								<div class='col-2'>
+									<label *ngIf='i==0'>Repo:</label>
+									<select class="form-control" formControlName="repositoryName">
+										<option value="" disabled>Select a repo</option>
+										<option 
+											[selected]="allRepo.value==branches.controls[i].controls.repositoryName.value"
+											*ngFor='let allRepo of branches.controls[i].controls.allRepos.controls'>
+											{{allRepo.value}}
+										</option>
+									</select>
+								</div>
+								<!-- branch -->
+								<div class='col-6'>
+									<label *ngIf='i==0'>Branch:</label>
+									<select class="form-control" formControlName="reviewedBranch">
+										<option value="" disabled>Select a branch</option>
+										<option
+											[selected]="allBranch.value==branches.controls[i].controls.reviewedBranch.value"
+											*ngFor='let allBranch of branches.controls[i].controls.allBranches.controls'>
+											{{allBranch.value}}
+										</option>
+									</select>
+								</div>
+								<!-- branches from -->
+								<div class='col-3'>
+									<label for="baseBranch" *ngIf='i==0'>Branched From:</label>
+									<select class="form-control"  formControlName="baseBranch">
+										<option value="" disabled>Select a base branch</option>
+										<option 
+											[selected]="allBranch.value==branches.controls[i].controls.baseBranch.value"
+											*ngFor='let allBranch of branches.controls[i].controls.allBranches.controls'>
+											{{allBranch.value}}
+										</option>
+									</select>
+								</div>
+								<!-- delete -->
+								<div class='col-1'>
+									<i class="material-icons" [ngClass]="{'delete-icon': i==0, 'delete-icon-next': i!=0}" (click)='removeBranch(i)'>delete</i>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+				
 				<div class="add-repo">
-					<i class="material-icons text-success" (click)='addRepo()'>add_box</i> 
+					<i class="material-icons text-success" (click)='addBranch({})'>add_box</i> 
 					<span>Add Repo</span>
-				</div> -->
+				</div>
 			</ng-template>
 
 			<!-- QA steps -->
@@ -97,13 +107,7 @@
 					<div class="col">
 						<span class="float-right">
 							<label for="">Log Time:</label>
-							<ngb-timepicker
-								class='float-right button-border'
-								name="logTime"
-								formControlName="logTime"
-								[hourStep]="hourStep" 
-								[minuteStep]="minuteStep">
-							</ngb-timepicker>
+							<ngb-timepicker class='float-right button-border' name="logTime" formControlName="logTime" [hourStep]="hourStep" [minuteStep]="minuteStep"></ngb-timepicker>
 						</span>
 					</div>
 				</div>
@@ -111,14 +115,12 @@
 		</div>
 
 		<div class="modal-footer">
-			<button 
-				type="submit"
-				(click)="submitQA('save')"
-				[disabled]="loadingBranches"
-				class="btn btn-outline-success"
-			>Generate
+			<button type="submit" (click)="submitQA('save')" [disabled]="loadingBranches" class="btn btn-outline-success">
+				Generate
 			</button>
-			<button type="button" class="btn btn-outline-danger" (click)="submitQA()">Cancel</button>
+			<button type="button" class="btn btn-outline-danger" (click)="submitQA()">
+				Cancel
+			</button>
 		</div>
 	</form>
 </ng-template>
