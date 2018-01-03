@@ -86,8 +86,6 @@ while True:
 			session.trust_env=False
 			response = session.post(url=f"http://{host}:{port}/dev_center/socket_tickets", json=response)
 
-
-	else:
-		time.sleep(60)
+	time.sleep(60)
 
 ########################################################################

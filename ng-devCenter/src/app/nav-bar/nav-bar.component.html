@@ -33,7 +33,6 @@
 					<a class="dropdown-item" [routerLink]="['/jira', 'scrum']">Scrum Board</a>
 					<a class="dropdown-item" [routerLink]="['/jira', 'fullscrum']">Full Scrum Board</a>
 					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" target="_blank" href="{{config.jiraUrl}}{{config.jiraPath}}">Jira</a>
 					<a class="dropdown-item" target="_blank" href="{{config.crucibleUrl}}{{config.cruciblePath}}">Crucible</a>
 					<a class="dropdown-item" target="_blank" href="{{config.codeCloudUrl}}{{config.codeCloudPath}}">Code Cloud</a>
 					<a class="dropdown-item" target="_blank" href="{{config.jiraUrl}}{{config.scrumBoardPath}}">Scrum Board</a>
@@ -198,12 +197,20 @@
 				</ul>
 			</li>
 
+			<!-- misc top level links -->
 			<li class="nav-item">
 				<a class="nav-link" target="_blank" href="{{config.msrpLink}}">MSRP</a>
 			</li>
-
+			<li class="nav-item">
+				<a class="nav-link" target="_blank" href="{{config.myApex}}">My APEX</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" target="_blank" href="{{config.jiraUrl}}">JIRA</a>
+			</li>
+			
+			<!-- log your hours -->
 			<li class="nav-item" *ngIf='isFriday'>
-				<a class="nav-link confirm_selection" target="_blank" href="{{config.logHours}}">
+				<a class="nav-link confirm_selection" target="_blank" href="{{config.myApex}}">
 					Log Your Hours
 				</a>
 			</li>

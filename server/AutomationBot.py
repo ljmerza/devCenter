@@ -37,7 +37,15 @@ class AutomationBot(object):
 		'''
 		self.username = os.environ['USER']
 		self.password = os.environ['PASSWORD']
-		self.filters = {'my_filter':"11502", 'beta':'11004', 'qa':'11019', 'cr':'11007', 'uct':'11014', 'all':'11002', 'pcr':'11128'}
+		self.filters = {
+			'my_filter':"11502", 
+			'beta':'11004', 
+			'qa':'11019', 
+			'cr':'11007', 
+			'uct':'11014', 
+			'all':'11002', 
+			'pcr':'11128'
+		}
 		################################################################################
 		# create DB object and connect
 		self.sql_object = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
@@ -74,7 +82,10 @@ class AutomationBot(object):
 			start_get = time.time()
 
 			# get all open Jira tickets
-			jira_tickets = self.jira_obj.get_jira_tickets(jql=self.jira_obj.jira_api.all_open_tickets, cred_hash=self.cred_hash)			
+			jira_tickets = self.jira_obj.get_jira_tickets(
+				jql=self.jira_obj.jira_api.all_open_tickets, 
+				cred_hash=self.cred_hash
+			)			
 
 			# make sure we have Jira tickets
 			if not jira_tickets['status']:
@@ -87,14 +98,14 @@ class AutomationBot(object):
 			# print time to retrieve tickets
 			print('Processing '+str(len(jira_tickets['data']))+' Jira tickets')
 			end_get = time.time()
-			print('Retrieved Tickets:        ', end_get-start_get)
+			print('Retrieved Tickets:        {:.4}'.format(end_get-start_get))
 			start_bot = time.time()
 
 			# create thread for chatbot to check pings and print time to start thread
 			for jira_ticket in jira_tickets['data']:	
 				self.check_for_pings(jira_ticket=jira_ticket)
 			end_bot = time.time()
-			print('Check for pings:          ', end_bot-start_bot)
+			print('Check for pings:          {:.4}'.format(end_bot-start_bot))
 			start_update = time.time()
 
 			# for each jira ticket update DB table
@@ -105,7 +116,7 @@ class AutomationBot(object):
 
 			# print time to update tickets in DB
 			end_update = time.time()
-			print('Updated Tickets:          ', end_update-start_update)
+			print('Updated Tickets:          {:.4}'.format(end_update-start_update))
 			start_commit = time.time()
 
 			# set all inactive tickets and print time it took
@@ -113,7 +124,7 @@ class AutomationBot(object):
 			self.sql_object.set_inactive_tickets(jira_tickets=jira_tickets, session=session)
 			self.sql_object.logout(session=session)
 			end_inactive = time.time()
-			print('Set Inactive Tickets:     ', end_inactive-start_commit)		
+			print('Set Inactive Tickets:     {:.4}'.format(end_inactive-start_commit))		
 			
 			# if we want to add beta stuff and enough time has passed then show beta stats
 			if self.is_beta_week and (self.beta_wait_time == self.beta_wait_count):
@@ -122,11 +133,11 @@ class AutomationBot(object):
 				thr.start()
 				end_beta = time.time()
 				self.beta_wait_count = self.beta_wait_count + 1
-				print('Beta processing: ', end_beta-start_beta)
+				print('Beta processing:          {:.4}'.format(end_beta-start_beta))
 
 			# print cron runtime 
 			end_cron = time.time()
-			print('CRON end time: ', end_cron-start_get)
+			print('CRON end time:            {:.4}'.format(end_cron-start_get))
 			print('-'*20)
 
 			return jira_tickets
@@ -212,11 +223,25 @@ class AutomationBot(object):
 			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point)
 			# send new ticket ping to user and update ping
 			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
-			self.chat_obj.send_new_ticket(key=key, msrp=msrp, summary=summary, username=username, story_point=story_point, pcr_estimate=pcr_estimate)
+			thr = threading.Thread(
+				target=self.chat_obj.send_new_ticket, 
+				kwargs={
+				'key':key, 
+				'msrp':msrp, 
+				'summary':summary, 
+				'story_point':story_point, 
+				'pcr_estimate':pcr_estimate, 
+				'username': username
+			})
+			thr.start()
 			# send me new ticket if it's not my ticket
 			# even if ive already been pinged (like for pm ticket)
 			if(username != self.username):
-				self.chat_obj.send_me_ticket_info(key=key, summary=summary, username=username, ping_message='New Ticket')
+				thr = threading.Thread(
+					target=self.chat_obj.send_me_ticket_info, 
+					kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':'New Ticket'}
+				)
+				thr.start()
 
 		# else if project manager then ping me if not my ticket 
 		# but do not update ping user and update my ping so I don't get it again
@@ -224,14 +249,22 @@ class AutomationBot(object):
 			self.sql_object.update_ping(key=key, field='me_ping', value=1, session=session)
 			if(username != self.username and not self.sql_object.get_ping(key=key, field='me_ping', session=session)):
 				# then ping me that a new user has been assigned
-				self.chat_obj.send_me_ticket_info(key=key, summary=summary, username=username, ping_message='New Ticket')
+				thr = threading.Thread(
+					target=self.chat_obj.send_me_ticket_info, 
+					kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':'New Ticket'}
+				)
+				thr.start()
 			
 
 		# else user doesn't want ping so update new ping and send me ticket
 		else:
 			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
 			if(username != self.username):
-				self.chat_obj.send_me_ticket_info(key=key, summary=summary, username=username, ping_message='New Ticket')
+				thr = threading.Thread(
+					target=self.chat_obj.send_me_ticket_info, 
+					kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':'New Ticket'}
+				)
+				thr.start()
 
 
 	def check_for_status_pings(self, jira_ticket, session):
@@ -269,7 +302,17 @@ class AutomationBot(object):
 			# get PCR estimate
 			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point)
 			# send ping
-			self.chat_obj.send_pcr_needed(key=key, msrp=msrp, sprint=sprint, label=label, crucible_id=crucible_id, pcr_estimate=pcr_estimate)
+			thr = threading.Thread(
+				target=self.chat_obj.send_pcr_needed, 
+				kwargs={
+				'key':key, 
+				'msrp':msrp, 
+				'sprint':sprint, 
+				'label':label, 
+				'crucible_id':crucible_id, 
+				'pcr_estimate':pcr_estimate
+			})
+			thr.start()
 			# reset ping settings if needed
 			self.sql_object.reset_pings(ping_type='pcr_ping', key=key, session=session)
 			# update ping
@@ -277,7 +320,11 @@ class AutomationBot(object):
 
 		# if qa needed and has not been pinged - update db and send ping
 		elif("Ready for QA" in status and not pings.qa_ping):
-			self.chat_obj.send_qa_needed(key=key, msrp=msrp, sprint=sprint, label=label, crucible_id=crucible_id)
+			thr = threading.Thread(
+				target=self.chat_obj.send_qa_needed, 
+				kwargs={'key':key, 'msrp':msrp, 'sprint':sprint, 'label':label, 'crucible_id':crucible_id}
+			)
+			thr.start()
 			# reset ping settings if needed
 			self.sql_object.reset_pings(ping_type='qa_ping', key=key, session=session)
 			# update ping
@@ -304,7 +351,11 @@ class AutomationBot(object):
 			# notify of repo update
 			# repos_merged = self.crucible_obj.get_repos_of_review(crucible_id=crucible_id, cred_hash=self.cred_hash)
 			# if repos_merged['status']:
-			# 	self.chat_obj.send_merge_alert(key=key, msrp=msrp, sprint=sprint, username=username, repos_merged=repos_merged['data'], crucible_id=crucible_id, summary=summary)
+			# 	self.chat_obj.send_merge_alert(
+			# 	key=key, msrp=msrp, sprint=sprint, 
+			# 	username=username, repos_merged=repos_merged['data'], 
+			# 	crucible_id=crucible_id, summary=summary
+			# )
 			# else:
 			# 	self.sql_object.log_error(message='Could not retrieve repos for repo update ping: '+repos_merged['data'], session=session)
 			# update DB
@@ -340,12 +391,18 @@ class AutomationBot(object):
 		
 		# if user wants ping then ping them
 		if(wants_ping == 1):
-			thr = threading.Thread(target=self.chat_obj.send_jira_update, kwargs={'key':key, 'msrp':msrp, 'summary':summary, 'username':username, 'ping_message':ping_message, 'sprint':sprint})
+			thr = threading.Thread(
+				target=self.chat_obj.send_jira_update, 
+				kwargs={'key':key, 'msrp':msrp, 'summary':summary, 'username':username, 'ping_message':ping_message, 'sprint':sprint}
+			)
 			thr.start()
 		
 		# send me Merge Conflict
 		if(username != self.username):
-			thr = threading.Thread(target=self.chat_obj.send_me_ticket_info, kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':ping_message})
+			thr = threading.Thread(
+				target=self.chat_obj.send_me_ticket_info, 
+				kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':ping_message}
+			)
 			thr.start()
 
 		# reset pings

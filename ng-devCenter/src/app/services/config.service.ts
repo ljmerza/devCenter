@@ -512,11 +512,11 @@ export class ConfigService {
 			link: 'https://regex101.com/'
 		},
 		{
-			name: 'My Apex',
-			link: 'https://myapex.apexsystemsinc.com/psp/MYAPEX/'
+			name: 'Internal Stack Overflow',
+			link: 'http://stack.web.att.com/'
 		},
 	];
 
 
-	logHours = 'https://myapex.apexsystemsinc.com/psp/MYAPEX/';
+	myApex = 'https://myapex.apexsystemsinc.com/psp/MYAPEX/';
 }

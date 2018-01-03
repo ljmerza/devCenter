@@ -5,7 +5,10 @@ import {
 } from '@angular/core';
 
 import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
-import { NgForm } from '@angular/forms';
+import { 
+	NgForm, FormGroup, FormControl, Validators, FormBuilder,
+	AbstractControl, ValidationErrors, FormArray
+} from '@angular/forms';
 
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
@@ -20,20 +23,12 @@ import { ConfigService } from './../services/config.service'
 })
 export class QaGeneratorComponent {
 	modalReference; // reference to open modal
-	loadingBranches:boolean = true; // are we loading branches?
-
+	loadingBranches:boolean = false; // are we loading branches?
 	repoLookUp$;
+	qaForm;
 
-	// form fields
-	pcrNeeded:boolean = true;
-	codeReview:boolean = true;
-	qaSteps:string;
-	logTime = {hour: 0, minute: 0};
 	hourStep = 1;
 	minuteStep = 15;
-	repoArray = [];
-
-	branches; // loaded branches data
 
 	@ViewChild('qaModal') content:ElementRef;
 	@Output() statusChange = new EventEmitter();
@@ -42,32 +37,124 @@ export class QaGeneratorComponent {
 	@Input() repos;
 
 	constructor(
-		public jira:JiraService, 
-		private modalService:NgbModal, 
-		public toastr: ToastrService, 
-		public config: ConfigService
-	) {}
+		public jira:JiraService, private modalService:NgbModal, public toastr: ToastrService, 
+		public config: ConfigService,public formBuilder: FormBuilder
+	) {
+		// create form object
+		this.qaForm = this.formBuilder.group({
+			selections: this.formBuilder.group({
+				pcrNeeded: this.formBuilder.control(''),
+				codeReview: this.formBuilder.control(''),
+				logTime: this.formBuilder.control({hour: 0, minute: 0}),
+			}),
+			qaSteps: this.formBuilder.control(''),
+			branches: this.formBuilder.array([])
+		});
+	}
 
 	/*
 	*/
-	submitQA(formObj: NgForm): void {
+	get branches(): FormArray {
+		return this.qaForm.get('branches') as FormArray;
+	};
 
-		// close modal
+	/*
+	*/
+	addBranch(newBranch){
+
+		// create repo name control
+		let repositoryName = this.formBuilder.control(newBranch.repositoryName || '');
+
+		// create repo branch group
+		const branch = this.formBuilder.group({
+			allRepos: this.formBuilder.array(this.repos.map(repo => repo.name)),
+			allBranches: this.formBuilder.array(newBranch.allBranches || []),
+			allBranchedFrom: this.formBuilder.array(newBranch.allBranches || []),
+			repositoryName,
+			reviewedBranch: this.formBuilder.control(newBranch.reviewedBranch || ''),
+			baseBranch: this.formBuilder.control(newBranch.baseBranch || '')
+		});
+
+		// on repo change get all branches of repo and set on FormGroup
+		repositoryName.valueChanges.subscribe(repoName => {
+			this.jira.getBranches(repoName).subscribe( 
+				branches => branch.setControl('allBranches', this.formBuilder.array(branches.data.length > 0 ? branches.data:[])),
+				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+			);
+		});
+
+		// add new branch to branches array
+		(this.qaForm.get('branches') as FormArray).push(branch);
+	}
+
+	/*
+	*/
+	removeBranch(branchIndex:number): void {
+		// if only one left cant delete
+		if((this.qaForm.get('branches') as FormArray).length == 1){
+			this.toastr.showToast('Must have at least one repo.', 'error');
+			return;
+		}
+
+		(this.qaForm.get('branches') as FormArray).removeAt(branchIndex);
+	}
+
+	/*
+	*/
+	resetBranches(){
+		// reset branches array to empty
+		let branches = (this.qaForm.get('branches') as FormArray);
+		while (branches.length) {
+		    branches.removeAt(branches.length - 1);
+		}
+	}
+
+	/*
+	*/
+	submitQA(isSaving): void {
+
+		// if we are currently looking for repos then cancel that search
+		if(this.repoLookUp$) this.repoLookUp$.unsubscribe();
+
+		// end here if we are just closing modal
+		if(!isSaving){
+			this.statusChange.emit({cancelled: true, showMessage: true});
+			this.resetBranches();
+			this.modalReference.close();
+			return;
+
+		} else if(this.qaForm.invalid){
+			// make sure entire form is valid
+			this.statusChange.emit({cancelled: true, showMessage: true});
+			return;
+		}
+
+		// close modal since we dont need it anymore
 		this.modalReference.close();
+
+		// get selections sub formGroup and branches sub formArray
+		const selections = this.qaForm.controls.selections.controls;
+		const branches = this.qaForm.controls.branches.controls
 
 		// create POST data structure
 		let postData = {
-			qa_steps: formObj.value.qaSteps,
-			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
-			autoCR: formObj.value.codeReview,
-			autoPCR: formObj.value.pcrNeeded,
+			qa_steps: this.qaForm.controls.qaSteps.value,
+			log_time: selections.logTime.value.hour * 60 + selections.logTime.value.minute,
+			autoCR: selections.codeReview.value,
+			autoPCR: selections.pcrNeeded.value,
 			key: this.key,
-			repos: this.repoArray,
-			msrp: this.msrp
+			msrp: this.msrp,
+			repos: branches.map(branch => {
+				return {
+					baseBranch: branch.controls.baseBranch.value,
+					repositoryName: branch.controls.repositoryName.value,
+					reviewedBranch: branch.controls.reviewedBranch.value
+				}
+			}),
 		};
 
 		// show informational toast
-		if(!formObj.value.qaSteps){
+		if(!postData.qa_steps){
 			this.toastr.showToast('Creating Crucible but not updating to Jira', 'info');
 			this.statusChange.emit({cancelled: true, showMessage: false});
 		} else {
@@ -83,8 +170,11 @@ export class QaGeneratorComponent {
 					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
 				`, 'success', true);
 
+				// reset branch list
+				this.resetBranches();
+
 				// only update status if we are updating Jira
-				if(formObj.value.qaSteps){
+				if(postData.qa_steps){
 					this.statusChange.emit({cancelled: false, showMessage: false});
 				}
 				
@@ -93,7 +183,7 @@ export class QaGeneratorComponent {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
 				
 				// only update status if we are updating Jira
-				if(formObj.value.qaSteps){
+				if(postData.qa_steps){
 					this.statusChange.emit({cancelled: true, showMessage: true});
 				}
 			}
@@ -107,17 +197,6 @@ export class QaGeneratorComponent {
 		// open modal
 		this.modalReference = this.modalService
 		.open(this.content, { windowClass: 'qa-modal' });
-
-		this.modalReference.result.then(
-			() => null,
-			() => {
-				// cancel repo look up and status change in UI
-				if(this.repoLookUp$){
-					this.repoLookUp$.unsubscribe();
-				}
-				this.statusChange.emit({cancelled: true, showMessage: true});
-			}
-		);
 
 		// disabled submit button for QA gen
 		this.loadingBranches = true;
@@ -139,11 +218,10 @@ export class QaGeneratorComponent {
 	*/
 	processBranches(branches): void {
 
-		// for each repo found create arrays of data needed
-		this.repoArray = branches.map( (repo, index) => {
+		branches.forEach( (repo, index) => {
 
 			// for each matching dev branch found get list of branches
-			return repo.branches.map( devBranch => {
+			const newBranch = repo.branches.map( devBranch => {
 				let selection = {
 					allRepos: this.repos,
 					allBranches: repo.all,
@@ -164,7 +242,10 @@ export class QaGeneratorComponent {
 				selection.baseBranch = baseBranch.length == 1 ? baseBranch[0] : '';
 
 				return selection;
-			})[0];	
+			})[0];
+
+
+			this.addBranch(newBranch);
 		});
 	}
 
@@ -183,45 +264,4 @@ export class QaGeneratorComponent {
 		return repos
 		.filter( branch => branch.length < 15 && branch.includes(selections[selections.length-1]));
 	}
-
-	/*
-	*/
-	deleteDevBranch(idx:number): void {
-		// if only one left cant delete
-		if(this.repoArray.length == 1){
-			this.toastr.showToast('Must have at least one repo.', 'error');
-			return;
-		}
-
-		this.repoArray.splice(idx,1);
-	}
-
-	/*
-	*/
-	addRepo(): void {
-		const selection = {
-			allRepos: this.repos,
-			allBranches: [],
-
-			repositoryName: '',
-			reviewedBranch: '',
-			baseBranch: '',
-		};
-
-		this.repoArray.push(selection);
-	}
-
-	/*
-	*/
-	getBranches(repoName:string, index): void {
-		this.repoArray[index].allBranches = ['Loading Branches...'];
-
-		this.jira.getBranches(repoName).subscribe( 
-			branches => {
-				this.repoArray[index].allBranches = branches.data;
-			},
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
-	}
-
 }
