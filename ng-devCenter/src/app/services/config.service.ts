@@ -515,6 +515,10 @@ export class ConfigService {
 			name: 'Internal Stack Overflow',
 			link: 'http://stack.web.att.com/'
 		},
+		{
+			name: 'UTM Debugger',
+			link: 'http://zlp32165.vci.att.com:32599/utm-ui/index.html#'
+		},
 	];
 
 
