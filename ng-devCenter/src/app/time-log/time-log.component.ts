@@ -114,7 +114,6 @@ export class TimeLogComponent	{
 		this.uctNotReady = false;
 		this.mergedCode = false;
 		this.conflictCode = false;
-
 	}
 
 }
