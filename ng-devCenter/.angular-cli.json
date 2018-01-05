@@ -50,7 +50,7 @@
         "dev": "environments/environment.ts",
         "prod": "environments/environment.prod.ts",
         "beta": "environments/environment.beta.ts",
-        "beta": "environments/environment.test.ts"
+        "test": "environments/environment.test.ts"
       }
     }
     
