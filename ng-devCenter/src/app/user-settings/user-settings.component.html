@@ -12,7 +12,8 @@
 			<!-- username -->
 			<div class="form-group">
 				<label for="username">Username:</label>
-				<input formControlName="username" type="text" class="form-control" placeholder="Enter username">
+				<input formControlName="username" placeholder="Enter username"
+					type="text" class="form-control" [class.invalid]="username.invalid">
 				<div class='text-danger' *ngIf='username.invalid'>
 					<span *ngIf="username.errors.required">Username required</span>
 					<span *ngIf="!username.errors.required && username.errors.usernameValidator">Invalid username</span>
@@ -21,7 +22,8 @@
 			<!-- password -->
 			<div class="form-group">
 				<label for="password">Password:</label>
-				<input type="password" class="form-control" formControlName='password' placeholder="Password">
+				<input type="password" class="form-control" [class.invalid]="password.invalid"
+						formControlName='password' placeholder="Password">
 				<div class='text-danger' *ngIf='password.invalid'>
 					<span *ngIf="password.errors.required">Password required</span>
 				</div>
@@ -29,7 +31,8 @@
 			<!-- port -->
 			<div class="form-group">
 				<label for="port">Port:</label>
-				<input type="text" class="form-control" formControlName='port' placeholder="Port">
+				<input type="text" class="form-control" [class.invalid]="port.invalid" 
+						formControlName='port' placeholder="Port">
 				<div class='text-danger' *ngIf='port.invalid'>
 					<span *ngIf="port.errors.required">Port required</span>
 					<span *ngIf="!port.errors.required && port.errors.portValidator">Invalid port</span>

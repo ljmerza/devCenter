@@ -17,7 +17,10 @@ const appRoutes: Routes = [
 
 @NgModule({
 	imports: [
-		RouterModule.forRoot(appRoutes, { useHash: true })
+		RouterModule.forRoot(appRoutes, { 
+			useHash: true, 
+			// onSameUrlNavigation: 'refresh' // angular 5 option
+		})
 	],
 	exports: [RouterModule]
 })

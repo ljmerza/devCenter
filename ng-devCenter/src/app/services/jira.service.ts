@@ -106,8 +106,8 @@ export class JiraService extends DataService {
 
 					if(data){
 						// first load locally then call for fresh data as well
-						return Observable.of({data:JSON.parse(data), cached: true})
-	  					.concat(super.getAPI(`${this.apiUrl}/jira/tickets?jql=${this.jql}&fields=${this.config.fields}`));
+						// return Observable.of({data:JSON.parse(data), cached: true})
+	  			// 		.concat(super.getAPI(`${this.apiUrl}/jira/tickets?jql=${this.jql}&fields=${this.config.fields}`));
 					}
 				}
 		}

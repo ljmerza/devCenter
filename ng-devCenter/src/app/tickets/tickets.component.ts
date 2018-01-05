@@ -164,9 +164,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				this.rerender(true);
 
 				// enable websockets
-				if( !this.ticketType || ['pcr','qa','cr','allopen','mytickets'].includes(this.ticketType) ) {
-					this.webSock$ = this.startWebSocket();
-				}
+				// if( !this.ticketType || ['pcr','qa','cr','allopen','mytickets'].includes(this.ticketType) ) {
+				// 	this.webSock$ = this.startWebSocket();
+				// }
 			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
