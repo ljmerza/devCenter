@@ -6,41 +6,48 @@ export class ConfigService {
 
 	constructor() { }
 
-	projects = 'project in (AQE, "Auto QM", "Customer DB", "Manager DB", "Taskmaster Dashboard", TeamDB, TQI, "Unified Desktop", UPM, WAM)';
+	projectsJql = 'project in (AQE, "Auto QM", "Customer DB", "Manager DB", "Taskmaster Dashboard", TeamDB, TQI, "Unified Desktop", UPM, WAM)';
 	
-	pcr = encodeURIComponent(this.projects + ' AND status != closed AND component in ("PCR - Needed")');
-
-	beta = encodeURIComponent(this.projects + ' AND status != closed AND labels = BETA');
-
-	cr = encodeURIComponent(this.projects + ' AND component in ("PCR - Completed") AND type != "Technical task" AND Status = "code review"');
-
-	qa = encodeURIComponent(this.projects + 'AND status in ("Ready for QA", "IN QA")');
-
-	uctready = encodeURIComponent(this.projects + ' AND status != closed AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND labels != NewGUI');
-
-	allopen = encodeURIComponent(this.projects+' AND status in ("ON HOLD", "IN DEVELOPMENT", "IN SPRINT", "Ready for Release", "Code Review", "Ready For QA", "IN QA", "IN UCT", "READY FOR UCT") OR assignee in (wc591w)');
-
-	teamdb_ember = encodeURIComponent(' labels = NewGUI');
-
-	apollo = encodeURIComponent('"Epic Link" = Apollo AND Status !=Closed');
+	pcr = encodeURIComponent(this.projectsJql + ' AND status != closed AND component in ("PCR - Needed")');
+	beta = encodeURIComponent(this.projectsJql + ' AND status != closed AND labels = BETA');
+	cr = encodeURIComponent(this.projectsJql + ' AND component in ("PCR - Completed") AND type != "Technical task" AND Status = "code review"');
+	qa = encodeURIComponent(this.projectsJql + 'AND status in ("Ready for QA", "IN QA")');
+	uctready = encodeURIComponent(this.projectsJql + ' AND status != closed AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND labels != NewGUI');
+	allopen = encodeURIComponent(this.projectsJql+' AND status in ("ON HOLD", "IN DEVELOPMENT", "IN SPRINT", "Ready for Release", "Code Review", "Ready For QA", "IN QA", "IN UCT", "READY FOR UCT") OR assignee in (wc591w)');
 
 	sme = encodeURIComponent('(sprint in (3187, 3183, 3182, 3676, 3185, 3180, 3684, 3186, 3432, 3968) OR assignee in (dh6094, bb486m, cc216t, jc001b, bp215n, tt0163, sm6821, br591w, sr6855, na0952)) AND status != closed');
-
-	fullScrum = encodeURIComponent(this.projects+'AND status != closed');
-
+	fullScrum = encodeURIComponent(this.projectsJql+'AND status != closed');
 	scrum = encodeURIComponent('project = BDEUT AND status != closed');
+	teamdb_ember = encodeURIComponent(' labels = NewGUI');
 
+	// projects
+	apollo = encodeURIComponent('"Epic Link" = Apollo AND Status !=Closed');
 	rocc =  encodeURIComponent('"Epic Link" = ROCC');
-
 	starship = encodeURIComponent('"epic%20link"%3D%20starship');
-
 	rds = encodeURIComponent('text ~ "RDS"');
+	roccathonTickets = encodeURIComponent(`"Epic Link" ='ROCC-A-THON Program'`);
+	orchestration = encodeURIComponent(`project in ("GCS BizOps - Orchestration") AND status != closed`);
+	innovation = encodeURIComponent(`labels = "InnovationExpress(IX)"`);
+	sable = encodeURIComponent(`project = "SABLE" and status != closed`);
+	cartProject = encodeURIComponent(`project in  = "InnovationExpress(IX)"`);
 
+	allProjectNames = [
+		{link: 'teamdb_ember', name: 'TeamDB Ember'},
+		{link: 'rocc', name: 'ROCC Automation'},
+		{link: 'roccathon', name: 'ROCC-A-THON'},
+		{link: 'apollo', name: 'Apollo'},
+		{link: 'starship', name: 'Starship'},
+		{link: 'rds', name: 'RDS'},
+		{link: 'orchestration', name: 'Orchestration'},
+		{link: 'innovation', name: 'Innovation Express'},
+		{link: 'sable', name: 'SABLE'},
+		{link: 'cart', name: 'CART'}
+	];
+	
 	pmTickets = encodeURIComponent('resolution = Unresolved AND assignee in ( wc591w, lk2973)');
-
 	allmy = encodeURIComponent(`assignee = ${this.username} ORDER BY updated DESC`);
-
 	mytickets = encodeURIComponent(`assignee = ${this.username} AND resolution = unresolved ORDER BY due DESC`);
+
 
 	jiraUrl = 'http://jira.web.att.com';
 	crucibleUrl = 'https://icode3.web.att.com';

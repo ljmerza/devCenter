@@ -94,6 +94,26 @@ export class JiraService extends DataService {
 				this.jql = this.config.pmTickets;
 				this.title = 'PM';
 				break;
+			case 'roccathon':
+				this.jql = this.config.roccathonTickets;
+				this.title = 'Roccathon';
+				break;
+			case 'orchestration':
+				this.jql = this.config.orchestration;
+				this.title = 'Orchestration';
+				break;
+			case 'innovation':
+				this.jql = this.config.innovation;
+				this.title = 'Innovation Express';
+				break;
+			case 'cart':
+				this.jql = this.config.cartProject;
+				this.title = 'CART';
+				break;
+			case 'sable':
+				this.jql = this.config.sable;
+				this.title = 'SABLE';
+				break;
 			default:
 				this.jql = this.config.mytickets;
 				this.title = 'My Open';

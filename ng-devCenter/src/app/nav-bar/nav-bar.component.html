@@ -11,32 +11,42 @@
 			<li ngbDropdown class="d-inline-block">
 				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Jira Links</a>
 
-				<div ngbDropdownMenu aria-labelledby="devDropdown">
-					<a class="dropdown-item" [routerLink]="['/jira', 'mytickets']">My Tickets</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'pcr']">PCR Needed</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'qa']">QA Needed</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'uctready']">UCT Ready</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'cr']">CR Needed</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" [routerLink]="['/jira', 'allopen']">All Open Tickets</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'allmy']">All My Tickets</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'beta']">Beta Tickets</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" [routerLink]="['/jira', 'teamdb_ember']">TeamDB Ember</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'rocc']">ROCC Automation</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'apollo']">Apollo</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'starship']">Starship</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'rds']">RDS</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" [routerLink]="['/jira', 'sme']">SME</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'pm']">PM</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'scrum']">Scrum Board</a>
-					<a class="dropdown-item" [routerLink]="['/jira', 'fullscrum']">Full Scrum Board</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" target="_blank" href="{{config.crucibleUrl}}{{config.cruciblePath}}">Crucible</a>
-					<a class="dropdown-item" target="_blank" href="{{config.codeCloudUrl}}{{config.codeCloudPath}}">Code Cloud</a>
-					<a class="dropdown-item" target="_blank" href="{{config.jiraUrl}}{{config.scrumBoardPath}}">Scrum Board</a>
-				</div>
+				<ul ngbDropdownMenu aria-labelledby="devDropdown">
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'mytickets']">My Tickets</a></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'pcr']">PCR Needed</a></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'qa']">QA Needed</a></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'uctready']">UCT Ready</a></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'cr']">CR Needed</a></li>
+					<li><div class="dropdown-divider"></div></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'allopen']">All Open Tickets</a></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'allmy']">All My Tickets</a></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'beta']">Beta Tickets</a></li>
+					
+					<!-- projects -->
+					<li class="dropdown-submenu">
+						<a class="dropdown-item" data-toggle="dropdown">
+							Projects
+							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
+						</a>
+						<ul class="dropdown-menu dropdown-submenu-items">
+							<li *ngFor='let project of config.allProjectNames'>
+								<a class="dropdown-item" [routerLink]="['/jira', project.link]">
+									{{project.name}}
+								</a>
+							</li>
+						</ul>
+					</li>
+
+					<li><div class="dropdown-divider"></div></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'sme']">SME</a></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'pm']">PM</a></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'scrum']">Scrum Board</a></li>
+					<li><a class="dropdown-item" [routerLink]="['/jira', 'fullscrum']">Full Scrum Board</a></li>
+					<li><div class="dropdown-divider"></div></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.crucibleUrl}}{{config.cruciblePath}}">Crucible</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.codeCloudUrl}}{{config.codeCloudPath}}">Code Cloud</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.jiraUrl}}{{config.scrumBoardPath}}">Scrum Board</a></li>
+				</ul>
 			</li>
 
 
