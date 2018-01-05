@@ -177,9 +177,7 @@ export class TicketComponent implements OnInit {
 			
 		} else if(statusName) {
 			// if given the status then set status at that
-			console.log('statusName: ', statusName);
 			const ticketState = this.allTransistions.filter(state => state.name == statusName);
-			console.log('ticketState: ', ticketState);
 
 			this.ticket.status = ticketState[0].name;
 			this.validTransitions();
@@ -187,7 +185,6 @@ export class TicketComponent implements OnInit {
 		} else {
 			// else set ticket state with new dropdown value and reload valid transitions
 			const ticketState = this.allTransistions.filter(state => state.id == this.ticketDropdown.value);
-			console.log('ticketState: ', ticketState);
 			this.ticket.status = ticketState[0].name;
 			this.validTransitions();
 		}

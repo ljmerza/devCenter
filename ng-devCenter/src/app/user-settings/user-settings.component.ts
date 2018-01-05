@@ -11,26 +11,28 @@ import { ToastrService } from './../services/toastr.service';
 	styleUrls: ['./user-settings.component.scss']
 })
 export class UserSettingsComponent implements AfterContentInit {
-
-	// create form group
-	userSettingsForm = new FormGroup({
-		username: new FormControl(this.user.username, [Validators.required, this.usernameValidator]),
-		password: new FormControl(this.user.password, [Validators.required]),
-		port: new FormControl(this.user.port, [Validators.required, this.portValidator]),
-		emberUrl: new FormControl(this.user.emberUrl, [Validators.required]),
-		teamUrl: new FormControl(this.user.teamUrl, [Validators.required]),
-		cache: new FormControl(this.user.cache)
-	});
-
+	userSettingsForm: FormGroup;
 	modelInstance: NgbModalRef;
 	@ViewChild('userModal') private userModal;
 
 	constructor(
-		private modalService: NgbModal, 
-		private user: UserService, 
-		private jira: JiraService, 
-		private toastr: ToastrService
-	) {}
+		private modalService: NgbModal, private user: UserService, 
+		private jira: JiraService, private toastr: ToastrService
+	) {
+		// create form group
+		this.userSettingsForm = new FormGroup({
+			username: new FormControl(user.username, Validators.compose(
+				[Validators.required, UserSettingsComponent.usernameValidator]
+			)),
+			password: new FormControl(user.password, [Validators.required]),
+			port: new FormControl(user.port, Validators.compose(
+				[Validators.required, UserSettingsComponent.portValidator]
+			)),
+			emberUrl: new FormControl(user.emberUrl, [Validators.required]),
+			teamUrl: new FormControl(user.teamUrl, [Validators.required]),
+			cache: new FormControl(user.cache)
+		});
+	}
 
 	/*
 	*/
@@ -59,13 +61,14 @@ export class UserSettingsComponent implements AfterContentInit {
 
 	submit(submitType){
 
-		// close modal if form is valid
-		if( this.userSettingsForm.valid ){
+		// just close form if no submit type
+		if(!submitType){
 			this.modelInstance.close();
+			return;
 		}
 
-		// if no submit type or invlid then do nothing
-		if(!submitType || this.userSettingsForm.invalid) return;
+		// if form is invalid then do nothing
+		if(this.userSettingsForm.invalid) return;
 
 		// save data to localstorage
 		this.user.setUserData('username', this.userSettingsForm.controls.username.value);
@@ -92,14 +95,14 @@ export class UserSettingsComponent implements AfterContentInit {
 
 	/*
 	*/
-	usernameValidator(control: AbstractControl): {[key: string]:any} {
+	static usernameValidator(control: AbstractControl): {[key: string]:any} {
 		const invalidUsername = control.value && /^[A-Za-z]{2}[0-9]{3}[A-Za-z0-9]$/.test(control.value);
 		return invalidUsername ? null : {usernameValidator: {value: control.value}} ;
 	}
 
 	/*
 	*/
-	portValidator(control: AbstractControl): {[key: string]:any} {
+	static portValidator(control: AbstractControl): {[key: string]:any} {
 		const validPort = control.value && /^[0-9]{4}$/.test(control.value);
 		return validPort ? null : {portValidator: {value: control.value}} ;
 	}

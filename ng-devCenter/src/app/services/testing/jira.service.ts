@@ -9,9 +9,6 @@ import { ConfigService } from './../config.service'
 
 @Injectable()
 export class JiraServiceTest extends DataService {
-	title:string = '';
-	jql:string=''
-	firstLoad = true;
 
 	/*
 	*/
@@ -32,18 +29,18 @@ export class JiraServiceTest extends DataService {
 			total_tickets: 4, 
 			data: [
 				{
-					"key": "UD-7990", 
-					"msrp": "119789", 
+					"key": "TS-1234", 
+					"msrp": "1029386", 
 					"user_details": {
-						"username": "te1680", 
-						"email_address": "te1680@att.com", 
-						"display_name": "Esposito, Thomas"
+						"username": "testuser", 
+						"email_address": "testuser@test.com", 
+						"display_name": "User, Test"
 					}, 
-					"username": "te1680", 
+					"username": "testuser", 
 					"customer_details": {
-						"username": "tt0163", 
-						"email": "tt0163@att.com", 
-						"display_name": "Trenton Trama", 
+						"username": "tu1234", 
+						"email": "tu1234@test.com", 
+						"display_name": "LASTNAME TEST", 
 						"phone_number": "null"
 					}, "dates": {
 						"estimate": "3d", 
@@ -53,22 +50,22 @@ export class JiraServiceTest extends DataService {
 						"updated": "2018-01-02T21:16:29.000+0000", 
 						"started": "2018-01-08"
 					}, 
-					"crucible_id": "", 
-					"summary": "Add UI/UX for RDS data collection", 
+					"crucible_id": "TS-37554", 
+					"summary": "This is a summary", 
 					"component": "", 
 					"status": "In Sprint", 
 					"story_point": 3, 
-					"sprint": "9.02", 
-					"epic_link": "UD-5384", 
-					"label": "UnifiedDesktop(UD)", 
+					"sprint": "4.02", 
+					"epic_link": "TS-1234", 
+					"label": "LABELS", 
 					"comments": [
 						{
 							"comment": "This is the first comment", 
 							"id": "321438", 
-							"key": "UD-7990", 
-							"username": "tt0163", 
-							"email": "tt0163@att.com", 
-							"display_name": "Trama, Trent (tt0163)", 
+							"key": "TS-1234", 
+							"username": "tu1234", 
+							"email": "tu1234@test.com", 
+							"display_name": "TEST, TEST (tu1234)", 
 							"comment_type": "info", 
 							"created": "2017-12-27T20:36:41.633+0000", 
 							"updated": "2017-12-27T20:38:10.067+0000", 
@@ -79,52 +76,52 @@ export class JiraServiceTest extends DataService {
 					"attachments": [
 						{
 							"filename": "screenshot-1.png", 
-							"link": "http://jira.web.att.com/secure/attachment/42100/screenshot-1.png"
+							"link": "http://jira.web.test.com/secure/attachment/42100/screenshot-1.png"
 						}
 					], 
 					"watchers": [
 						{
-							"username": "m07915", 
+							"username": "tu0483", 
 							"displayName": "JIRA mech ID"
 						}, 
 						{
-							"username": "tt0163", 
-							"displayName": "Trama, Trent"
+							"username": "tu1234", 
+							"displayName": "TEST, TEST"
 						}
 					], 
 					"priority": "Minor", 
 					"severity": "Severity 3", 
 					"code_reviewer": {
-						"username": "tt0163", 
-						"displayName": "Trama, Trent"
+						"username": "tu1234", 
+						"displayName": "TEST, TEST"
 					}, 
 					"issue_type": "Story", 
-					"environment": "BizOps Accelerate", 
+					"environment": "env testing", 
 					"links": [
 						{
 							"id": "51042", 
-							"self": "http://jira.web.att.com/rest/api/2/issueLink/51042", 
+							"self": "http://jira.web.test.com/rest/api/2/issueLink/51042", 
 							"type": {
 								"id": "10000", 
 								"name": "Blocks", 
 								"inward": "is blocked by", 
 								"outward": "blocks", 
-								"self": "http://jira.web.att.com/rest/api/2/issueLinkType/10000"
+								"self": "http://jira.web.test.com/rest/api/2/issueLinkType/10000"
 							}, 
 							"inwardIssue": {
 								"id": "89473", 
 								"key": "UD-7795", 
-								"self": "http://jira.web.att.com/rest/api/2/issue/89473", 
+								"self": "http://jira.web.test.com/rest/api/2/issue/89473", 
 								"fields": {
-									"summary": "Add RDS write methods to ember model", 
+									"summary": "summary of another ticket", 
 									"status": {
-										"self": "http://jira.web.att.com/rest/api/2/status/10105",
+										"self": "http://jira.web.test.com/rest/api/2/status/10105",
 										 "description": "", 
-										 "iconUrl": "http://jira.web.att.com/images/icons/statuses/generic.png", 
+										 "iconUrl": "http://jira.web.test.com/images/icons/statuses/generic.png", 
 										 "name": "In Development", 
 										 "id": "10105", 
 										 "statusCategory": {
-										 	"self": "http://jira.web.att.com/rest/api/2/statuscategory/4", 
+										 	"self": "http://jira.web.test.com/rest/api/2/statuscategory/4", 
 										 	"id": 4, 
 										 	"key": "indeterminate", 
 										 	"colorName": "yellow", 
@@ -132,16 +129,16 @@ export class JiraServiceTest extends DataService {
 										}
 									}, 
 									"priority": {
-										"self": "http://jira.web.att.com/rest/api/2/priority/7", 
-										"iconUrl": "http://jira.web.att.com/images/icons/priorities/lowest.svg", 
+										"self": "http://jira.web.test.com/rest/api/2/priority/7", 
+										"iconUrl": "http://jira.web.test.com/images/icons/priorities/lowest.svg", 
 										"name": "Minor", 
 										"id": "7"
 									}, 
 									"issuetype": {
-										"self": "http://jira.web.att.com/rest/api/2/issuetype/10001", 
+										"self": "http://jira.web.test.com/rest/api/2/issuetype/10001", 
 										"id": "10001", 
-										"description": "Created by JIRA Software - do not edit or delete. Issue type for a user story.", 
-										"iconUrl": "http://jira.web.att.com/images/icons/issuetypes/story.svg", 
+										"description": "jira issue number", 
+										"iconUrl": "http://jira.web.test.com/images/icons/issuetypes/story.svg", 
 										"name": "Story", 
 										"subtask": false
 									}
@@ -149,22 +146,22 @@ export class JiraServiceTest extends DataService {
 							}
 						}
 					], 
-					"commit": "[UD-7990] Ticket #119789 Add UI/UX for RDS data collection", 
-					"branch": "te1680-119789-Add-UI-UX-for-RDS-data-collection"
+					"commit": "[TS-1234] Ticket #1029386 This is a summary", 
+					"branch": "testuser-1029386-branch-testing"
 				},
 				{
-					"key": "UD-7990", 
-					"msrp": "119789", 
+					"key": "TS-1234", 
+					"msrp": "1029386", 
 					"user_details": {
-						"username": "te1680", 
-						"email_address": "te1680@att.com", 
-						"display_name": "Esposito, Thomas"
+						"username": "testuser", 
+						"email_address": "testuser@test.com", 
+						"display_name": "User, Test"
 					}, 
-					"username": "te1680", 
+					"username": "testuser", 
 					"customer_details": {
-						"username": "tt0163", 
-						"email": "tt0163@att.com", 
-						"display_name": "Trenton Trama", 
+						"username": "tu1234", 
+						"email": "tu1234@test.com", 
+						"display_name": "LASTNAME TEST", 
 						"phone_number": "null"
 					}, "dates": {
 						"estimate": "3d", 
@@ -174,22 +171,22 @@ export class JiraServiceTest extends DataService {
 						"updated": "2018-01-02T21:16:29.000+0000", 
 						"started": "2018-01-08"
 					}, 
-					"crucible_id": "", 
-					"summary": "Add UI/UX for RDS data collection", 
+					"crucible_id": "TS-0987", 
+					"summary": "This is a summary", 
 					"component": "", 
 					"status": "In Sprint", 
 					"story_point": 3, 
-					"sprint": "9.02", 
-					"epic_link": "UD-5384", 
-					"label": "UnifiedDesktop(UD)", 
+					"sprint": "4.02", 
+					"epic_link": "TS-1234", 
+					"label": "LABELS", 
 					"comments": [
 						{
 							"comment": "This is the first comment", 
 							"id": "321438", 
-							"key": "UD-7990", 
-							"username": "tt0163", 
-							"email": "tt0163@att.com", 
-							"display_name": "Trama, Trent (tt0163)", 
+							"key": "TS-1234", 
+							"username": "tu1234", 
+							"email": "tu1234@test.com", 
+							"display_name": "TEST, TEST (tu1234)", 
 							"comment_type": "info", 
 							"created": "2017-12-27T20:36:41.633+0000", 
 							"updated": "2017-12-27T20:38:10.067+0000", 
@@ -200,52 +197,52 @@ export class JiraServiceTest extends DataService {
 					"attachments": [
 						{
 							"filename": "screenshot-1.png", 
-							"link": "http://jira.web.att.com/secure/attachment/42100/screenshot-1.png"
+							"link": "http://jira.web.test.com/secure/attachment/42100/screenshot-1.png"
 						}
 					], 
 					"watchers": [
 						{
-							"username": "m07915", 
+							"username": "tu0483", 
 							"displayName": "JIRA mech ID"
 						}, 
 						{
-							"username": "tt0163", 
-							"displayName": "Trama, Trent"
+							"username": "tu1234", 
+							"displayName": "TEST, TEST"
 						}
 					], 
 					"priority": "Minor", 
 					"severity": "Severity 3", 
 					"code_reviewer": {
-						"username": "tt0163", 
-						"displayName": "Trama, Trent"
+						"username": "tu1234", 
+						"displayName": "TEST, TEST"
 					}, 
 					"issue_type": "Story", 
-					"environment": "BizOps Accelerate", 
+					"environment": "env testing", 
 					"links": [
 						{
 							"id": "51042", 
-							"self": "http://jira.web.att.com/rest/api/2/issueLink/51042", 
+							"self": "http://jira.web.test.com/rest/api/2/issueLink/51042", 
 							"type": {
 								"id": "10000", 
 								"name": "Blocks", 
 								"inward": "is blocked by", 
 								"outward": "blocks", 
-								"self": "http://jira.web.att.com/rest/api/2/issueLinkType/10000"
+								"self": "http://jira.web.test.com/rest/api/2/issueLinkType/10000"
 							}, 
 							"inwardIssue": {
 								"id": "89473", 
 								"key": "UD-7795", 
-								"self": "http://jira.web.att.com/rest/api/2/issue/89473", 
+								"self": "http://jira.web.test.com/rest/api/2/issue/89473", 
 								"fields": {
-									"summary": "Add RDS write methods to ember model", 
+									"summary": "summary of another ticket", 
 									"status": {
-										"self": "http://jira.web.att.com/rest/api/2/status/10105",
+										"self": "http://jira.web.test.com/rest/api/2/status/10105",
 										 "description": "", 
-										 "iconUrl": "http://jira.web.att.com/images/icons/statuses/generic.png", 
+										 "iconUrl": "http://jira.web.test.com/images/icons/statuses/generic.png", 
 										 "name": "In Development", 
 										 "id": "10105", 
 										 "statusCategory": {
-										 	"self": "http://jira.web.att.com/rest/api/2/statuscategory/4", 
+										 	"self": "http://jira.web.test.com/rest/api/2/statuscategory/4", 
 										 	"id": 4, 
 										 	"key": "indeterminate", 
 										 	"colorName": "yellow", 
@@ -253,16 +250,16 @@ export class JiraServiceTest extends DataService {
 										}
 									}, 
 									"priority": {
-										"self": "http://jira.web.att.com/rest/api/2/priority/7", 
-										"iconUrl": "http://jira.web.att.com/images/icons/priorities/lowest.svg", 
+										"self": "http://jira.web.test.com/rest/api/2/priority/7", 
+										"iconUrl": "http://jira.web.test.com/images/icons/priorities/lowest.svg", 
 										"name": "Minor", 
 										"id": "7"
 									}, 
 									"issuetype": {
-										"self": "http://jira.web.att.com/rest/api/2/issuetype/10001", 
+										"self": "http://jira.web.test.com/rest/api/2/issuetype/10001", 
 										"id": "10001", 
-										"description": "Created by JIRA Software - do not edit or delete. Issue type for a user story.", 
-										"iconUrl": "http://jira.web.att.com/images/icons/issuetypes/story.svg", 
+										"description": "jira issue number", 
+										"iconUrl": "http://jira.web.test.com/images/icons/issuetypes/story.svg", 
 										"name": "Story", 
 										"subtask": false
 									}
@@ -270,22 +267,22 @@ export class JiraServiceTest extends DataService {
 							}
 						}
 					], 
-					"commit": "[UD-7990] Ticket #119789 Add UI/UX for RDS data collection", 
-					"branch": "te1680-119789-Add-UI-UX-for-RDS-data-collection"
+					"commit": "[TS-1234] Ticket #1029386 This is a summary", 
+					"branch": "testuser-1029386-branch-testing"
 				},
 				{
-					"key": "UD-7990", 
-					"msrp": "119789", 
+					"key": "TS-1234", 
+					"msrp": "1029386", 
 					"user_details": {
-						"username": "te1680", 
-						"email_address": "te1680@att.com", 
-						"display_name": "Esposito, Thomas"
+						"username": "testuser", 
+						"email_address": "testuser@test.com", 
+						"display_name": "User, Test"
 					}, 
-					"username": "te1680", 
+					"username": "testuser", 
 					"customer_details": {
-						"username": "tt0163", 
-						"email": "tt0163@att.com", 
-						"display_name": "Trenton Trama", 
+						"username": "tu1234", 
+						"email": "tu1234@test.com", 
+						"display_name": "LASTNAME TEST", 
 						"phone_number": "null"
 					}, "dates": {
 						"estimate": "3d", 
@@ -296,21 +293,21 @@ export class JiraServiceTest extends DataService {
 						"started": "2018-01-08"
 					}, 
 					"crucible_id": "", 
-					"summary": "Add UI/UX for RDS data collection", 
+					"summary": "This is a summary 5", 
 					"component": "", 
 					"status": "In Sprint", 
 					"story_point": 3, 
-					"sprint": "9.02", 
-					"epic_link": "UD-5384", 
-					"label": "UnifiedDesktop(UD)", 
+					"sprint": "4.02", 
+					"epic_link": "TS-1234", 
+					"label": "LABELS", 
 					"comments": [
 						{
 							"comment": "This is the first comment", 
 							"id": "321438", 
-							"key": "UD-7990", 
-							"username": "tt0163", 
-							"email": "tt0163@att.com", 
-							"display_name": "Trama, Trent (tt0163)", 
+							"key": "TS-1234", 
+							"username": "tu1234", 
+							"email": "tu1234@test.com", 
+							"display_name": "TEST, TEST (tu1234)", 
 							"comment_type": "info", 
 							"created": "2017-12-27T20:36:41.633+0000", 
 							"updated": "2017-12-27T20:38:10.067+0000", 
@@ -321,52 +318,52 @@ export class JiraServiceTest extends DataService {
 					"attachments": [
 						{
 							"filename": "screenshot-1.png", 
-							"link": "http://jira.web.att.com/secure/attachment/42100/screenshot-1.png"
+							"link": "http://jira.web.test.com/secure/attachment/42100/screenshot-1.png"
 						}
 					], 
 					"watchers": [
 						{
-							"username": "m07915", 
+							"username": "tu0483", 
 							"displayName": "JIRA mech ID"
 						}, 
 						{
-							"username": "tt0163", 
-							"displayName": "Trama, Trent"
+							"username": "tu1234", 
+							"displayName": "TEST, TEST"
 						}
 					], 
 					"priority": "Minor", 
 					"severity": "Severity 3", 
 					"code_reviewer": {
-						"username": "tt0163", 
-						"displayName": "Trama, Trent"
+						"username": "tu1234", 
+						"displayName": "TEST, TEST"
 					}, 
 					"issue_type": "Story", 
-					"environment": "BizOps Accelerate", 
+					"environment": "env testing", 
 					"links": [
 						{
 							"id": "51042", 
-							"self": "http://jira.web.att.com/rest/api/2/issueLink/51042", 
+							"self": "http://jira.web.test.com/rest/api/2/issueLink/51042", 
 							"type": {
 								"id": "10000", 
 								"name": "Blocks", 
 								"inward": "is blocked by", 
 								"outward": "blocks", 
-								"self": "http://jira.web.att.com/rest/api/2/issueLinkType/10000"
+								"self": "http://jira.web.test.com/rest/api/2/issueLinkType/10000"
 							}, 
 							"inwardIssue": {
 								"id": "89473", 
 								"key": "UD-7795", 
-								"self": "http://jira.web.att.com/rest/api/2/issue/89473", 
+								"self": "http://jira.web.test.com/rest/api/2/issue/89473", 
 								"fields": {
-									"summary": "Add RDS write methods to ember model", 
+									"summary": "summary of another ticket", 
 									"status": {
-										"self": "http://jira.web.att.com/rest/api/2/status/10105",
+										"self": "http://jira.web.test.com/rest/api/2/status/10105",
 										 "description": "", 
-										 "iconUrl": "http://jira.web.att.com/images/icons/statuses/generic.png", 
+										 "iconUrl": "http://jira.web.test.com/images/icons/statuses/generic.png", 
 										 "name": "In Development", 
 										 "id": "10105", 
 										 "statusCategory": {
-										 	"self": "http://jira.web.att.com/rest/api/2/statuscategory/4", 
+										 	"self": "http://jira.web.test.com/rest/api/2/statuscategory/4", 
 										 	"id": 4, 
 										 	"key": "indeterminate", 
 										 	"colorName": "yellow", 
@@ -374,16 +371,16 @@ export class JiraServiceTest extends DataService {
 										}
 									}, 
 									"priority": {
-										"self": "http://jira.web.att.com/rest/api/2/priority/7", 
-										"iconUrl": "http://jira.web.att.com/images/icons/priorities/lowest.svg", 
+										"self": "http://jira.web.test.com/rest/api/2/priority/7", 
+										"iconUrl": "http://jira.web.test.com/images/icons/priorities/lowest.svg", 
 										"name": "Minor", 
 										"id": "7"
 									}, 
 									"issuetype": {
-										"self": "http://jira.web.att.com/rest/api/2/issuetype/10001", 
+										"self": "http://jira.web.test.com/rest/api/2/issuetype/10001", 
 										"id": "10001", 
-										"description": "Created by JIRA Software - do not edit or delete. Issue type for a user story.", 
-										"iconUrl": "http://jira.web.att.com/images/icons/issuetypes/story.svg", 
+										"description": "jira issue number", 
+										"iconUrl": "http://jira.web.test.com/images/icons/issuetypes/story.svg", 
 										"name": "Story", 
 										"subtask": false
 									}
@@ -391,47 +388,47 @@ export class JiraServiceTest extends DataService {
 							}
 						}
 					], 
-					"commit": "[UD-7990] Ticket #119789 Add UI/UX for RDS data collection", 
-					"branch": "te1680-119789-Add-UI-UX-for-RDS-data-collection"
+					"commit": "[TS-1234] Ticket #1029386 This is a summary", 
+					"branch": "testuser-1029386-branch-testing"
 				},
 				{
-					"key": "UD-7990", 
-					"msrp": "119789", 
+					"key": "TS-1234", 
+					"msrp": "1029386", 
 					"user_details": {
-						"username": "te1680", 
-						"email_address": "te1680@att.com", 
-						"display_name": "Esposito, Thomas"
+						"username": "testuser", 
+						"email_address": "testuser@test.com", 
+						"display_name": "User, Test"
 					}, 
-					"username": "te1680", 
+					"username": "testuser", 
 					"customer_details": {
-						"username": "tt0163", 
-						"email": "tt0163@att.com", 
-						"display_name": "Trenton Trama", 
+						"username": "tu1234", 
+						"email": "tu1234@test.com", 
+						"display_name": "LASTNAME TEST", 
 						"phone_number": "null"
 					}, "dates": {
 						"estimate": "3d", 
-						"logged": "", 
+						"logged": "2d", 
 						"duedate": "2018-01-10", 
 						"created": "2017-12-27T20:36:38.000+0000", 
 						"updated": "2018-01-02T21:16:29.000+0000", 
 						"started": "2018-01-08"
 					}, 
 					"crucible_id": "", 
-					"summary": "Add UI/UX for RDS data collection", 
+					"summary": "This is a summary again - this is a really long summary", 
 					"component": "", 
 					"status": "In Sprint", 
 					"story_point": 3, 
-					"sprint": "9.02", 
-					"epic_link": "UD-5384", 
-					"label": "UnifiedDesktop(UD)", 
+					"sprint": "4.02", 
+					"epic_link": "TS-1234", 
+					"label": "LABELS", 
 					"comments": [
 						{
 							"comment": "This is the first comment", 
 							"id": "321438", 
-							"key": "UD-7990", 
-							"username": "tt0163", 
-							"email": "tt0163@att.com", 
-							"display_name": "Trama, Trent (tt0163)", 
+							"key": "TS-1234", 
+							"username": "tu1234", 
+							"email": "tu1234@test.com", 
+							"display_name": "TEST, TEST (tu1234)", 
 							"comment_type": "info", 
 							"created": "2017-12-27T20:36:41.633+0000", 
 							"updated": "2017-12-27T20:38:10.067+0000", 
@@ -442,52 +439,52 @@ export class JiraServiceTest extends DataService {
 					"attachments": [
 						{
 							"filename": "screenshot-1.png", 
-							"link": "http://jira.web.att.com/secure/attachment/42100/screenshot-1.png"
+							"link": "http://jira.web.test.com/secure/attachment/42100/screenshot-1.png"
 						}
 					], 
 					"watchers": [
 						{
-							"username": "m07915", 
+							"username": "tu0483", 
 							"displayName": "JIRA mech ID"
 						}, 
 						{
-							"username": "tt0163", 
-							"displayName": "Trama, Trent"
+							"username": "tu1234", 
+							"displayName": "TEST, TEST"
 						}
 					], 
 					"priority": "Minor", 
 					"severity": "Severity 3", 
 					"code_reviewer": {
-						"username": "tt0163", 
-						"displayName": "Trama, Trent"
+						"username": "tu1234", 
+						"displayName": "TEST, TEST"
 					}, 
 					"issue_type": "Story", 
-					"environment": "BizOps Accelerate", 
+					"environment": "env testing", 
 					"links": [
 						{
 							"id": "51042", 
-							"self": "http://jira.web.att.com/rest/api/2/issueLink/51042", 
+							"self": "http://jira.web.test.com/rest/api/2/issueLink/51042", 
 							"type": {
 								"id": "10000", 
 								"name": "Blocks", 
 								"inward": "is blocked by", 
 								"outward": "blocks", 
-								"self": "http://jira.web.att.com/rest/api/2/issueLinkType/10000"
+								"self": "http://jira.web.test.com/rest/api/2/issueLinkType/10000"
 							}, 
 							"inwardIssue": {
 								"id": "89473", 
 								"key": "UD-7795", 
-								"self": "http://jira.web.att.com/rest/api/2/issue/89473", 
+								"self": "http://jira.web.test.com/rest/api/2/issue/89473", 
 								"fields": {
-									"summary": "Add RDS write methods to ember model", 
+									"summary": "summary of another ticket", 
 									"status": {
-										"self": "http://jira.web.att.com/rest/api/2/status/10105",
+										"self": "http://jira.web.test.com/rest/api/2/status/10105",
 										 "description": "", 
-										 "iconUrl": "http://jira.web.att.com/images/icons/statuses/generic.png", 
+										 "iconUrl": "http://jira.web.test.com/images/icons/statuses/generic.png", 
 										 "name": "In Development", 
 										 "id": "10105", 
 										 "statusCategory": {
-										 	"self": "http://jira.web.att.com/rest/api/2/statuscategory/4", 
+										 	"self": "http://jira.web.test.com/rest/api/2/statuscategory/4", 
 										 	"id": 4, 
 										 	"key": "indeterminate", 
 										 	"colorName": "yellow", 
@@ -495,16 +492,16 @@ export class JiraServiceTest extends DataService {
 										}
 									}, 
 									"priority": {
-										"self": "http://jira.web.att.com/rest/api/2/priority/7", 
-										"iconUrl": "http://jira.web.att.com/images/icons/priorities/lowest.svg", 
+										"self": "http://jira.web.test.com/rest/api/2/priority/7", 
+										"iconUrl": "http://jira.web.test.com/images/icons/priorities/lowest.svg", 
 										"name": "Minor", 
 										"id": "7"
 									}, 
 									"issuetype": {
-										"self": "http://jira.web.att.com/rest/api/2/issuetype/10001", 
+										"self": "http://jira.web.test.com/rest/api/2/issuetype/10001", 
 										"id": "10001", 
-										"description": "Created by JIRA Software - do not edit or delete. Issue type for a user story.", 
-										"iconUrl": "http://jira.web.att.com/images/icons/issuetypes/story.svg", 
+										"description": "jira issue number", 
+										"iconUrl": "http://jira.web.test.com/images/icons/issuetypes/story.svg", 
 										"name": "Story", 
 										"subtask": false
 									}
@@ -512,12 +509,12 @@ export class JiraServiceTest extends DataService {
 							}
 						}
 					], 
-					"commit": "[UD-7990] Ticket #119789 Add UI/UX for RDS data collection", 
-					"branch": "te1680-119789-Add-UI-UX-for-RDS-data-collection"
+					"commit": "[TS-1234] Ticket #1029386 This is a summary", 
+					"branch": "testuser-1029386-branch-testing"
 				}
 			], 
 			status: true
-		});
+		}).delay(2000);
 	}
 
 	/**
@@ -526,7 +523,7 @@ export class JiraServiceTest extends DataService {
 		return Observable.of({
 			data: "999 push messages remaining today",
 			status: true
-		});
+		}).delay(2000);
 	}
 
 	/**
@@ -536,18 +533,18 @@ export class JiraServiceTest extends DataService {
 			total_tickets: 1, 
 			data: [
 				{
-					"key": "UD-7990", 
-					"msrp": "119789", 
+					"key": "TS-1234", 
+					"msrp": "1029386", 
 					"user_details": {
-						"username": "te1680", 
-						"email_address": "te1680@att.com", 
-						"display_name": "Esposito, Thomas"
+						"username": "testuser", 
+						"email_address": "testuser@test.com", 
+						"display_name": "User, Test"
 					}, 
-					"username": "te1680", 
+					"username": "testuser", 
 					"customer_details": {
-						"username": "tt0163", 
-						"email": "tt0163@att.com", 
-						"display_name": "Trenton Trama", 
+						"username": "tu1234", 
+						"email": "tu1234@test.com", 
+						"display_name": "LASTNAME TEST", 
 						"phone_number": "null"
 					}, "dates": {
 						"estimate": "3d", 
@@ -557,22 +554,22 @@ export class JiraServiceTest extends DataService {
 						"updated": "2018-01-02T21:16:29.000+0000", 
 						"started": "2018-01-08"
 					}, 
-					"crucible_id": "", 
-					"summary": "Add UI/UX for RDS data collection", 
+					"crucible_id": "TS-1245", 
+					"summary": "This is a summary", 
 					"component": "", 
 					"status": "In Sprint", 
 					"story_point": 3, 
-					"sprint": "9.02", 
-					"epic_link": "UD-5384", 
-					"label": "UnifiedDesktop(UD)", 
+					"sprint": "4.02", 
+					"epic_link": "TS-1234", 
+					"label": "LABELS", 
 					"comments": [
 						{
 							"comment": "This is the first comment", 
 							"id": "321438", 
-							"key": "UD-7990", 
-							"username": "tt0163", 
-							"email": "tt0163@att.com", 
-							"display_name": "Trama, Trent (tt0163)", 
+							"key": "TS-1234", 
+							"username": "tu1234", 
+							"email": "tu1234@test.com", 
+							"display_name": "TEST, TEST (tu1234)", 
 							"comment_type": "info", 
 							"created": "2017-12-27T20:36:41.633+0000", 
 							"updated": "2017-12-27T20:38:10.067+0000", 
@@ -583,52 +580,52 @@ export class JiraServiceTest extends DataService {
 					"attachments": [
 						{
 							"filename": "screenshot-1.png", 
-							"link": "http://jira.web.att.com/secure/attachment/42100/screenshot-1.png"
+							"link": "http://jira.web.test.com/secure/attachment/42100/screenshot-1.png"
 						}
 					], 
 					"watchers": [
 						{
-							"username": "m07915", 
+							"username": "tu0483", 
 							"displayName": "JIRA mech ID"
 						}, 
 						{
-							"username": "tt0163", 
-							"displayName": "Trama, Trent"
+							"username": "tu1234", 
+							"displayName": "TEST, TEST"
 						}
 					], 
 					"priority": "Minor", 
 					"severity": "Severity 3", 
 					"code_reviewer": {
-						"username": "tt0163", 
-						"displayName": "Trama, Trent"
+						"username": "tu1234", 
+						"displayName": "TEST, TEST"
 					}, 
 					"issue_type": "Story", 
-					"environment": "BizOps Accelerate", 
+					"environment": "env testing", 
 					"links": [
 						{
 							"id": "51042", 
-							"self": "http://jira.web.att.com/rest/api/2/issueLink/51042", 
+							"self": "http://jira.web.test.com/rest/api/2/issueLink/51042", 
 							"type": {
 								"id": "10000", 
 								"name": "Blocks", 
 								"inward": "is blocked by", 
 								"outward": "blocks", 
-								"self": "http://jira.web.att.com/rest/api/2/issueLinkType/10000"
+								"self": "http://jira.web.test.com/rest/api/2/issueLinkType/10000"
 							}, 
 							"inwardIssue": {
 								"id": "89473", 
 								"key": "UD-7795", 
-								"self": "http://jira.web.att.com/rest/api/2/issue/89473", 
+								"self": "http://jira.web.test.com/rest/api/2/issue/89473", 
 								"fields": {
-									"summary": "Add RDS write methods to ember model", 
+									"summary": "summary of another ticket", 
 									"status": {
-										"self": "http://jira.web.att.com/rest/api/2/status/10105",
+										"self": "http://jira.web.test.com/rest/api/2/status/10105",
 										 "description": "", 
-										 "iconUrl": "http://jira.web.att.com/images/icons/statuses/generic.png", 
+										 "iconUrl": "http://jira.web.test.com/images/icons/statuses/generic.png", 
 										 "name": "In Development", 
 										 "id": "10105", 
 										 "statusCategory": {
-										 	"self": "http://jira.web.att.com/rest/api/2/statuscategory/4", 
+										 	"self": "http://jira.web.test.com/rest/api/2/statuscategory/4", 
 										 	"id": 4, 
 										 	"key": "indeterminate", 
 										 	"colorName": "yellow", 
@@ -636,16 +633,16 @@ export class JiraServiceTest extends DataService {
 										}
 									}, 
 									"priority": {
-										"self": "http://jira.web.att.com/rest/api/2/priority/7", 
-										"iconUrl": "http://jira.web.att.com/images/icons/priorities/lowest.svg", 
+										"self": "http://jira.web.test.com/rest/api/2/priority/7", 
+										"iconUrl": "http://jira.web.test.com/images/icons/priorities/lowest.svg", 
 										"name": "Minor", 
 										"id": "7"
 									}, 
 									"issuetype": {
-										"self": "http://jira.web.att.com/rest/api/2/issuetype/10001", 
+										"self": "http://jira.web.test.com/rest/api/2/issuetype/10001", 
 										"id": "10001", 
-										"description": "Created by JIRA Software - do not edit or delete. Issue type for a user story.", 
-										"iconUrl": "http://jira.web.att.com/images/icons/issuetypes/story.svg", 
+										"description": "jira issue number", 
+										"iconUrl": "http://jira.web.test.com/images/icons/issuetypes/story.svg", 
 										"name": "Story", 
 										"subtask": false
 									}
@@ -653,12 +650,12 @@ export class JiraServiceTest extends DataService {
 							}
 						}
 					], 
-					"commit": "[UD-7990] Ticket #119789 Add UI/UX for RDS data collection", 
-					"branch": "te1680-119789-Add-UI-UX-for-RDS-data-collection"
+					"commit": "[TS-1234] Ticket #1029386 This is a summary", 
+					"branch": "testuser-1029386-branch-testing"
 				}
 			], 
 			status: true
-		});
+		}).delay(2000);
 	}
 
 	/*
@@ -667,7 +664,7 @@ export class JiraServiceTest extends DataService {
 		return Observable.of({
 			status: true, 
 			data: "TEST-1234"
-		});
+		}).delay(2000);
 	}
 
 	/**
@@ -675,40 +672,51 @@ export class JiraServiceTest extends DataService {
 	getTicketBranches(msrp:string): Observable<any> {
 		return Observable.of({
 			data:{
-				"status": true, 
-				"data": [
+				status: true, 
+				data: [
 					{
-						"repo": "test1", 
-						"branches": [
+						repo: "test1", 
+						branches: [
 							"test-100000-test branch"
 						], 
-						"all": [
+						all: [
 							"DEV", 
 							"test-100000-test branch", 
 							"test-100001-test branch2", 
 							"test-100002-test branch3", 
-							"MASTER9.10", 
-							""
+							"MASTER9.10",
 						]
 					},
 					{
-						"repo": "test2", 
-						"branches": [
+						repo: "test2", 
+						branches: [
 							"test-100000-test branch"
 						], 
-						"all": [
+						all: [
 							"DEV", 
 							"test-100000-test branch", 
 							"test-100001-test branch2", 
 							"test-100002-test branch3", 
-							"MASTER9.10", 
-							""
+							"MASTER9.10",
 						]
-					}
+					},
+					{
+						repo: "test3", 
+						branches: [
+							"test-100000-test branch"
+						], 
+						all: [
+							"DEV", 
+							"test-100000-test branch", 
+							"test-100001-test branch2", 
+							"test-100002-test branch3", 
+							"MASTER9.10",
+						]
+					},
 				]
 			},
 			status: true
-		});
+		}).delay(2000);
 	}
 
 	/**
@@ -727,7 +735,7 @@ export class JiraServiceTest extends DataService {
 				{"name": "test8"}, 
 				{"name": "test9"} 
 			]
-		});
+		}).delay(2000);
 	}
 
 	/**
@@ -736,7 +744,7 @@ export class JiraServiceTest extends DataService {
 		return Observable.of({
 			status: true, 
 			data: "CR-TEST-1234"
-		});
+		}).delay(2000);
 	}
 
 	/**
@@ -750,13 +758,13 @@ export class JiraServiceTest extends DataService {
 				"test3"
 			],
 			status: true
-		});
+		}).delay(2000);
 	}
 
 	/**
 	*/
 	workLog(postData): Observable<any> {
-		return Observable.of(this.commentResponse);
+		return Observable.of(this.commentResponse).delay(2000);
 	}
 
 	commentResponse = {
@@ -785,7 +793,7 @@ export class JiraServiceTest extends DataService {
 				 	"self": "http://jira.com/rest/api/2/user?username=testuser", 
 				 	"name": "testuser", 
 				 	"key": "testuser", 
-				 	"emailAddress": "testuser@att.com",
+				 	"emailAddress": "testuser@test.com",
 				 	"avatarUrls": {
 				 		"48x48": "http://jira.com/secure/useravatar?ownerId=testuser&avatarId=11051", 
 				 		"24x24": "http://jira.com/secure/useravatar?size=small&ownerId=testuser&avatarId=11051", 
@@ -813,7 +821,7 @@ export class JiraServiceTest extends DataService {
 		return Observable.of({
 			data:this.commentResponse,
 			status: true
-		});
+		}).delay(2000);
 	}
 
 	/**
@@ -822,7 +830,7 @@ export class JiraServiceTest extends DataService {
 		return Observable.of({
 			data:{},
 			status: true
-		});
+		}).delay(2000);
 	}
 
 	/**
@@ -831,7 +839,7 @@ export class JiraServiceTest extends DataService {
 		return Observable.of({
 			data:{},
 			status: true
-		});
+		}).delay(2000);
 	}
 
 	/**
@@ -864,7 +872,7 @@ export class JiraServiceTest extends DataService {
 				"expand": "groups,applicationRoles"
 			},
 			status: true
-		});
+		}).delay(2000);
 	}
 
 }
