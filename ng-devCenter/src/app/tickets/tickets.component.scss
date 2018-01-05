@@ -7,10 +7,83 @@ i {
 	cursor: pointer;
 }
 
+// dt buttons
+$success: #28a745;
+.dt-button.buttons-collection.buttons-colvis, 
+.dataTables_wrapper .dataTables_paginate .paginate_button,
+.dt-button-collection .dt-button.buttons-columnVisibility {
+	
+	display: inline-block;
+	font-weight: 400;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	border: 1px solid transparent;
+	padding: .375rem .75rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	border-radius: .25rem;
+	transition: 
+		background-color 
+		.15s ease-in-out,border-color 
+		.15s ease-in-out,box-shadow 
+		.15s ease-in-out;
+	
+	color: $success !important; 
+	background-color: transparent;
+	background-image: none !important;
+	border-color: $success;
+
+	&:hover:not(.disabled), &.active {
+		color: #fff !important;
+		background-color: $success !important;
+		border-color: $success !important;
+		box-shadow: 0 0 0 0.2rem rgba(40,167,69,.5);
+	}
+
+	&:focus:not(.disabled) {
+		outline: 0;
+	}
+
+	&:active {
+		color: #fff !important;
+		background-color: $success !important;
+		border-color: $success !important;
+		
+	}
+}
+
+// dt length dropdown
+.dataTables_length {
+	margin-left: 20px;
+	margin-top: 6px;
+	select { 
+		width: 100px;
+	}
+}
+
 .summary-format {
 	word-break: break-all;
 	max-width: 300px;
 }
+
+// filter button
+#DataTables_Table_0_filter input {
+ 	padding: .375rem .75rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	color: #495057;
+	background-color: #fff;
+	background-image: none;
+	background-clip: padding-box;
+	border: 1px solid #ced4da;
+	border-radius: .25rem;
+	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+ }
 
 .title-spacing {
 	margin-top: 50px;

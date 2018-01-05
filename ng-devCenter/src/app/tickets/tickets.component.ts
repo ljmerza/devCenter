@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Subject, Observable, Subscription } from 'rxjs';
@@ -17,7 +17,8 @@ import * as $ from 'jquery';
 @Component({
 	selector: 'app-tickets',
 	templateUrl: './tickets.component.html',
-	styleUrls: ['./tickets.component.scss']
+	styleUrls: ['./tickets.component.scss'],
+	encapsulation: ViewEncapsulation.None
 })
 export class TicketsComponent implements OnInit, OnDestroy {
 	loadingTickets:boolean = true;
@@ -39,13 +40,21 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			{targets: 3, width: '10%'},
 			{targets: [4,5,8,9], type: 'date'}
 		],
-		dom: 'BfRtip',
-		pageLength: 20,
-		buttons: [
-			'colvis',
-			'excel'
-		],
-		stateSave: true
+		dom: `
+			<'row'<'col-sm-12'Bfl>>
+			<'row'<'col-sm-12'tr>>
+			<'row'<'col-sm-12'ip>>
+		`,
+		pageLength: 5,
+		lengthMenu: [5, 10, 15, 20, 100],
+		buttons: ['colvis', 'excel'],
+		stateSave: true,
+		pagingType: 'full',
+		language: {
+			search: "",
+        	searchPlaceholder: "Search Ticket",
+        	zeroRecords: 'No matching tickets found'
+        }
 	};
 
 	/*

@@ -17,17 +17,19 @@
 <div class="container-fluid table-spacing" [hidden]='loadingTickets'>
 	<div class="row">
 		<div class="col-12">
-			<h1 class='text-center title-spacing'>{{jira.title}} Tickets</h1>
-			<i class="material-icons float-right" title='Refresh Tickets'
-			(click)="getTickets()">
-			update
-		</i>
+			<h1 class='text-center title-spacing'>{{jira.title}} Tickets
+				<i class="material-icons" title='Refresh Tickets'
+				(click)="getTickets()">update</i>
+			</h1>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-12">
 			<div [hidden]='!openTickets'>
-				<table [ngClass]="{'table-striped': jira.title != 'All Open'}" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+				<table 
+					[ngClass]="{'table-striped': jira.title != 'All Open'}" 
+					datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+				>
 					<thead>
 						<tr>
 							<th>Key</th>
