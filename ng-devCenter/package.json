@@ -1,6 +1,6 @@
 {
-  "name": "ng-dev-center",
-  "version": "0.0.0",
+  "name": "devCenter",
+  "version": "3.4.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -9,7 +9,8 @@
     "beta": "ng build --base-href=./ --environment=beta --aot --build-optimizer",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "demo": "ng serve --environment=test"
   },
   "private": true,
   "dependencies": {
