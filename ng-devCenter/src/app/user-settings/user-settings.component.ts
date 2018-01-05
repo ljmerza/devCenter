@@ -52,6 +52,19 @@ export class UserSettingsComponent implements AfterContentInit {
 
 	/*
 	*/
+	resetForm(){
+		this.userSettingsForm.reset({
+			username: this.user.username,
+			password: this.user.password,
+			port: this.user.port,
+			emberUrl: this.user.emberUrl,
+			teamUrl: this.user.teamUrl,
+			cache: this.user.cache
+		});
+	}
+
+	/*
+	*/
 	get username(){ return this.userSettingsForm.get('username'); }
 	get password(){ return this.userSettingsForm.get('password'); }
 	get port(){ return this.userSettingsForm.get('port'); }
@@ -65,6 +78,7 @@ export class UserSettingsComponent implements AfterContentInit {
 
 		// just close form if no submit type
 		if(!submitType){
+			this.resetForm();
 			this.modelInstance.close();
 			return;
 		}
