@@ -59,6 +59,8 @@ export class UserSettingsComponent implements AfterContentInit {
 	get teamUrl(){ return this.userSettingsForm.get('teamUrl'); }
 	get cache(){ return this.userSettingsForm.get('cache'); }
 
+	/*
+	*/
 	submit(submitType){
 
 		// just close form if no submit type
