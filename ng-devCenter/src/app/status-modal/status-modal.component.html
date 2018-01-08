@@ -1,22 +1,22 @@
-<ng-template #statusModal let-c="close" let-d="dismiss">
+<dev-center-modal [title]=statusName (modalEvent)=closeStatusModal($event)>
 
-	<div class="modal-header">
-		<h4 class="modal-title">{{statusName}}</h4>
-
-		<button type="button" class="close" aria-label="Close" (click)="d()">
-			<span aria-hidden="true">&times;</span>
-		</button>
+	<div class='modal-text'>
+		<h4 class="modal-title">Status change to '{{statusName}}'</h4>
 	</div>
 
-	<div class="modal-body" [ngSwitch]="statusType">
-		<p>Would you like change to '{{statusName}}'?</p>
-	</div>
+	<span class='modal-body'>
+		<p>Would you like change {{key}} to '{{statusName}}'?</p>
+	</span>
 
-	<div class="modal-footer" [ngSwitch]="statusType">
-		<button type="button" class="btn btn-outline-success" (click)="c()">
+	<span class='modal-footer'>
+		<button type="button" class="btn btn-outline-primary" 
+		(click)="closeStatusModal(true)">
 			Change to {{statusName}}
 		</button>
-		<button type="button" class="btn btn-outline-danger" (click)="d()">Cancel</button>
-	</div>
-
-</ng-template>
+		<button type="button" class="btn btn-outline-danger" 
+		(click)="closeStatusModal()">
+			Cancel
+		</button>
+	</span>
+	
+</dev-center-modal>

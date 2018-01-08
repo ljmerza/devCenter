@@ -2,8 +2,9 @@ import {
 	Component, OnInit, ElementRef, ChangeDetectionStrategy,
 	EventEmitter, Input, Output, ViewChild
 } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ModalComponent } from './../modal/modal.component';
 import { UserService } from './../services/user.service';
 import { ToastrService } from './../services/toastr.service';
 import { JiraService } from './../services/jira.service';
@@ -17,24 +18,24 @@ import { JiraService } from './../services/jira.service';
 })
 export class StatusModalComponent {
 
-	@ViewChild('statusModal') content: ElementRef;
+	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Output() statusChange = new EventEmitter();
-	@Input() crucible_id;
-	@Input() key;
-	statusType;
-	statusName;
+	@Input() crucible_id: string;
+	@Input() key: string;
+	statusType: string;
+	statusName: string;
+	modelRef: NgbModalRef;
 
 	constructor(
-		private user: UserService, 
-		public toastr: ToastrService, 
-		public jira: JiraService, 
-		private modalService: NgbModal
-	) {
-	}
+		private user: UserService, public toastr: ToastrService, 
+		public jira: JiraService
+	) {}
 
-	/*
+	/**
 	*/
-	openStatusModal(statusType, statusName): void {
+	openStatusModal(statusType:string, statusName:string): void {
+
+		// save data to modal
 		this.statusType = statusType
 		this.statusName = statusName;
 
@@ -45,26 +46,37 @@ export class StatusModalComponent {
 			return;
 		}
 
-		// open modal then on close process result
-		this.modalService.open(this.content).result.then( 
-			() => {
-				switch(statusType){
-					case 'complete':
-						this.changeStatus('pcrPass');
-						this.changeStatus('pcrComplete');
-						break;
-					default:
-						this.changeStatus(statusType);
-						break;
-				}
-			}, 
-			() => this.statusChange.emit({cancelled: true, showMessage: true}) 
-		);	
+		// open modal
+		this.modelRef = this.modal.openModal();
 	}
 
-	/*
+	/**
 	*/
-	changeStatus(statusType) {
+	closeStatusModal(submit:boolean=false): void{
+
+		// if we are submitting then update status
+		if(submit){
+			switch(this.statusType){
+				case 'complete':
+					this.changeStatus('pcrPass');
+					this.changeStatus('pcrComplete');
+					break;
+				default:
+					this.changeStatus(this.statusType);
+					break;
+			}
+		} else {
+			// else cancel status
+			this.statusChange.emit({cancelled: true, showMessage: true}) 
+		}
+
+		// always close modal
+		this.modelRef.close();	
+	}
+
+	/**
+	*/
+	changeStatus(statusType:string): void {
 		this.jira.changeStatus({key:this.key, statusType, crucible_id:this.crucible_id})
 		.subscribe(
 			() => {

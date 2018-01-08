@@ -1,3 +1,16 @@
-<p>
-  modal works!
-</p>
+<ng-template #modal>
+
+	<div class="modal-header">
+		<h4><i class="material-icons">warning</i></h4>
+		<ng-content select=".modal-text"></ng-content>
+
+		<button type="button" class="close" aria-label="Close" (click)="closeModal()">
+			<span aria-hidden="true">
+				<i class="material-icons">clear</i>
+			</span>
+		</button>
+	</div>
+	
+	<ng-content select=".modal-body"></ng-content>
+	<ng-content select=".modal-footer"></ng-content>
+</ng-template>
