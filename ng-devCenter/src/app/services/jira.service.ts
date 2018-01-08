@@ -114,6 +114,10 @@ export class JiraService extends DataService {
 				this.jql = this.config.sable;
 				this.title = 'SABLE';
 				break;
+			case 'apiud':
+				this.jql = this.config.apiTeamAccelerate;
+				this.title = 'API Team Accelerate';
+				break;
 			default:
 				this.jql = this.config.mytickets;
 				this.title = 'My Open';

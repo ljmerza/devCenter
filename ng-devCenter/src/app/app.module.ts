@@ -39,6 +39,8 @@ import { ToastrComponent } from './toastr/toastr.component';
 import { TicketDetailsComponent } from './ticket-details/ticket-details.component';
 
 import { environment } from '../environments/environment';
+import { ModalComponent } from './modal/modal.component';
+import { TicketStatusComponent } from './ticket-status/ticket-status.component';
 
 @NgModule({
 	declarations: [
@@ -47,7 +49,7 @@ import { environment } from '../environments/environment';
 		FooterComponent, JiraCommentsComponent, SafehtmlPipe,
 		StatusModalComponent, TimeLogComponent, LogoutComponent,
 		TicketComponent, CommentFormatPipe, SetPingsComponent,
-		ToastrComponent, TicketDetailsComponent
+		ToastrComponent, TicketDetailsComponent, ModalComponent, TicketStatusComponent
 	],
 	imports: [
 		BrowserModule, FormsModule, NgbModule.forRoot(),

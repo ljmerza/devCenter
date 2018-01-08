@@ -1,14 +1,13 @@
 import { 
-	Component, Input, ViewChild, 
-	EventEmitter, Output, OnInit
+	Component, Input, ViewChild, ComponentFactoryResolver,
+	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy
 } from '@angular/core';
 
-import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 import { JiraCommentsComponent } from './../jira-comments/jira-comments.component';
-import { StatusModalComponent } from './../status-modal/status-modal.component';
 import { TimeLogComponent } from './../time-log/time-log.component';
 import { SetPingsComponent } from './../set-pings/set-pings.component';
 import { TicketDetailsComponent } from './../ticket-details/ticket-details.component';
+import { TicketStatusComponent } from './../ticket-status/ticket-status.component';
 
 import { ToastrService } from './../services/toastr.service';
 import { JiraService } from './../services/jira.service';
@@ -19,115 +18,36 @@ import { UserService } from './../services/user.service'
 @Component({
 	selector: '.appTicket',
 	templateUrl: './ticket.component.html',
-	styleUrls: ['./ticket.component.scss']
+	styleUrls: ['./ticket.component.scss'],
+	entryComponents: [
+		SetPingsComponent, TicketDetailsComponent,
+		JiraCommentsComponent, TimeLogComponent
+	],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TicketComponent implements OnInit {
+export class TicketComponent {
 	ticketDropdown; // ticket dropdown reference
-	ticketStates = [];
+
+	ticketDetails;
+	detailsComponentRef;
+	pingComponentRef;
+	commentComponentRef;
+	worklogComponentRef;
 
 	constructor(
-		public toastr: ToastrService, 
-		public jira: JiraService, 
-		public config: ConfigService, 
-		public user: UserService
-	) {}
+		private toastr: ToastrService, public jira: JiraService, public config: ConfigService, 
+		public user: UserService, private factoryResolver: ComponentFactoryResolver, 
+		private viewContRef: ViewContainerRef
+	) { }
 
 	@Input() ticket;
 	@Input() repos;
 	@Output() rerender = new EventEmitter();
+	@ViewChild(TicketStatusComponent) ticketStatusRef: TicketStatusComponent;
 
-	@ViewChild(QaGeneratorComponent) public qaGen: QaGeneratorComponent;
-	@ViewChild(JiraCommentsComponent) public jiraComments: JiraCommentsComponent;
-	@ViewChild(StatusModalComponent) public statusModal: StatusModalComponent;
-	@ViewChild(TimeLogComponent) public logWork: TimeLogComponent;
-	@ViewChild(SetPingsComponent) public setPing: SetPingsComponent;
-	@ViewChild(TicketDetailsComponent) public detailsModal: TicketDetailsComponent;
-
-	ngOnInit(){
-		this.validTransitions();
-	}
-
-	validTransitions() {
-		// set valid transitions
-		if(['In Sprint','On Hold'].includes(this.ticket.status)){
-			this.ticketStates = this.allTransistions.filter(state => ['In Development'].includes(state.name));
-		} else if(this.ticket.status === 'In Development'){
-			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
-		} else if(this.ticket.status === 'PCR - Needed'){
-			this.ticketStates = this.allTransistions.filter(state => ['PCR - Pass','PCR - Completed'].includes(state.name));
-		} else if(this.ticket.status === 'PCR - Completed'){
-			this.ticketStates = this.allTransistions.filter(state => ['Code Review - Working'].includes(state.name));
-		} else if(this.ticket.status === 'Code Review - Working'){
-			this.ticketStates = this.allTransistions.filter(state => ['Ready for QA', 'Code Review - Fail'].includes(state.name));
-		} else if(this.ticket.status === 'Ready for QA'){
-			this.ticketStates = this.allTransistions.filter(state => ['In QA'].includes(state.name));
-		} else if(this.ticket.status === 'In QA'){
-			this.ticketStates = this.allTransistions.filter(state => ['QA Fail','QA Pass'].includes(state.name));
-		
-		} else if(this.ticket.status === 'Ready for UCT'){
-			this.ticketStates = this.allTransistions.filter(state => ['In UCT'].includes(state.name));
-		} else if(this.ticket.status === 'In UCT'){
-			this.ticketStates = this.allTransistions.filter(state => ['UCT Fail','UCT Pass'].includes(state.name));
-		} else if(['Ready for Release','Merge Code','Merge Conflict','Code Review - Working'].includes(this.ticket.status)){
-			this.ticketStates = [];
-		
-		} else {
-			this.ticketStates = this.allTransistions;
-		}
-
-		// if current status not in list of statues then add to beginning
-		if( !(this.ticketStates.filter(state => state.name == this.ticket.status).length > 0)){
-			this.ticketStates.unshift({name: this.ticket.status, id: ''});
-		}
-	}
-
-	
-
-	allTransistions = [
-		{name: 'In Development', id: 'inDev'},
-		{name: 'PCR - Needed', id: 'pcrNeeded'},
-		{name: 'Remove PCR Needed', id: 'removePcrNeeded'},
-		{name: 'PCR - Pass', id: 'pcrPass'},
-		{name: 'PCR - Completed', id: 'pcrCompleted'},
-		{name: 'Remove PCR Completed', id: 'removePcrCompleted'},
-		{name: 'Code Review - Working', id: 'crWorking'},
-		{name: 'Code Review - Fail', id: 'crFail'},
-		{name: 'Ready for QA', id: 'qaReady'},
-		{name: 'In QA', id: 'inQa'},
-		{name: 'QA Fail', id: 'qaFail'},
-		{name: 'QA Pass', id: 'qaPass'},
-		{name: 'Merge Code', id: 'mergeCode'},
-		{name: 'Merge Conflict', id: 'mergeConflict'},
-		{name: 'In UCT', id: 'inUct'},
-		{name: 'UCT Pass', id: 'uctPass'},
-		{name: 'UCT Fail', id: 'uctFail'},
-		{name: 'Ready for UCT', id: 'uctReady'},
-		{name: 'Ready for Release', id: 'releaseReady'}
-	];
-
-	/*
-	*/
-	stateChange(ticketDropdown){
-
-		// save select element reference and old status
-		this.ticketDropdown = ticketDropdown;
-
-		// if pcr needed open qa gen
-		if(ticketDropdown.value == 'pcrNeeded'){
-			this.qaGen.openQAModal();
-			return;
-		}
-		
-		// get ticket state info and open status modal
-		const ticketState = this.ticketStates.filter(state => state.id == ticketDropdown.value);
-		this.statusModal.openStatusModal(ticketState[0].id, ticketState[0].name);
-	}
-
-	/*
+	/**
 	*/
 	commentChangeEvent({allComments, postData, newComment, response}):void {
-
-		console.log('allComments, postData, newComment, response: ', allComments, postData, newComment, response);
 
 		// if comment added the push comment onto comment array
 		if(postData && postData.comment){
@@ -158,43 +78,12 @@ export class TicketComponent implements OnInit {
 		// check for removal of components
 		if(postData && postData.remove_merge){
 			this.ticket.status = 'Ready for UCT';
-			this.statusChange({showMessage:false, cancelled:false, statusName:this.ticket.status});
-			
 		} else if(postData && postData.remove_conflict){
 			this.ticket.status = 'Ready for QA';
-			this.statusChange({showMessage:false, cancelled:false, statusName:this.ticket.status});
 		}
 	}
 
-	/*
-	*/
-	statusChange({showMessage=true, cancelled=true, statusName=''}):void {
-
-		// if we are canceling a status then reset dropdown
-		if(cancelled){
-			const ticketState = this.ticketStates.filter(state => state.name == this.ticket.status);
-			this.ticketDropdown.value = ticketState[0].id;
-			
-		} else if(statusName) {
-			// if given the status then set status at that
-			const ticketState = this.allTransistions.filter(state => state.name == statusName);
-
-			this.ticket.status = ticketState[0].name;
-			this.validTransitions();
-
-		} else {
-			// else set ticket state with new dropdown value and reload valid transitions
-			const ticketState = this.allTransistions.filter(state => state.id == this.ticketDropdown.value);
-			this.ticket.status = ticketState[0].name;
-			this.validTransitions();
-		}
-
-		if(showMessage){
-			this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
-		}
-	}
-
-	/*
+	/**
 	*/
 	addReviewer(){
 
@@ -210,18 +99,85 @@ export class TicketComponent implements OnInit {
 		);
 	}
 
-	/*
+	/**
 	*/
-	ticketDetails;
-	additionalDataEvent(){
+	openAdditionalDataModal(){
+
+		// create modal if doesn't exist
+		if(!this.detailsComponentRef) {
+			const factory = this.factoryResolver.resolveComponentFactory(TicketDetailsComponent);
+	    	this.detailsComponentRef = this.viewContRef.createComponent(factory);
+	    	(<TicketDetailsComponent>this.detailsComponentRef.instance).ticketDetails = this.ticketDetails;
+		}
+
 		// open modal
-		this.detailsModal.openDetailsModel();
+    	this.detailsComponentRef.instance.openDetailsModel();
 
 		// load new or refresh ticket details
 		this.jira.getATicketDetails(this.ticket.key)
 		.subscribe(
-			issue => this.ticketDetails = issue.data[0],
+			issue => {
+				this.ticketDetails = issue.data[0];
+				(<TicketDetailsComponent>this.detailsComponentRef.instance).ticketDetails = issue.data[0];
+			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
+	}
+
+	/**
+	*/
+	openPingModel() {
+		// create modal if doesn't exist
+		if(!this.pingComponentRef) {
+			const factory = this.factoryResolver.resolveComponentFactory(SetPingsComponent);
+	    	this.pingComponentRef = this.viewContRef.createComponent(factory);
+	    	(<SetPingsComponent>this.pingComponentRef.instance).key = this.ticket.key;
+	    	(<SetPingsComponent>this.pingComponentRef.instance).sprint = this.ticket.sprint;
+	    	(<SetPingsComponent>this.pingComponentRef.instance).branch = this.ticket.branch;
+	    	(<SetPingsComponent>this.pingComponentRef.instance).commit = this.ticket.commit;
+		}
+		
+		// open modal
+    	this.pingComponentRef.instance.openPingModel();
+	}
+
+	/**
+	*/
+	openCommentModal() {
+		// create modal if doesn't exist
+		if(!this.commentComponentRef) {
+			const factory = this.factoryResolver.resolveComponentFactory(JiraCommentsComponent);
+	    	this.commentComponentRef = this.viewContRef.createComponent(factory);
+	    	// add inputs
+	    	(<JiraCommentsComponent>this.commentComponentRef.instance).key = this.ticket.key;
+	    	(<JiraCommentsComponent>this.commentComponentRef.instance).attachments = this.ticket.attachments;
+	    	(<JiraCommentsComponent>this.commentComponentRef.instance).comments = this.ticket.comments;
+	    	// add output event
+	    	(<JiraCommentsComponent>this.commentComponentRef.instance)
+	    		.commentChangeEvent.subscribe($event => this.commentChangeEvent($event));
+		}
+		
+		// open modal
+    	(<JiraCommentsComponent>this.commentComponentRef.instance).openCommentModal();
+	}
+
+	/**
+	*/
+	openLogModal() {
+		// create modal if doesn't exist
+		if(!this.worklogComponentRef) {
+			const factory = this.factoryResolver.resolveComponentFactory(TimeLogComponent);
+	    	this.worklogComponentRef = this.viewContRef.createComponent(factory);
+
+	    	// add input/outputs
+	    	(<TimeLogComponent>this.worklogComponentRef.instance).key = this.ticket.key;
+	    	(<TimeLogComponent>this.worklogComponentRef.instance)
+	    		.commentChangeEvent.subscribe($event => this.commentChangeEvent($event) );
+	    	(<TimeLogComponent>this.worklogComponentRef.instance)
+	    		.statusChangeCancel.subscribe($event => this.ticketStatusRef.statusChange($event) );
+		}
+		
+		// open modal
+    	(<TimeLogComponent>this.worklogComponentRef.instance).openLogModal();
 	}
 }

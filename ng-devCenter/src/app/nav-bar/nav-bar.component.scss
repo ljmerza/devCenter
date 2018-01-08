@@ -7,14 +7,16 @@
 		top: -10px;
 		left: 100%;
 	}
+
+	.dropdown-submenu-icon {
+		position: absolute;
+		top: 8px;
+		right: 0;
+		font-size: 17px;
+	}
 }
 
-.dropdown-submenu-icon {
-	position: absolute;
-	top: 8px;
-	right: 0;
-	font-size: 17px;
-}
+
 
 /* label underline focus color */
 .input-field input[type=text] {

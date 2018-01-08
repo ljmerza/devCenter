@@ -1,4 +1,4 @@
-import { Component, AfterContentInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserService } from './../services/user.service';
@@ -17,7 +17,7 @@ declare var $ :any;
 	templateUrl: './nav-bar.component.html',
 	styleUrls: ['./nav-bar.component.scss']
 })
-export class NavBarComponent implements AfterContentInit {
+export class NavBarComponent {
 	ticketValue:string;
 	isFriday:boolean;
 
@@ -44,23 +44,6 @@ export class NavBarComponent implements AfterContentInit {
 		}, 60*60*2)
 		
 	}
-
-	/*
-	*/
-	ngAfterContentInit(): void {
-
-		// add mouse events to show/hide submenus
-		$('.dropdown-submenu').on('mouseenter mouseleave','.dropdown', function(e){
-			const $elem = $(e.target).closest('.dropdown');
-			$elem.addClass('show');
-			
-			// after 300 ms then toggle class
-			setTimeout(function(){
-				$elem[$elem.is(':hover')?'addClass':'removeClass']('show');
-			},300);
-		});
-	}
-
 
 	/*
 	*/

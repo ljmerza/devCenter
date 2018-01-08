@@ -4,7 +4,7 @@
 		<a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira'>{{ticket.key}}</a>
 	</div>
 	<div class="float-right">
-		<i (click)="setPing.openPingModel()" class="material-icons"title='Branch Information'>record_voice_over</i>
+		<i (click)="openPingModel()" class="material-icons"title='Branch Information'>record_voice_over</i>
 	</div>
 </td>
 
@@ -12,26 +12,27 @@
 <td>
 	<div class='float-left'>{{ticket.msrp}}</div>
 	<div class="float-right">
-		<i (click)="logWork.openLogModal()" class="material-icons" title='Add comment/time log'>alarm_add</i>
-		<i (click)="jiraComments.openCommentModal()" class="material-icons"title='View comments'>storage</i>
+		<i (click)="openLogModal()" class="material-icons" title='Add comment/time log'>alarm_add</i>
+		<i (click)="openCommentModal()" class="material-icons"title='View comments'>storage</i>
 	</div>
 </td>
 
 <!-- summary -->
 <td class='summary-format'>
-	<i class="material-icons" title='View Additional Data' (click)="additionalDataEvent()">live_help</i>
+	<i class="material-icons" title='View Additional Data' 
+	(click)="openAdditionalDataModal()">live_help</i>
 	{{ticket.summary}}
 </td>
 
 <!-- state dropdown -->
 <td>
-	<select (change)="stateChange(ticketState)" #ticketState>
-		<option 
-			*ngFor='let state of ticketStates' [value]="state.id"
-			[attr.selected]="state.name==ticket.status ? 'true': null">
-				{{state.name}}
-		</option>
-	</select>
+	<dev-center-ticket-status
+		[ticketStatus]=ticket.status
+		[ticketKey]=ticket.key
+		[ticketMsrp]=ticket.msrp
+		[ticketCrucible]=ticket.crucible_id
+		[repos]=repos
+	></dev-center-ticket-status>
 </td>
 
 <!-- dates -->
@@ -85,43 +86,3 @@
 		</a>
 	</div>
 </td>
-	
-
-
-<!-- modals for this ticket -->
-<app-time-log 
-	(statusChange)="statusChange($event)"
-	(commentChangeEvent)="commentChangeEvent($event)" 
-	[key]=ticket.key>
-</app-time-log>
-
-<app-status-modal 
-	(statusChange)="statusChange($event)" 
-	[crucible_id]=ticket.crucible_id 
-	[key]=ticket.key>
-</app-status-modal>
-
-<app-qa-generator
-	(statusChange)="statusChange($event)" 
-	[key]=ticket.key
-	[repos]=repos
-	[msrp]=ticket.msrp>
-</app-qa-generator>
-
-<app-jira-comments 
-	(commentChangeEvent)="commentChangeEvent($event)" 
-	[key]=ticket.key 
-	[attachments]=ticket.attachments
-	[comments]=ticket.comments>
-</app-jira-comments>
-
-<app-set-pings 
-	[key]=ticket.key
-	[sprint]=ticket.sprint
-	[branch]=ticket.branch
-	[commit]=ticket.commit>
-</app-set-pings>
-
-<app-ticket-details 
-[ticketDetails]=ticketDetails>
-</app-ticket-details>

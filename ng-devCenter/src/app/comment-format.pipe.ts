@@ -20,9 +20,7 @@ export class CommentFormatPipe implements PipeTransform {
 		let stepNumber = 1;
 
 		[comment, stepNumber] = this._formatLines(comment, attachments, stepNumber);
-		comment = this._formatCode(comment);
-		comment = `<div class="container"> ${comment} </div>`;
-		return comment;
+		return this._formatCode(comment);
 	}
 
 	/*

@@ -1,0 +1,7 @@
+<select (change)="stateChange(ticketState)" #ticketState>
+	<option 
+		*ngFor='let state of ticketStates' [value]="state.id"
+		[attr.selected]="state.name==ticketStatus ? 'true': null">
+			{{state.name}}
+	</option>
+</select>

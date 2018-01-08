@@ -30,6 +30,7 @@ export class ConfigService {
 	innovation = encodeURIComponent(`labels = "InnovationExpress(IX)"`);
 	sable = encodeURIComponent(`project = "SABLE" and status != closed`);
 	cartProject = encodeURIComponent(`project in  = "InnovationExpress(IX)"`);
+	apiTeamAccelerate = encodeURIComponent(`project in ("API Team") and status != closed and "Epic Link" in (GCSAPI-380, GCSAPI-896)`);
 
 	allProjectNames = [
 		{link: 'teamdb_ember', name: 'TeamDB Ember'},
@@ -41,7 +42,28 @@ export class ConfigService {
 		{link: 'orchestration', name: 'Orchestration'},
 		{link: 'innovation', name: 'Innovation Express'},
 		{link: 'sable', name: 'SABLE'},
-		{link: 'cart', name: 'CART'}
+		{link: 'cart', name: 'CART'},
+		{link: 'apiud', name: 'API UD'},
+	];
+
+	teamTicketListNames = [
+		{link: 'mytickets', name: 'My Tickets'},
+		{link: 'pcr', name: 'PCR Needed'},
+		{link: 'qa', name: 'QA Needed'},
+		{link: 'uctready', name: 'UCT Ready'},
+		{link: 'cr', name: 'CR Needed'},
+		{divider: true},
+		{link: 'allopen', name: 'All Open Tickets'},
+		{link: 'allmy', name: 'All My Tickets'},
+		{link: 'beta', name: 'Beta Tickets'},
+		{divider: true},
+	];
+
+	otherTicketListNames = [
+		{link: 'sme', name: 'SME'},
+		{link: 'pm', name: 'PM'},
+		{link: 'scrum', name: 'Scrum Board'},
+		{link: 'fullscrum', name: 'Full Scrum Board'}
 	];
 	
 	pmTickets = encodeURIComponent('resolution = Unresolved AND assignee in ( wc591w, lk2973)');
@@ -137,15 +159,14 @@ export class ConfigService {
 		{
 			name: 'Backup Request',
 			link: `task/backup-request/123`
-		}
-		,
+		},
 		{
 			name: 'Backup Validation',
 			link: `task/backup-validation/123`
 		}
 	];
 
-	wfa_links = [
+	wfaLinks = [
 		{
 			name: 'Group Ticket',
 			link: `group-lead?lead_ticket=WTXIV000724?cache=`
@@ -157,10 +178,10 @@ export class ConfigService {
 		{
 			name: 'Referrals',
 			link: `ticket/ethernet/WILTP177929?cache=`
-		},
+		}
 	];
 
-	order_links = [
+	orderLinks = [
 		{
 			link: `order/ethernet/GAS544770001?cache=`,
 			name: 'GAS544770001 (EAN)'
@@ -218,13 +239,13 @@ export class ConfigService {
 			name: 'ARC167777001 (EXACT)'
 		},
 		{
-			link: `order/ethernet/TNS268897001?cache=`,
-			name: 'TNS268897001'
-		},
-		{
 			link: `order/ethernet/LAS899407001?cache=`,
 			name: 'LAS899407001 (RDS Tracking ID)'
 		},
+		
+	];
+
+	otherOrders = [
 		{
 			link: `order/ethernet/SLS817036001?cache=`,
 			name: 'SLS817036001'
@@ -240,12 +261,15 @@ export class ConfigService {
 		{
 			link: `order/ethernet/NOS193664001?cache=`,
 			name: 'NOS193664001'
-		}
-		,
+		},
 		{
 			link: `order/ethernet/LBS065460001?cache=`,
 			name: 'LBS065460001'
-		}
+		},
+		{
+			link: `order/ethernet/TNS268897001?cache=`,
+			name: 'TNS268897001'
+		},
 	];
 
 	teamdb_ember_links = [
@@ -330,37 +354,59 @@ export class ConfigService {
 	];
 
 	wikiLinks = [
-		{	
-			name: 'Glossary',
-			link: 'http://glossary.web.att.com/'
-		},
 		{
-			name: 'Accelerate',
-			link: '/pages/viewpage.action?pageId=480723373',
-			wiki: true
-		},
-		{
-			name: 'Biz Ops',
-			link: '/display/GCSDevOps/GCS+BizOps',
-			wiki: true
-		},
-		{
-			divider: true
-		},
-		{
-			name: 'New Hire',
-			link: '/display/GCSDevOps/Complete+New+Hire+Training+Program',
-			wiki: true
-		},
-		{
-			name: 'Create SASHA UA Ticket',
-			link: '/display/GCSDevOps/HOWTO%3A+Create+a+SASHA+UA+Ticket',
-			wiki: true
-		},
-		{
-			name: 'AQE Basics',
-			link: '/display/GCSDevOps/AQE%3A+How+to+Work+An+AQE+Search+String+Ticket',
-			wiki: true
+			name: 'AT&T Wiki',
+			links: [
+				{	
+					name: 'Glossary',
+					link: 'http://glossary.web.att.com/'
+				},
+				{
+					name: 'Accelerate',
+					link: '/pages/viewpage.action?pageId=480723373',
+					wiki: true
+				},
+				{
+					name: 'Biz Ops',
+					link: '/display/GCSDevOps/GCS+BizOps',
+					wiki: true
+				},
+				{
+					name: 'New Hire',
+					link: '/display/GCSDevOps/Complete+New+Hire+Training+Program',
+					wiki: true
+				},
+				{
+					name: 'Create SASHA UA Ticket',
+					link: '/display/GCSDevOps/HOWTO%3A+Create+a+SASHA+UA+Ticket',
+					wiki: true
+				},
+				{
+					name: 'AQE Basics',
+					link: '/display/GCSDevOps/AQE%3A+How+to+Work+An+AQE+Search+String+Ticket',
+					wiki: true
+				},
+				{
+					name: 'Git Repos',
+					link: '/display/GCSDevOps/Git+Process+-+DTI',
+					wiki: true
+				},
+				{
+					name: 'Test Circuits',
+					link: '/display/GCSDevOps/Test+Circuits+for+BMP+and+WFA',
+					wiki: true
+				},
+				{
+					name: 'Crucible PCR Process',
+					link: '/display/GCSDevOps/Crucible+Code+Reviews',
+					wiki: true
+				},
+				{
+					name: 'Jira Workflow',
+					link: '/display/GCSDevOps/Developer+Workflow+in+JIRA',
+					wiki: true
+				},
+			]
 		},
 		{
 			name: 'API Defect',
@@ -471,29 +517,6 @@ export class ConfigService {
 					link: 'https://www.10bestdesign.com/dirtymarkup/'
 				},
 			]
-		},
-		{
-			divider: true
-		},
-		{
-			name: 'Git Repos',
-			link: '/display/GCSDevOps/Git+Process+-+DTI',
-			wiki: true
-		},
-		{
-			name: 'Test Circuits',
-			link: '/display/GCSDevOps/Test+Circuits+for+BMP+and+WFA',
-			wiki: true
-		},
-		{
-			name: 'Crucible PCR Process',
-			link: '/display/GCSDevOps/Crucible+Code+Reviews',
-			wiki: true
-		},
-		{
-			name: 'Jira Workflow',
-			link: '/display/GCSDevOps/Developer+Workflow+in+JIRA',
-			wiki: true
 		},
 		{
 			divider: true

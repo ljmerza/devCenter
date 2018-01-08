@@ -1,7 +1,6 @@
 import { 
 	Component, Input, ViewChild, 
-	ElementRef, ChangeDetectionStrategy,
-	OnChanges, SimpleChanges
+	ElementRef, ChangeDetectionStrategy
 } from '@angular/core';
 
 import { ConfigService } from './../services/config.service'
@@ -14,34 +13,36 @@ import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 	styleUrls: ['./ticket-details.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TicketDetailsComponent implements OnChanges{
+export class TicketDetailsComponent {
 
 	options: NgbModalOptions = {size: 'lg'}
 	loading:boolean = true;
 
-	@Input() ticketDetails;
+	// @Input() ticketDetails;
 	@ViewChild('detailsModal') content: ElementRef;
 	links = [];
+	ticket;
 
-	constructor(private modalService: NgbModal, public config: ConfigService) { }
+	// on set of input sort links
+	@Input()
+	set ticketDetails(ticket) {
+		this.ticket = ticket;
 
-	/*
-	*/
-	ngOnChanges(changes: SimpleChanges) {
-
-		// if we have link values finally then we need to sort them
-		if(changes.ticketDetails.currentValue){
+		if(ticket && ticket.links){
 			this.loading = false
 
 			// sort by inward issues first
-			this.links = changes.ticketDetails.currentValue.links.sort( (a,b)=> {
+			this.links = ticket.links.sort( (a,b)=> {
 				return a.inwardIssue ? 1: 0;
 			});
-		}
+		}	
 	}
 
+	constructor(private modalService: NgbModal, public config: ConfigService) { }
+
+
 	openDetailsModel(){
-		this.modalService.open(this.content, this.options)
+		this.modalService.open(this.content, this.options);
 	}
 
 }
