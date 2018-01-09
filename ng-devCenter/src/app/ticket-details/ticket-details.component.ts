@@ -1,48 +1,61 @@
 import { 
-	Component, Input, ViewChild, 
-	ElementRef, ChangeDetectionStrategy
+	Component, Input, ViewChild, ChangeDetectorRef,
+	ElementRef, ChangeDetectionStrategy, ViewEncapsulation
 } from '@angular/core';
 
 import { ConfigService } from './../services/config.service'
-
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { ModalComponent } from './../modal/modal.component';
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
 	selector: 'app-ticket-details',
 	templateUrl: './ticket-details.component.html',
 	styleUrls: ['./ticket-details.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	encapsulation: ViewEncapsulation.None
 })
 export class TicketDetailsComponent {
-
-	options: NgbModalOptions = {size: 'lg'}
 	loading:boolean = true;
 
 	// @Input() ticketDetails;
-	@ViewChild('detailsModal') content: ElementRef;
+	@ViewChild(ModalComponent) modal: ModalComponent;
+	modalRef: NgbModalRef;
+
 	links = [];
 	ticket;
+	customModalCss = 'ticketDetails';
 
-	// on set of input sort links
+	constructor(public config: ConfigService, private cd: ChangeDetectorRef) { }
+
 	@Input()
 	set ticketDetails(ticket) {
 		this.ticket = ticket;
 
-		if(ticket && ticket.links){
-			this.loading = false
+		if(ticket) {
+			this.loading = false;
 
 			// sort by inward issues first
 			this.links = ticket.links.sort( (a,b)=> {
 				return a.inwardIssue ? 1: 0;
 			});
+
+			// need to manually trigger change detection
+			this.cd.detectChanges();
 		}	
 	}
 
-	constructor(private modalService: NgbModal, public config: ConfigService) { }
+	/**
+	*/
+	openModel(){
+		setTimeout( () => {
+			this.modalRef = this.modal.openModal();
+		});
+	}
 
-
-	openDetailsModel(){
-		this.modalService.open(this.content, this.options);
+	/**
+	*/
+	closeModel(){
+		this.modalRef.close();
 	}
 
 }

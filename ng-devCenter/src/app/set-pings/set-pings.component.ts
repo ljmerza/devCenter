@@ -19,6 +19,7 @@ export class SetPingsComponent {
 	@Input() branch;
 	@Input() sprint;
 
+	customModalCss ='setPings';
 	modalInstance: NgbModalRef;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 

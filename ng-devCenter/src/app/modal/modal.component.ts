@@ -1,5 +1,5 @@
 import { 
-	Component, Output, Input, ViewEncapsulation,
+	Component, Output, Input, ViewEncapsulation, HostBinding,
 	EventEmitter, ViewChild, ChangeDetectionStrategy 
 } from '@angular/core';
 
@@ -13,21 +13,24 @@ import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 	encapsulation: ViewEncapsulation.None
 })
 export class ModalComponent {
+
 	@Input() size;
-	@Input() customClose:boolean = false;
+	@Input() customModalCss;
 	@Output() modalEvent = new EventEmitter();
 	@ViewChild('modal') modal: NgbModal;
 	modalRef;
 
 	constructor(private modalService: NgbModal) { }
 
-
 	/**
 	*/
 	openModal(){
 		// create custom args
-		let options:any = {};
-		if(this.size) options.size = this.size;
+		let options = {};
+		if(this.customModalCss){
+			options = {windowClass: this.customModalCss};
+		}		
+		console.log('options: ', options);
 
 		// open modal and return modal ref
 		this.modalRef = this.modalService.open(this.modal, options);

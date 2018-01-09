@@ -31,7 +31,7 @@ import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { TicketsComponent } from './tickets/tickets.component';
 import { QaGeneratorComponent } from './qa-generator/qa-generator.component';
 import { FooterComponent } from './footer/footer.component';
-import { JiraCommentsComponent } from './jira-comments/jira-comments.component';
+import { TicketCommentsModalComponent } from './ticket-comments-modal/ticket-comments-modal.component';
 import { StatusModalComponent } from './status-modal/status-modal.component';
 import { TimeLogComponent } from './time-log/time-log.component';
 import { LogoutComponent } from './logout/logout.component';
@@ -39,6 +39,7 @@ import { TicketComponent } from './ticket/ticket.component';
 import { SetPingsComponent } from './set-pings/set-pings.component';
 import { ToastrComponent } from './toastr/toastr.component';
 import { TicketDetailsComponent } from './ticket-details/ticket-details.component';
+import { TicketCommentsComponent } from './ticket-comments/ticket-comments.component';
 
 import { environment } from '../environments/environment';
 import { ModalComponent } from './modal/modal.component';
@@ -49,11 +50,11 @@ import { DropdownSubmenuDirective } from './dropdown-submenu.directive';
 	declarations: [
 		AppComponent, NavBarComponent, UserSettingsComponent,
 		TicketsComponent, WorkTimePipe, QaGeneratorComponent,
-		FooterComponent, JiraCommentsComponent, SafehtmlPipe,
+		FooterComponent, TicketCommentsModalComponent, SafehtmlPipe,
 		StatusModalComponent, TimeLogComponent, LogoutComponent,
 		TicketComponent, CommentFormatPipe, SetPingsComponent,
 		ToastrComponent, TicketDetailsComponent, ModalComponent, 
-		TicketStatusComponent, DropdownSubmenuDirective
+		TicketStatusComponent, DropdownSubmenuDirective, TicketCommentsComponent
 	],
 	imports: [
 		BrowserModule, FormsModule, NgbModule.forRoot(),

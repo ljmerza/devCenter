@@ -1,0 +1,20 @@
+<dev-center-modal (modalEvent)=closeCommentModal() [customModalCss]=customModalCss>
+
+	<div class='modal-text'>
+		<h4 class="modal-title">Comments for {{key}}</h4>
+	</div>
+
+	<span class='modal-body'>
+		<dev-center-ticket-comments
+			[key]=key
+			[comments]=comments
+			[attachments]=attachments
+			(commentChangeEvent)="commentChangeEvent($event)"
+		></dev-center-ticket-comments>
+	</span>
+
+	<span class='modal-footer'>
+		<button type="button" class="btn btn-outline-danger" (click)="closeCommentModal()">Close</button>
+	</span>
+	
+</dev-center-modal>

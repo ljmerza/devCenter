@@ -98,9 +98,11 @@ export class TimeLogComponent	{
 		this.logTime = {hour: 0, minute: 0};
 
 		// open modal
-		this.modalReference = this.modalService
+		setTimeout( () => {
+			this.modalReference = this.modalService
 			.open(this.content, { windowClass: 'log-modal' });
-
+		});
+		
 		this.modalReference.result.then(
 			// always reset form
 			() => this._resetForm(),

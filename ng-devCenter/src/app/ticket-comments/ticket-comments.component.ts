@@ -1,9 +1,8 @@
 import { 
-	Component, ViewChild, ElementRef, EventEmitter,
+	Component, ViewChild, ElementRef, EventEmitter, AfterViewInit,
 	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy
 } from '@angular/core';
 
-import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
 import { UserService } from './../services/user.service';
@@ -13,13 +12,13 @@ declare var hljs :any;
 declare var $ :any;
 
 @Component({
-	selector: 'app-jira-comments',
-	templateUrl: './jira-comments.component.html',
-	styleUrls: ['./jira-comments.component.scss'],
+	selector: 'dev-center-ticket-comments',
+	templateUrl: './ticket-comments.component.html',
+	styleUrls: ['./ticket-comments.component.scss'],
 	encapsulation: ViewEncapsulation.None,
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class JiraCommentsComponent implements OnInit {
+export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	openPanelIds = [];
 
 	@ViewChild('commentModal') content:ElementRef;
@@ -30,13 +29,13 @@ export class JiraCommentsComponent implements OnInit {
 	@Output() commentChangeEvent = new EventEmitter();
 
 	constructor(
-		private modalService:NgbModal, private toastr: ToastrService, 
-		public config: NgbAccordionConfig, public user:UserService,
+		private toastr: ToastrService, public user:UserService,
 		public jira:JiraService, private misc: MiscService
 	) {}
 
+	/**
+	*/
 	ngOnInit() {
-
 		// add isEditing boolean to each comments
 		this.comments = this.comments.map(comment => {
 			comment.isEditing = false;
@@ -44,28 +43,23 @@ export class JiraCommentsComponent implements OnInit {
 			comment.editId = 'E'+comment.id.toString();
 			return comment;
 		});
-	}
 
-  	/*
-  	*/
-	openCommentModal(): void {
-
-		// open all panels if less than 6 else open last three
 		this.openPanelIds = this.comments.map((c,i) => {
 			if(this.comments.length<6 || (this.comments.length>6 && i>this.comments.length-4)){
 				return `${this.key}${i}`;
 			}
 		});
+	}
 
-		// open modal
-		this.modalService.open(this.content, { windowClass: 'qa-modal' });
-
-
-		// set all of this at back of event loop for after modal opens
-		let self=this;
-		setTimeout( () => {
+	/**
+	*/
+	ngAfterViewInit(): void {
+		const self=this;
+		
+		setTimeout(() => {
 			// highlight code needs to be triggered after modal opens
 			$('pre').each(function(i, block) {
+				console.log('this: ', this);
 				hljs.highlightBlock(block);
 			});
 
@@ -75,47 +69,46 @@ export class JiraCommentsComponent implements OnInit {
 					self.misc.copyText( $(this).children('input').get(0) );
 				});
 			});
+		})
+		
+		
 
-		},0);
 	}
 
-	/*
+	/**
 	*/
 	toggleEditing(comment){
 		comment.isEditing = !comment.isEditing;
 		comment.closeText = comment.closeText == 'Cancel Editing' ? 'Edit Comment' : 'Cancel Editing';
 	}
 
-	/*
+	/**
 	*/
 	deleteComment(comment_id) {
-		this.modalService.open(this.deleteModal).result.then( () => {
 
-			// get index of comment and remove it there
-			const pos = this.comments.map(comm =>  comm.id).indexOf(comment_id);
-			const deletedComment = this.comments.splice(pos, 1);
+		// get index of comment and remove it there
+		const pos = this.comments.map(comm =>	comm.id).indexOf(comment_id);
+		const deletedComment = this.comments.splice(pos, 1);
 
-			this.jira.deleteComment(comment_id, this.key).subscribe(
-				() => {
-					this.commentChangeEvent.emit({allComments: this.comments});
-					this.toastr.showToast('Comment Deleted Successfully', 'success');
-				},
-				error => {
-					// if error revert comment and show error
-					this.comments.splice(pos, 0, ...deletedComment);
-					this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-				}
-			);
-		});
+		this.jira.deleteComment(comment_id, this.key).subscribe(
+			() => {
+				this.commentChangeEvent.emit({allComments: this.comments});
+				this.toastr.showToast('Comment Deleted Successfully', 'success');
+			},
+			error => {
+				// if error revert comment and show error
+				this.comments.splice(pos, 0, ...deletedComment);
+				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
+			}
+		);
 	}
 
-	/*
+	/**
 	*/
 	editComment(comment){
 
 		// toggle editing text
 		this.toggleEditing(comment);
-
 
 		const newComment = $(`#${comment.editId}`).val();
 

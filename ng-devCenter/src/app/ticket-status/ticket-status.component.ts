@@ -51,6 +51,9 @@ export class TicketStatusComponent implements OnInit {
 	}
 
 	statusChange({showMessage=true, cancelled=true, statusName=''}):void {
+		console.log('cancelled: ', cancelled);
+		console.log('statusName: ', statusName);
+		console.log('statusName: ', statusName);
 		// if we are canceling a status then reset dropdown
 		if(cancelled){
 			const ticketState = this.ticketStates.filter(state => state.name == this.ticketStatus);

@@ -1,3 +1,5 @@
+$darkbg: #292b2c;
+
 .dropdown-submenu{
 	position: relative;
 
@@ -52,4 +54,17 @@ img {
     to {
         text-shadow: 0 0 10px red;
     }
+}
+
+nav {
+	background-color: $darkbg;
+	color: #fff;
+	button {
+		border-radius: 0;
+	}
+
+	input {
+		background-color: $darkbg;
+		border-radius: 0;
+	}
 }

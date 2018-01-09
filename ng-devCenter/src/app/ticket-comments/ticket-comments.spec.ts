@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { JiraCommentsComponent } from './jira-comments.component';
+import { TicketCommentsComponent } from './ticket-comments.component';
 
-describe('JiraCommentsComponent', () => {
-  let component: JiraCommentsComponent;
-  let fixture: ComponentFixture<JiraCommentsComponent>;
+describe('TicketCommentsComponent', () => {
+  let component: TicketCommentsComponent;
+  let fixture: ComponentFixture<TicketCommentsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ JiraCommentsComponent ]
+      declarations: [ TicketCommentsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(JiraCommentsComponent);
+    fixture = TestBed.createComponent(TicketCommentsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

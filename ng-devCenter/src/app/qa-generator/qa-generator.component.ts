@@ -30,6 +30,7 @@ export class QaGeneratorComponent {
 	hourStep = 1;
 	minuteStep = 15;
 
+
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	modalRef: NgbModalRef;
 
@@ -37,6 +38,7 @@ export class QaGeneratorComponent {
 	@Input() msrp;
 	@Input() key;
 	@Input() repos;
+	customModalCss;
 
 	constructor(
 		public jira:JiraService, public toastr: ToastrService, 
@@ -52,6 +54,8 @@ export class QaGeneratorComponent {
 			qaSteps: this.formBuilder.control(''),
 			branches: this.formBuilder.array([])
 		});
+
+		this.customModalCss = 'qaGen';
 	}
 
 	/*
@@ -198,7 +202,9 @@ export class QaGeneratorComponent {
 	*/
 	openQAModal(): void {
 		// open modal
-		this.modalRef = this.modal.openModal();
+		setTimeout( () => {
+			this.modalRef = this.modal.openModal();
+		});
 
 		// disabled submit button for QA gen
 		this.loadingBranches = true;

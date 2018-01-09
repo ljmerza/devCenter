@@ -3,7 +3,7 @@ import {
 	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy
 } from '@angular/core';
 
-import { JiraCommentsComponent } from './../jira-comments/jira-comments.component';
+import { TicketCommentsModalComponent } from './../ticket-comments-modal/ticket-comments-modal.component';
 import { TimeLogComponent } from './../time-log/time-log.component';
 import { SetPingsComponent } from './../set-pings/set-pings.component';
 import { TicketDetailsComponent } from './../ticket-details/ticket-details.component';
@@ -22,7 +22,7 @@ import { MiscService } from './../services/misc.service';
 	styleUrls: ['./ticket.component.scss'],
 	entryComponents: [
 		SetPingsComponent, TicketDetailsComponent,
-		JiraCommentsComponent, TimeLogComponent
+		TicketCommentsModalComponent, TimeLogComponent
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -112,7 +112,7 @@ export class TicketComponent {
 		}
 
 		// open modal
-    	this.detailsComponentRef.instance.openDetailsModel();
+    	this.detailsComponentRef.instance.openModel();
 
 		// load new or refresh ticket details
 		this.jira.getATicketDetails(this.ticket.key)
@@ -139,7 +139,7 @@ export class TicketComponent {
 		}
 		
 		// open modal
-    	this.pingComponentRef.instance.openPingModel();
+    	(<SetPingsComponent>this.pingComponentRef.instance).openPingModel();
 	}
 
 	/**
@@ -147,19 +147,20 @@ export class TicketComponent {
 	openCommentModal() {
 		// create modal if doesn't exist
 		if(!this.commentComponentRef) {
-			const factory = this.factoryResolver.resolveComponentFactory(JiraCommentsComponent);
+			const factory = this.factoryResolver.resolveComponentFactory(TicketCommentsModalComponent);
 	    	this.commentComponentRef = this.viewContRef.createComponent(factory);
 	    	// add inputs
-	    	(<JiraCommentsComponent>this.commentComponentRef.instance).key = this.ticket.key;
-	    	(<JiraCommentsComponent>this.commentComponentRef.instance).attachments = this.ticket.attachments;
-	    	(<JiraCommentsComponent>this.commentComponentRef.instance).comments = this.ticket.comments;
+	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).key = this.ticket.key;
+	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).attachments = this.ticket.attachments;
+	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).comments = this.ticket.comments;
 	    	// add output event
-	    	(<JiraCommentsComponent>this.commentComponentRef.instance)
+	    	
+	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance)
 	    		.commentChangeEvent.subscribe($event => this.commentChangeEvent($event));
 		}
 		
-		// open modal
-    	(<JiraCommentsComponent>this.commentComponentRef.instance).openCommentModal();
+		// open modal on next event loop to allow inputs to settle
+    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).openCommentModal();
 	}
 
 	/**

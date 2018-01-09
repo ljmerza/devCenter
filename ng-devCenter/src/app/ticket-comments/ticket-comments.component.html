@@ -1,0 +1,62 @@
+<ngb-accordion #acc="ngbAccordion" activeIds='{{openPanelIds}}' [type]='danger' [destroyOnHide]='false'>
+
+	<!-- a comment panel -->
+	<ngb-panel *ngFor='let comment of comments; index as i' [id]="key+i">
+
+		<!-- title -->
+		<ng-template ngbPanelTitle>
+			<div class='comment-header' data-id={{comment.id}}>
+				<span>
+					{{comment.display_name}}
+					<img src="http://presence.q.att.com/presence/{{comment.username}}.gif">
+				</span>
+				<span class="float-right">
+					{{comment.created | amDateFormat:'MM/D/YY h:mm A'}}
+				</span>
+				
+			</div>
+		</ng-template>
+		
+		<!-- body -->
+		<ng-template ngbPanelContent>
+
+			<!-- editing buttons -->
+			<span class='edit-buttons'>
+				<button 
+					type="button" 
+					class="btn btn-outline-primary" 
+					*ngIf='comment.username == user.username' 
+					(click)="toggleEditing(comment)">
+						{{comment.closeText}}
+				</button>
+
+				<button 
+					[hidden]="!comment.isEditing" 
+					type="button" 
+					class="btn btn-outline-success"
+					
+					(click)="editComment(comment)">
+						Save Edit
+				</button>
+
+				<button 
+					type="button" 
+					class="btn btn-outline-danger" 
+					*ngIf='!comment.isEditing && comment.username == user.username' 
+					(click)="deleteComment(comment.id)">
+						Delete Comment
+				</button>
+			</span>
+			
+			<div [hidden]="comment.isEditing" [innerHTML]="comment.comment | commentFormat:attachments | safehtml"></div>
+			<textarea
+				[id]=comment.editId
+				[hidden]="!comment.isEditing" 
+				class='edit-area' 
+				cols="100" rows=25 
+				value={{comment.comment}}
+				>
+			</textarea>
+		</ng-template>
+	</ngb-panel>
+</ngb-accordion>

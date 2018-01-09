@@ -1,4 +1,56 @@
 $header-bg: #0275d8;
+$darkbg: #292b2c;
+
+.ticketComments, .qaGen {
+	.modal-dialog {
+		max-width: 1000px;
+	}
+}
+
+.ticketDetails, .setPings {
+	.modal-dialog {
+		max-width: 700px;
+	}
+}
+
+
+.modal-dialog {
+	margin: 5% auto;
+}
+
+.modal-content {
+	border-radius: 0;
+	background-color: #333;
+	color: white;
+
+	.card, textarea, .form-control, .form-control:focus {
+		border-radius: 0;
+		background-color: #333;
+		color: white;
+	}
+
+	tr:nth-of-type(odd) {
+		background-color: $darkbg !important;
+	}
+
+	tr:nth-of-type(even) {
+		background-color: #333 !important;
+	}
+
+	.card-header {
+		background-color: $darkbg;
+	}
+
+	.modal-footer, .modal-header {
+		border-top: 0;
+		border-bottom: 0;
+	}
+
+	button {
+		border-radius: 0 !important;
+	}
+}
+
 
 .modal-header {
 	background-color: $header-bg;
@@ -27,12 +79,4 @@ $header-bg: #0275d8;
 	}
 }
 
-.modal-content {
-	border-radius: 0;
-}
 
-.modal-footer {
-	button {
-		border-radius: 0;
-	}
-}
