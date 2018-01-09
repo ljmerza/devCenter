@@ -11,8 +11,9 @@ import { TicketStatusComponent } from './../ticket-status/ticket-status.componen
 
 import { ToastrService } from './../services/toastr.service';
 import { JiraService } from './../services/jira.service';
-import { ConfigService } from './../services/config.service'
-import { UserService } from './../services/user.service'
+import { ConfigService } from './../services/config.service';
+import { UserService } from './../services/user.service';
+import { MiscService } from './../services/misc.service';
 
 
 @Component({
@@ -37,7 +38,7 @@ export class TicketComponent {
 	constructor(
 		private toastr: ToastrService, public jira: JiraService, public config: ConfigService, 
 		public user: UserService, private factoryResolver: ComponentFactoryResolver, 
-		private viewContRef: ViewContainerRef
+		private viewContRef: ViewContainerRef, public misc: MiscService
 	) { }
 
 	@Input() ticket;

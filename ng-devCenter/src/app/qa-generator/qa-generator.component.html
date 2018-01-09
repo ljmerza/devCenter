@@ -1,15 +1,11 @@
-<!-- QA Generator Model -->
-<ng-template #qaModal>
-	<form [formGroup]="qaForm">
+<dev-center-modal (modalEvent)="submitQA($event)">
 
-		<div class="modal-header">
-			<h2 class="modal-title">QA Generator</h2>
-			<button type="button" class="close" aria-label="Close" (click)="submitQA()">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
+	<div class='modal-text'>
+		<h4 class="modal-title">QA Generator</h4>
+	</div>
 
-		<div class="modal-body">
+	<span class='modal-body'>
+		<form [formGroup]="qaForm">
 			<h4>Your Branches:</h4>
 
 			<div class='loading' *ngIf="loadingBranches; else ticketTable">
@@ -112,15 +108,12 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
+	</span>
 
-		<div class="modal-footer">
-			<button type="submit" (click)="submitQA('save')" [disabled]="loadingBranches" class="btn btn-outline-success">
-				Generate
-			</button>
-			<button type="button" class="btn btn-outline-danger" (click)="submitQA()">
-				Cancel
-			</button>
-		</div>
-	</form>
-</ng-template>
+	<span class='modal-footer'>
+		<button type="submit" (click)="submitQA('save')" class="btn btn-outline-primary">Generate</button>
+		<button type="button" class="btn btn-outline-danger" (click)="submitQA('')">Cancel</button>
+	</span>
+	
+</dev-center-modal>

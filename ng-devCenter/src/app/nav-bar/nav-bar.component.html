@@ -25,7 +25,7 @@
 					</li>
 					
 					<!-- projects -->
-					<li class="dropdown-submenu">
+					<li class="dropdown-submenu" dropdownSubmenu>
 						<a class="dropdown-item" data-toggle="dropdown">
 							Projects
 							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
@@ -40,7 +40,7 @@
 					</li>
 
 					<!-- other project links -->
-					<li class="dropdown-submenu">
+					<li class="dropdown-submenu" dropdownSubmenu>
 						<a class="dropdown-item" data-toggle="dropdown">
 							Other Lists
 							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
@@ -68,13 +68,13 @@
 				<ul ngbDropdownMenu aria-labelledby="devDropdown">
 
 					<!-- ember links -->
-					<li class="dropdown-submenu">
+					<li class="dropdown-submenu" dropdownSubmenu>
 						<a class="dropdown-item" data-toggle="dropdown">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
 							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[0].link}}">{{config.ember_links[0].name}}</a></li>
 							
 							<!-- orders list -->
-							<li class="dropdown-submenu">
+							<li class="dropdown-submenu" dropdownSubmenu>
 								<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 								<ul class="dropdown-menu dropdown-submenu-items">
 									<li><a 
@@ -85,7 +85,7 @@
 										>{{navLink.name}}
 									</a></li>
 									<!-- misc orders -->
-									<li class="dropdown-submenu">
+									<li class="dropdown-submenu" dropdownSubmenu>
 										<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 										<ul class="dropdown-menu dropdown-submenu-items">
 											<li><a 
@@ -101,7 +101,7 @@
 							</li>
 
 							<!-- WFA list -->
-							<li class="dropdown-submenu">
+							<li class="dropdown-submenu" dropdownSubmenu>
 								<a class="dropdown-item" data-toggle="dropdown">WFA Tickets <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 								<ul class="dropdown-menu dropdown-submenu-items">
 									<li><a 
@@ -126,7 +126,7 @@
 					</li>
 					
 					<!-- team ember links -->
-					<li class="dropdown-submenu">
+					<li class="dropdown-submenu" dropdownSubmenu>
 						<a class="dropdown-item" data-toggle="dropdown">TeamDB Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu dropdown-submenu-items">
 							<li><a 
@@ -186,7 +186,7 @@
 				<a class="nav-link dropdown-toggle" id="wikiDropdown" ngbDropdownToggle>Helpful Links</a>
 				<ul ngbDropdownMenu aria-labelledby="wikiDropdown">
 
-					<li *ngFor='let link of config.wikiLinks' [ngClass]="{'dropdown-submenu': link.links}">
+					<li *ngFor='let link of config.wikiLinks' [ngClass]="{'dropdown-submenu': link.links}" dropdownSubmenu>
 						
 						<!-- links -->
 						<a 

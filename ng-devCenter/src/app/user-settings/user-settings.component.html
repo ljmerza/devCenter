@@ -1,94 +1,94 @@
-<ng-template #userModal let-c="close" let-d='dismiss'>
-	<div class="modal-header">
+<dev-center-modal [title]=statusName (modalEvent)=submit($event)>
+
+	<div class='modal-text'>
 		<h4 class="modal-title">User Settings</h4>
-		<button type="button" class="close" aria-label="Close" (click)="submit()">
-			<span aria-hidden="true">&times;</span>
-		</button>
 	</div>
 
-	<form [formGroup]="userSettingsForm">
+	<span class='modal-body'>
+		<form [formGroup]="userSettingsForm">
+			<div class="modal-body">
+				<!-- username -->
+				<div class="form-group">
+					<label for="username">Username:</label>
+					<input formControlName="username" placeholder="Enter username"
+						type="text" class="form-control" [class.invalid]="username.invalid">
+					<div class='text-danger' *ngIf='username.invalid'>
+						<span *ngIf="username.errors.required">Username required</span>
+						<span *ngIf="!username.errors.required && username.errors.usernameValidator">Invalid username</span>
+					</div>
+				</div>
+				<!-- password -->
+				<div class="form-group">
+					<label for="password">Password:</label>
+					<input type="password" class="form-control" [class.invalid]="password.invalid"
+							formControlName='password' placeholder="Password">
+					<div class='text-danger' *ngIf='password.invalid'>
+						<span *ngIf="password.errors.required">Password required</span>
+					</div>
+				</div>
+				<!-- port -->
+				<div class="form-group">
+					<label for="port">Port:</label>
+					<input type="text" class="form-control" [class.invalid]="port.invalid" 
+							formControlName='port' placeholder="Port">
+					<div class='text-danger' *ngIf='port.invalid'>
+						<span *ngIf="port.errors.required">Port required</span>
+						<span *ngIf="!port.errors.required && port.errors.portValidator">Invalid port</span>
+					</div>
+				</div>
+				<!-- ember url -->
+				<div class="form-group">
+					<label for="emberUrl">Ember Url:</label>
+					<select formControlName="emberUrl" class='form-control'>
+						<option disabled>Please choose...</option>
+						<option *ngFor="let emberBuild of user.emberBuilds"
+							[ngValue]="emberBuild.value"
+							[attr.selected]="emberBuild.value === emberUrl ? true : null"
+						>
+							{{emberBuild.label}}
+						</option>
+					</select>
+					<div class='text-danger' *ngIf='emberUrl.invalid'>
+						<span *ngIf="emberUrl.errors.required">Ember URL required</span>
+					</div>
+				</div>
 
-		<div class="modal-body">
-			<!-- username -->
-			<div class="form-group">
-				<label for="username">Username:</label>
-				<input formControlName="username" placeholder="Enter username"
-					type="text" class="form-control" [class.invalid]="username.invalid">
-				<div class='text-danger' *ngIf='username.invalid'>
-					<span *ngIf="username.errors.required">Username required</span>
-					<span *ngIf="!username.errors.required && username.errors.usernameValidator">Invalid username</span>
+				<!-- team ember url -->
+				<div class="form-group">
+					<label for="teamUrl">TeamDB Ember Url:</label>
+					<select formControlName="teamUrl" class='form-control'>
+						<option disabled>Please choose...</option>
+						<option *ngFor="let emberBuild of user.emberBuilds"
+							[ngValue]="emberBuild.value"
+							[attr.selected]="emberBuild.value === teamUrl ? true : null">
+							{{emberBuild.label}}
+						</option>
+					</select>
+					<div class='text-danger' *ngIf='teamUrl.invalid'>
+						<span *ngIf="teamUrl.errors.required">Team URL required</span>
+					</div>
 				</div>
-			</div>
-			<!-- password -->
-			<div class="form-group">
-				<label for="password">Password:</label>
-				<input type="password" class="form-control" [class.invalid]="password.invalid"
-						formControlName='password' placeholder="Password">
-				<div class='text-danger' *ngIf='password.invalid'>
-					<span *ngIf="password.errors.required">Password required</span>
-				</div>
-			</div>
-			<!-- port -->
-			<div class="form-group">
-				<label for="port">Port:</label>
-				<input type="text" class="form-control" [class.invalid]="port.invalid" 
-						formControlName='port' placeholder="Port">
-				<div class='text-danger' *ngIf='port.invalid'>
-					<span *ngIf="port.errors.required">Port required</span>
-					<span *ngIf="!port.errors.required && port.errors.portValidator">Invalid port</span>
-				</div>
-			</div>
-			<!-- ember url -->
-			<div class="form-group">
-				<label for="emberUrl">Ember Url:</label>
-				<select formControlName="emberUrl" class='form-control'>
-					<option disabled>Please choose...</option>
-					<option *ngFor="let emberBuild of user.emberBuilds"
-						[ngValue]="emberBuild.value"
-						[attr.selected]="emberBuild.value === emberUrl ? true : null"
-					>
-						{{emberBuild.label}}
-					</option>
-				</select>
-				<div class='text-danger' *ngIf='emberUrl.invalid'>
-					<span *ngIf="emberUrl.errors.required">Ember URL required</span>
-				</div>
-			</div>
 
-			<!-- team ember url -->
-			<div class="form-group">
-				<label for="teamUrl">TeamDB Ember Url:</label>
-				<select formControlName="teamUrl" class='form-control'>
-					<option disabled>Please choose...</option>
-					<option *ngFor="let emberBuild of user.emberBuilds"
-						[ngValue]="emberBuild.value"
-						[attr.selected]="emberBuild.value === teamUrl ? true : null">
-						{{emberBuild.label}}
-					</option>
-				</select>
-				<div class='text-danger' *ngIf='teamUrl.invalid'>
-					<span *ngIf="teamUrl.errors.required">Team URL required</span>
-				</div>
-			</div>
-
-			<!-- cache query param -->
-			<div class="form-group">
-				<div class="row">
-					<div class="col">
-						<div class="form-check">
-							<label class="form-check-label" for='cache'>
-								<input class="form-check-input" type="checkbox" name='cache' formControlName="cache">
-								Cache Ember Routes
-							</label>
+				<!-- cache query param -->
+				<div class="form-group">
+					<div class="row">
+						<div class="col">
+							<div class="form-check">
+								<label class="form-check-label" for='cache'>
+									<input class="form-check-input" type="checkbox" name='cache' formControlName="cache">
+									Cache Ember Routes
+								</label>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
+	</span>
 
-		<div class="modal-footer">
-			<button type="submit" class="btn btn-outline-success"  (click)="submit('save')">Save</button>
-			<button type="submit" class="btn btn-outline-danger"  (click)="submit()">Cancel</button>
-		</div>
-	</form>
-</ng-template>
+	<span class='modal-footer'>
+		<button type="submit" class="btn btn-outline-primary"  (click)="submit('save')">Save</button>
+		<button type="submit" class="btn btn-outline-danger"  (click)="submit('')">Cancel</button>
+	</span>
+	
+</dev-center-modal>

@@ -7,6 +7,7 @@ import { NgbModal, NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
 import { UserService } from './../services/user.service';
+import { MiscService } from './../services/misc.service';
 
 declare var hljs :any;
 declare var $ :any;
@@ -29,11 +30,9 @@ export class JiraCommentsComponent implements OnInit {
 	@Output() commentChangeEvent = new EventEmitter();
 
 	constructor(
-		private modalService:NgbModal, 
-		private toastr: ToastrService, 
-		public config: NgbAccordionConfig, 
-		public jira:JiraService,
-		public user:UserService
+		private modalService:NgbModal, private toastr: ToastrService, 
+		public config: NgbAccordionConfig, public user:UserService,
+		public jira:JiraService, private misc: MiscService
 	) {}
 
 	ngOnInit() {
@@ -73,7 +72,7 @@ export class JiraCommentsComponent implements OnInit {
 			// for each table item add click event for copying text
 			$('.tableCopy').each(function(i, block) {
 				$(this).click(function(){
-					self.jira.copyText( $(this).children('input').get(0) );
+					self.misc.copyText( $(this).children('input').get(0) );
 				});
 			});
 

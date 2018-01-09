@@ -3,23 +3,22 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { DataService } from './../data.service';
+import { APIService } from './../api.service';
 import { UserService } from './../user.service';
-import { ConfigService } from './../config.service'
+import { ConfigService } from './../config.service';
+import { LocalStorageService } from './../local-storage.service';
+;
 
 @Injectable()
-export class JiraServiceTest extends DataService {
+export class JiraServiceTest {
 
 	/*
 	*/
 	constructor(
-		public http: HttpClient, 
-		public config:ConfigService,
-		public user:UserService, 
-		public sanitizer: DomSanitizer
-	) {
-		super(http, config, user, sanitizer);
-	}
+		public http:HttpClient, public config:ConfigService,
+		public lStore:LocalStorageService,
+		public user:UserService, public api:APIService
+	) {}
 
 
 	/*

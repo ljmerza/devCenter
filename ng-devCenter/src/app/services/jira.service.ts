@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { DataService } from './data.service';
+import { APIService } from './api.service';
 import { UserService } from './user.service';
-import { ConfigService } from './config.service'
+import { ConfigService } from './config.service';
+import { LocalStorageService } from './local-storage.service';
+
+import { environment } from '../../environments/environment';
 
 @Injectable()
-export class JiraService extends DataService {
+export class JiraService {
 	title:string = '';
 	jql:string=''
 	firstLoad = true;
@@ -16,14 +18,12 @@ export class JiraService extends DataService {
 	/*
 	*/
 	constructor(
-		public http: HttpClient, 
-		public config:ConfigService,
-		public user:UserService, 
-		public sanitizer: DomSanitizer
-	) {
-		super(http, config, user, sanitizer);
-	}
+		public http:HttpClient, public config:ConfigService,
+		public lStore:LocalStorageService,
+		public user:UserService, public api:APIService
+	) { }
 
+	apiUrl:string = `${environment.apiUrl}:${environment.port}/dev_center`;
 
 	/*
 	*/
@@ -126,24 +126,24 @@ export class JiraService extends DataService {
 				// loading my ticket then just try to load locally
 				if(this.firstLoad){
 					this.firstLoad = false;
-					const data = this.getItem('mytickets');
+					const data = this.lStore.getItem('mytickets');
 
 					if(data){
 						// first load locally then call for fresh data as well
 						// return Observable.of({data:JSON.parse(data), cached: true})
-	  			// 		.concat(super.getAPI(`${this.apiUrl}/jira/tickets?jql=${this.jql}&fields=${this.config.fields}`));
+	  			// 		.concat(this.api.getAPI(`${this.apiUrl}/jira/tickets?jql=${this.jql}&fields=${this.config.fields}`));
 					}
 				}
 		}
 
 		this.firstLoad = false;
-		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${this.jql}&fields=${this.config.fields}`);
+		return this.api.getAPI(`${this.apiUrl}/jira/tickets?jql=${this.jql}&fields=${this.config.fields}`);
 	}
 
 	/*
 	*/
 	setPing({key, ping_type}): Observable<any> {
-		return super.postAPI({
+		return this.api.postAPI({
 			url: `${this.apiUrl}/chat/send_ping`,
 			body: { key, ping_type, username: this.user.username }
 		});
@@ -153,25 +153,25 @@ export class JiraService extends DataService {
 	*/
 	getATicketDetails(key){
 		const jql = `key%3D%20${key}`
-		return super.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}`);
+		return this.api.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}`);
 	}
 
 	/*
 	*/
 	searchTicket(msrp:string): Observable<any> {
-		return super.getAPI(`${this.apiUrl}/jira/getkey/${msrp}`);
+		return this.api.getAPI(`${this.apiUrl}/jira/getkey/${msrp}`);
 	}
 
 	/*
 	*/
 	getTicketBranches(msrp:string): Observable<any> {
-		return super.getAPI(`${this.apiUrl}/git/branches/${msrp}`);
+		return this.api.getAPI(`${this.apiUrl}/git/branches/${msrp}`);
 	}
 
 	/*
 	*/
 	getRepos(): Observable<any>{
-		return super.getAPI(`${this.apiUrl}/git/repos`);
+		return this.api.getAPI(`${this.apiUrl}/git/repos`);
 	}
 
 	/*
@@ -185,7 +185,7 @@ export class JiraService extends DataService {
 		let sources = [];
 
 		// create crucible and post comment
-		return super.postAPI({
+		return this.api.postAPI({
 			url: `${this.apiUrl}/crucible/create`,
 			body: postData
 		})
@@ -194,13 +194,13 @@ export class JiraService extends DataService {
 	/*
 	*/
 	getBranches(repoName): Observable<any> {
-		return super.getAPI(`${this.apiUrl}/git/repo/${repoName}`);
+		return this.api.getAPI(`${this.apiUrl}/git/repo/${repoName}`);
 	}
 
 	/*
 	*/
 	workLog(postData): Observable<any> {
-		return super.postAPI({
+		return this.api.postAPI({
 			url: `${this.apiUrl}/jira/comment`,
 			body: postData
 		});
@@ -209,7 +209,7 @@ export class JiraService extends DataService {
 	/*
 	*/
 	editComment(postData): Observable<any> {
-		return super.putAPI({
+		return this.api.putAPI({
 			url: `${this.apiUrl}/jira/comment`,
 			body: postData
 		});
@@ -218,7 +218,7 @@ export class JiraService extends DataService {
 	/*
 	*/
 	deleteComment(comment_id, key): Observable<any> {
-		return super.deleteAPI({
+		return this.api.deleteAPI({
 			url: `${this.apiUrl}/jira/comment?comment_id=${comment_id}&key=${key}`
 		});
 	}
@@ -228,7 +228,7 @@ export class JiraService extends DataService {
 	changeStatus(postData): Observable<any> {
 		postData.username = this.user.username;
 		
-		return super.postAPI({
+		return this.api.postAPI({
 			url: `${this.apiUrl}/jira/status`,
 			body: postData
 		});
@@ -237,7 +237,13 @@ export class JiraService extends DataService {
 	/*
 	*/
 	getProfile(): Observable<any> {
-		return super.getAPI(`${this.apiUrl}/jira/profile`);
+		return this.api.getAPI(`${this.apiUrl}/jira/profile`);
+	}
+
+	/*
+	*/
+	public processErrorResponse(response:HttpErrorResponse): string {
+		return response.error.data || response.message || response.error;
 	}
 
 }

@@ -8,6 +8,8 @@ import { UserService } from './../services/user.service';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
 import { WebSocketService } from './../services/web-socket.service';
+import { LocalStorageService } from './../services/local-storage.service';
+
 
 import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
@@ -23,14 +25,11 @@ import * as $ from 'jquery';
 export class TicketsComponent implements OnInit, OnDestroy {
 	loadingTickets:boolean = true;
 	openTickets:Array<any>;
-
-	searchTicket$;
-	webSock$;
-
 	ticketType;
 	repos;
+	searchTicket$;
+	webSock$;
 	dtTrigger:Subject<any> = new Subject();
-
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
 
 	dtOptions = {
@@ -60,12 +59,10 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	constructor(
-		public ngProgress: NgProgress, 
-		public jira:JiraService, 
-		private route:ActivatedRoute, 
-		private user:UserService,
-		public toastr: ToastrService,
-		public webSock: WebSocketService
+		public lStore:LocalStorageService,
+		public ngProgress: NgProgress, public route:ActivatedRoute, 
+		public jira:JiraService, public user:UserService,
+		public toastr: ToastrService, public webSock: WebSocketService
 	) {}
 	
 	/*
@@ -137,11 +134,10 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		})
 		.skip(1)
 		.subscribe( data => {
-			console.log('data: ', data);
 
 			// save new tickets locally if my tickets
 			if(!this.ticketType || this.ticketType == 'mytickets'){
-				this.jira.setItem('mytickets', JSON.stringify(data));
+				this.lStore.setItem('mytickets', JSON.stringify(data));
 			}
 
 			this.openTickets = data;
@@ -167,7 +163,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 				// save new tickets locally if my tickets
 				if(!this.ticketType || this.ticketType == 'mytickets'){
-					this.jira.setItem('mytickets', JSON.stringify(this.openTickets));
+					this.lStore.setItem('mytickets', JSON.stringify(this.openTickets));
 				}
 				
 				this.rerender(true);

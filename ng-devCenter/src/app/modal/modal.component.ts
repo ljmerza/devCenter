@@ -13,7 +13,6 @@ import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 	encapsulation: ViewEncapsulation.None
 })
 export class ModalComponent {
-	@Input() title;
 	@Input() size;
 	@Input() customClose:boolean = false;
 	@Output() modalEvent = new EventEmitter();

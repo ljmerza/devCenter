@@ -1,6 +1,9 @@
 import { Component, AfterContentInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+
+import { ModalComponent } from './../modal/modal.component';
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+
 import { UserService } from './../services/user.service'
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
@@ -12,13 +15,16 @@ import { ToastrService } from './../services/toastr.service';
 })
 export class UserSettingsComponent implements AfterContentInit {
 	userSettingsForm: FormGroup;
-	modelInstance: NgbModalRef;
+	modalInstance: NgbModalRef;
+	statusName:string = 'User Settings';
 	@ViewChild('userModal') private userModal;
+	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(
-		private modalService: NgbModal, private user: UserService, 
-		private jira: JiraService, private toastr: ToastrService
+		public user: UserService, private jira: JiraService, 
+		private toastr: ToastrService
 	) {
+
 		// create form group
 		this.userSettingsForm = new FormGroup({
 			username: new FormControl(user.username, Validators.compose(
@@ -75,11 +81,11 @@ export class UserSettingsComponent implements AfterContentInit {
 	/*
 	*/
 	submit(submitType){
+		this.modalInstance.close();
 
 		// just close form if no submit type
 		if(!submitType){
 			this.resetForm();
-			this.modelInstance.close();
 			return;
 		}
 
@@ -100,13 +106,14 @@ export class UserSettingsComponent implements AfterContentInit {
 			|| this.userSettingsForm.controls.password.dirty
 		){
 			location.reload();
+
 		}
 	}
 
 	/*
 	*/
 	openUserSettings() {
-		this.modelInstance = this.modalService.open(this.userModal, {keyboard:false,backdrop:false});
+		this.modalInstance = this.modal.openModal();
 	}
 
 	/*

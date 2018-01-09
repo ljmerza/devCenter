@@ -61,7 +61,7 @@
 <td>
 	<div>
 		<img src="http://presence.q.att.com/presence/{{ticket.user_details?.username}}.gif">
-		<a [href]="jira.chatUrlSanitize(ticket.user_details?.username)" title="Open chat with {{ticket.user_details?.username}}">
+		<a [href]="misc.chatUrlSanitize(ticket.user_details?.username)" title="Open chat with {{ticket.user_details?.username}}">
 			{{ticket.user_details?.username}}
 		</a>		
 	</div>
@@ -76,7 +76,7 @@
 <td>
 	<div>
 		<img src="http://presence.q.att.com/presence/{{ticket.customer_details?.username}}.gif">
-		<a [href]="jira.chatUrlSanitize(ticket.customer_details?.username)" title="Open chat with {{ticket.customer_details?.display_name}}">
+		<a [href]="misc.chatUrlSanitize(ticket.customer_details?.username)" title="Open chat with {{ticket.customer_details?.display_name}}">
 			{{ticket.customer_details?.username}}
 		</a>
 	</div>

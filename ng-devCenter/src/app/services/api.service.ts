@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders, HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { UserService } from './user.service'
-import { ConfigService } from './config.service'
-
-import { environment } from '../../environments/environment';
+import { UserService } from './user.service';
+import { LocalStorageService } from './local-storage.service';
 
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -16,48 +13,9 @@ import 'rxjs/add/operator/map';
 import { Headers, RequestOptions } from '@angular/http';
 
 @Injectable()
-export class DataService {
+export class APIService {
 
-	apiUrl:string = `${environment.apiUrl}:${environment.port}/dev_center`;
-
-	constructor(
-		public http:HttpClient, 
-		public config:ConfigService, 
-		public user:UserService, 
-		public sanitizer: DomSanitizer
-	) { }
-
-
-	/*
-	*/
-	setItem(data, value) {
-		localStorage.setItem(`devCenter.${data}`, value);
-	}
-
-	/*
-	*/
-	getItem(data) {
-		return localStorage.getItem(`devCenter.${data}`);
-	}
-
-	/*
-	*/
-	copyText(text){
-		text.select();
-		document.execCommand("copy");
-	}
-
-	/*
-	*/
-	removeItem(data) {
-		localStorage.removeItem(`devCenter.${data}`);
-	}
-
-	/*
-	*/
-	public chatUrlSanitize(username:string): SafeUrl {
-		return this.sanitizer.bypassSecurityTrustUrl(`${this.config.chatUrl}/${username}`)
-	}
+	constructor(public http:HttpClient, public user:UserService) { }
 
 	/*
 	*/
@@ -100,11 +58,5 @@ export class DataService {
 			return '';
 		}
 		
-	} 
-
-	/*
-	*/
-	public processErrorResponse(response:HttpErrorResponse): string {
-		return response.error.data || response.message || response.error;
 	}
 }

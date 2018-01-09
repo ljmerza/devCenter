@@ -13,7 +13,9 @@ import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
 import { JiraService } from './services/jira.service';
 import { JiraServiceTest } from './services/testing/jira.service';
-import { DataService } from './services/data.service';
+import { APIService } from './services/api.service';
+import { LocalStorageService } from './services/local-storage.service';
+import { MiscService } from './services/misc.service';
 import { UserService } from './services/user.service';
 import { ToastrService } from './services/toastr.service';
 import { ConfigService } from './services/config.service';
@@ -41,6 +43,7 @@ import { TicketDetailsComponent } from './ticket-details/ticket-details.componen
 import { environment } from '../environments/environment';
 import { ModalComponent } from './modal/modal.component';
 import { TicketStatusComponent } from './ticket-status/ticket-status.component';
+import { DropdownSubmenuDirective } from './dropdown-submenu.directive';
 
 @NgModule({
 	declarations: [
@@ -49,7 +52,8 @@ import { TicketStatusComponent } from './ticket-status/ticket-status.component';
 		FooterComponent, JiraCommentsComponent, SafehtmlPipe,
 		StatusModalComponent, TimeLogComponent, LogoutComponent,
 		TicketComponent, CommentFormatPipe, SetPingsComponent,
-		ToastrComponent, TicketDetailsComponent, ModalComponent, TicketStatusComponent
+		ToastrComponent, TicketDetailsComponent, ModalComponent, 
+		TicketStatusComponent, DropdownSubmenuDirective
 	],
 	imports: [
 		BrowserModule, FormsModule, NgbModule.forRoot(),
@@ -59,8 +63,8 @@ import { TicketStatusComponent } from './ticket-status/ticket-status.component';
 		BrowserAnimationsModule, ToastModule.forRoot()
 	],
 	providers: [
-		DataService, UserService, JiraServiceTest,
-		ToastrService, ConfigService, WebSocketService,
+		APIService, UserService, LocalStorageService,
+		ToastrService, ConfigService, WebSocketService, MiscService,
 		// if in testing mode use test endpoint else use regular endpoints
 		{ provide: JiraService, useClass: environment.test ? JiraServiceTest : JiraService}
 	],

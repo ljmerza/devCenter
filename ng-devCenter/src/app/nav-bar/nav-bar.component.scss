@@ -1,7 +1,7 @@
 .dropdown-submenu{
 	position: relative;
 
-	&:hover > .dropdown-submenu-items {
+	.show-submenu {
 		display: block;
 		position: absolute;
 		top: -10px;

@@ -4,12 +4,13 @@ import {
 	EventEmitter, Output, Input
 } from '@angular/core';
 
-import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { 
 	NgForm, FormGroup, FormControl, Validators, FormBuilder,
 	AbstractControl, ValidationErrors, FormArray
 } from '@angular/forms';
 
+import { ModalComponent } from './../modal/modal.component';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
 import { ConfigService } from './../services/config.service'
@@ -22,7 +23,6 @@ import { ConfigService } from './../services/config.service'
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QaGeneratorComponent {
-	modalReference; // reference to open modal
 	loadingBranches:boolean = false; // are we loading branches?
 	repoLookUp$;
 	qaForm;
@@ -30,21 +30,23 @@ export class QaGeneratorComponent {
 	hourStep = 1;
 	minuteStep = 15;
 
-	@ViewChild('qaModal') content:ElementRef;
+	@ViewChild(ModalComponent) modal: ModalComponent;
+	modalRef: NgbModalRef;
+
 	@Output() statusChange = new EventEmitter();
 	@Input() msrp;
 	@Input() key;
 	@Input() repos;
 
 	constructor(
-		public jira:JiraService, private modalService:NgbModal, public toastr: ToastrService, 
+		public jira:JiraService, public toastr: ToastrService, 
 		public config: ConfigService,public formBuilder: FormBuilder
 	) {
 		// create form object
 		this.qaForm = this.formBuilder.group({
 			selections: this.formBuilder.group({
-				pcrNeeded: this.formBuilder.control(''),
-				codeReview: this.formBuilder.control(''),
+				pcrNeeded: this.formBuilder.control(true),
+				codeReview: this.formBuilder.control(true),
 				logTime: this.formBuilder.control({hour: 0, minute: 0}),
 			}),
 			qaSteps: this.formBuilder.control(''),
@@ -113,6 +115,8 @@ export class QaGeneratorComponent {
 	*/
 	submitQA(isSaving): void {
 
+		if(this.loadingBranches) return;
+
 		// if we are currently looking for repos then cancel that search
 		if(this.repoLookUp$) this.repoLookUp$.unsubscribe();
 
@@ -120,7 +124,7 @@ export class QaGeneratorComponent {
 		if(!isSaving){
 			this.statusChange.emit({cancelled: true, showMessage: true});
 			this.resetBranches();
-			this.modalReference.close();
+			this.modalRef.close();
 			return;
 
 		} else if(this.qaForm.invalid){
@@ -130,7 +134,7 @@ export class QaGeneratorComponent {
 		}
 
 		// close modal since we dont need it anymore
-		this.modalReference.close();
+		this.modalRef.close();
 
 		// get selections sub formGroup and branches sub formArray
 		const selections = this.qaForm.controls.selections.controls;
@@ -193,10 +197,8 @@ export class QaGeneratorComponent {
 	/*
 	*/
 	openQAModal(): void {
-
 		// open modal
-		this.modalReference = this.modalService
-		.open(this.content, { windowClass: 'qa-modal' });
+		this.modalRef = this.modal.openModal();
 
 		// disabled submit button for QA gen
 		this.loadingBranches = true;

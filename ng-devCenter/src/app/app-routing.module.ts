@@ -1,9 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
-import { AppComponent } from './app.component';
-import { NavBarComponent } from './nav-bar/nav-bar.component';
-import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { TicketsComponent } from './tickets/tickets.component';
 
 

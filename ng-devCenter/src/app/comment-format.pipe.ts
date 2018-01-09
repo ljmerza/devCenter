@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ConfigService } from './services/config.service'
+import { ConfigService } from './services/config.service';
 
 @Pipe({
 	name: 'commentFormat'
@@ -111,6 +111,8 @@ export class CommentFormatPipe implements PipeTransform {
 			.split('|')
 			.filter(t => !!t.trim())
 			.map(t => {
+				const input = $(t).children()
+
 				return `
 				<td>
 					<span class='tableCopy'>
@@ -134,10 +136,10 @@ export class CommentFormatPipe implements PipeTransform {
 	*/
 	_format_colors(commentPiece:string){
 		// replace colors
-		commentPiece = commentPiece.replace(/{color:((\w+)|(#[A-Za-z0-9]{3,6}))(.*?)}/, function(a,b) {
+		commentPiece = commentPiece.replace(/{color:((\w+)|(#[A-Za-z0-9]{3,6}))(.*?)}/g, function(a,b) {
 			return `<span style="color: ${b}">`
 		});
-		return commentPiece.replace('{color}', '</span>');
+		return commentPiece.replace(/\{color\}/g, '</span>');
 	}
 
 

@@ -1,8 +1,10 @@
 import { Component, Input, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { ModalComponent } from './../modal/modal.component';
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
+import { MiscService } from './../services/misc.service';
 
 @Component({
 	selector: 'app-set-pings',
@@ -12,26 +14,35 @@ import { ToastrService } from './../services/toastr.service';
 })
 export class SetPingsComponent {
 
-	options: NgbModalOptions = {
-		size: 'lg'
-	}
-
 	@Input() key;
 	@Input() commit;
 	@Input() branch;
 	@Input() sprint;
-	@ViewChild('pingModal') content: ElementRef;
+
+	modalInstance: NgbModalRef;
+	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(
-		public toastr: ToastrService, 
-		public jira: JiraService, 
-		private modalService: NgbModal
-	) { }
+		private toastr: ToastrService, private jira: JiraService,
+		public misc: MiscService
+	){}
 
-	/*
+	/**
 	*/
 	openPingModel(){
-		this.modalService.open(this.content, this.options).result.then( (pingType) => {
+		this.modalInstance = this.modal.openModal();
+	}
+
+
+	/**
+	*/
+	closePingModal(pingType){
+
+		// close modal
+		this.modalInstance.close();
+
+		// if we have a ping type then call it
+		if(pingType){
 			this.jira.setPing({
 				key: this.key,
 				ping_type: pingType
@@ -42,6 +53,6 @@ export class SetPingsComponent {
 				},
 				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 			);
-		}, () => null);
+		}
 	}
 }

@@ -24,7 +24,7 @@ export class StatusModalComponent {
 	@Input() key: string;
 	statusType: string;
 	statusName: string;
-	modelRef: NgbModalRef;
+	modalRef: NgbModalRef;
 
 	constructor(
 		private user: UserService, public toastr: ToastrService, 
@@ -47,7 +47,7 @@ export class StatusModalComponent {
 		}
 
 		// open modal
-		this.modelRef = this.modal.openModal();
+		this.modalRef = this.modal.openModal();
 	}
 
 	/**
@@ -71,7 +71,7 @@ export class StatusModalComponent {
 		}
 
 		// always close modal
-		this.modelRef.close();	
+		this.modalRef.close();	
 	}
 
 	/**
