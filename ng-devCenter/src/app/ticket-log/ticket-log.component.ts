@@ -12,13 +12,13 @@ import { ToastrService } from './../services/toastr.service';
 
 
 @Component({
-	selector: 'app-time-log',
-	templateUrl: './time-log.component.html',
-	styleUrls: ['./time-log.component.scss'],
+	selector: 'devc-ticket-log',
+	templateUrl: './ticket-log.component.html',
+	styleUrls: ['./ticket-log.component.scss'],
 	encapsulation: ViewEncapsulation.None,
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimeLogComponent	{
+export class TicketLogComponent	{
 	modalReference;
 
 	uctNotReady: false;
@@ -29,6 +29,8 @@ export class TimeLogComponent	{
 
 	hourStep = 1;
 	minuteStep = 15;
+
+	customModalCss = 'timeLog';
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Output() commentChangeEvent = new EventEmitter();
@@ -46,8 +48,6 @@ export class TimeLogComponent	{
 		this.modalRef.close();
 
 		if(!formObj) return;
-
-		console.log('formObj: ', formObj);
 		
 		// check for change type
 		let message = [];

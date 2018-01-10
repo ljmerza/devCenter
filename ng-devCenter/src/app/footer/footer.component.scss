@@ -1,9 +1,14 @@
 footer {
-	position: fixed;
+	position: absolu;
   	bottom: 0;
   	padding: 0 3rem 3rem 3rem;
-  	background-color: white;
-}
-.col {
-	border-top: 1px solid #DDD;
+
+  	.col {
+		border-top: 1px solid #DDD;
+	}
+
+	$dark-blk: #292b2c;
+	$white: #fff;
+	background-color: $dark-blk;
+	color: $white;
 }

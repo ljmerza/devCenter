@@ -1,4 +1,5 @@
 $darkbg: #292b2c;
+$offdarkbg: #333;
 
 .dropdown-submenu{
 	position: relative;
@@ -18,12 +19,18 @@ $darkbg: #292b2c;
 	}
 }
 
+.dropdown-menu {
+	border-radius: 0;
+}
 
+.dropdown-submenu-icon {
+	color: $darkbg;
+}
 
 /* label underline focus color */
 .input-field input[type=text] {
-	border: 1px solid #333;
-	box-shadow: 0 1px 0 0 #333;
+	border: 1px solid $offdarkbg;
+	box-shadow: 0 1px 0 0 $offdarkbg;
 	padding-left: 10px;
 }
 
@@ -46,13 +53,14 @@ img {
 
 
 .confirm_selection {
-    animation: glow .5s infinite alternate;
+    animation: glow 0.5s infinite alternate;
+    color: red;
     font-weight: bold;
 }
 
 @keyframes glow {
     to {
-        text-shadow: 0 0 10px red;
+        text-shadow: 0 0 30px rgba(255,255,255,0.4);
     }
 }
 

@@ -1,14 +1,28 @@
+$light-blk: #333;
+$dark-blk: #292b2c;
+$link: #0275d8;
+$link-hover: #0056b3;
+$white: #fff;
+$success: #28a745;
+
 .table-spacing {
 	margin-top: 50px;
 	margin-bottom: 100px;
+	background-color: $dark-blk;
+	color: $white;
 }
 
-i {
+a, .material-icons {
+	color: $link;
 	cursor: pointer;
+
+	&:hover {
+		color: $link-hover;
+		text-decoration: none;
+	} 
 }
 
 // dt buttons
-$success: #28a745;
 .dt-button.buttons-collection.buttons-colvis, 
 .dataTables_wrapper .dataTables_paginate .paginate_button,
 .dt-button-collection .dt-button.buttons-columnVisibility {
@@ -63,7 +77,17 @@ $success: #28a745;
 	margin-top: 6px;
 	select { 
 		width: 100px;
+		background-color: $dark-blk;
+		color: $white;
 	}
+
+	label {
+		color: $white;
+	}
+}
+
+.dataTables_info {
+	color: $white !important;
 }
 
 .summary-format {
@@ -71,18 +95,48 @@ $success: #28a745;
 	max-width: 300px;
 }
 
+table.dataTable,
+.dataTables_wrapper {
+	background-color: $dark-blk;
+	color: $white;
+
+	#DataTables_Table_0_filter input {
+		
+	}
+}
+
+table.dataTable {
+	tbody tr {
+		background-color: $dark-blk;
+		color: $white;
+
+		&:nth-of-type(odd) {
+			background-color: $light-blk;
+			color: $white;
+		}
+
+		select {
+			background-color: #292b2c;
+			color: $white;
+		}
+	}
+}
+
+
+
 // filter button
 #DataTables_Table_0_filter input {
  	padding: .375rem .75rem;
 	font-size: 1rem;
 	line-height: 1.5;
-	color: #495057;
-	background-color: #fff;
 	background-image: none;
 	background-clip: padding-box;
 	border: 1px solid #ced4da;
-	border-radius: .25rem;
 	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	background-color: $dark-blk;
+	color: $white;
+	border-radius: 0;
+	margin-right: 10px;
  }
 
 .title-spacing {

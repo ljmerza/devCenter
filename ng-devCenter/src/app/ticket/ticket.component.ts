@@ -1,10 +1,10 @@
 import { 
-	Component, Input, ViewChild, ComponentFactoryResolver,
+	Component, Input, ViewChild, ComponentFactoryResolver, ViewEncapsulation,
 	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy
 } from '@angular/core';
 
 import { TicketCommentsModalComponent } from './../ticket-comments-modal/ticket-comments-modal.component';
-import { TimeLogComponent } from './../time-log/time-log.component';
+import { TicketLogComponent } from './../ticket-log/ticket-log.component';
 import { SetPingsComponent } from './../set-pings/set-pings.component';
 import { TicketDetailsComponent } from './../ticket-details/ticket-details.component';
 import { TicketStatusComponent } from './../ticket-status/ticket-status.component';
@@ -22,9 +22,11 @@ import { MiscService } from './../services/misc.service';
 	styleUrls: ['./ticket.component.scss'],
 	entryComponents: [
 		SetPingsComponent, TicketDetailsComponent,
-		TicketCommentsModalComponent, TimeLogComponent
+		TicketCommentsModalComponent, TicketLogComponent
 	],
-	changeDetection: ChangeDetectionStrategy.OnPush
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	encapsulation: ViewEncapsulation.None
+
 })
 export class TicketComponent {
 	ticketDropdown; // ticket dropdown reference
@@ -199,18 +201,18 @@ export class TicketComponent {
 	openLogModal() {
 		// create modal if doesn't exist
 		if(!this.worklogComponentRef) {
-			const factory = this.factoryResolver.resolveComponentFactory(TimeLogComponent);
+			const factory = this.factoryResolver.resolveComponentFactory(TicketLogComponent);
 	    	this.worklogComponentRef = this.viewContRef.createComponent(factory);
 
 	    	// add input/outputs
-	    	(<TimeLogComponent>this.worklogComponentRef.instance).key = this.ticket.key;
-	    	(<TimeLogComponent>this.worklogComponentRef.instance)
+	    	(<TicketLogComponent>this.worklogComponentRef.instance).key = this.ticket.key;
+	    	(<TicketLogComponent>this.worklogComponentRef.instance)
 	    		.commentChangeEvent.subscribe($event => this.commentChangeEvent($event) );
-	    	(<TimeLogComponent>this.worklogComponentRef.instance)
+	    	(<TicketLogComponent>this.worklogComponentRef.instance)
 	    		.statusChangeCancel.subscribe($event => this.ticketStatusRef.statusChange($event) );
 		}
 		
 		// open modal
-    	(<TimeLogComponent>this.worklogComponentRef.instance).openLogModal();
+    	(<TicketLogComponent>this.worklogComponentRef.instance).openLogModal();
 	}
 }

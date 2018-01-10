@@ -32,7 +32,7 @@ import { QaGeneratorComponent } from './qa-generator/qa-generator.component';
 import { FooterComponent } from './footer/footer.component';
 import { TicketCommentsModalComponent } from './ticket-comments-modal/ticket-comments-modal.component';
 import { StatusModalComponent } from './status-modal/status-modal.component';
-import { TimeLogComponent } from './time-log/time-log.component';
+import { TicketLogComponent } from './ticket-log/ticket-log.component';
 import { LogoutComponent } from './logout/logout.component';
 import { TicketComponent } from './ticket/ticket.component';
 import { SetPingsComponent } from './set-pings/set-pings.component';
@@ -53,7 +53,7 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
 		AppComponent, NavBarComponent, UserSettingsComponent,
 		TicketsComponent, WorkTimePipe, QaGeneratorComponent,
 		FooterComponent, TicketCommentsModalComponent, SafehtmlPipe,
-		StatusModalComponent, TimeLogComponent, LogoutComponent,
+		StatusModalComponent, TicketLogComponent, LogoutComponent,
 		TicketComponent, CommentFormatPipe, SetPingsComponent,
 		ToastrComponent, TicketDetailsComponent, ModalComponent, 
 		TicketStatusComponent, DropdownSubmenuDirective, TicketCommentsComponent

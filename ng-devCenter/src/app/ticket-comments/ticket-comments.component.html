@@ -48,7 +48,12 @@
 				</button>
 			</span>
 			
-			<div [hidden]="comment.isEditing" [innerHTML]="comment.comment | commentFormat:attachments | safehtml"></div>
+			<!-- comment body -->
+			<div [hidden]="comment.isEditing" 
+			[innerHTML]="comment.comment | commentFormat:attachments | safehtml">
+			</div>
+			
+			<!-- text area comment body -->
 			<textarea
 				[id]=comment.editId
 				[hidden]="!comment.isEditing" 
@@ -60,3 +65,4 @@
 		</ng-template>
 	</ngb-panel>
 </ngb-accordion>
+
