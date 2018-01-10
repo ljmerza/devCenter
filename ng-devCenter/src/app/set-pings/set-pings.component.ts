@@ -31,7 +31,9 @@ export class SetPingsComponent {
 	/**
 	*/
 	openPingModel(){
-		this.modalInstance = this.modal.openModal();
+		setTimeout( () => {
+			this.modalInstance = this.modal.openModal();
+		});
 	}
 
 

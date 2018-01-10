@@ -48,7 +48,7 @@ export class TicketComponent {
 
 	/**
 	*/
-	commentChangeEvent({allComments, postData, newComment, response}):void {
+	commentChangeEvent({allComments, postData, qaGenUpdate, response}):void {
 
 		// if comment added the push comment onto comment array
 		if(postData && postData.comment){
@@ -74,6 +74,34 @@ export class TicketComponent {
 		} else if(allComments) {
 			// else just replace comment ref to trigger change detection
 			this.ticket.comments = allComments;
+
+		} else if(qaGenUpdate) {
+
+			// set crucible id
+			this.ticket.crucible_id = qaGenUpdate.crucibleId;
+
+			// add new comment if given
+			if(qaGenUpdate.comment){
+				const newCommentBody = [{
+					comment: qaGenUpdate.comment.body,
+					created: qaGenUpdate.comment.created,
+					id: qaGenUpdate.comment.id,
+					updated: qaGenUpdate.comment.updated,
+					username: this.user.username,
+					display_name: this.user.userData.displayName,
+					key: this.ticket.key,
+					isEditing: false,
+					closeText: 'Edit Comment',
+					comment_type: 'info',
+					editId: `E${qaGenUpdate.comment.id}`,
+					email: this.user.userData.emailAddress,
+					visibility: 'Developers'
+				}];
+
+				// merge comments to new array ref
+				this.ticket.comments = [...this.ticket.comments, ...newCommentBody];
+			}
+			
 		}
 
 		// check for removal of components

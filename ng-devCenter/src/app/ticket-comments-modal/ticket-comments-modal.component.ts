@@ -32,12 +32,20 @@ export class TicketCommentsModalComponent {
   	/**
   	*/
 	openCommentModal(): void {
-		this.modalRef = this.modal.openModal();
+		setTimeout( () => {
+			this.modalRef = this.modal.openModal();
+		});
 	}
 
 	/**
 	*/
 	closeCommentModal() {
 		this.modalRef.close();
+	}
+
+	/**
+	*/
+	commentChangeEventBubble(event){
+		this.commentChangeEvent.emit(event);
 	}
 }

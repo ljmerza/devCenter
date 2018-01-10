@@ -153,13 +153,17 @@ export class JiraService {
 	/**
 	*/
 	getTicketBranches(msrp:string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/git/branches/${msrp}`);
+		let params = new HttpParams();
+		params = params.append('skipCache', `true`);
+		return this.http.get(`${this.apiUrl}/git/branches/${msrp}`, {params});
 	}
 
 	/**
 	*/
 	getRepos(): Observable<any>{
-		return this.http.get(`${this.apiUrl}/git/repos`);
+		let params = new HttpParams();
+		params = params.append('skipCache', `true`);
+		return this.http.get(`${this.apiUrl}/git/repos`, {params});
 	}
 
 	/**
@@ -177,7 +181,9 @@ export class JiraService {
 	/**
 	*/
 	getBranches(repoName): Observable<any> {
-		return this.http.get(`${this.apiUrl}/git/repo/${repoName}`);
+		let params = new HttpParams();
+		params = params.append('skipCache', `true`);
+		return this.http.get(`${this.apiUrl}/git/repo/${repoName}`, {params});
 	}
 
 	/**
@@ -198,7 +204,7 @@ export class JiraService {
 		let params = new HttpParams();
 		params = params.append('comment_id', comment_id);
 		params = params.append('key', key);
-		return this.http.get(`${this.apiUrl}/jira/comment`, {params});
+		return this.http.delete(`${this.apiUrl}/jira/comment`, {params});
 	}
 
 	/**

@@ -81,7 +81,7 @@ export class StatusModalComponent {
 		.subscribe(
 			() => {
 				this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
-				this.statusChange.emit({cancelled: false, showMessage:['pcrPass', 'qaPass'].includes(statusType)});
+				this.statusChange.emit({cancelled: false, showMessage: false});
 			},
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');

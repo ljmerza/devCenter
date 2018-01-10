@@ -1,15 +1,24 @@
 $header-bg: #0275d8;
 $darkbg: #292b2c;
 
-.ticketComments, .qaGen {
+.qaGen {
 	.modal-dialog {
 		max-width: 1000px;
+		width: 70%;
+	}
+}
+
+.ticketComments,  {
+	.modal-dialog {
+		max-width: 1200px;
+		width: 70%;
 	}
 }
 
 .ticketDetails, .setPings {
 	.modal-dialog {
 		max-width: 700px;
+		width: 70%;
 	}
 }
 

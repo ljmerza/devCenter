@@ -69,10 +69,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 					self.misc.copyText( $(this).children('input').get(0) );
 				});
 			});
-		})
-		
-		
-
+		});
 	}
 
 	/**

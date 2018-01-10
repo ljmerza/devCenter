@@ -1,5 +1,5 @@
 import { 
-	Component, ViewChild, ElementRef, 
+	Component, ViewChild, ElementRef, ChangeDetectorRef,
 	ViewEncapsulation, ChangeDetectionStrategy,
 	EventEmitter, Output, Input
 } from '@angular/core';
@@ -14,6 +14,7 @@ import { ModalComponent } from './../modal/modal.component';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
 import { ConfigService } from './../services/config.service'
+import { UserService } from './../services/user.service'
 
 @Component({
 	selector: 'app-qa-generator',
@@ -35,14 +36,15 @@ export class QaGeneratorComponent {
 	modalRef: NgbModalRef;
 
 	@Output() statusChange = new EventEmitter();
+	@Output() commentChangeEvent = new EventEmitter();
 	@Input() msrp;
 	@Input() key;
 	@Input() repos;
 	customModalCss;
 
 	constructor(
-		public jira:JiraService, public toastr: ToastrService, 
-		public config: ConfigService,public formBuilder: FormBuilder
+		public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef,
+		public config: ConfigService, public formBuilder: FormBuilder, public user: UserService
 	) {
 		// create form object
 		this.qaForm = this.formBuilder.group({
@@ -67,7 +69,6 @@ export class QaGeneratorComponent {
 	/*
 	*/
 	addBranch(newBranch){
-
 		// create repo name control
 		let repositoryName = this.formBuilder.control(newBranch.repositoryName || '');
 
@@ -91,6 +92,7 @@ export class QaGeneratorComponent {
 
 		// add new branch to branches array
 		(this.qaForm.get('branches') as FormArray).push(branch);
+
 	}
 
 	/*
@@ -119,23 +121,23 @@ export class QaGeneratorComponent {
 	*/
 	submitQA(isSaving): void {
 
-		if(this.loadingBranches) return;
-
-		// if we are currently looking for repos then cancel that search
-		if(this.repoLookUp$) this.repoLookUp$.unsubscribe();
-
 		// end here if we are just closing modal
 		if(!isSaving){
+			// cancel request for repos
+			if(this.repoLookUp$) this.repoLookUp$.unsubscribe();
+
+			// notify of status cancel and reset branches
 			this.statusChange.emit({cancelled: true, showMessage: true});
 			this.resetBranches();
+
+			// close modal and end here
 			this.modalRef.close();
 			return;
 
-		} else if(this.qaForm.invalid){
-			// make sure entire form is valid
-			this.statusChange.emit({cancelled: true, showMessage: true});
-			return;
 		}
+
+		// if invalid form then just return
+		if(this.qaForm.invalid) return;
 
 		// close modal since we dont need it anymore
 		this.modalRef.close();
@@ -175,7 +177,7 @@ export class QaGeneratorComponent {
 				this.toastr.showToast(`
 					<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>
 					<br>
-					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data}'>Crucible Link</a>
+					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
 				`, 'success', true);
 
 				// reset branch list
@@ -183,6 +185,14 @@ export class QaGeneratorComponent {
 
 				// only update status if we are updating Jira
 				if(postData.qa_steps){
+
+					// update comments on ticket
+					this.commentChangeEvent.emit({
+						qaGenUpdate: {
+							comment: response.data.comment,
+							crucibleId: response.data.crucible_id	
+						}
+					});
 					this.statusChange.emit({cancelled: false, showMessage: false});
 				}
 				
@@ -214,6 +224,9 @@ export class QaGeneratorComponent {
 			response => {
 				this.loadingBranches = false;
 				this.processBranches(response.data);
+
+				// manually tell Angular of change
+				this.cd.detectChanges();
 			},
 			error => {
 				this.loadingBranches = false;

@@ -1,16 +1,11 @@
-<!-- QA Generator Model -->
-<ng-template #logModal let-c="close">
-	<form class="form-group" #logForm="ngForm" (ngSubmit)="submitLog(logForm)">
+<dev-center-modal (modalEvent)="submitLog('')">
 
-		<div class="modal-header">
-			<h2 class="modal-title">Add Comment/Timelog for {{key}}</h2>
-			<button type="button" class="close" aria-label="Close" (click)="c('close')">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
+	<div class='modal-text'>
+		<h4 class="modal-title">Add Comment/Timelog for {{key}}</h4>
+	</div>
 
-		<div class="modal-body">
-
+	<span class='modal-body'>
+		<form class="form-group" #logForm="ngForm">
 			<h4>Comment:</h4>
 			<div class="form-group">
 				 <textarea class="form-control" name="comment" id="comment" rows=15 [(ngModel)]="comment"></textarea>
@@ -52,13 +47,14 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
+	</span>
 
-		<div class="modal-footer">
-			<button type="submit" class="btn btn-outline-success">
+	<span class='modal-footer'>
+		<button type="submit" class="btn btn-outline-success" (click)="submitLog(logForm)">
 				<span [innerHtml]=" logTime.minute || logTime.hour ? 'Log Work' : 'Add Comment'"></span>
-			</button>
-			<button type="button" class="btn btn-outline-danger" (click)="c('close')">Cancel</button>
-		</div>
-	</form>
-</ng-template>
+		</button>
+		<button type="button" class="btn btn-outline-danger" (click)="submitLog()">Cancel</button>
+	</span>
+	
+</dev-center-modal>

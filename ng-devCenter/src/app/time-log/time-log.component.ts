@@ -3,7 +3,8 @@ import {
 	ElementRef, ViewEncapsulation, Output, Input
 } from '@angular/core';
 
-import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { ModalComponent } from './../modal/modal.component';
 import { NgForm } from '@angular/forms';
 
 import { JiraService } from './../services/jira.service';
@@ -20,32 +21,33 @@ import { ToastrService } from './../services/toastr.service';
 export class TimeLogComponent	{
 	modalReference;
 
-	uctNotReady;
-	mergedCode;
-	conflictCode;
-	comments:string;
+	uctNotReady: false;
+	mergedCode: false;
+	conflictCode: false;
+	comment:string;
 	logTime = {hour: 0, minute: 0};
 
 	hourStep = 1;
 	minuteStep = 15;
 
-	@ViewChild('logModal') content:ElementRef;
+	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Output() commentChangeEvent = new EventEmitter();
 	@Output() statusChangeCancel = new EventEmitter();
 	@Input() key:string;
+	modalRef: NgbModalRef;
 
-	constructor(
-		public jira:JiraService,
-		public toastr: ToastrService,
-		private modalService:NgbModal
-	) {}
+	constructor(public jira:JiraService, public toastr: ToastrService) {}
 
 	/*
 	*/
-	submitLog(formObj: NgForm) {
+	submitLog(formObj?:NgForm) {
 
 		// close modal
-		this.modalReference.close();
+		this.modalRef.close();
+
+		if(!formObj) return;
+
+		console.log('formObj: ', formObj);
 		
 		// check for change type
 		let message = [];
@@ -82,8 +84,9 @@ export class TimeLogComponent	{
 				// show success and notify table to update time
 				this.toastr.showToast('Work Log updated', 'success');
 				this.commentChangeEvent.emit({postData, response});
-				// then reset form
-				formObj.resetForm();
+
+				// then reset form - manual reset because logTime object becomes null on formObj.formReset()
+				this._resetForm();
 			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
@@ -92,22 +95,17 @@ export class TimeLogComponent	{
 	/*
 	*/
 	openLogModal():void {
-
-		// set values
-		this.comments = '';
-		this.logTime = {hour: 0, minute: 0};
-
 		// open modal
 		setTimeout( () => {
-			this.modalReference = this.modalService
-			.open(this.content, { windowClass: 'log-modal' });
+			// open modal
+			this.modalRef = this.modal.openModal();
+
+			this.modalRef.result.then(
+				// always reset form
+				() => this._resetForm(),
+				() => this._resetForm()
+			);
 		});
-		
-		this.modalReference.result.then(
-			// always reset form
-			() => this._resetForm(),
-			() => this._resetForm()
-		);
 	}
 
 	/*
@@ -116,6 +114,8 @@ export class TimeLogComponent	{
 		this.uctNotReady = false;
 		this.mergedCode = false;
 		this.conflictCode = false;
+		this.comment = '';
+		this.logTime = {hour: 0, minute: 0};
 	}
 
 }

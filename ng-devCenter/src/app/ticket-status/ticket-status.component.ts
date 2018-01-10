@@ -1,5 +1,5 @@
 import { 
-	Component, Input, Output, ViewContainerRef,
+	Component, Input, Output, ViewContainerRef, EventEmitter,
 	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy
 } from '@angular/core';
 
@@ -25,6 +25,7 @@ export class TicketStatusComponent implements OnInit {
 	@Input() ticketMsrp;
 	@Input() ticketCrucible;
 	@Input() repos;
+	@Output() commentChangeEvent = new EventEmitter();
 
 	ngOnInit() {
 		this.validTransitions();
@@ -51,9 +52,6 @@ export class TicketStatusComponent implements OnInit {
 	}
 
 	statusChange({showMessage=true, cancelled=true, statusName=''}):void {
-		console.log('cancelled: ', cancelled);
-		console.log('statusName: ', statusName);
-		console.log('statusName: ', statusName);
 		// if we are canceling a status then reset dropdown
 		if(cancelled){
 			const ticketState = this.ticketStates.filter(state => state.name == this.ticketStatus);
@@ -146,7 +144,7 @@ export class TicketStatusComponent implements OnInit {
 	    	(<StatusModalComponent>this.statusComponentRef.instance).key = this.ticketKey;
 	    	(<StatusModalComponent>this.statusComponentRef.instance).crucible_id = this.ticketCrucible;
 	    	(<StatusModalComponent>this.statusComponentRef.instance)
-	    		.statusChange.subscribe($event => this.statusChange($event) );
+	    		.statusChange.subscribe($event => this.statusChange($event));
 		}
 		
 		// open modal
@@ -167,6 +165,10 @@ export class TicketStatusComponent implements OnInit {
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.ticketMsrp;
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance)
 	    		.statusChange.subscribe($event => this.statusChange($event) );
+	    		(<QaGeneratorComponent>this.qaComponentRef.instance)
+	    		.commentChangeEvent.subscribe($event => {
+	    			this.commentChangeEvent.emit($event) 
+	    		});
 		}
 		
 		// open modal

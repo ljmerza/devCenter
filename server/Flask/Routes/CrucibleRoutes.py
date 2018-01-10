@@ -42,6 +42,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 
 		# save cru id on data
 		data['crucible_id'] = cru_response['data']
+		comment_response = {}
 
 
 		# add comment to Jira if QA step exist
@@ -49,10 +50,10 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 
 			# try to add comment now
 			data['crucible_id'] = cru_response['data']
-			com_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
-			if not com_response['status']:
-				com_response['data'] += ' but Crucible created: ' + cru_response['data']
-				return Response(com_response, mimetype='application/json')
+			comment_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
+			if not comment_response['status']:
+				comment_response['data'] += ' but Crucible created: ' + cru_response['data']
+				return Response(comment_response, mimetype='application/json')
 
 			# add PCR needed component if wanted
 			if data['autoPCR']:
@@ -77,8 +78,17 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 					log_response['data'] += ' but Jira log and Crucible created: ' + cru_response['data']
 					return Response(log_response, mimetype='application/json')
 
-		# return Crucible response with cru id
-		return Response(cru_response, mimetype='application/json')
+		# create response with crucible and jira comment response
+		response = {
+			'data': {
+				'crucible_id': cru_response['data'],
+				'comment': comment_response['data']
+			},
+			'status': True	
+		}
+
+		# return Crucible response with cru id and comment info
+		return Response(response, mimetype='application/json')
 
 
 	@app.route(f'/{app_name}/crucible/add_reviewer', methods=['POST'])
