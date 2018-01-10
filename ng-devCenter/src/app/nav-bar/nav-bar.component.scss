@@ -1,5 +1,15 @@
-$darkbg: #292b2c;
-$offdarkbg: #333;
+$darkblk: #292b2c;
+$offdark: #333;
+$linkhover: #0056b3;
+$white: #fff;
+$success: #28a745;
+
+.table-spacing {
+	margin-top: 50px;
+	margin-bottom: 100px;
+	background-color: $darkblk;
+	color: $white;
+}
 
 .dropdown-submenu{
 	position: relative;
@@ -21,16 +31,21 @@ $offdarkbg: #333;
 
 .dropdown-menu {
 	border-radius: 0;
+
+	.dropdown-item:hover {
+		background-color: $linkhover;
+		color: $white;
+	}
 }
 
 .dropdown-submenu-icon {
-	color: $darkbg;
+	color: $darkblk;
 }
 
 /* label underline focus color */
 .input-field input[type=text] {
-	border: 1px solid $offdarkbg;
-	box-shadow: 0 1px 0 0 $offdarkbg;
+	border: 1px solid $offdark;
+	box-shadow: 0 1px 0 0 $offdark;
 	padding-left: 10px;
 }
 
@@ -65,14 +80,14 @@ img {
 }
 
 nav {
-	background-color: $darkbg;
+	background-color: $darkblk;
 	color: #fff;
 	button {
 		border-radius: 0;
 	}
 
 	input {
-		background-color: $darkbg;
+		background-color: $darkblk;
 		border-radius: 0;
 	}
 }

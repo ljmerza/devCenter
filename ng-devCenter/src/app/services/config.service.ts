@@ -135,11 +135,11 @@ export class ConfigService {
 		},
 		{
 			name: 'BMP Ticket',
-			link: `order/ethernet/7O2402151?cache=`
+			link: `order/bmp/7O2402151?cache=`
 		},
 		{
 			name: 'ELD',
-			link: `order/ethernet/BAS539606001?cache=`
+			link: `order/eld/BAS539606001?cache=`
 		},
 		{
 			name: 'AOTS Advanced Search',
@@ -151,21 +151,45 @@ export class ConfigService {
 		},
 		{
 			name: 'Backup Restore',
-			link: `task/backup-restore/123`
+			link: `task/backup-restore/123?cache=`
 		}
 		,
 		{
 			name: 'Backup Request',
-			link: `task/backup-request/123`
+			link: `task/backup-request/123?cache=`
 		},
 		{
 			name: 'Backup Validation',
-			link: `task/backup-validation/123`
+			link: `task/backup-validation/123?cache=`
 		},
 		{
 			name: 'RDS',
-			link: `order/rds/11301788850496TE`
-		}
+			link: `order/rds/11301788850496TE?cache=`
+		},
+		{
+			name: 'ASE DB',
+			link: `order/asedb/11301788850496TE?cache=`
+		},
+		{
+			name: 'Ticket Logs',
+			link: `logs/7O2402151?cache=`
+		},
+		{
+			name: 'Client-Request',
+			link: `order/client-request/7O2402151?cache=`
+		},
+		{
+			name: 'ROME',
+			link: `development/components/rome?cache= `
+		},
+		{
+			name: 'RDS-Data',
+			link: `development/rds-data?cache=`
+		},
+		{
+			name: 'Splash-Images',
+			link: `splash-images/edit/1?cache=`
+		},
 	];
 
 	wfaLinks = [

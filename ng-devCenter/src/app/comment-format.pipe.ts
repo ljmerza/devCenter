@@ -44,8 +44,8 @@ export class CommentFormatPipe implements PipeTransform {
 		comment = comment.split('\n').map( commentPiece => {
 
 			[commentPiece, stepNumber] = this._format_list_headers(commentPiece, stepNumber);
-			[commentPiece, tableStart] = this._formatTable(commentPiece, tableStart);
 			commentPiece = this._format_colors(commentPiece);
+			[commentPiece, tableStart] = this._formatTable(commentPiece, tableStart);
 			commentPiece = this._format_links(commentPiece);
 			commentPiece = this._format_images(commentPiece, attachments);
 
@@ -111,7 +111,10 @@ export class CommentFormatPipe implements PipeTransform {
 			.split('|')
 			.filter(t => !!t.trim())
 			.map(t => {
-				const input = $(t).children()
+				const input = $(t).children();
+				console.log('input: ', input);
+				const data = $(t).text();
+				console.log('data: ', data);
 
 				return `
 				<td>

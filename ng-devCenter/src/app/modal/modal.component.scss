@@ -83,8 +83,17 @@ $darkbg: #292b2c;
 		color: #FFF;
 	}
 
+	.icon {
+		cursor: default;
+	}
+
 	.material-icons {
+		color: #fff;
 		font-size: 35px;
+
+		&:hover {
+			color: #fff;
+		}
 	}
 }
 
