@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { APIService } from './api.service';
 import { UserService } from './user.service';
 import { ConfigService } from './config.service';
 import { LocalStorageService } from './local-storage.service';
@@ -15,7 +14,7 @@ export class JiraService {
 	jql:string=''
 	firstLoad = true;
 
-	/*
+	/**
 	*/
 	constructor(
 		public http:HttpClient, public config:ConfigService,
@@ -123,8 +122,6 @@ export class JiraService {
 				this.title = 'My Open';
 		}
 
-		this.firstLoad = false;
-
 		let params = new HttpParams();
 		params = params.append('jql', this.jql);
 		params = params.append('fields', this.config.fields);
@@ -132,14 +129,14 @@ export class JiraService {
 		return this.http.get(`${this.apiUrl}/jira/tickets`, {params});
 	}
 
-	/*
+	/**
 	*/
 	setPing({key, ping_type}): Observable<any> {
 		const postData = { key, ping_type, username: this.user.username };
 		return this.http.post(`${this.apiUrl}/chat/send_ping`, postData);
 	}
 
-	/*
+	/**
 	*/
 	getATicketDetails(key){
 		let params = new HttpParams();
@@ -147,25 +144,25 @@ export class JiraService {
 		return this.http.get(`${this.apiUrl}/jira/tickets`, {params});
 	}
 
-	/*
+	/**
 	*/
 	searchTicket(msrp:string): Observable<any> {
 		return this.http.get(`${this.apiUrl}/jira/getkey/${msrp}`);
 	}
 
-	/*
+	/**
 	*/
 	getTicketBranches(msrp:string): Observable<any> {
 		return this.http.get(`${this.apiUrl}/git/branches/${msrp}`);
 	}
 
-	/*
+	/**
 	*/
 	getRepos(): Observable<any>{
 		return this.http.get(`${this.apiUrl}/git/repos`);
 	}
 
-	/*
+	/**
 	*/
 	generateQA(postData): Observable<any> {
 
@@ -177,25 +174,25 @@ export class JiraService {
 		return this.http.post(`${this.apiUrl}/crucible/create`, postData);
 	}
 
-	/*
+	/**
 	*/
 	getBranches(repoName): Observable<any> {
 		return this.http.get(`${this.apiUrl}/git/repo/${repoName}`);
 	}
 
-	/*
+	/**
 	*/
 	workLog(postData): Observable<any> {
 		return this.http.post(`${this.apiUrl}/jira/comment`, postData);
 	}
 
-	/*
+	/**
 	*/
 	editComment(postData): Observable<any> {
 		return this.http.put(`${this.apiUrl}/jira/comment`, postData);
 	}
 
-	/*
+	/**
 	*/
 	deleteComment(comment_id, key): Observable<any> {
 		let params = new HttpParams();
@@ -204,20 +201,20 @@ export class JiraService {
 		return this.http.get(`${this.apiUrl}/jira/comment`, {params});
 	}
 
-	/*
+	/**
 	*/
 	changeStatus(postData): Observable<any> {
 		postData.username = this.user.username;
 		return this.http.post(`${this.apiUrl}/jira/status`, postData);
 	}
 
-	/*
+	/**
 	*/
 	getProfile(): Observable<any> {
 		return this.http.get(`${this.apiUrl}/jira/profile`);
 	}
 
-	/*
+	/**
 	*/
 	public processErrorResponse(response:HttpErrorResponse): string {
 		return response.error.data || response.message || response.error;

@@ -13,7 +13,6 @@ import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
 import { JiraService } from './services/jira.service';
 import { JiraServiceTest } from './services/testing/jira.service';
-import { APIService } from './services/api.service';
 import { LocalStorageService } from './services/local-storage.service';
 import { MiscService } from './services/misc.service';
 import { UserService } from './services/user.service';
@@ -45,7 +44,7 @@ import { TicketStatusComponent } from './ticket-status/ticket-status.component';
 
 import { environment } from '../environments/environment';
 import { DropdownSubmenuDirective } from './dropdown-submenu.directive';
-import {AuthInterceptor} from './interceptors/auth.interceptor';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 
@@ -67,8 +66,8 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
 		BrowserAnimationsModule, ToastModule.forRoot()
 	],
 	providers: [
-		APIService, UserService, LocalStorageService,
-		ToastrService, ConfigService, WebSocketService, MiscService,
+		UserService, LocalStorageService, ToastrService, ConfigService, 
+		WebSocketService, MiscService,
 		// if in testing mode use test endpoint else use regular endpoints
 		{ provide: JiraService, useClass: environment.test ? JiraServiceTest : JiraService},
 		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},

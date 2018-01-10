@@ -1,24 +1,9 @@
 import { Injectable } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-
-import { APIService } from './../api.service';
-import { UserService } from './../user.service';
-import { ConfigService } from './../config.service';
-import { LocalStorageService } from './../local-storage.service';
-;
 
 @Injectable()
 export class JiraServiceTest {
-
-	/*
-	*/
-	constructor(
-		public http:HttpClient, public config:ConfigService,
-		public lStore:LocalStorageService,
-		public user:UserService, public api:APIService
-	) {}
+	constructor() {}
 
 
 	/*

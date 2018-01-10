@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserService } from './../services/user.service';
-import { APIService } from './../services/api.service';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
 import { ConfigService } from '../services/config.service';
@@ -28,8 +27,7 @@ export class NavBarComponent {
 	/*
 	*/
 	constructor(
-		public user: UserService, 
-		public api:APIService,  
+		public user: UserService,  
 		private toastr: ToastrService,
 		public jira:JiraService,
 		private modalService:NgbModal,
