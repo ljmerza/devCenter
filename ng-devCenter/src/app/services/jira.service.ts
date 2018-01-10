@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { APIService } from './api.service';
@@ -20,14 +20,14 @@ export class JiraService {
 	constructor(
 		public http:HttpClient, public config:ConfigService,
 		public lStore:LocalStorageService,
-		public user:UserService, public api:APIService
+		public user:UserService
 	) { }
 
 	apiUrl:string = `${environment.apiUrl}:${environment.port}/dev_center`;
 
-	/*
+	/**
 	*/
-	getFilterData(jiraListType:string): Observable<any> {
+	getFilterData(jiraListType:string, skipCache:boolean=false): Observable<any> {
 
 		switch(jiraListType) {
 			case 'pcr':
@@ -121,123 +121,100 @@ export class JiraService {
 			default:
 				this.jql = this.config.mytickets;
 				this.title = 'My Open';
-
-				// if loading for the first time and 
-				// loading my ticket then just try to load locally
-				if(this.firstLoad){
-					this.firstLoad = false;
-					const data = this.lStore.getItem('mytickets');
-
-					if(data){
-						// first load locally then call for fresh data as well
-						// return Observable.of({data:JSON.parse(data), cached: true})
-	  			// 		.concat(this.api.getAPI(`${this.apiUrl}/jira/tickets?jql=${this.jql}&fields=${this.config.fields}`));
-					}
-				}
 		}
 
 		this.firstLoad = false;
-		return this.api.getAPI(`${this.apiUrl}/jira/tickets?jql=${this.jql}&fields=${this.config.fields}`);
+
+		let params = new HttpParams();
+		params = params.append('jql', this.jql);
+		params = params.append('fields', this.config.fields);
+		params = params.append('skipCache', skipCache.toString());
+		return this.http.get(`${this.apiUrl}/jira/tickets`, {params});
 	}
 
 	/*
 	*/
 	setPing({key, ping_type}): Observable<any> {
-		return this.api.postAPI({
-			url: `${this.apiUrl}/chat/send_ping`,
-			body: { key, ping_type, username: this.user.username }
-		});
+		const postData = { key, ping_type, username: this.user.username };
+		return this.http.post(`${this.apiUrl}/chat/send_ping`, postData);
 	}
 
 	/*
 	*/
 	getATicketDetails(key){
-		const jql = `key%3D%20${key}`
-		return this.api.getAPI(`${this.apiUrl}/jira/tickets?jql=${jql}`);
+		let params = new HttpParams();
+		params = params.append('jql', `key%3D%20${key}`);
+		return this.http.get(`${this.apiUrl}/jira/tickets`, {params});
 	}
 
 	/*
 	*/
 	searchTicket(msrp:string): Observable<any> {
-		return this.api.getAPI(`${this.apiUrl}/jira/getkey/${msrp}`);
+		return this.http.get(`${this.apiUrl}/jira/getkey/${msrp}`);
 	}
 
 	/*
 	*/
 	getTicketBranches(msrp:string): Observable<any> {
-		return this.api.getAPI(`${this.apiUrl}/git/branches/${msrp}`);
+		return this.http.get(`${this.apiUrl}/git/branches/${msrp}`);
 	}
 
 	/*
 	*/
 	getRepos(): Observable<any>{
-		return this.api.getAPI(`${this.apiUrl}/git/repos`);
+		return this.http.get(`${this.apiUrl}/git/repos`);
 	}
 
 	/*
 	*/
 	generateQA(postData): Observable<any> {
 
-		// add creds
+		// add creds to POST data
 		postData.username = this.user.username;
 		postData.password = this.user.password;
 
-		let sources = [];
-
 		// create crucible and post comment
-		return this.api.postAPI({
-			url: `${this.apiUrl}/crucible/create`,
-			body: postData
-		})
+		return this.http.post(`${this.apiUrl}/crucible/create`, postData);
 	}
 
 	/*
 	*/
 	getBranches(repoName): Observable<any> {
-		return this.api.getAPI(`${this.apiUrl}/git/repo/${repoName}`);
+		return this.http.get(`${this.apiUrl}/git/repo/${repoName}`);
 	}
 
 	/*
 	*/
 	workLog(postData): Observable<any> {
-		return this.api.postAPI({
-			url: `${this.apiUrl}/jira/comment`,
-			body: postData
-		});
+		return this.http.post(`${this.apiUrl}/jira/comment`, postData);
 	}
 
 	/*
 	*/
 	editComment(postData): Observable<any> {
-		return this.api.putAPI({
-			url: `${this.apiUrl}/jira/comment`,
-			body: postData
-		});
+		return this.http.put(`${this.apiUrl}/jira/comment`, postData);
 	}
 
 	/*
 	*/
 	deleteComment(comment_id, key): Observable<any> {
-		return this.api.deleteAPI({
-			url: `${this.apiUrl}/jira/comment?comment_id=${comment_id}&key=${key}`
-		});
+		let params = new HttpParams();
+		params = params.append('comment_id', comment_id);
+		params = params.append('key', key);
+		return this.http.get(`${this.apiUrl}/jira/comment`, {params});
 	}
 
 	/*
 	*/
 	changeStatus(postData): Observable<any> {
 		postData.username = this.user.username;
-		
-		return this.api.postAPI({
-			url: `${this.apiUrl}/jira/status`,
-			body: postData
-		});
+		return this.http.post(`${this.apiUrl}/jira/status`, postData);
 	}
 
 	/*
 	*/
 	getProfile(): Observable<any> {
-		return this.api.getAPI(`${this.apiUrl}/jira/profile`);
+		return this.http.get(`${this.apiUrl}/jira/profile`);
 	}
 
 	/*

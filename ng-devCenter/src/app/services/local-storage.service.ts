@@ -5,19 +5,21 @@ export class LocalStorageService {
 
 	constructor() { }
 
-	/*
+	/**
 	*/
 	setItem(data, value) {
-		localStorage.setItem(`devCenter.${data}`, value);
+		const jsonValue = JSON.stringify(value);
+		localStorage.setItem(`devCenter.${data}`, jsonValue);
 	}
 
-	/*
+	/**
 	*/
 	getItem(data) {
-		return localStorage.getItem(`devCenter.${data}`);
+		let response = localStorage.getItem(`devCenter.${data}`);
+		return JSON.parse(response);
 	}
 
-	/*
+	/**
 	*/
 	removeItem(data) {
 		localStorage.removeItem(`devCenter.${data}`);

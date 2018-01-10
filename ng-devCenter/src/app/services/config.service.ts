@@ -1,10 +1,25 @@
 import { Injectable } from '@angular/core';
 
+
 @Injectable()
 export class ConfigService {
+	constructor() { }
+	
 	username = localStorage.getItem('devCenter.username') || '';
 
-	constructor() { }
+	jiraUrl = 'http://jira.web.att.com';
+	crucibleUrl = 'https://icode3.web.att.com';
+	codeCloudUrl = 'https://codecloud.web.att.com';
+	devUrl = 'http://m5devacoe01.gcsc.att.com';
+	betaUrl = 'http://chrapud16b.gcsc.att.com';
+	wikiUrl = 'https://wiki.web.att.com';
+	msrpLink = 'http://ix.web.att.com:2017';
+	chatUrl = 'qto://talk';
+	jiraPath = '/secure/Dashboard.jspa';
+	cruciblePath = '/cru/browse/CR-UD';
+	codeCloudPath = '/projects';
+	scrumBoardPath = '/secure/RapidBoard.jspa?rapidView=178&view=planning.nodetail&versions=visible';
+	myApex = 'https://myapex.apexsystemsinc.com/psp/MYAPEX/';
 
 	projectsJql = 'project in (AQE, "Auto QM", "Customer DB", "Manager DB", "Taskmaster Dashboard", TeamDB, TQI, "Unified Desktop", UPM, WAM)';
 	
@@ -70,25 +85,8 @@ export class ConfigService {
 	allmy = encodeURIComponent(`assignee = ${this.username} ORDER BY updated DESC`);
 	mytickets = encodeURIComponent(`assignee = ${this.username} AND resolution = unresolved ORDER BY due DESC`);
 
-
-	jiraUrl = 'http://jira.web.att.com';
-	crucibleUrl = 'https://icode3.web.att.com';
-	codeCloudUrl = 'https://codecloud.web.att.com';
-
-	devUrl = 'http://m5devacoe01.gcsc.att.com';
-	betaUrl = 'http://chrapud16b.gcsc.att.com';
-	wikiUrl = 'https://wiki.web.att.com';
-
-	msrpLink = 'http://ix.web.att.com:2017';
-
-	chatUrl = 'qto://talk';
-
 	fields = 'attachment,fixVersions,timeoriginalestimate,customfield_10109,status,customfield_10212,summary,assignee,components,timetracking,duedate,comment,updated,created,customfield_10102,customfield_10175,customfield_10103,customfield_10602';
 
-	jiraPath = '/secure/Dashboard.jspa';
-	cruciblePath = '/cru/browse/CR-UD';
-	codeCloudPath = '/projects';
-	scrumBoardPath = '/secure/RapidBoard.jspa?rapidView=178&view=planning.nodetail&versions=visible';
 
 	dev_links = [
 		{
@@ -554,7 +552,5 @@ export class ConfigService {
 			link: 'http://zlp32165.vci.att.com:32599/utm-ui/index.html#'
 		},
 	];
-
-
-	myApex = 'https://myapex.apexsystemsinc.com/psp/MYAPEX/';
+	
 }

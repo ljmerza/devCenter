@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MomentModule } from 'angular2-moment';
@@ -40,11 +40,14 @@ import { SetPingsComponent } from './set-pings/set-pings.component';
 import { ToastrComponent } from './toastr/toastr.component';
 import { TicketDetailsComponent } from './ticket-details/ticket-details.component';
 import { TicketCommentsComponent } from './ticket-comments/ticket-comments.component';
-
-import { environment } from '../environments/environment';
 import { ModalComponent } from './modal/modal.component';
 import { TicketStatusComponent } from './ticket-status/ticket-status.component';
+
+import { environment } from '../environments/environment';
 import { DropdownSubmenuDirective } from './dropdown-submenu.directive';
+import {AuthInterceptor} from './interceptors/auth.interceptor';
+import { LoggerInterceptor } from './interceptors/logger.interceptor';
+import { CacheInterceptor } from './interceptors/cache.interceptor';
 
 @NgModule({
 	declarations: [
@@ -67,7 +70,10 @@ import { DropdownSubmenuDirective } from './dropdown-submenu.directive';
 		APIService, UserService, LocalStorageService,
 		ToastrService, ConfigService, WebSocketService, MiscService,
 		// if in testing mode use test endpoint else use regular endpoints
-		{ provide: JiraService, useClass: environment.test ? JiraServiceTest : JiraService}
+		{ provide: JiraService, useClass: environment.test ? JiraServiceTest : JiraService},
+		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+		{ provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
+		{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
 	],
 	bootstrap: [AppComponent]
 })

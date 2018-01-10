@@ -117,9 +117,12 @@ export class TicketComponent {
 		// load new or refresh ticket details
 		this.jira.getATicketDetails(this.ticket.key)
 		.subscribe(
-			issue => {
-				this.ticketDetails = issue.data[0];
-				(<TicketDetailsComponent>this.detailsComponentRef.instance).ticketDetails = issue.data[0];
+			(issue:any) => {
+				if(issue && Array.isArray(issue.data)){
+					this.ticketDetails = issue.data[0];
+					(<TicketDetailsComponent>this.detailsComponentRef.instance).ticketDetails = issue.data[0];
+				}
+				
 			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);

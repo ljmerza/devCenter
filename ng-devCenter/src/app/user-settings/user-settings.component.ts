@@ -1,4 +1,4 @@
-import { Component, AfterContentInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 
 import { ModalComponent } from './../modal/modal.component';
@@ -13,7 +13,7 @@ import { ToastrService } from './../services/toastr.service';
 	templateUrl: './user-settings.component.html',
 	styleUrls: ['./user-settings.component.scss']
 })
-export class UserSettingsComponent implements AfterContentInit {
+export class UserSettingsComponent implements OnInit {
 	userSettingsForm: FormGroup;
 	modalInstance: NgbModalRef;
 	statusName:string = 'User Settings';
@@ -42,14 +42,15 @@ export class UserSettingsComponent implements AfterContentInit {
 
 	/*
 	*/
-	ngAfterContentInit() {
+	ngOnInit() {
 		if( this.user.needRequiredCredentials() ){
 			this.openUserSettings();
 		} else {
-			this.jira.getProfile().subscribe(
-				response => {
+			this.jira.getProfile().subscribe(response => {
+				if(response && response.data){
 					this.user.userData = response.data;
 					this.user.userPicture = response.data.avatarUrls['48x48'];
+				}	
 			},
 				error => this.toastr.showToast(`Could not retrieve user profile: ${error}`,'error')
 			)

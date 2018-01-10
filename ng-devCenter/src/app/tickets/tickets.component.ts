@@ -101,7 +101,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 		// get list of repos once
 		this.jira.getRepos().subscribe( 
-			branches => this.repos = branches.data,
+			branches => { 
+				if(branches) this.repos = branches.data;
+			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
 	}
@@ -128,8 +130,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			}
 		})
 		.distinctUntilChanged( (old_tickets, new_tickets) => {
-			console.log('new_tickets: ', new_tickets);
-			console.log('old_tickets: ', old_tickets, JSON.stringify(old_tickets) === JSON.stringify(new_tickets));
 			return JSON.stringify(old_tickets) === JSON.stringify(new_tickets) 
 		})
 		.skip(1)
@@ -148,23 +148,19 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	getTickets():Subscription {
+	getTickets(skipCache=false):Subscription {
 		this.ngProgress.start();
 		this.loadingTickets = true;
 
-		return this.jira.getFilterData(this.ticketType)
+		return this.jira.getFilterData(this.ticketType, skipCache)
 		.subscribe(issues => {
 
+			if(issues && issues.data) {
 				// save tickets and re-render data tables
 				this.openTickets = issues.data;
 				
 				this.ngProgress.done();
 				this.loadingTickets = false;
-
-				// save new tickets locally if my tickets
-				if(!this.ticketType || this.ticketType == 'mytickets'){
-					this.lStore.setItem('mytickets', JSON.stringify(this.openTickets));
-				}
 				
 				this.rerender(true);
 
@@ -172,7 +168,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				// if( !this.ticketType || ['pcr','qa','cr','allopen','mytickets'].includes(this.ticketType) ) {
 				// 	this.webSock$ = this.startWebSocket();
 				// }
-			},
+			}
+		},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
 	}
