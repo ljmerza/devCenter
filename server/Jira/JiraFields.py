@@ -215,15 +215,22 @@ def get_comments(issue):
 		an array of the issue's comments or empty array
 	'''
 	comments = []
+	raw_comment = ''
 	# for each comment save it and see if QA steps
-	for comment in issue.get('fields', {}).get('comment', {}).get('comments', []):
-		# save comment
+	for index, comment in enumerate(issue.get('renderedFields', {}).get('comment', {}).get('comments', [])):
+
+		# try toget raw comment data
+		raw_comments = issue.get('fields', {}).get('comment', {}).get('comments', [])
+		if len(raw_comments) > index-1:
+			raw_comment = raw_comments[index].get('body', '')
+
 		comment_type = 'info'
 		if 'QA Steps' in comment.get('body', ''):
 			comment_type = True
 
 		comments.append({
 			'comment': comment.get('body', ''),
+			'raw_comment': raw_comment,
 			'id': comment.get('id', ''),
 			'key': issue.get('key', ''),
 			'username': comment.get('updateAuthor', {}).get('name', ''),

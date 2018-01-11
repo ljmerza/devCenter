@@ -252,3 +252,13 @@ def get_profile(data, jira_obj):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# get key from MSRP
 	return jira_obj.get_profile(cred_hash=data['cred_hash'])
+
+def parse_comment(data, jira_obj):
+	'''
+	'''
+	# check for required data
+	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'comment', 'key'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+	# get parsed comment
+	return jira_obj.parse_comment(cred_hash=data['cred_hash'], comment=data['comment'], key=data['key'])

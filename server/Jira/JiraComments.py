@@ -60,10 +60,13 @@ class JiraComments():
 			json_data['visibility'] = {'type': 'role', 'value': 'Developers'}
 		return json_data
 
-
-	
-	
-	
-	
-
-
+	def parse_comment(self, cred_hash, comment, key):
+		'''
+		'''
+		json_data = {
+			'rendererType': 'atlassian-wiki-renderer',
+			'unrenderedMarkup': comment,
+			'issueKey': key
+		}
+		return self.jira_api.post_json(url=f'{self.jira_api.api_base}/render', json_data=json_data, cred_hash=cred_hash)
+		

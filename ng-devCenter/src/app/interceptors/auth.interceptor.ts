@@ -18,6 +18,7 @@ export class AuthInterceptor implements HttpInterceptor {
 	}
 
 	private _createHeaders() {
+		console.log('this._authorizationHeader(): ', this._authorizationHeader());
 		return new HttpHeaders()
 			.set('Authorization', this._authorizationHeader() )
 			.set('Content-Type', 'application/json');

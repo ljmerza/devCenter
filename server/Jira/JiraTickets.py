@@ -65,7 +65,7 @@ class JiraTickets():
 		if not fields:
 			fields = self.jira_api.fields
 		# get filter data
-		response = self.jira_api.get(url=f'{url}&startAt={start_at}&maxResults={max_results}&fields={fields}', cred_hash=cred_hash)
+		response = self.jira_api.get(url=f'{url}&startAt={start_at}&maxResults={max_results}&fields={fields}&expand=names,renderedFields', cred_hash=cred_hash)
 		if not response['status']:
 			return response
 		return {'status': True, 'data': response['data']['issues']}

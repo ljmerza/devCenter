@@ -103,7 +103,8 @@ class JiraMisc():
 		'''
 		'''
 		return self.jira_api.get(url=f'{self.jira_api.api_base}/myself', cred_hash=cred_hash)
-		
+
+	
 	
 
 

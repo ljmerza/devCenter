@@ -136,3 +136,14 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		'''
 		data = JiraRequests.get_profile(data={"cred_hash": g.cred_hash}, jira_obj=jira_obj)
 		return Response(data, mimetype='application/json')
+
+	@app.route(f'/{app_name}/jira/parse_comment', methods=['POST'])
+	@cross_origin()
+	def parse_comment(key):
+		'''
+		'''
+		data=request.get_json()
+		data["cred_hash"] = g.cred_hash
+
+		data = JiraRequests.parse_comment(data=data, jira_obj=jira_obj)
+		return Response(data, mimetype='application/text')

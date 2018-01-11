@@ -15,12 +15,13 @@ export class CommentFormatPipe implements PipeTransform {
 	/*
 	*/
 	transform(comment:any, attachments:any,): any {
+		return comment.replace(/confluenceTable/g, 'table');
 
-		// make an array so reference is persisted through functions (i know...)
-		let stepNumber = 1;
+		// // make an array so reference is persisted through functions (i know...)
+		// let stepNumber = 1;
 
-		[comment, stepNumber] = this._formatLines(comment, attachments, stepNumber);
-		return this._formatCode(comment);
+		// [comment, stepNumber] = this._formatLines(comment, attachments, stepNumber);
+		// return this._formatCode(comment);
 	}
 
 	/*
