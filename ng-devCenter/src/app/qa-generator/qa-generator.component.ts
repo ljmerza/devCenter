@@ -221,7 +221,6 @@ export class QaGeneratorComponent {
 		// get all branches associated with this msrp
 		this.repoLookUp$ = this.jira.getTicketBranches(this.msrp).subscribe(
 			response => {
-				console.log('response: ', response);
 				this.loadingBranches = false;
 				this.processBranches(response.data);
 

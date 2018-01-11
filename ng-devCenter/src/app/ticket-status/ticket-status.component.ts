@@ -37,7 +37,7 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 	) { }
 
 	ngOnChanges(changes){
-		console.log('changes: ', changes);
+		// console.log('changes: ', changes);
 	}
 
 	/*
@@ -46,7 +46,7 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 		// save select element reference and old status
 		this.ticketDropdown = ticketDropdown;
 
-		console.log('ticketDropdown: ', ticketDropdown);
+		// console.log('ticketDropdown: ', ticketDropdown);
 
 		// if pcr needed - create QA gen if needed then open QA gen
 		if(ticketDropdown.value == 'pcrNeeded'){
@@ -58,7 +58,7 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 	}
 
 	statusChange({showMessage=true, cancelled=true, statusName=''}):void {
-		console.log('{', {showMessage, cancelled, statusName});
+		// console.log('{', {showMessage, cancelled, statusName});
 
 		// if we are canceling a status then reset dropdown
 		if(cancelled){
@@ -74,7 +74,7 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 			// else set ticket state with new dropdown value and reload valid transitions
 			const ticketState = this.allTransistions.filter(state => state.id == this.ticketDropdown.value);
 			this.ticketStatus = ticketState[0].name;
-			console.log('this.ticketStatus: ', this.ticketStatus);
+			// console.log('this.ticketStatus: ', this.ticketStatus);
 		}
 
 		this.validateTransitions();
@@ -170,8 +170,8 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 		// get ticket state info and open status modal
 		const ticketState = this.ticketStates.filter(state => state.id == ticketDropdown.value);
 
-		console.log('ticketState: ', ticketState);
-		console.log('ticketDropdown: ', ticketDropdown);
+		// console.log('ticketState: ', ticketState);
+		// console.log('ticketDropdown: ', ticketDropdown);
 
 		// create QA gen component if not created yet
 		if(!this.statusComponentRef) {

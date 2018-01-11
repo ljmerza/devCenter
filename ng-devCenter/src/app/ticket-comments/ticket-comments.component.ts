@@ -59,7 +59,6 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 		setTimeout(() => {
 			// highlight code needs to be triggered after modal opens
 			$('pre').each(function(i, block) {
-				console.log('this: ', this);
 				hljs.highlightBlock(block);
 			});
 

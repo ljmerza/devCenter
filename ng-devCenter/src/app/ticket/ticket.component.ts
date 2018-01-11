@@ -52,7 +52,7 @@ export class TicketComponent {
 	*/
 	commentChangeEvent({allComments, postData, qaGenUpdate, response}):void {
 
-		console.log('{allComments, postData, qaGenUpdate, response}: ', {allComments, postData, qaGenUpdate, response});
+		// console.log('{allComments, postData, qaGenUpdate, response}: ', {allComments, postData, qaGenUpdate, response});
 
 		// if comment added the push comment onto comment array
 		if(postData && postData.comment){
@@ -111,7 +111,7 @@ export class TicketComponent {
 		// check for removal of components
 		if(postData && postData.remove_merge){
 			this.ticket.status = 'Ready for UCT';
-			console.log('this.ticket.status: ', this.ticket.status);
+			// console.log('this.ticket.status: ', this.ticket.status);
 		} else if(postData && postData.remove_conflict){
 			this.ticket.status = 'Ready for QA';
 		}

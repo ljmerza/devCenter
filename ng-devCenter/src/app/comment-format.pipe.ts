@@ -111,11 +111,6 @@ export class CommentFormatPipe implements PipeTransform {
 			.split('|')
 			.filter(t => !!t.trim())
 			.map(t => {
-				const input = $(t).children();
-				console.log('input: ', input);
-				const data = $(t).text();
-				console.log('data: ', data);
-
 				return `
 				<td>
 					<span class='tableCopy'>
