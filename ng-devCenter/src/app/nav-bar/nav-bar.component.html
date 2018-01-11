@@ -30,7 +30,7 @@
 							Projects
 							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
 						</a>
-						<ul class="dropdown-menu dropdown-submenu-items">
+						<ul class="dropdown-menu" dropdownSubmenuMenu dropdownSubmenuMenu>
 							<li *ngFor='let project of config.allProjectNames'>
 								<a class="dropdown-item" [routerLink]="['/jira', project.link]">
 									{{project.name}}
@@ -45,7 +45,7 @@
 							Other Lists
 							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
 						</a>
-						<ul class="dropdown-menu dropdown-submenu-items">
+						<ul class="dropdown-menu" dropdownSubmenuMenu>
 							<li *ngFor='let project of config.otherTicketListNames'>
 								<a class="dropdown-item" [routerLink]="['/jira', project.link]">
 									{{project.name}}
@@ -70,13 +70,13 @@
 					<!-- ember links -->
 					<li class="dropdown-submenu" dropdownSubmenu>
 						<a class="dropdown-item" data-toggle="dropdown">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-						<ul class="dropdown-menu dropdown-submenu-items">
+						<ul class="dropdown-menu" dropdownSubmenuMenu>
 							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[0].link}}">{{config.ember_links[0].name}}</a></li>
 							
 							<!-- orders list -->
 							<li class="dropdown-submenu" dropdownSubmenu>
 								<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-								<ul class="dropdown-menu dropdown-submenu-items">
+								<ul class="dropdown-menu" dropdownSubmenuMenu>
 									<li><a 
 											*ngFor='let navLink of config.orderLinks'
 											class="dropdown-item" 
@@ -87,7 +87,7 @@
 									<!-- misc orders -->
 									<li class="dropdown-submenu" dropdownSubmenu>
 										<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-										<ul class="dropdown-menu dropdown-submenu-items">
+										<ul class="dropdown-menu" dropdownSubmenuMenu>
 											<li><a 
 													*ngFor='let navLink of config.otherOrders'
 													class="dropdown-item" 
@@ -103,7 +103,7 @@
 							<!-- WFA list -->
 							<li class="dropdown-submenu" dropdownSubmenu>
 								<a class="dropdown-item" data-toggle="dropdown">WFA Tickets <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-								<ul class="dropdown-menu dropdown-submenu-items">
+								<ul class="dropdown-menu" dropdownSubmenuMenu>
 									<li><a 
 											*ngFor='let navLink of config.wfaLinks'
 											class="dropdown-item" 
@@ -128,7 +128,7 @@
 					<!-- team ember links -->
 					<li class="dropdown-submenu" dropdownSubmenu>
 						<a class="dropdown-item" data-toggle="dropdown">TeamDB Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-						<ul class="dropdown-menu dropdown-submenu-items">
+						<ul class="dropdown-menu" dropdownSubmenuMenu>
 							<li><a 
 									*ngFor='let navLink of config.teamdb_ember_links'
 									class="dropdown-item" 
@@ -213,7 +213,7 @@
 							{{link.name}}
 							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
 						</a>
-						<ul class="dropdown-menu dropdown-submenu-items" *ngIf='link.links'>
+						<ul class="dropdown-menu" dropdownSubmenuMenu *ngIf='link.links'>
 							<li *ngFor='let sublink of link.links'>
 								<a 
 									*ngIf='sublink.link && sublink.wiki; else subNoWiki'

@@ -4,7 +4,7 @@
 		<a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira'>{{ticket.key}}</a>
 	</div>
 	<div class="float-right">
-		<i (click)="openPingModel()" class="material-icons" title='Branch Information'>record_voice_over</i>
+		<i (click)="openPingModel()" class="material-icons success" title='Branch Information'>record_voice_over</i>
 	</div>
 </td>
 
@@ -12,14 +12,14 @@
 <td>
 	<div class='float-left'>{{ticket.msrp}}</div>
 	<div class="float-right">
-		<i (click)="openLogModal()" class="material-icons" title='Add comment/time log'>alarm_add</i>
-		<i (click)="openCommentModal()" class="material-icons"title='View comments'>storage</i>
+		<i (click)="openLogModal()" class="material-icons success" title='Add comment/time log'>alarm_add</i>
+		<i (click)="openCommentModal()" class="material-icons success"title='View comments'>storage</i>
 	</div>
 </td>
 
 <!-- summary -->
 <td class='summary-format'>
-	<i class="material-icons" title='View Additional Data' 
+	<i class="material-icons success" title='View Additional Data' 
 	(click)="openAdditionalDataModal()">live_help</i>
 	{{ticket.summary}}
 </td>
@@ -52,7 +52,7 @@
 		</a>
 	</div>
 	<div class='float-right' *ngIf='ticket.crucible_id'>
-		<i title='Open Crucible as Reviewer' class="material-icons float-right" (click)="addReviewer()">
+		<i title='Open Crucible as Reviewer' class="material-icons success float-right" (click)="addReviewer()">
 			history
 		</i>
 	</div>

@@ -1,14 +1,16 @@
-$light-blk: #333;
-$dark-blk: #292b2c;
+$lightBlk: #333;
+$darkBlk: #292b2c;
 $link: #0275d8;
-$link-hover: #0056b3;
+$linkHover: #0056b3;
 $white: #fff;
+
 $success: #28a745;
+$successHover: rgba(40, 167, 69, 0.5);
 
 .table-spacing {
 	margin-top: 50px;
 	margin-bottom: 100px;
-	background-color: $dark-blk;
+	background-color: $darkBlk;
 	color: $white;
 }
 
@@ -16,8 +18,16 @@ a, .material-icons {
 	color: $link;
 	cursor: pointer;
 
+	&.success {
+		transition: color 0.5s;
+		color: $success;
+		&:hover {
+			color: $successHover;
+		}
+	}
+
 	&:hover {
-		color: $link-hover;
+		color: $linkHover;
 		text-decoration: none;
 	} 
 }
@@ -77,7 +87,7 @@ a, .material-icons {
 	margin-top: 6px;
 	select { 
 		width: 100px;
-		background-color: $dark-blk;
+		background-color: $darkBlk;
 		color: $white;
 	}
 
@@ -97,7 +107,7 @@ a, .material-icons {
 
 table.dataTable,
 .dataTables_wrapper {
-	background-color: $dark-blk;
+	background-color: $darkBlk;
 	color: $white;
 
 	#DataTables_Table_0_filter input {
@@ -107,11 +117,11 @@ table.dataTable,
 
 table.dataTable {
 	tbody tr {
-		background-color: $dark-blk;
+		background-color: $darkBlk;
 		color: $white;
 
 		&:nth-of-type(odd) {
-			background-color: $light-blk;
+			background-color: $lightBlk;
 			color: $white;
 		}
 
@@ -133,13 +143,14 @@ table.dataTable {
 	background-clip: padding-box;
 	border: 1px solid #ced4da;
 	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-	background-color: $dark-blk;
+	background-color: $darkBlk;
 	color: $white;
 	border-radius: 0;
 	margin-right: 10px;
  }
 
-.title-spacing {
+.ticket-title {
+	font-size: 3.5rem;
 	margin-top: 50px;
 	padding-bottom: 10px;
 	margin-bottom: 20px;

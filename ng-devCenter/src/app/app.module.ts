@@ -43,7 +43,7 @@ import { ModalComponent } from './modal/modal.component';
 import { TicketStatusComponent } from './ticket-status/ticket-status.component';
 
 import { environment } from '../environments/environment';
-import { DropdownSubmenuDirective } from './dropdown-submenu.directive';
+import { DropdownSubmenuDirective, DropdownSubmenuMenuDirective } from './dropdown-submenu.directive';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
@@ -56,7 +56,8 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
 		StatusModalComponent, TicketLogComponent, LogoutComponent,
 		TicketComponent, CommentFormatPipe, SetPingsComponent,
 		ToastrComponent, TicketDetailsComponent, ModalComponent, 
-		TicketStatusComponent, DropdownSubmenuDirective, TicketCommentsComponent
+		TicketStatusComponent, DropdownSubmenuDirective, DropdownSubmenuMenuDirective,
+		TicketCommentsComponent
 	],
 	imports: [
 		BrowserModule, FormsModule, NgbModule.forRoot(),

@@ -1,34 +1,44 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, ContentChild, Renderer2 } from '@angular/core';
 
-declare var $ :any;
+@Directive({
+	selector: '[dropdownSubmenuMenu]'
+})
+export class  DropdownSubmenuMenuDirective {
+	constructor(public el: ElementRef) {}
+}
+
 
 @Directive({
 	selector: '[dropdownSubmenu]'
 })
 export class DropdownSubmenuDirective {
 	timerId;
+	@ContentChild(DropdownSubmenuMenuDirective) submenuMenu: DropdownSubmenuMenuDirective;
 
-	constructor(private el: ElementRef) { 
+	constructor(private render: Renderer2) { 
 		this.timerId = setTimeout(() => {});
 	}
 
+	/**
+	*/
 	@HostListener('mouseenter') onMouseEnter() {
-		let $submenu = $(this.el.nativeElement);
-		let $submenuItems = $submenu.children('.dropdown-submenu-items');
-
-		if(this.timerId) window.clearTimeout(this.timerId);
-		this.timerId = setTimeout(() => {
-			$submenuItems.addClass('show-submenu');
-		}, 0);
+		if(this.submenuMenu) {
+			if(this.timerId) window.clearTimeout(this.timerId);
+			this.timerId = setTimeout(() => {
+				this.render.addClass(this.submenuMenu.el.nativeElement, 'show-submenu');
+			}, 0);
+		}
+		
 	}
  
+	/**
+ 	*/
 	@HostListener('mouseleave') onMouseLeave() {
-		let $submenu = $(this.el.nativeElement);
-		let $submenuItems = $submenu.children('.dropdown-submenu-items');
-
-		if(this.timerId) window.clearTimeout(this.timerId);
-		this.timerId = setTimeout(() => {
-			$submenuItems.removeClass('show-submenu');
-		}, 200);
+		if(this.submenuMenu) {
+			if(this.timerId) window.clearTimeout(this.timerId);
+			this.timerId = setTimeout(() => {
+				this.render.removeClass(this.submenuMenu.el.nativeElement, 'show-submenu');
+			}, 0);
+		}
 	}
 }

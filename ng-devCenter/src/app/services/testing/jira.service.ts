@@ -279,7 +279,7 @@ export class JiraServiceTest {
 					"crucible_id": "", 
 					"summary": "This is a summary 5", 
 					"component": "", 
-					"status": "In Sprint", 
+					"status": "In Development", 
 					"story_point": 3, 
 					"sprint": "4.02", 
 					"epic_link": "TS-1234", 
@@ -498,7 +498,7 @@ export class JiraServiceTest {
 				}
 			], 
 			status: true
-		}).delay(2000);
+		}).delay(1000);
 	}
 
 	/**
@@ -507,7 +507,7 @@ export class JiraServiceTest {
 		return Observable.of({
 			data: "999 push messages remaining today",
 			status: true
-		}).delay(2000);
+		}).delay(1000);
 	}
 
 	/**
@@ -639,7 +639,7 @@ export class JiraServiceTest {
 				}
 			], 
 			status: true
-		}).delay(2000);
+		}).delay(1000);
 	}
 
 	/*
@@ -648,59 +648,56 @@ export class JiraServiceTest {
 		return Observable.of({
 			status: true, 
 			data: "TEST-1234"
-		}).delay(2000);
+		}).delay(1000);
 	}
 
 	/**
 	*/
 	getTicketBranches(msrp:string): Observable<any> {
 		return Observable.of({
-			data:{
-				status: true, 
-				data: [
-					{
-						repo: "test1", 
-						branches: [
-							"test-100000-test branch"
-						], 
-						all: [
-							"DEV", 
-							"test-100000-test branch", 
-							"test-100001-test branch2", 
-							"test-100002-test branch3", 
-							"MASTER9.10",
-						]
-					},
-					{
-						repo: "test2", 
-						branches: [
-							"test-100000-test branch"
-						], 
-						all: [
-							"DEV", 
-							"test-100000-test branch", 
-							"test-100001-test branch2", 
-							"test-100002-test branch3", 
-							"MASTER9.10",
-						]
-					},
-					{
-						repo: "test3", 
-						branches: [
-							"test-100000-test branch"
-						], 
-						all: [
-							"DEV", 
-							"test-100000-test branch", 
-							"test-100001-test branch2", 
-							"test-100002-test branch3", 
-							"MASTER9.10",
-						]
-					},
-				]
-			},
-			status: true
-		}).delay(2000);
+			status: true, 
+			data: [
+				{
+					repo: "test1", 
+					branches: [
+						"test-100000-test branch"
+					], 
+					all: [
+						"DEV", 
+						"test-100000-test branch", 
+						"test-100001-test branch2", 
+						"test-100002-test branch3", 
+						"MASTER9.10",
+					]
+				},
+				{
+					repo: "test2", 
+					branches: [
+						"test-100000-test branch"
+					], 
+					all: [
+						"DEV", 
+						"test-100000-test branch", 
+						"test-100001-test branch2", 
+						"test-100002-test branch3", 
+						"MASTER9.10",
+					]
+				},
+				{
+					repo: "test3", 
+					branches: [
+						"test-100000-test branch"
+					], 
+					all: [
+						"DEV", 
+						"test-100000-test branch", 
+						"test-100001-test branch2", 
+						"test-100002-test branch3", 
+						"MASTER9.10",
+					]
+				},
+			]
+		}).delay(1000);
 	}
 
 	/**
@@ -719,7 +716,7 @@ export class JiraServiceTest {
 				{"name": "test8"}, 
 				{"name": "test9"} 
 			]
-		}).delay(2000);
+		}).delay(1000);
 	}
 
 	/**
@@ -727,8 +724,16 @@ export class JiraServiceTest {
 	generateQA(postData): Observable<any> {
 		return Observable.of({
 			status: true, 
-			data: "CR-TEST-1234"
-		}).delay(2000);
+			data: {
+				comment: {
+					body: "QA comment added", 
+					id: "321438", 
+					created: "2017-12-27T20:36:41.633+0000", 
+					updated: "2017-12-27T20:38:10.067+0000"
+				},
+				crucible_id: 'CR-123456'
+			}
+		}).delay(1000);
 	}
 
 	/**
@@ -742,13 +747,13 @@ export class JiraServiceTest {
 				"test3"
 			],
 			status: true
-		}).delay(2000);
+		}).delay(1000);
 	}
 
 	/**
 	*/
 	workLog(postData): Observable<any> {
-		return Observable.of(this.commentResponse).delay(2000);
+		return Observable.of(this.commentResponse).delay(1000);
 	}
 
 	commentResponse = {
@@ -805,7 +810,7 @@ export class JiraServiceTest {
 		return Observable.of({
 			data:this.commentResponse,
 			status: true
-		}).delay(2000);
+		}).delay(1000);
 	}
 
 	/**
@@ -814,7 +819,7 @@ export class JiraServiceTest {
 		return Observable.of({
 			data:{},
 			status: true
-		}).delay(2000);
+		}).delay(1000);
 	}
 
 	/**
@@ -823,7 +828,7 @@ export class JiraServiceTest {
 		return Observable.of({
 			data:{},
 			status: true
-		}).delay(2000);
+		}).delay(1000);
 	}
 
 	/**
@@ -856,7 +861,7 @@ export class JiraServiceTest {
 				"expand": "groups,applicationRoles"
 			},
 			status: true
-		}).delay(2000);
+		}).delay(1000);
 	}
 
 }

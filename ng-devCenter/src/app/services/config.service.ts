@@ -30,7 +30,7 @@ export class ConfigService {
 
 	uctready = encodeURIComponent(this.projectsJql + ' AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892');
 	
-	uctreadyNoRoccApollo = encodeURIComponent(this.projectsJql + ' AND issuetype != Epic AND status = "Ready for UCT" AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND "Epic Link" not in (apollo, ROCC)');
+	uctreadyNoRoccApollo = encodeURIComponent(this.projectsJql + ' AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND "Epic Link" not in (apollo, ROCC)');
 	
 	allopen = encodeURIComponent(this.projectsJql+' AND status in ("ON HOLD", "IN DEVELOPMENT", "IN SPRINT", "Ready for Release", "Code Review", "Ready For QA", "IN QA", "IN UCT", "READY FOR UCT") OR assignee in (wc591w)');
 
@@ -273,6 +273,10 @@ export class ConfigService {
 			link: `order/ethernet/LAS899407001?cache=`,
 			name: 'LAS899407001 (RDS Tracking ID)'
 		},
+		{
+			link: `order/ethernet/KYS015215001?cache=`,
+			name: 'KYS015215001 (ASEdb)'
+		},
 		
 	];
 
@@ -381,6 +385,14 @@ export class ConfigService {
 		{
 			link: '/tqi3/cgi-bin/index.pl',
 			name: 'TQI'
+		},
+		{
+			link: 'http://chrapud22.gcsc.att.com:4040/order/gps/cr/149686',
+			name: 'UD_api'
+		},
+		{
+			link: 'http://ud-beta.web.att.com/UD-ember/#/ticket/ethernet/WILOJ017967',
+			name: 'UD ember'
 		}
 	];
 

@@ -121,17 +121,13 @@ export class QaGeneratorComponent {
 
 		// end here if we are just closing modal
 		if(!isSaving){
-			// cancel request for repos
-			if(this.repoLookUp$) this.repoLookUp$.unsubscribe();
 
 			// notify of status cancel and reset branches
 			this.statusChange.emit({cancelled: true, showMessage: true});
-			this.resetBranches();
 
 			// close modal and end here
 			this.modalRef.close();
 			return;
-
 		}
 
 		// if invalid form then just return
@@ -225,6 +221,7 @@ export class QaGeneratorComponent {
 		// get all branches associated with this msrp
 		this.repoLookUp$ = this.jira.getTicketBranches(this.msrp).subscribe(
 			response => {
+				console.log('response: ', response);
 				this.loadingBranches = false;
 				this.processBranches(response.data);
 

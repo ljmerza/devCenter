@@ -68,7 +68,9 @@ export class JiraService {
 	/**
 	*/
 	searchTicket(msrp:string): Observable<any> {
-		return this.http.get(`${this.apiUrl}/jira/getkey/${msrp}`);
+		let params = new HttpParams();
+		params = params.append('skipCache', `true`);
+		return this.http.get(`${this.apiUrl}/jira/getkey/${msrp}`, {params});
 	}
 
 	/**
