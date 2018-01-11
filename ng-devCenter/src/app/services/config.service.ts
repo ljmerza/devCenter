@@ -538,7 +538,7 @@ export class ConfigService {
 					link: 'http://underscorejs.org/'
 				},
 				{
-					name: 'Jira API 7.1.10',
+					name: 'Jira API 7.6.1',
 					link: 'https://docs.atlassian.com/software/jira/docs/api/REST/7.6.1/'
 				},
 				
