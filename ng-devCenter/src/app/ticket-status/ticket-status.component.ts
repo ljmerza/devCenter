@@ -1,6 +1,6 @@
 import { 
-	Component, Input, Output, ViewContainerRef, EventEmitter,
-	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy
+	Component, Input, Output, ViewContainerRef, EventEmitter, ChangeDetectorRef,
+	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy, OnChanges
 } from '@angular/core';
 
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
@@ -14,7 +14,7 @@ import { ToastrService } from './../services/toastr.service';
 	entryComponents: [StatusModalComponent, QaGeneratorComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TicketStatusComponent implements OnInit {
+export class TicketStatusComponent implements OnInit, OnChanges {
 	ticketStates = [];
 	ticketDropdown;
 	qaComponentRef;
@@ -28,19 +28,25 @@ export class TicketStatusComponent implements OnInit {
 	@Output() commentChangeEvent = new EventEmitter();
 
 	ngOnInit() {
-		this.validTransitions();
+		this.validateTransitions();
 	}
 
 	constructor(
-		private factoryResolver: ComponentFactoryResolver, 
+		private factoryResolver: ComponentFactoryResolver, private cd: ChangeDetectorRef,
 		private viewContRef: ViewContainerRef, private toastr: ToastrService
 	) { }
+
+	ngOnChanges(changes){
+		console.log('changes: ', changes);
+	}
 
 	/*
 	*/
 	stateChange(ticketDropdown){
 		// save select element reference and old status
 		this.ticketDropdown = ticketDropdown;
+
+		console.log('ticketDropdown: ', ticketDropdown);
 
 		// if pcr needed - create QA gen if needed then open QA gen
 		if(ticketDropdown.value == 'pcrNeeded'){
@@ -52,6 +58,8 @@ export class TicketStatusComponent implements OnInit {
 	}
 
 	statusChange({showMessage=true, cancelled=true, statusName=''}):void {
+		console.log('{', {showMessage, cancelled, statusName});
+
 		// if we are canceling a status then reset dropdown
 		if(cancelled){
 			const ticketState = this.ticketStates.filter(state => state.name == this.ticketStatus);
@@ -66,35 +74,60 @@ export class TicketStatusComponent implements OnInit {
 			// else set ticket state with new dropdown value and reload valid transitions
 			const ticketState = this.allTransistions.filter(state => state.id == this.ticketDropdown.value);
 			this.ticketStatus = ticketState[0].name;
+			console.log('this.ticketStatus: ', this.ticketStatus);
 		}
+
+		this.validateTransitions();
 
 		if(showMessage){
 			this.toastr.showToast(`Ticket status change cancelled for ${this.ticketKey}`, 'info');
 		}
 	}
 
-	validTransitions() {
+	validateTransitions() {
 		// set valid transitions
 		if(['In Sprint','On Hold'].includes(this.ticketStatus)){
 			this.ticketStates = this.allTransistions.filter(state => ['In Development'].includes(state.name));
 		} else if(this.ticketStatus === 'In Development'){
 			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
+		
 		} else if(this.ticketStatus === 'PCR - Needed'){
 			this.ticketStates = this.allTransistions.filter(state => ['PCR - Pass','PCR - Completed'].includes(state.name));
 		} else if(this.ticketStatus === 'PCR - Completed'){
 			this.ticketStates = this.allTransistions.filter(state => ['Code Review - Working'].includes(state.name));
+		
 		} else if(this.ticketStatus === 'Code Review - Working'){
 			this.ticketStates = this.allTransistions.filter(state => ['Ready for QA', 'Code Review - Fail'].includes(state.name));
+		} else if(this.ticketStatus === 'Code Review - Fail'){
+			this.ticketStatus = 'In Development';
+			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
 		} else if(this.ticketStatus === 'Ready for QA'){
 			this.ticketStates = this.allTransistions.filter(state => ['In QA'].includes(state.name));
+		
 		} else if(this.ticketStatus === 'In QA'){
-			this.ticketStates = this.allTransistions.filter(state => ['QA Fail','QA Pass'].includes(state.name));
+			this.ticketStates = this.allTransistions.filter(state => ['QA Fail','QA Pass', 'Merge Conflict'].includes(state.name));
+		} else if(this.ticketStatus === 'QA Fail'){
+			this.ticketStatus = 'In Development';
+			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
+		} else if(this.ticketStatus === 'QA Pass'){
+			this.ticketStatus = 'Merge Code';
+			this.ticketStates = this.allTransistions.filter(state => ['Ready for UCT'].includes(state.name));
 		
 		} else if(this.ticketStatus === 'Ready for UCT'){
 			this.ticketStates = this.allTransistions.filter(state => ['In UCT'].includes(state.name));
 		} else if(this.ticketStatus === 'In UCT'){
 			this.ticketStates = this.allTransistions.filter(state => ['UCT Fail','UCT Pass'].includes(state.name));
-		} else if(['Ready for Release','Merge Code','Merge Conflict','Code Review - Working'].includes(this.ticketStatus)){
+		} else if(this.ticketStatus === 'UCT Pass'){
+			this.ticketStatus = 'Ready for Release';
+			this.ticketStates = [];
+		} else if(this.ticketStatus === 'UCT Fail'){
+			this.ticketStatus = 'In Development';
+			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
+
+		} else if(this.ticketStatus === 'Merge Conflict'){
+			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed', 'PCR - Completed', 'Ready for QA'].includes(state.name));
+		
+		} else if(['Ready for Release', 'PCR - Pass'].includes(this.ticketStatus)){
 			this.ticketStates = [];
 		
 		} else {
@@ -105,6 +138,8 @@ export class TicketStatusComponent implements OnInit {
 		if( !(this.ticketStates.filter(state => state.name == this.ticketStatus).length > 0)){
 			this.ticketStates.unshift({name: this.ticketStatus, id: ''});
 		}
+
+		this.cd.detectChanges();
 	}
 
 	allTransistions = [
@@ -134,6 +169,9 @@ export class TicketStatusComponent implements OnInit {
 	openStatusModal(ticketDropdown){
 		// get ticket state info and open status modal
 		const ticketState = this.ticketStates.filter(state => state.id == ticketDropdown.value);
+
+		console.log('ticketState: ', ticketState);
+		console.log('ticketDropdown: ', ticketDropdown);
 
 		// create QA gen component if not created yet
 		if(!this.statusComponentRef) {
@@ -167,7 +205,7 @@ export class TicketStatusComponent implements OnInit {
 	    		.statusChange.subscribe($event => this.statusChange($event) );
 	    		(<QaGeneratorComponent>this.qaComponentRef.instance)
 	    		.commentChangeEvent.subscribe($event => {
-	    			this.commentChangeEvent.emit($event) 
+	    			this.commentChangeEvent.emit($event);
 	    		});
 		}
 		

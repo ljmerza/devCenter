@@ -40,7 +40,7 @@ export class QaGeneratorComponent {
 	@Input() msrp;
 	@Input() key;
 	@Input() repos;
-	customModalCss;
+	customModalCss = 'qaGen';
 
 	constructor(
 		public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef,
@@ -56,8 +56,6 @@ export class QaGeneratorComponent {
 			qaSteps: this.formBuilder.control(''),
 			branches: this.formBuilder.array([])
 		});
-
-		this.customModalCss = 'qaGen';
 	}
 
 	/*
@@ -216,6 +214,11 @@ export class QaGeneratorComponent {
 			this.modalRef = this.modal.openModal();
 		});
 
+		// if we already have branches then don't reload them
+		if( (this.qaForm.get('branches') as FormArray).length > 0 ) {
+			return;
+		}
+
 		// disabled submit button for QA gen
 		this.loadingBranches = true;
 
@@ -231,6 +234,9 @@ export class QaGeneratorComponent {
 			error => {
 				this.loadingBranches = false;
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
+
+				// manually tell Angular of change
+				this.cd.detectChanges();
 			}
 		);	
 	}

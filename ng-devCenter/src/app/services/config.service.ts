@@ -27,7 +27,11 @@ export class ConfigService {
 	beta = encodeURIComponent(this.projectsJql + ' AND status != closed AND labels = BETA');
 	cr = encodeURIComponent(this.projectsJql + ' AND component in ("PCR - Completed") AND type != "Technical task" AND Status = "code review"');
 	qa = encodeURIComponent(this.projectsJql + 'AND status in ("Ready for QA", "IN QA")');
-	uctready = encodeURIComponent(this.projectsJql + ' AND status != closed AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND labels != NewGUI');
+
+	uctready = encodeURIComponent(this.projectsJql + ' AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892');
+	
+	uctreadyNoRoccApollo = encodeURIComponent(this.projectsJql + ' AND issuetype != Epic AND status = "Ready for UCT" AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND "Epic Link" not in (apollo, ROCC)');
+	
 	allopen = encodeURIComponent(this.projectsJql+' AND status in ("ON HOLD", "IN DEVELOPMENT", "IN SPRINT", "Ready for Release", "Code Review", "Ready For QA", "IN QA", "IN UCT", "READY FOR UCT") OR assignee in (wc591w)');
 
 	sme = encodeURIComponent('(sprint in (3187, 3183, 3182, 3676, 3185, 3180, 3684, 3186, 3432, 3968) OR assignee in (dh6094, bb486m, cc216t, jc001b, bp215n, tt0163, sm6821, br591w, sr6855, na0952)) AND status != closed');
@@ -48,37 +52,38 @@ export class ConfigService {
 	apiTeamAccelerate = encodeURIComponent(`project in ("API Team") and status != closed and "Epic Link" in (GCSAPI-380, GCSAPI-896)`);
 
 	allProjectNames = [
-		{link: 'teamdb_ember', name: 'TeamDB Ember'},
-		{link: 'rocc', name: 'ROCC Automation'},
-		{link: 'roccathon', name: 'ROCC-A-THON'},
-		{link: 'apollo', name: 'Apollo'},
-		{link: 'starship', name: 'Starship'},
-		{link: 'rds', name: 'RDS'},
-		{link: 'orchestration', name: 'Orchestration'},
-		{link: 'innovation', name: 'Innovation Express'},
-		{link: 'sable', name: 'SABLE'},
-		{link: 'cart', name: 'CART'},
-		{link: 'apiud', name: 'API UD'},
+		{link: 'teamdb_ember', name: 'TeamDB Ember', displayName: 'TeamDB Ember'},
+		{link: 'rocc', name: 'ROCC Automation', displayName: 'ROCC Automation'},
+		{link: 'roccathon', name: 'ROCC-A-THON', displayName: 'Roccathon'},
+		{link: 'apollo', name: 'Apollo', displayName: 'Apollo'},
+		{link: 'starship', name: 'Starship', displayName: 'Starship'},
+		{link: 'rds', name: 'RDS', displayName: 'RDS'},
+		{link: 'orchestration', name: 'Orchestration', displayName: 'Orchestration'},
+		{link: 'innovation', name: 'Innovation Express', displayName: 'Innovation Express'},
+		{link: 'sable', name: 'SABLE', displayName: 'SABLE'},
+		{link: 'cart', name: 'CART', displayName: 'CART'},
+		{link: 'apiud', name: 'API UD', displayName: 'API Team Accelerate'},
 	];
 
 	teamTicketListNames = [
-		{link: 'mytickets', name: 'My Tickets'},
-		{link: 'pcr', name: 'PCR Needed'},
-		{link: 'qa', name: 'QA Needed'},
-		{link: 'uctready', name: 'UCT Ready'},
-		{link: 'cr', name: 'CR Needed'},
-		{divider: true},
-		{link: 'allopen', name: 'All Open Tickets'},
-		{link: 'allmy', name: 'All My Tickets'},
-		{link: 'beta', name: 'Beta Tickets'},
-		{divider: true},
+		{link: 'mytickets', name: 'My Tickets', displayName: 'My Open'},
+		{link: 'pcr', name: 'PCR Needed', displayName: 'Peer Code Review'},
+		{link: 'qa', name: 'QA Needed', displayName: 'QA'},
+		{link: 'uctready', name: 'UCT Ready', displayName: 'UCT Ready'},
+		{link: 'uctreadyNoRoccApollo', name: 'UCT Ready (Short)', displayName: 'UCT Ready (No ROCC/Apollo)'},
+		{link: 'cr', name: 'CR Needed', displayName: 'Code Review'},
+		{divider: true, link: '', name: '', displayName: ''},
+		{link: 'allopen', name: 'All Open Tickets', displayName: 'All Open'},
+		{link: 'allmy', name: 'All My Tickets', displayName: 'All My'},
+		{link: 'beta', name: 'Beta Tickets', displayName: 'Beta'},
+		{divider: true, link: '', name: '', displayName: ''}
 	];
 
 	otherTicketListNames = [
-		{link: 'sme', name: 'SME'},
-		{link: 'pm', name: 'PM'},
-		{link: 'scrum', name: 'Scrum Board'},
-		{link: 'fullscrum', name: 'Full Scrum Board'}
+		{link: 'sme', name: 'SME', displayName: 'SME'},
+		{link: 'pm', name: 'PM', displayName: 'PM'},
+		{link: 'scrum', name: 'Scrum Board', displayName: 'Scrum Board'},
+		{link: 'fullscrum', name: 'Full Scrum Board', displayName: 'Full Scrum Board'}
 	];
 	
 	pmTickets = encodeURIComponent('resolution = Unresolved AND assignee in ( wc591w, lk2973)');

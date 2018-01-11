@@ -30,7 +30,6 @@ export class ModalComponent {
 		if(this.customModalCss){
 			options = {windowClass: this.customModalCss};
 		}		
-		console.log('options: ', options);
 
 		// open modal and return modal ref
 		this.modalRef = this.modalService.open(this.modal, options);

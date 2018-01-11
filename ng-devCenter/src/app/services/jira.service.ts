@@ -28,104 +28,25 @@ export class JiraService {
 	*/
 	getFilterData(jiraListType:string, skipCache:boolean=false): Observable<any> {
 
-		switch(jiraListType) {
-			case 'pcr':
-				this.jql = this.config.pcr;
-				this.title = 'Peer Code Review';
-				break;
-			case 'beta':
-				this.jql = this.config.beta;
-				this.title = 'Beta';
-				break;
-			case 'cr':
-				this.jql = this.config.cr;
-				this.title = 'Code Review';
-				break;
-			case 'qa':
-				this.jql = this.config.qa;
-				this.title = 'QA';
-				break;
-			case 'uctready':
-				this.jql = this.config.uctready;
-				this.title = 'UCT Ready';
-				break;
-			case 'allmy':
-				this.jql = this.config.allmy;
-				this.title = 'All My';
-				break;
-			case 'allopen':
-				this.jql = this.config.allopen;
-				this.title = 'All Open';
-				break;
-			case 'teamdb_ember':
-				this.jql = this.config.teamdb_ember;
-				this.title = 'TeamDB Ember';
-				break;
-			case 'apollo':
-				this.jql = this.config.apollo;
-				this.title = 'Apollo';
-				break;
-			case 'sme':
-				this.jql = this.config.sme;
-				this.title = 'SME';
-				break;
-			case 'scrum':
-				this.jql = this.config.scrum;
-				this.title = 'Scrum Board';
-				break;
-			case 'fullscrum':
-				this.jql = this.config.fullScrum;
-				this.title = 'Full Scrum Board';
-				break;
-			case 'rocc':
-				this.jql = this.config.rocc;
-				this.title = 'ROCC Automation';
-				break;
-			case 'starship':
-				this.jql = this.config.starship;
-				this.title = 'Starship';
-				break;
-			case 'rds':
-				this.jql = this.config.rds;
-				this.title = 'RDS';
-				break;
-			case 'pm':
-				this.jql = this.config.pmTickets;
-				this.title = 'PM';
-				break;
-			case 'roccathon':
-				this.jql = this.config.roccathonTickets;
-				this.title = 'Roccathon';
-				break;
-			case 'orchestration':
-				this.jql = this.config.orchestration;
-				this.title = 'Orchestration';
-				break;
-			case 'innovation':
-				this.jql = this.config.innovation;
-				this.title = 'Innovation Express';
-				break;
-			case 'cart':
-				this.jql = this.config.cartProject;
-				this.title = 'CART';
-				break;
-			case 'sable':
-				this.jql = this.config.sable;
-				this.title = 'SABLE';
-				break;
-			case 'apiud':
-				this.jql = this.config.apiTeamAccelerate;
-				this.title = 'API Team Accelerate';
-				break;
-			default:
-				this.jql = this.config.mytickets;
-				this.title = 'My Open';
-		}
+		// try to get ticket list data
+		const allProjectNames = this.config.allProjectNames.filter(ticketData=>ticketData.link===jiraListType);
+		const teamTicketListNames = this.config.teamTicketListNames.filter(ticketData=>ticketData.link===jiraListType);
+		const otherTicketListNames = this.config.otherTicketListNames.filter(ticketData=>ticketData.link===jiraListType);
 
+		// see which array came back with data
+		const ticketListData = allProjectNames[0] || teamTicketListNames[0] || otherTicketListNames[0];
+
+		// set JQL and title if found match or default to my ticket
+		this.jql = ticketListData ? this.config[ticketListData.link] : this.config.mytickets;
+		this.title = ticketListData ? ticketListData.displayName : this.config.teamTicketListNames[0].name;
+
+		// set url params
 		let params = new HttpParams();
 		params = params.append('jql', this.jql);
 		params = params.append('fields', this.config.fields);
 		params = params.append('skipCache', skipCache.toString());
+
+		// return request
 		return this.http.get(`${this.apiUrl}/jira/tickets`, {params});
 	}
 
@@ -161,9 +82,7 @@ export class JiraService {
 	/**
 	*/
 	getRepos(): Observable<any>{
-		let params = new HttpParams();
-		params = params.append('skipCache', `true`);
-		return this.http.get(`${this.apiUrl}/git/repos`, {params});
+		return this.http.get(`${this.apiUrl}/git/repos`);
 	}
 
 	/**

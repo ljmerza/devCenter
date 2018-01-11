@@ -1,4 +1,4 @@
-<ngb-accordion #acc="ngbAccordion" activeIds='{{openPanelIds}}' [type]='danger' [destroyOnHide]='false'>
+<ngb-accordion #acc="ngbAccordion" activeIds='{{openPanelIds}}' [destroyOnHide]='false'>
 
 	<!-- a comment panel -->
 	<ngb-panel *ngFor='let comment of comments; index as i' [id]="key+i">

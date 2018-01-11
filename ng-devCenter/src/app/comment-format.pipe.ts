@@ -182,10 +182,19 @@ export class CommentFormatPipe implements PipeTransform {
 			if( commentPiece.includes('<a href') ){
 				return a;
 			} else {
-				const pieces = a.split(' ');
+				const pieces = a.split(/ |\]/g);
 
 				if(pieces.length > 0){
-					return `<a href="${pieces[0]}" target="_blank">${pieces[0]}</a>`;
+					const piece = pieces[0].replace(/\]\|/g, '');
+
+					// if we have more text then add it back
+					let rest = ''
+					if(pieces.length > 1){
+						pieces.shift();
+						rest = pieces.join(' ');
+					}
+
+					return `<a href="${piece}" target="_blank">${piece}</a> ${rest}`;
 				} else {
 					return a;
 				}

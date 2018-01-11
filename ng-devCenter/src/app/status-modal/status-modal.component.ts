@@ -1,6 +1,6 @@
 import { 
 	Component, OnInit, ElementRef, ChangeDetectionStrategy,
-	EventEmitter, Input, Output, ViewChild
+	EventEmitter, Input, Output, ViewChild, ChangeDetectorRef
 } from '@angular/core';
 
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -28,7 +28,7 @@ export class StatusModalComponent {
 
 	constructor(
 		private user: UserService, public toastr: ToastrService, 
-		public jira: JiraService
+		public jira: JiraService, private cd: ChangeDetectorRef
 	) {}
 
 	/**
@@ -46,7 +46,7 @@ export class StatusModalComponent {
 			return;
 		}
 
-		// open modal
+		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
 	}
 
