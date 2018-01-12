@@ -85,7 +85,7 @@ export class StatusModalComponent {
 			},
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-				this.statusChange.emit();
+				this.statusChange.emit({cancelled: true, showMessage: true});
 			}
 		);
 	}

@@ -137,8 +137,11 @@ export class TicketComponent {
 	*/
 	openAdditionalDataModal(){
 
+		
+
 		// create modal if doesn't exist
 		if(!this.detailsComponentRef) {
+			console.log('openAdditionalDataModal:');
 			const factory = this.factoryResolver.resolveComponentFactory(TicketDetailsComponent);
 	    	this.detailsComponentRef = this.viewContRef.createComponent(factory);
 	    	(<TicketDetailsComponent>this.detailsComponentRef.instance).ticketDetails = this.ticketDetails;

@@ -81,8 +81,8 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		# create response with crucible and jira comment response
 		response = {
 			'data': {
-				'crucible_id': cru_response['data'],
-				'comment': comment_response['data']
+				'crucible_id': cru_response.get('data', ''),
+				'comment': comment_response.get('data', '')
 			},
 			'status': True	
 		}

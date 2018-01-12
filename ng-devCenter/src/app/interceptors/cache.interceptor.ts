@@ -21,7 +21,7 @@ export class CacheInterceptor implements HttpInterceptor {
 		let maybeCachedResponse: Observable<HttpEvent<any>> = Observable.empty();
 	 
 		// check the cache - set status as cached (304)
-		const body = this.lStore.getItem(req.url);
+		const body = this.lStore.getItem(req.urlWithParams);
 		const cachedResponse = new HttpResponse({body, status: 304});
 
 		if(cachedResponse) {
@@ -31,7 +31,7 @@ export class CacheInterceptor implements HttpInterceptor {
 		// save network response
 		const networkResponse = next.handle(req).do(event => {
 			if (event instanceof HttpResponse) {
-				this.lStore.setItem(req.url, event.body);
+				this.lStore.setItem(req.urlWithParams, event.body);
 			}
 		});
 	 

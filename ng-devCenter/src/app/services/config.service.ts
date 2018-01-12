@@ -30,7 +30,7 @@ export class ConfigService {
 
 	uctready = encodeURIComponent(this.projectsJql + ' AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892');
 	
-	uctreadyNoRoccApollo = encodeURIComponent(this.projectsJql + ' AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND "Epic Link" not in (apollo, ROCC)');
+	uctreadyNoRoccApollo = encodeURIComponent(this.projectsJql + ' AND issuetype != Epic AND status = "Ready for UCT" AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND ("Epic Link" not in (apollo, ROCC) OR "Epic Link" is EMPTY)');
 	
 	allopen = encodeURIComponent(this.projectsJql+' AND status in ("ON HOLD", "IN DEVELOPMENT", "IN SPRINT", "Ready for Release", "Code Review", "Ready For QA", "IN QA", "IN UCT", "READY FOR UCT") OR assignee in (wc591w)');
 
@@ -50,6 +50,8 @@ export class ConfigService {
 	sable = encodeURIComponent(`project = "SABLE" and status != closed`);
 	cartProject = encodeURIComponent(`project in  = "InnovationExpress(IX)"`);
 	apiTeamAccelerate = encodeURIComponent(`project in ("API Team") and status != closed and "Epic Link" in (GCSAPI-380, GCSAPI-896)`);
+	
+	mergeCode = encodeURIComponent(`project in (AQE, "Auto QM", "Customer DB", "Manager DB", "Taskmaster Dashboard", TeamDB, TQI, "Unified Desktop", UPM, WAM, SASHA) AND component = "Merge Code" and status != closed `);
 
 	allProjectNames = [
 		{link: 'teamdb_ember', name: 'TeamDB Ember', displayName: 'TeamDB Ember'},
@@ -76,6 +78,7 @@ export class ConfigService {
 		{link: 'allopen', name: 'All Open Tickets', displayName: 'All Open'},
 		{link: 'allmy', name: 'All My Tickets', displayName: 'All My'},
 		{link: 'beta', name: 'Beta Tickets', displayName: 'Beta'},
+		{link: 'mergeCode', name: 'Merge Tickets', displayName: 'Merge Code'},
 		{divider: true, link: '', name: '', displayName: ''}
 	];
 
@@ -363,27 +366,31 @@ export class ConfigService {
 
 	beta_links = [
 		{
-			link: '/aqe/cgi-bin/index.pl',
+			link: `http://ud-beta.web.att.com/UD/cgi-bin/worklist.pl`,
+			name: 'UD'
+		},
+		{
+			link: `${this.betaUrl}/aqe/cgi-bin/index.pl`,
 			name: 'AQE'
 		},
 		{
-			link: '/teamdb/teams.php?ATTuid=',
+			link: `${this.betaUrl}/teamdb/teams.php?ATTuid=${this.username}`,
 			name: 'TeamDB'
 		},
 		{
-			link: '/wam/cgi-bin/wam.pl',
+			link: `${this.betaUrl}/wam/cgi-bin/wam.pl`,
 			name: 'WAM'
 		},
 		{
-			link: '/upm2/access.php',
+			link: `${this.betaUrl}/upm2/access.php`,
 			name: 'UPM'
 		},
 		{
-			link: '/Templates/cgi-bin/Template.pl',
+			link: `${this.betaUrl}/Templates/cgi-bin/Template.pl`,
 			name: 'Template Tool'
 		},
 		{
-			link: '/tqi3/cgi-bin/index.pl',
+			link: `${this.betaUrl}/tqi3/cgi-bin/index.p`,
 			name: 'TQI'
 		},
 		{
@@ -393,6 +400,10 @@ export class ConfigService {
 		{
 			link: 'http://ud-beta.web.att.com/UD-ember/#/ticket/ethernet/WILOJ017967',
 			name: 'UD ember'
+		},
+		{
+			link: 'http://chrapud16b.gcsc.att.com/teamdbgui/',
+			name: 'TeamDB ember'
 		}
 	];
 

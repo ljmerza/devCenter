@@ -47,9 +47,7 @@ export class TicketDetailsComponent {
 	/**
 	*/
 	openModel(){
-		setTimeout( () => {
-			this.modalRef = this.modal.openModal();
-		});
+		this.modalRef = this.modal.openModal();
 	}
 
 	/**

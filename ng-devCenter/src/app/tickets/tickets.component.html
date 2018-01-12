@@ -53,12 +53,10 @@
 						*ngFor='let ticket of openTickets' 
 						id='{{ticket.key}}'
 						[ngClass]="{
-							'bg-primary': ticket.status == 'Ready for QA' && jira.title == 'All Open',
+							'bg-secondary': ticket.status == 'Ready for QA' && jira.title == 'All Open',
 							'bg-warning': ticket.status == 'Code Review' && jira.title == 'All Open',
-							'bg-inverse': ticket.status == 'In Sprint' && jira.title == 'All Open',
-							'bg-faded': ticket.status == 'In Development' && jira.title == 'All Open',
-							'bg-success': (ticket.status == 'Ready for UCT' || ticket.status == 'Ready for Release') && jira.title == 'All Open',
-							'bg-danger': (ticket.status == 'Closed' || ticket.component == 'Merge Code') && jira.title == 'All Open'
+							'bg-danger': ticket.component == 'Merge Code' && jira.title == 'All Open',
+							'bg-info': ticket.component == 'PCR - Needed' && jira.title == 'All Open'
 						}"
 						class="appTicket" [ticket]=ticket [repos]=repos>
 						</tr>

@@ -6,7 +6,7 @@ import ChatUtils
 
 def set_status(data, jira_obj):
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','key','status_type'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash','key','status_type'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -66,7 +66,7 @@ def add_qa_comment(data, jira_obj):
 	Returns:
 
 	'''
-	missing_params = FlaskUtils.check_args(params=data, required=['key', 'crucible_id','repos', 'qa_steps', 'cred_hash'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'crucible_id','repos', 'qa_steps', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# generate QA steps
@@ -91,9 +91,9 @@ def add_comment(data, jira_obj):
 
 	'''
 	response = ''
-	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash', 'comment'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash'], one_required=['comment', 'uct_date'])
 	if missing_params:
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+		return {"data": missing_params, "status": False}
 
 	# set uct date if given
 	uct_date = data.get('uct_date', 0)
@@ -122,7 +122,7 @@ def edit_comment(data, jira_obj):
 	Returns:
 
 	'''
-	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash', 'comment_id', 'comment'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash', 'comment_id', 'comment'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -148,7 +148,7 @@ def delete_comment(data, jira_obj):
 	Returns:
 
 	'''
-	missing_params = FlaskUtils.check_args(params=data, required=['key', 'cred_hash', 'comment_id'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash', 'comment_id'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -173,7 +173,7 @@ def add_worklog(data, jira_obj):
 	Returns:
 
 	'''
-	missing_params = FlaskUtils.check_args(params=data, required=['key', 'log_time', 'cred_hash'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'log_time', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# try to add work log and return
@@ -197,7 +197,7 @@ def get_jira_tickets(data, jira_obj):
 	'''
 
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 		
@@ -237,7 +237,7 @@ def find_key_by_msrp(data, jira_obj):
 		the server response JSON object with status/data properties
 	'''
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash','msrp'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash','msrp'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# get key from MSRP
@@ -247,7 +247,7 @@ def get_profile(data, jira_obj):
 	'''
 	'''
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# get key from MSRP
@@ -257,7 +257,7 @@ def parse_comment(data, jira_obj):
 	'''
 	'''
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'comment', 'key'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash', 'comment', 'key'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# get parsed comment

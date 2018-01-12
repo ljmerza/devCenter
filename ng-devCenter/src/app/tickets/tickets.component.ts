@@ -150,6 +150,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	*/
 	getTickets(skipCache=false):Subscription {
 		this.ngProgress.start();
+		if(!skipCache) this.loadingTickets = false;
 
 		return this.jira.getFilterData(this.ticketType, skipCache)
 		.subscribe(issues => {

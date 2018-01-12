@@ -105,14 +105,8 @@ a, .material-icons {
 	max-width: 300px;
 }
 
-table.dataTable,
-.dataTables_wrapper {
-	background-color: $darkBlk;
-	color: $white;
-
-	#DataTables_Table_0_filter input {
-		
-	}
+table.dataTable {	
+	width: 100% !important;
 }
 
 table.dataTable {
@@ -146,7 +140,6 @@ table.dataTable {
 	background-color: $darkBlk;
 	color: $white;
 	border-radius: 0;
-	margin-right: 10px;
  }
 
 .ticket-title {

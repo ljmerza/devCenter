@@ -101,7 +101,7 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 		else:
 			color = ''
 		# build commit message
-		commit_message = build_commit_message(data['msrp'], data['msrp'], data['summary'])
+		commit_message = build_commit_message(data['key'], data['msrp'], data['summary'])
 		# create message piece
 		message += f"\
 		<tr> \

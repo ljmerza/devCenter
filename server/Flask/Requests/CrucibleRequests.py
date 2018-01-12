@@ -5,7 +5,7 @@ from Flask import FlaskUtils
 
 def add_reviewer(data, crucible_obj):
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['username','crucible_id','cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -15,7 +15,7 @@ def add_reviewer(data, crucible_obj):
 
 def complete_review(data, crucible_obj):
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['username','crucible_id','cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -25,7 +25,7 @@ def complete_review(data, crucible_obj):
 
 def pass_review(data, crucible_obj):
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['username','crucible_id','cred_hash'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['username','crucible_id','cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -48,7 +48,7 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	'''
 
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['key', 'msrp', 'username', 'password', 'repos','cred_hash'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'msrp', 'username', 'password', 'repos','cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -79,7 +79,7 @@ def get_repos(data, crucible_obj):
 	'''
 	'''
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# return data
@@ -90,7 +90,7 @@ def get_branches(data, crucible_obj):
 	'''
 	'''
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'repo_name'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash', 'repo_name'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# return data
@@ -101,7 +101,7 @@ def ticket_branches(data, crucible_obj):
 	'''
 	'''
 	# check for required data
-	missing_params = FlaskUtils.check_args(params=data, required=['cred_hash', 'msrp'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash', 'msrp'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# return data
