@@ -37,7 +37,7 @@ export class NavBarComponent {
 		this.isFriday = (new Date()).getDay() == 5;
 
 		// check every two hours
-		setTimeout( () => {
+		setInterval( () => {
 			this.isFriday = (new Date()).getDay() == 5;
 		}, 60*60*2)
 		

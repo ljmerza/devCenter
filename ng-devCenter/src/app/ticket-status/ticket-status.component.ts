@@ -85,6 +85,8 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 	}
 
 	validateTransitions() {
+
+		console.log(this.ticketStatus);
 		// set valid transitions
 		if(['In Sprint','On Hold'].includes(this.ticketStatus)){
 			this.ticketStates = this.allTransistions.filter(state => ['In Development'].includes(state.name));
@@ -93,6 +95,8 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 		
 		} else if(this.ticketStatus === 'PCR - Needed'){
 			this.ticketStates = this.allTransistions.filter(state => ['PCR - Pass','PCR - Completed'].includes(state.name));
+		} else if(this.ticketStatus === 'PCR - Pass'){
+			this.ticketStates = this.allTransistions.filter(state => ['PCR - Completed'].includes(state.name));
 		} else if(this.ticketStatus === 'PCR - Completed'){
 			this.ticketStates = this.allTransistions.filter(state => ['Code Review - Working'].includes(state.name));
 		
@@ -126,8 +130,10 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 
 		} else if(this.ticketStatus === 'Merge Conflict'){
 			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed', 'PCR - Completed', 'Ready for QA'].includes(state.name));
+		} else if(this.ticketStatus === 'Merge Code'){
+			this.ticketStates = this.allTransistions.filter(state => ['Ready for UCT'].includes(state.name));
 		
-		} else if(['Ready for Release', 'PCR - Pass'].includes(this.ticketStatus)){
+		} else if(['Ready for Release'].includes(this.ticketStatus)){
 			this.ticketStates = [];
 		
 		} else {
@@ -211,6 +217,7 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 		
 		// open modal
     	(<QaGeneratorComponent>this.qaComponentRef.instance).openQAModal();
+
 	}
 
 }

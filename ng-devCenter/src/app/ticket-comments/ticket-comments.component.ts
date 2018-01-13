@@ -3,6 +3,7 @@ import {
 	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy
 } from '@angular/core';
 
+import { ModalComponent } from './../modal/modal.component';
 import { JiraService } from './../services/jira.service';
 import { ToastrService } from './../services/toastr.service';
 import { UserService } from './../services/user.service';
@@ -20,9 +21,11 @@ declare var $ :any;
 })
 export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	openPanelIds = [];
+	commentId;
+	modalRef;
+	customModalCss = 'ticketComment';
 
-	@ViewChild('commentModal') content:ElementRef;
-	@ViewChild('deleteModal') deleteModal: ElementRef;
+	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key;
 	@Input() comments;
 	@Input() attachments;
@@ -80,13 +83,24 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 
 	/**
 	*/
-	deleteComment(comment_id) {
+	deleteComment(commentId) {
+		this.commentId = commentId;
+		// open modal
+		this.modalRef = this.modal.openModal()
+	}
+
+	/**
+	*/
+	closeDeleteModal(deleteComment){
+
+		this.modalRef.close();
+		if(!deleteComment) return;
 
 		// get index of comment and remove it there
-		const pos = this.comments.map(comm =>	comm.id).indexOf(comment_id);
+		const pos = this.comments.map(comm =>	comm.id).indexOf(this.commentId);
 		const deletedComment = this.comments.splice(pos, 1);
 
-		this.jira.deleteComment(comment_id, this.key).subscribe(
+		this.jira.deleteComment(this.commentId, this.key).subscribe(
 			() => {
 				this.commentChangeEvent.emit({allComments: this.comments});
 				this.toastr.showToast('Comment Deleted Successfully', 'success');

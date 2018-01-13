@@ -1,6 +1,6 @@
 import { 
 	Component, ViewChild, EventEmitter, ChangeDetectionStrategy,
-	ElementRef, ViewEncapsulation, Output, Input
+	ElementRef, ViewEncapsulation, Output, Input, ChangeDetectorRef
 } from '@angular/core';
 
 import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -38,7 +38,10 @@ export class TicketLogComponent	{
 	@Input() key:string;
 	modalRef: NgbModalRef;
 
-	constructor(public jira:JiraService, public toastr: ToastrService) {}
+	constructor(
+		public jira:JiraService, public toastr: ToastrService, 
+		private cd: ChangeDetectorRef
+	) {}
 
 	/*
 	*/
@@ -96,16 +99,15 @@ export class TicketLogComponent	{
 	*/
 	openLogModal():void {
 		// open modal
-		setTimeout( () => {
-			// open modal
-			this.modalRef = this.modal.openModal();
+		this.cd.detectChanges();
+		// open modal
+		this.modalRef = this.modal.openModal();
 
-			this.modalRef.result.then(
-				// always reset form
-				() => this._resetForm(),
-				() => this._resetForm()
-			);
-		});
+		this.modalRef.result.then(
+			// always reset form
+			() => this._resetForm(),
+			() => this._resetForm()
+		);
 	}
 
 	/*

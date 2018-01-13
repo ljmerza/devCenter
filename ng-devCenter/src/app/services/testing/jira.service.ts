@@ -94,7 +94,7 @@ export class JiraServiceTest {
 							}, 
 							"inwardIssue": {
 								"id": "89473", 
-								"key": "UD-7795", 
+								"key": "TS-7795", 
 								"self": "http://jira.web.test.com/rest/api/2/issue/89473", 
 								"fields": {
 									"summary": "summary of another ticket", 
@@ -215,7 +215,7 @@ export class JiraServiceTest {
 							}, 
 							"inwardIssue": {
 								"id": "89473", 
-								"key": "UD-7795", 
+								"key": "TS-7795", 
 								"self": "http://jira.web.test.com/rest/api/2/issue/89473", 
 								"fields": {
 									"summary": "summary of another ticket", 
@@ -336,7 +336,7 @@ export class JiraServiceTest {
 							}, 
 							"inwardIssue": {
 								"id": "89473", 
-								"key": "UD-7795", 
+								"key": "TS-7795", 
 								"self": "http://jira.web.test.com/rest/api/2/issue/89473", 
 								"fields": {
 									"summary": "summary of another ticket", 
@@ -457,7 +457,7 @@ export class JiraServiceTest {
 							}, 
 							"inwardIssue": {
 								"id": "89473", 
-								"key": "UD-7795", 
+								"key": "TS-7795", 
 								"self": "http://jira.web.test.com/rest/api/2/issue/89473", 
 								"fields": {
 									"summary": "summary of another ticket", 
@@ -598,7 +598,7 @@ export class JiraServiceTest {
 							}, 
 							"inwardIssue": {
 								"id": "89473", 
-								"key": "UD-7795", 
+								"key": "TS-7795", 
 								"self": "http://jira.web.test.com/rest/api/2/issue/89473", 
 								"fields": {
 									"summary": "summary of another ticket", 

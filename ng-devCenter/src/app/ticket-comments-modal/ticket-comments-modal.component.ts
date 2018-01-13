@@ -1,5 +1,5 @@
 import { 
-	Component, ViewChild, EventEmitter,
+	Component, ViewChild, EventEmitter, ChangeDetectorRef,
 	ViewEncapsulation, Input, Output, ChangeDetectionStrategy
 } from '@angular/core';
 
@@ -27,14 +27,13 @@ export class TicketCommentsModalComponent {
 	@Output() commentChangeEvent = new EventEmitter();
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
-	constructor() {}
+	constructor(private cd: ChangeDetectorRef) {}
 
   	/**
   	*/
 	openCommentModal(): void {
-		setTimeout( () => {
-			this.modalRef = this.modal.openModal();
-		});
+		this.cd.detectChanges();
+		this.modalRef = this.modal.openModal();
 	}
 
 	/**

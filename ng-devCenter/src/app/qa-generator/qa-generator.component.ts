@@ -107,16 +107,6 @@ export class QaGeneratorComponent {
 
 	/*
 	*/
-	resetBranches(){
-		// reset branches array to empty
-		let branches = (this.qaForm.get('branches') as FormArray);
-		while (branches.length) {
-		    branches.removeAt(branches.length - 1);
-		}
-	}
-
-	/*
-	*/
 	submitQA(isSaving): void {
 
 		// end here if we are just closing modal
@@ -174,9 +164,6 @@ export class QaGeneratorComponent {
 					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
 				`, 'success', true);
 
-				// reset branch list
-				this.resetBranches();
-
 				// only update status if we are updating Jira
 				if(postData.qa_steps){
 
@@ -205,10 +192,14 @@ export class QaGeneratorComponent {
 	/*
 	*/
 	openQAModal(): void {
-		// open modal
-		setTimeout( () => {
-			this.modalRef = this.modal.openModal();
-		});
+		// detect css input changes then open modal
+		this.cd.detectChanges();
+		this.modalRef = this.modal.openModal();
+
+		this.modalRef.result.then(
+    		() => null,
+    		() => this.statusChange.emit({showMessage:true, cancelled:true})
+    	)
 
 		// if we already have branches then don't reload them
 		if( (this.qaForm.get('branches') as FormArray).length > 0 ) {
@@ -217,6 +208,7 @@ export class QaGeneratorComponent {
 
 		// disabled submit button for QA gen
 		this.loadingBranches = true;
+		this.cd.detectChanges();
 
 		// get all branches associated with this msrp
 		this.repoLookUp$ = this.jira.getTicketBranches(this.msrp).subscribe(
@@ -234,7 +226,7 @@ export class QaGeneratorComponent {
 				// manually tell Angular of change
 				this.cd.detectChanges();
 			}
-		);	
+		);
 	}
 
 	/*

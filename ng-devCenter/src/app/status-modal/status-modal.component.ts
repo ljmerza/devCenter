@@ -46,8 +46,16 @@ export class StatusModalComponent {
 			return;
 		}
 
+
+		// detect changes then open modal
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
+
+		// set dismiss event to trigger status cancel
+		this.modalRef.result.then(
+    		() => null,
+    		() => this.statusChange.emit({showMessage:true, cancelled:true})
+    	)
 	}
 
 	/**

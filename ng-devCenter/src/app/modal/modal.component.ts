@@ -3,7 +3,7 @@ import {
 	EventEmitter, ViewChild, ChangeDetectionStrategy 
 } from '@angular/core';
 
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalOptions, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
 	selector: 'dev-center-modal',
@@ -13,8 +13,6 @@ import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 	encapsulation: ViewEncapsulation.None
 })
 export class ModalComponent {
-
-	@Input() size;
 	@Input() customModalCss;
 	@Output() modalEvent = new EventEmitter();
 	@ViewChild('modal') modal: NgbModal;
@@ -24,7 +22,7 @@ export class ModalComponent {
 
 	/**
 	*/
-	openModal(){
+	openModal(): NgbModalRef {
 		// create custom args
 		let options = {};
 		if(this.customModalCss){

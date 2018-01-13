@@ -1,4 +1,7 @@
-import { Component, Input, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { 
+	Component, Input, ViewChild, ElementRef, 
+	ChangeDetectionStrategy, ChangeDetectorRef 
+} from '@angular/core';
 
 import { ModalComponent } from './../modal/modal.component';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -25,15 +28,14 @@ export class SetPingsComponent {
 
 	constructor(
 		private toastr: ToastrService, private jira: JiraService,
-		public misc: MiscService
+		public misc: MiscService, private cd: ChangeDetectorRef
 	){}
 
 	/**
 	*/
 	openPingModel(){
-		setTimeout( () => {
-			this.modalInstance = this.modal.openModal();
-		});
+		this.cd.detectChanges();
+		this.modalInstance = this.modal.openModal();
 	}
 
 
