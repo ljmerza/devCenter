@@ -13,7 +13,6 @@
 				<span class="float-right">
 					{{comment.created | amDateFormat:'MM/D/YY h:mm A'}}
 				</span>
-				
 			</div>
 		</ng-template>
 		
@@ -22,36 +21,23 @@
 
 			<!-- editing buttons -->
 			<span class='edit-buttons'>
-				<button 
-					type="button" 
-					class="btn btn-outline-primary" 
-					
-					(click)="toggleEditing(comment)">
-						{{comment.closeText}}
+				<button type="button" class="btn btn-outline-primary" (click)="toggleEditing(comment)">
+					{{comment.closeText}}
 				</button>
 
-				<button 
-					[hidden]="!comment.isEditing" 
-					type="button" 
-					class="btn btn-outline-success"
-					
-					(click)="editComment(comment)">
-						Save Edit
+				<button [hidden]="!comment.isEditing" type="button" class="btn btn-outline-success" 
+				(click)="editComment(comment)">
+					Save Edit
 				</button>
 
-				<button 
-					type="button" 
-					class="btn btn-outline-danger" 
-					*ngIf='!comment.isEditing && comment.username == user.username' 
-					(click)="deleteComment(comment.id)">
-						Delete Comment
+				<button type="button" class="btn btn-outline-danger" (click)="deleteComment(comment.id)"
+				*ngIf='!comment.isEditing && comment.username == user.username' >
+					Delete Comment
 				</button>
 			</span>
 			
 			<!-- comment body -->
-			<div [hidden]="comment.isEditing" 
-			[innerHTML]="comment.comment | commentFormat:attachments | safehtml">
-			</div>
+			<div [hidden]="comment.isEditing" [innerHTML]="comment.comment | commentFormat:attachments | safehtml"></div>
 			
 			<!-- text area comment body -->
 			<textarea [id]=comment.editId [hidden]="!comment.isEditing" 
