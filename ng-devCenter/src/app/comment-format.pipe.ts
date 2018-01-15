@@ -15,7 +15,9 @@ export class CommentFormatPipe implements PipeTransform {
 	/*
 	*/
 	transform(comment:any, attachments:any,): any {
-		return comment.replace(/confluenceTable/g, 'table');
+		comment = comment.replace(/confluenceTable/g, 'table');
+		comment = this._formatTable(comment);
+		return comment;
 
 		// // make an array so reference is persisted through functions (i know...)
 		// let stepNumber = 1;
@@ -46,7 +48,6 @@ export class CommentFormatPipe implements PipeTransform {
 
 			[commentPiece, stepNumber] = this._format_list_headers(commentPiece, stepNumber);
 			commentPiece = this._format_colors(commentPiece);
-			[commentPiece, tableStart] = this._formatTable(commentPiece, tableStart);
 			commentPiece = this._format_links(commentPiece);
 			commentPiece = this._format_images(commentPiece, attachments);
 
@@ -97,38 +98,54 @@ export class CommentFormatPipe implements PipeTransform {
 
 	/*
 	*/
-	_formatTable(commentPiece:string, tableStart){
-		// create tables
-		if(commentPiece.startsWith('||')){
-			tableStart = true;
-			commentPiece = '<table class="table table-striped table-bordered"><thead><tr>' + 
-			commentPiece.split('||')
-			.filter(t => !!t.trim())
-			.map(t => '<th>'+t+'</th>')
-			.join('') + '</tr><thead><tbody>';
+	_formatTable(comment:string){
 
-		} else if(commentPiece.startsWith('|')){
-			commentPiece = '<tr>' + commentPiece
-			.split('|')
-			.filter(t => !!t.trim())
-			.map(t => {
-				return `
-				<td>
-					<span class='tableCopy'>
-						<span class="material-icons" title="Copy to clipboard">note</span>
-						<input value='${t}'>
-					</span>
-					${t}
-				</td>`;
-			})
-			.join('') + '</tr>';
+		const commentPieces = comment.split('confluenceTd');
 
-		} else if(tableStart) {
-			tableStart = false;
-			commentPiece = '<tbody></table>';
+		if(commentPieces.length === 1) {
+			return commentPieces.join('confluenceTd');
 		}
 
-		return [commentPiece, tableStart];
+		const evenComments = commentPieces.filter( (element, index) => index%2===0);
+		const oddComments = commentPieces.filter( (element, index) => index%2===1);
+
+		console.log('commentPieces: ', commentPieces);
+		console.log('evenComments: ', evenComments);
+		console.log('oddComments: ', oddComments);
+
+		
+
+		// create tables
+		// if(commentPiece.startsWith('||')){
+		// 	tableStart = true;
+		// 	commentPiece = '<table class="table table-striped table-bordered"><thead><tr>' + 
+		// 	commentPiece.split('||')
+		// 	.filter(t => !!t.trim())
+		// 	.map(t => '<th>'+t+'</th>')
+		// 	.join('') + '</tr><thead><tbody>';
+
+		// } else if(commentPiece.startsWith('|')){
+		// 	commentPiece = '<tr>' + commentPiece
+		// 	.split('|')
+		// 	.filter(t => !!t.trim())
+		// 	.map(t => {
+		// 		return `
+		// 		<td>
+		// 			<span class='tableCopy'>
+		// 				<span class="material-icons" title="Copy to clipboard">note</span>
+		// 				<input value='${t}'>
+		// 			</span>
+		// 			${t}
+		// 		</td>`;
+		// 	})
+		// 	.join('') + '</tr>';
+
+		// } else if(tableStart) {
+		// 	tableStart = false;
+		// 	commentPiece = '<tbody></table>';
+		// }
+
+		// return [commentPiece, tableStart];
 	}
 
 	/*
