@@ -98,16 +98,8 @@ export class TicketLogComponent	{
 	/*
 	*/
 	openLogModal():void {
-		// open modal
 		this.cd.detectChanges();
-		// open modal
 		this.modalRef = this.modal.openModal();
-
-		this.modalRef.result.then(
-			// always reset form
-			() => this._resetForm(),
-			() => this._resetForm()
-		);
 	}
 
 	/*

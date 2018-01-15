@@ -5,12 +5,11 @@ import { ConfigService } from './services/config.service';
 	name: 'commentFormat'
 })
 export class CommentFormatPipe implements PipeTransform {
+
 	config;
 	constructor(config: ConfigService) {
 		this.config = config;
 	}
-
-	ids = 1928378475;
 
 	/*
 	*/
@@ -98,54 +97,33 @@ export class CommentFormatPipe implements PipeTransform {
 
 	/*
 	*/
+	tableSplitter = "confluenceTd'>";
 	_formatTable(comment:string){
 
-		const commentPieces = comment.split('confluenceTd');
+		let commentPieces = comment.split(this.tableSplitter);
 
 		if(commentPieces.length === 1) {
-			return commentPieces.join('confluenceTd');
+			return commentPieces.join(this.tableSplitter);
 		}
 
-		const evenComments = commentPieces.filter( (element, index) => index%2===0);
-		const oddComments = commentPieces.filter( (element, index) => index%2===1);
+		commentPieces = commentPieces.map( (piece, index) => {
+			if(index === 0) return piece;
 
-		console.log('commentPieces: ', commentPieces);
-		console.log('evenComments: ', evenComments);
-		console.log('oddComments: ', oddComments);
+			let tableRowData = piece.split(/</);
 
-		
+			const copyText = tableRowData.shift();
 
-		// create tables
-		// if(commentPiece.startsWith('||')){
-		// 	tableStart = true;
-		// 	commentPiece = '<table class="table table-striped table-bordered"><thead><tr>' + 
-		// 	commentPiece.split('||')
-		// 	.filter(t => !!t.trim())
-		// 	.map(t => '<th>'+t+'</th>')
-		// 	.join('') + '</tr><thead><tbody>';
+			const newText = `
+				<span class='tableCopy'>
+					<span class="material-icons" title="Copy to clipboard">note</span>
+					<input value='${copyText}'>
+				</span>
+				${copyText}`;
 
-		// } else if(commentPiece.startsWith('|')){
-		// 	commentPiece = '<tr>' + commentPiece
-		// 	.split('|')
-		// 	.filter(t => !!t.trim())
-		// 	.map(t => {
-		// 		return `
-		// 		<td>
-		// 			<span class='tableCopy'>
-		// 				<span class="material-icons" title="Copy to clipboard">note</span>
-		// 				<input value='${t}'>
-		// 			</span>
-		// 			${t}
-		// 		</td>`;
-		// 	})
-		// 	.join('') + '</tr>';
+			return [newText, ...tableRowData].join('<');
+		});
 
-		// } else if(tableStart) {
-		// 	tableStart = false;
-		// 	commentPiece = '<tbody></table>';
-		// }
-
-		// return [commentPiece, tableStart];
+		return commentPieces.join(this.tableSplitter);
 	}
 
 	/*
