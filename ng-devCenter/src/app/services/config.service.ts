@@ -39,16 +39,22 @@ export class ConfigService {
 	scrum = encodeURIComponent('project = BDEUT AND status != closed');
 	teamdb_ember = encodeURIComponent(' labels = NewGUI');
 
+	dtiUnassigned = encodeURIComponent('(project in (AQE, "Customer DB", "Desktop Integration", "Taskmaster Dashboard", TeamDB, TQI, UPM, "Unified Desktop", WAM) OR project in (SASHA) AND labels = "Function" OR project in (SABLE) AND labels = "Function") AND status != closed AND issuetype != Epic AND assignee = EMPTY AND status != TRIAGE AND type != "Technical task" AND type != Sub-task ORDER BY "Ticket ID" DESC');
+
+	apiDefects = encodeURIComponent(`(project in (AQE, "Customer DB", "Desktop Integration", "Taskmaster Dashboard", TeamDB, TQI, UPM, "Unified Desktop", WAM) OR project in (SASHA) AND labels = "Function" OR project in (SABLE) AND labels = "Function") AND status != closed AND issuetype != Epic AND component = "API Defect" AND type != "Technical task" ORDER BY status DESC, Rank ASC`);
+
 	// projects
 	apollo = encodeURIComponent('"Epic Link" = Apollo AND Status !=Closed');
 	rocc =  encodeURIComponent('"Epic Link" = ROCC');
 	starship = encodeURIComponent('"epic%20link"%3D%20starship');
 	rds = encodeURIComponent('text ~ "RDS"');
+	apigateway = encodeURIComponent('project = BPO AND component = "API Gateway" and status != Closed');
 	roccathonTickets = encodeURIComponent(`"Epic Link" ='ROCC-A-THON Program'`);
 	orchestration = encodeURIComponent(`project in ("GCS BizOps - Orchestration") AND status != closed`);
 	innovation = encodeURIComponent(`labels = "InnovationExpress(IX)"`);
 	sable = encodeURIComponent(`project = "SABLE" and status != closed`);
 	cartProject = encodeURIComponent(`project in  = "InnovationExpress(IX)"`);
+	orderautomation = encodeURIComponent(`"Program Name" ="Order Automation" and status != Closed`);
 	apiTeamAccelerate = encodeURIComponent(`project in ("API Team") and status != closed and "Epic Link" in (GCSAPI-380, GCSAPI-896)`);
 	
 	mergeCode = encodeURIComponent(`project in (AQE, "Auto QM", "Customer DB", "Manager DB", "Taskmaster Dashboard", TeamDB, TQI, "Unified Desktop", UPM, WAM, SASHA) AND component = "Merge Code" and status != closed `);
@@ -60,11 +66,13 @@ export class ConfigService {
 		{link: 'apollo', name: 'Apollo', displayName: 'Apollo'},
 		{link: 'starship', name: 'Starship', displayName: 'Starship'},
 		{link: 'rds', name: 'RDS', displayName: 'RDS'},
+		{link: 'apigateway', name: 'API Gateway', displayName: 'API Gateway'},
 		{link: 'orchestration', name: 'Orchestration', displayName: 'Orchestration'},
 		{link: 'innovation', name: 'Innovation Express', displayName: 'Innovation Express'},
 		{link: 'sable', name: 'SABLE', displayName: 'SABLE'},
 		{link: 'cart', name: 'CART', displayName: 'CART'},
 		{link: 'apiud', name: 'API UD', displayName: 'API Team Accelerate'},
+		{link: 'orderautomation', name: 'Order Automation', displayName: 'Order Automation'},
 	];
 
 	teamTicketListNames = [
@@ -86,7 +94,9 @@ export class ConfigService {
 		{link: 'sme', name: 'SME', displayName: 'SME'},
 		{link: 'pm', name: 'PM', displayName: 'PM'},
 		{link: 'scrum', name: 'Scrum Board', displayName: 'Scrum Board'},
-		{link: 'fullscrum', name: 'Full Scrum Board', displayName: 'Full Scrum Board'}
+		{link: 'fullscrum', name: 'Full Scrum Board', displayName: 'Full Scrum Board'},
+		{link: 'dtiUnassigned', name: 'DTI Unassigned', displayName: 'DTI Unassigned'},
+		{link: 'apiDefects', name: 'API Defects', displayName: 'API Defects'},
 	];
 	
 	pmTickets = encodeURIComponent('resolution = Unresolved AND assignee in ( wc591w, lk2973)');
@@ -551,6 +561,10 @@ export class ConfigService {
 				{
 					name: 'Jira API 7.6.1',
 					link: 'https://docs.atlassian.com/software/jira/docs/api/REST/7.6.1/'
+				},
+				{
+					name: 'SQL Reference',
+					link: 'https://www.w3schools.com/sql/default.asp'
 				},
 				
 			]
