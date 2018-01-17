@@ -68,6 +68,17 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	ngOnInit():void {
+		// if we are authed then get list of repos once
+		if( !this.user.needRequiredCredentials() ){
+			
+			this.jira.getRepos().subscribe( 
+				branches => { 
+					if(branches) this.repos = branches.data;
+				},
+				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+			);
+		}
+
 		this.route.paramMap.subscribe( params => {
 
 			// default to my tickets
@@ -76,7 +87,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			this.destorySubscritions();
 			// if required user info exists then get tickets and repos
 			if( !this.user.needRequiredCredentials() ){
-				this.syncData();
+				this.searchTicket$ = this.getTickets();
 			}
 		});
 	}
@@ -89,23 +100,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	private destorySubscritions() {
+	destorySubscritions() {
 		if(this.searchTicket$) this.searchTicket$.unsubscribe();
 		if(this.webSock$) this.webSock$.unsubscribe();
-	}
-
-	/*
-	*/
-	syncData() {
-		this.searchTicket$ = this.getTickets();
-
-		// get list of repos once
-		this.jira.getRepos().subscribe( 
-			branches => { 
-				if(branches) this.repos = branches.data;
-			},
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
 	}
 
 	/*
@@ -141,7 +138,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			}
 
 			this.openTickets = data;
-			this.rerender(true);
+			this.rerender();
 
 		});
 	}
@@ -162,7 +159,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 				this.ngProgress.done();
 				this.loadingTickets = false;
 				
-				this.rerender(true);
+				this.rerender();
 
 				// enable websockets
 				// if( !this.ticketType || ['pcr','qa','cr','allopen','mytickets'].includes(this.ticketType) ) {
@@ -176,20 +173,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
 	/*
 	*/
-	rerender(forceRender=false):void {
+	rerender():void {
 
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
-
-				// do we destroy the whole table and start over 
-				// or just redraw? (destroy if we have all new data)
-				if(forceRender){
-					dtInstance.destroy();
-					this.dtTrigger.next();
-				} else {
-					dtInstance.draw();
-				}
-				
+				dtInstance.destroy();
+				this.dtTrigger.next();			
 			});
 		} else {
 			this.dtTrigger.next();
