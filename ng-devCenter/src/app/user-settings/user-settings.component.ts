@@ -36,7 +36,17 @@ export class UserSettingsComponent implements OnInit {
 			)),
 			emberUrl: new FormControl(user.emberUrl, [Validators.required]),
 			teamUrl: new FormControl(user.teamUrl, [Validators.required]),
-			cache: new FormControl(user.cache)
+			cache: new FormControl(user.cache),
+			pings: new FormGroup({
+				allPing: new FormControl(),
+				newPing: new FormControl(),
+				conflictPing: new FormControl(),
+				crFailPing: new FormControl(),
+				mergePing: new FormControl(),
+				neverPing: new FormControl(),
+				qaFailPing: new FormControl(),
+				uctFailPing: new FormControl()
+			})
 		});
 	}
 
@@ -50,11 +60,30 @@ export class UserSettingsComponent implements OnInit {
 				if(response && response.data){
 					this.user.userData = response.data;
 					this.user.userPicture = response.data.avatarUrls['48x48'];
+
+					this.setUserPings(this.user.userData.ping_settings)
 				}	
 			},
 				error => this.toastr.showToast(`Could not retrieve user profile: ${error}`,'error')
 			)
 		}
+	}
+
+	/**
+	*/
+	setUserPings(pingSettings){
+		let pingControlGroup = this.pings;
+
+		// set form group ping settings from what we got back from the DB
+		pingControlGroup.get('allPing').setValue(new FormControl(pingSettings.all_ping));
+		pingControlGroup.get('newPing').setValue(new FormControl(pingSettings.new_ping));
+		pingControlGroup.get('conflictPing').setValue(new FormControl(pingSettings.conflict_ping));
+		pingControlGroup.get('crFailPing').setValue(new FormControl(pingSettings.cr_fail_ping));
+		pingControlGroup.get('mergePing').setValue(new FormControl(pingSettings.merge_ping));
+		pingControlGroup.get('neverPing').setValue(new FormControl(pingSettings.never_ping));
+		pingControlGroup.get('qaFailPing').setValue(new FormControl(pingSettings.qa_fail_ping));
+		pingControlGroup.get('uctFailPing').setValue(new FormControl(pingSettings.uct_fail_ping));
+		pingControlGroup.markAsPristine();
 	}
 
 	/*
@@ -68,6 +97,9 @@ export class UserSettingsComponent implements OnInit {
 			teamUrl: this.user.teamUrl,
 			cache: this.user.cache
 		});
+
+		// reset user ping settings
+		this.setUserPings(this.user.userData.ping_settings);
 	}
 
 	/*
@@ -78,6 +110,7 @@ export class UserSettingsComponent implements OnInit {
 	get emberUrl(){ return this.userSettingsForm.get('emberUrl'); }
 	get teamUrl(){ return this.userSettingsForm.get('teamUrl'); }
 	get cache(){ return this.userSettingsForm.get('cache'); }
+	get pings() { return this.userSettingsForm.get('pings'); }
 
 	/*
 	*/
@@ -101,17 +134,49 @@ export class UserSettingsComponent implements OnInit {
 		this.user.setUserData('teamUrl', this.userSettingsForm.controls.teamUrl.value);
 		this.user.setUserData('cache', this.userSettingsForm.controls.cache.value);
 
-		// if we need a sync then reload page now
-		if(
-			this.userSettingsForm.controls.username.dirty
-			|| this.userSettingsForm.controls.password.dirty
-		){
-			location.reload();
 
+		if(!this.pings.pristine){
+			this.savePingSettings();
+		} else {
+			this.toastr.showToast('Saved User Settings', 'success');
+			this.reloadPage();
 		}
 	}
 
-	/*
+	/**
+	*/
+ 	reloadPage(){
+ 		const controls = this.userSettingsForm.controls
+
+ 		if(controls.username.dirty || controls.password.dirty){
+			location.reload();
+		}
+ 	}
+
+ 	/**
+ 	*/
+ 	savePingSettings(){
+ 		let pingControlGroup = this.pings;
+ 		console.log('pingControlGroup2: ', pingControlGroup);
+
+ 		let postData = {
+ 			fields: [
+ 				{name:'all_ping', value:pingControlGroup.get('allPing').value ? 1 : 0}
+ 			]
+ 		}
+
+ 		this.jira.setPingSettings(postData).subscribe(
+ 			response => {
+ 				this.toastr.showToast('Saved User Settings', 'success');
+ 				this.reloadPage();
+ 			},
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
+ 	}
+
+		
+
+	/**
 	*/
 	openUserSettings() {
 		this.modalInstance = this.modal.openModal();

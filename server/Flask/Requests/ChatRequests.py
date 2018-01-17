@@ -40,4 +40,21 @@ def send_ping(data, chat_obj, jira_obj, crucible_obj):
 	else:
 		return {"data": "Ping reset not implemented", "status": False}
 
-	
+def set_user_pings(data, sql_obj):
+	'''
+	'''
+	# check for required data
+	missing_params = FlaskUtils.check_parameters(params=data, required=['username', 'fields'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+	session = sql_obj.login()
+	response = sql_obj.set_user_pings(
+		username=data['username'],
+		fields=data['fields'],
+		session=session
+	)
+	sql_obj.logout(session=session)
+	return response
+
+

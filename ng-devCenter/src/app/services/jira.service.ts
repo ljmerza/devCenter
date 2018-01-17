@@ -138,7 +138,14 @@ export class JiraService {
 	/**
 	*/
 	getProfile(): Observable<any> {
-		return this.http.get(`${this.apiUrl}/jira/profile`);
+		return this.http.get(`${this.apiUrl}/jira/profile/${this.user.username}`);
+	}
+
+	/**
+	*/
+	setPingSettings(postData): Observable<any> {
+		postData.username = this.user.username;
+		return this.http.post(`${this.apiUrl}/chat/user_pings`, postData);
 	}
 
 	/**

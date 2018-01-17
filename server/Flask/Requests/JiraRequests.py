@@ -243,15 +243,30 @@ def find_key_by_msrp(data, jira_obj):
 	# get key from MSRP
 	return jira_obj.find_key_by_msrp(msrp=data['msrp'], cred_hash=data['cred_hash'])
 
-def get_profile(data, jira_obj):
+def get_profile(data, jira_obj, sql_obj):
 	'''
 	'''
 	# check for required data
-	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['username', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-	# get key from MSRP
-	return jira_obj.get_profile(cred_hash=data['cred_hash'])
+
+	# get user profile from Jira
+	jira_response = jira_obj.get_profile(cred_hash=data['cred_hash'])
+	if not jira_response['status']:
+		return {'status': False, 'data': f'Could not get user profile:'+ jira_response.get('data', '') }
+
+	# get user ping settings
+	session = sql_obj.login()
+	sql_response = sql_obj.get_user_ping_values(username=data['username'], session=session)
+	sql_obj.logout(session=session)
+	if not sql_response['status']:
+		return {'status': False, 'data': f'Could not get user ping settings:'+ sql_response.get('data', '') }
+
+	# merge settings to one dict and return
+	jira_response['data']['ping_settings'] = sql_response['data']
+	return jira_response
+
 
 def parse_comment(data, jira_obj):
 	'''

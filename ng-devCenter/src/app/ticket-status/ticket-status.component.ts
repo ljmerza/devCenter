@@ -41,7 +41,7 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 	ngOnChanges(changes){
 		const status = changes.ticketStatus;
 
-		if(status.currentValue != status.previousValue){
+		if(status && status.currentValue != status.previousValue){
 			this.cd.detectChanges();
 			this.validateTransitions();
 		}

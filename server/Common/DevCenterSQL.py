@@ -209,26 +209,47 @@ class DevCenterSQL():
 				session.commit()
 				return 0
 
-	def get_user_ping_values(username, session):
+	def row2dict(self, row):
 		'''
 		'''
-		row = session.query(SQLModels.Users).filter(SQLModels.Users.username == username).first()
-		if row:
-			return {'status': True, 'data': row}
-		else:
-			return {'status': False, 'data': f'DevCenterSQL::get_user_ping_values::Could not find {username}'}
+		d = {}
+		for column in row.__table__.columns:
+			d[column.name] = str(getattr(row, column.name))
+		return d
 
+	def get_user_ping_values(self, username, session):
+		'''
+		'''
+		# else get user setting and return it
+		row = session.query(SQLModels.Users).filter(SQLModels.Users.username == username).first()
+		if row is not None:
+			return {'status': True, 'data':  self.row2dict(row)}
+		else:
+			return {'status': False, 'data': row}
 
 	def set_user_ping_value(self, username, field, value, session):
 		'''
 		'''
+		fields = [{'name':field, 'value':value}]
+		return set_user_pings(self, username, fields, session)
+	
+	def set_user_pings(self, username, fields, session):
+		'''
+		'''
 		row = session.query(SQLModels.Users).filter(SQLModels.Users.username == username).first()
 		if row is not None:
-			setattr(row, field, value)
-			session.commit()
-			return {'status': True}
+			try:
+				# for each field wanting to save - update user field
+				for field in fields:
+					setattr(row, field['name'], field['value'])
+				# commit and return true when done
+				session.commit()
+				return {'status': True}
+			except Exception as err:
+				return {'status': False, 'data': f'DevCenterSQL::set_user_pings::{err}'}
 		else:
-			return {'status': False, 'data': f'DevCenterSQL::set_user_ping_value::Could not find {username} to set {field} to {value}'}
+			return {'status': False, 'data': f'DevCenterSQL::set_user_pings::Could not find username "{username}"'}
+
 
 	def reset_pings(self, ping_type, key, session):
 		'''resets all pings of any kind of failed status
