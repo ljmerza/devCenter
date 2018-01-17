@@ -70,6 +70,9 @@ export class TicketLogComponent	{
 		// show composed info message
 		this.toastr.showToast(`Running the following tasks: ${message.join(', ')}`, 'info');
 
+		// do we construct UCT not ready comment?
+		const uct_date = formObj.value.uctNotReady ? ((new Date).getTime())/1000 : 0;
+
 		// create POST body
 		let postData = {
 			comment: formObj.value.comment || '',
@@ -83,6 +86,12 @@ export class TicketLogComponent	{
 		// log work and show results
 		this.jira.workLog(postData).subscribe( 
 			(response) => {
+
+				// if we added uct date then we need to let events know
+				// there's an added 'comment'
+				if(uct_date){
+					postData.comment += uct_date;
+				}
 
 				// show success and notify table to update time
 				this.toastr.showToast('Work Log updated', 'success');

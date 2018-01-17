@@ -85,8 +85,8 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	*/
 	deleteComment(commentId) {
 		this.commentId = commentId;
-		// open modal
-		this.modalRef = this.modal.openModal()
+		// open delete modal
+		this.modalRef = this.modal.openModal();
 	}
 
 	/**

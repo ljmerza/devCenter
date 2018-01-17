@@ -41,13 +41,13 @@ class JiraComments():
 			comment = f"{comment}\n{uct_comment}"
 
 		json_data = self._set_json(comment=comment, private_comment=private_comment)
-		return self.jira_api.post_json(url=f'{self.jira_api.api_base}/issue/{key}/comment', json_data=json_data, cred_hash=cred_hash)
+		return self.jira_api.post_json(url=f'{self.jira_api.api_base}/issue/{key}/comment?expand=renderedBody', json_data=json_data, cred_hash=cred_hash)
 		
 	def edit_comment(self, key, comment_id, cred_hash, comment, private_comment=True):
 		'''
 		'''
 		json_data = self._set_json(comment=comment, private_comment=private_comment)
-		return self.jira_api.put_json(url=f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}', json_data=json_data, cred_hash=cred_hash)
+		return self.jira_api.put_json(url=f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}?expand=renderedBody', json_data=json_data, cred_hash=cred_hash)
 
 	def delete_comment(self, key, comment_id, cred_hash):
 		return self.jira_api.delete(url=f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}', cred_hash=cred_hash)

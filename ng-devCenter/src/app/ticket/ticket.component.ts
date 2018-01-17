@@ -51,13 +51,11 @@ export class TicketComponent {
 	/**
 	*/
 	commentChangeEvent({allComments, postData, qaGenUpdate, response}):void {
-
-		// console.log('{allComments, postData, qaGenUpdate, response}: ', {allComments, postData, qaGenUpdate, response});
-
 		// if comment added the push comment onto comment array
 		if(postData && postData.comment){
 			const newCommentBody = [{
-				comment: response.data.body,
+				comment: response.data.renderedBody,
+				raw_comment: response.data.body,
 				created: response.data.created,
 				id: response.data.id,
 				updated: response.data.updated,
@@ -87,7 +85,8 @@ export class TicketComponent {
 			// add new comment if given
 			if(qaGenUpdate.comment){
 				const newCommentBody = [{
-					comment: qaGenUpdate.comment.body,
+					comment: response.data.renderedBody,
+					raw_comment: response.data.body,
 					created: qaGenUpdate.comment.created,
 					id: qaGenUpdate.comment.id,
 					updated: qaGenUpdate.comment.updated,
@@ -105,13 +104,15 @@ export class TicketComponent {
 				// merge comments to new array ref
 				this.ticket.comments = [...this.ticket.comments, ...newCommentBody];
 			}
-			
+		}
+
+		if(this.commentComponentRef){
+			this.commentComponentRef.instance.comments = this.ticket.comments;
 		}
 
 		// check for removal of components
 		if(postData && postData.remove_merge){
 			this.ticket.status = 'Ready for UCT';
-			// console.log('this.ticket.status: ', this.ticket.status);
 		} else if(postData && postData.remove_conflict){
 			this.ticket.status = 'Ready for QA';
 		}
@@ -137,11 +138,8 @@ export class TicketComponent {
 	*/
 	openAdditionalDataModal(){
 
-		
-
 		// create modal if doesn't exist
 		if(!this.detailsComponentRef) {
-			console.log('openAdditionalDataModal:');
 			const factory = this.factoryResolver.resolveComponentFactory(TicketDetailsComponent);
 	    	this.detailsComponentRef = this.viewContRef.createComponent(factory);
 	    	(<TicketDetailsComponent>this.detailsComponentRef.instance).ticketDetails = this.ticketDetails;
@@ -188,6 +186,7 @@ export class TicketComponent {
 		if(!this.commentComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketCommentsModalComponent);
 	    	this.commentComponentRef = this.viewContRef.createComponent(factory);
+
 	    	// add inputs
 	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).key = this.ticket.key;
 	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).attachments = this.ticket.attachments;

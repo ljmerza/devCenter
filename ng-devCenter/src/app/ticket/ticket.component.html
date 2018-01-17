@@ -26,14 +26,14 @@
 
 <!-- state dropdown -->
 <td>
-	<dev-center-ticket-status
+	<dc-ticket-status
 		[ticketStatus]=ticket.status
 		[ticketKey]=ticket.key
 		[ticketMsrp]=ticket.msrp
 		[ticketCrucible]=ticket.crucible_id
 		[repos]=repos
 		(commentChangeEvent)="commentChangeEvent($event)"
-	></dev-center-ticket-status>
+	></dc-ticket-status>
 </td>
 
 <!-- dates -->

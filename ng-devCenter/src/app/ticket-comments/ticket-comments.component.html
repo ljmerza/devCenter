@@ -41,7 +41,7 @@
 			
 			<!-- text area comment body -->
 			<textarea [id]=comment.editId [hidden]="!comment.isEditing" 
-				class='edit-area' cols="100" rows=25 value={{comment.comment}}>
+				class='edit-area' cols="100" rows=25 value={{comment.raw_comment}}>
 			</textarea>
 		</ng-template>
 	</ngb-panel>
