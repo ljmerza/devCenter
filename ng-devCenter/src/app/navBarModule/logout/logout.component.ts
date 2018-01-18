@@ -3,6 +3,8 @@ import {
 	ElementRef, ViewContainerRef, 
 	ViewEncapsulation, ChangeDetectionStrategy
 } from '@angular/core';
+import { Router } from '@angular/router';
+
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from './../../shared/services/user.service';
@@ -16,7 +18,10 @@ import { UserService } from './../../shared/services/user.service';
 export class LogoutComponent {
 	@ViewChild('logoutModal') content:ElementRef;
 
-	constructor(public user: UserService, private modalService:NgbModal) { }
+	constructor(
+		public user: UserService, private modalService:NgbModal,
+		private router: Router
+	) { }
 
 	/*
 	*/
@@ -26,8 +31,8 @@ export class LogoutComponent {
 
 			// if we logout delete user data then reload page
 			if(confirm){
-				this.user.resetUserData();
-				window.location.reload();
+				// this.user.resetUserData();
+				this.router.navigate(['/login']);
 			}
 		});
 

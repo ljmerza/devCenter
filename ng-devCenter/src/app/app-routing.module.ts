@@ -1,23 +1,38 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TicketsComponent } from './tickets/tickets.component';
+import { TicketsComponent } from './ticketModule/tickets/tickets.component';
+import { UserSettingsComponent } from './navbarModule/user-settings/user-settings.component';
 
+import { ProfileGuard } from './profile.guard'
 
-const appRoutes: Routes = [
-	{path: '', component: TicketsComponent},
-	{path: 'jira/:filter', component: TicketsComponent},
-	{path: '', redirectTo: '/jira/mytickets', pathMatch: 'full'},
-	{path: '**', redirectTo: '/jira/mytickets'}
+const routes: Routes = [
+	{
+		path: '', 
+		component: TicketsComponent, 
+		canActivate: [ProfileGuard]
+	},
+	{
+		path: 'jira/:filter', 
+		component: TicketsComponent, 
+		canActivate: [ProfileGuard]
+	},
+	{
+		path: 'login',
+		component: UserSettingsComponent
+	},
+	{
+		path: '', 
+		redirectTo: '/jira/mytickets', 
+		pathMatch: 'full', 
+		canActivate: [ProfileGuard]
+	},
+	{
+		path: '**', 
+		redirectTo: '/jira/mytickets', 
+		canActivate: [ProfileGuard]
+	}
 ]
 
 
-@NgModule({
-	imports: [
-		RouterModule.forRoot(appRoutes, { 
-			useHash: true, 
-			// onSameUrlNavigation: 'refresh' // angular 5 option
-		})
-	],
-	exports: [RouterModule]
-})
-export class AppRoutingModule { }
+export const appRoutingProviders: any[] = [ProfileGuard];
+export const routing = RouterModule.forRoot(routes, {useHash: true});

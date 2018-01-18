@@ -1,10 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { UserService } from './../../shared/services/user.service';
+import { NavbarModalComponent } from '../navbar-modal/navbar-modal.component';
 import { JiraService } from './../../shared/services/jira.service';
 import { ToastrService } from './../../shared/services/toastr.service';
 import { ConfigService } from '../../shared/services/config.service';
+import { UserService } from '../../shared/services/user.service';
 
 import { LogoutComponent } from '../logout/logout.component';
 import { NgForm } from '@angular/forms';
@@ -17,33 +17,27 @@ declare var $ :any;
 	styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent {
-	ticketValue:string;
-	isFriday:boolean;
+	ticketValue:string; // value of msrp/key search
+	isFriday:boolean; // boolean is friday for log hours notification
 
-	@ViewChild('userSetting') private userSetting;
+	// get logout modal for confirm
 	@ViewChild(LogoutComponent) private logout: LogoutComponent;
 
-
-	/*
+	/**
 	*/
 	constructor(
-		public user: UserService,  
-		private toastr: ToastrService,
-		public jira:JiraService,
-		private modalService:NgbModal,
-		public config:ConfigService
-	) { 
+		private toastr: ToastrService, public jira:JiraService,
+		 public config:ConfigService, public user: UserService) { 
 
-		this.isFriday = (new Date()).getDay() == 5;
+		// is it current friday?
+		const isFriday = () => (new Date()).getDay() == 5;
+		this.isFriday = isFriday();
 
-		// check every two hours
-		setInterval( () => {
-			this.isFriday = (new Date()).getDay() == 5;
-		}, 60*60*2)
-		
+		// check every hour
+		setInterval(isFriday, 60*60*1);
 	}
 
-	/*
+	/**
 	*/
 	public searchTicket(formObj: NgForm):void {
 
@@ -63,14 +57,14 @@ export class NavBarComponent {
 			
 		} else {
 			this.jira.searchTicket(formData.ticketValue)
-			.subscribe( 
+			.subscribe(
 				data => window.open(`${this.config.jiraUrl}/browse/${data.data}`),
 				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 			);
 		}
 	}
 
-	/*
+	/**
 	*/
 	resetUserSettings(){
 		this.logout.resetUserSettings();

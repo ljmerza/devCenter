@@ -11,6 +11,7 @@ import { SharedModule } from '../shared/shared.module';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { LogoutComponent } from './logout/logout.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
+import { NavbarModalComponent } from './navbar-modal/navbar-modal.component';
 
 // directives
 import { DropdownSubmenuDirective, DropdownSubmenuMenuDirective } from './dropdown-submenu.directive';
@@ -23,8 +24,9 @@ import { DropdownSubmenuDirective, DropdownSubmenuMenuDirective } from './dropdo
 	],
 	declarations: [
 		NavBarComponent, LogoutComponent, UserSettingsComponent,
-		DropdownSubmenuDirective, DropdownSubmenuMenuDirective
+		DropdownSubmenuDirective, DropdownSubmenuMenuDirective,
+		NavbarModalComponent
 	],
-	exports: [NavBarComponent]
+	exports: [NavBarComponent, UserSettingsComponent]
 })
 export class NavbarModule {}

@@ -1,4 +1,4 @@
-<dev-center-modal (modalEvent)=closeCommentModal() [customModalCss]=customModalCss>
+<dev-center-modal (modalEvent)="closeModal()" [customModalCss]=customModalCss>
 
 	<div class='modal-text'>
 		<h4 class="modal-title">Comments for {{key}}</h4>
@@ -14,7 +14,7 @@
 	</span>
 
 	<span class='modal-footer'>
-		<button type="button" class="btn btn-outline-danger" (click)="closeCommentModal()">Close</button>
+		<button type="button" class="btn btn-outline-danger" (click)="closeModal()">Close</button>
 	</span>
 	
 </dev-center-modal>

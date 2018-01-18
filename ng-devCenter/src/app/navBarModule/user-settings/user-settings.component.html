@@ -1,53 +1,55 @@
-<dev-center-modal [title]=statusName (modalEvent)=submit($event)>
-
-	<div class='modal-text'>
-		<h4 class="modal-title">User Settings</h4>
-	</div>
-
-	<span class='modal-body'>
-		<form [formGroup]="userSettingsForm">
-			<div class="modal-body">
+<div [ngClass]="{'container login': isLogin == true}">
+	<div [ngClass]="{'row': isLogin == true}">
+		<div class='col-sm-3' *ngIf='isLogin == true'></div>
+		<div [ngClass]="{'col-sm-6': isLogin == true}">
+			<form [formGroup]="userSettingsForm">
 				<!-- username -->
 				<div class="form-group">
 					<label for="username">Username:</label>
 					<input formControlName="username" placeholder="Enter username"
-						type="text" class="form-control" [class.invalid]="username.invalid">
+					type="text" class="form-control" [class.invalid]="username.invalid">
+					<!-- invalids -->
 					<div class='text-danger' *ngIf='username.invalid'>
 						<span *ngIf="username.errors.required">Username required</span>
 						<span *ngIf="!username.errors.required && username.errors.usernameValidator">Invalid username</span>
 					</div>
 				</div>
+
 				<!-- password -->
 				<div class="form-group">
 					<label for="password">Password:</label>
 					<input type="password" class="form-control" [class.invalid]="password.invalid"
-							formControlName='password' placeholder="Password">
+					formControlName='password' placeholder="Password">
+					<!-- invalids -->
 					<div class='text-danger' *ngIf='password.invalid'>
 						<span *ngIf="password.errors.required">Password required</span>
 					</div>
 				</div>
+
 				<!-- port -->
 				<div class="form-group">
 					<label for="port">Port:</label>
 					<input type="text" class="form-control" [class.invalid]="port.invalid" 
-							formControlName='port' placeholder="Port">
+					formControlName='port' placeholder="Port">
+					<!-- invalids -->
 					<div class='text-danger' *ngIf='port.invalid'>
 						<span *ngIf="port.errors.required">Port required</span>
 						<span *ngIf="!port.errors.required && port.errors.portValidator">Invalid port</span>
 					</div>
 				</div>
+
 				<!-- ember url -->
 				<div class="form-group">
 					<label for="emberUrl">Ember Url:</label>
+					<!-- ember select -->
 					<select formControlName="emberUrl" class='form-control'>
 						<option disabled>Please choose...</option>
-						<option *ngFor="let emberBuild of user.emberBuilds"
-							[ngValue]="emberBuild.value"
-							[attr.selected]="emberBuild.value === emberUrl ? true : null"
-						>
+						<option *ngFor="let emberBuild of user.emberBuilds" [ngValue]="emberBuild.value"
+						[attr.selected]="emberBuild.value === emberUrl ? true : null">
 							{{emberBuild.label}}
 						</option>
 					</select>
+					<!-- invalids -->
 					<div class='text-danger' *ngIf='emberUrl.invalid'>
 						<span *ngIf="emberUrl.errors.required">Ember URL required</span>
 					</div>
@@ -56,23 +58,26 @@
 				<!-- team ember url -->
 				<div class="form-group">
 					<label for="teamUrl">TeamDB Ember Url:</label>
+					<!-- team ember select -->
 					<select formControlName="teamUrl" class='form-control'>
 						<option disabled>Please choose...</option>
-						<option *ngFor="let emberBuild of user.emberBuilds"
-							[ngValue]="emberBuild.value"
-							[attr.selected]="emberBuild.value === teamUrl ? true : null">
+						<option *ngFor="let emberBuild of user.emberBuilds" [ngValue]="emberBuild.value"
+						[attr.selected]="emberBuild.value === teamUrl ? true : null">
 							{{emberBuild.label}}
 						</option>
 					</select>
+					<!-- invalids -->
 					<div class='text-danger' *ngIf='teamUrl.invalid'>
 						<span *ngIf="teamUrl.errors.required">Team URL required</span>
 					</div>
 				</div>
 
-				<!-- cache query param -->
+				<!-- checkboxes -->
 				<div class="form-group">
 					<div class="row">
+						<!-- col 1 -->
 						<div class="col-sm-6">
+							<!-- cache ember -->
 							<div class="form-check">
 								<label class="form-check-label" for='cache'>
 									<input class="form-check-input" type="checkbox" name='cache' formControlName="cache">
@@ -80,9 +85,11 @@
 								</label>
 							</div>
 						</div>
+						<!-- col 2 -->
 						<div class="col-sm-6">
-							<div formGroupName="pings">
-								<div class="form-check" >
+							<div formGroupName="pings" *ngIf='isLogin == false'>
+								<!-- ticket pings -->
+								<div class="form-check">
 									<label class="form-check-label" for='allPing'>
 										<input class="form-check-input" type="checkbox" name='allPing' formControlName="allPing">
 										Ping My Ticket Updates
@@ -92,13 +99,13 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		</form>
-	</span>
+				<!-- end checkboxes -->
+				<span *ngIf='isLogin == true' class='buttons'>
+					<button type="submit" class="btn btn-outline-primary align-right" (click)="submit(true)">Create Profile</button>
+				</span>
 
-	<span class='modal-footer'>
-		<button type="submit" class="btn btn-outline-primary"  (click)="submit('save')">Save</button>
-		<button type="submit" class="btn btn-outline-danger"  (click)="submit('')">Cancel</button>
-	</span>
-	
-</dev-center-modal>
+			</form>
+		</div>
+	</div>
+</div>
+

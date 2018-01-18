@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 
-import { ModalComponent } from './../../shared/modal/modal.component';
 
 import { UserService } from './../../shared/services/user.service'
 import { JiraService } from './../../shared/services/jira.service';
@@ -15,14 +14,12 @@ import { ToastrService } from './../../shared/services/toastr.service';
 })
 export class UserSettingsComponent implements OnInit {
 	userSettingsForm: FormGroup;
-	modalInstance: NgbModalRef;
-	statusName:string = 'User Settings';
-	@ViewChild('userModal') private userModal;
-	@ViewChild(ModalComponent) modal: ModalComponent;
+	@Input() isLogin:boolean = true;
 
 	constructor(
 		public user: UserService, private jira: JiraService, 
-		private toastr: ToastrService
+		private toastr: ToastrService, public route: ActivatedRoute,
+		private router: Router
 	) {
 
 		// create form group
@@ -53,20 +50,41 @@ export class UserSettingsComponent implements OnInit {
 	/*
 	*/
 	ngOnInit() {
-		if( this.user.needRequiredCredentials() ){
-			this.openUserSettings();
-		} else {
-			this.jira.getProfile().subscribe(response => {
-				if(response && response.data){
-					this.user.userData = response.data;
-					this.user.userPicture = response.data.avatarUrls['48x48'];
 
-					this.setUserPings(this.user.userData.ping_settings)
-				}	
-			},
-				error => this.toastr.showToast(`Could not retrieve user profile: ${error}`,'error')
-			)
-		}
+		console.log('this.router', this.router, this.route)
+		// get route url
+		this.route.url.subscribe( (urlSegment:UrlSegment[]) => {
+
+			console.log('urlSegment', urlSegment[0].path)
+
+			const hasCreds = !this.user.needRequiredCredentials();
+
+			// if we are in logiun path and dont needs creds redirect
+			if(hasCreds && urlSegment.length > 0 && urlSegment[0].path === 'login'){
+				
+				// if saved URL use to that else redirect to home
+				if(this.user.redirectUrl) {
+					this.router.navigate([this.user.redirectUrl]);
+				} else {
+					this.router.navigate(['/']);
+				}
+			}
+			
+			// if we have creds then try to get profile data
+			if(hasCreds){
+				this.jira.getProfile().subscribe(
+					response => {
+						if(response && response.data){
+							this.user.userData = response.data;
+							this.user.userPicture = response.data.avatarUrls['48x48'];
+
+							this.setUserPings(this.user.userData.ping_settings)
+						}
+					},
+					error => this.toastr.showToast(`Could not retrieve user profile: ${error}`,'error')
+				)
+			}
+		});
 	}
 
 	/**
@@ -98,8 +116,8 @@ export class UserSettingsComponent implements OnInit {
 			cache: this.user.cache
 		});
 
-		// reset user ping settings
-		this.setUserPings(this.user.userData.ping_settings);
+		// reset user ping settings if they exist
+		if(this.user.userData) this.setUserPings(this.user.userData.ping_settings);
 	}
 
 	/*
@@ -115,7 +133,6 @@ export class UserSettingsComponent implements OnInit {
 	/*
 	*/
 	submit(submitType){
-		this.modalInstance.close();
 
 		// just close form if no submit type
 		if(!submitType){
@@ -134,7 +151,6 @@ export class UserSettingsComponent implements OnInit {
 		this.user.setUserData('teamUrl', this.userSettingsForm.controls.teamUrl.value);
 		this.user.setUserData('cache', this.userSettingsForm.controls.cache.value);
 
-
 		if(!this.pings.pristine){
 			this.savePingSettings();
 		} else {
@@ -146,10 +162,29 @@ export class UserSettingsComponent implements OnInit {
 	/**
 	*/
  	reloadPage(){
- 		const controls = this.userSettingsForm.controls
 
- 		if(controls.username.dirty || controls.password.dirty){
+ 		// reload values saved into form
+ 		this.resetForm();
+
+ 		const controls = this.userSettingsForm.controls;
+ 		// if we were given a redirect URL then redirect to that
+ 		if(this.user.redirectUrl){
+ 			// save and reset redirect URL
+ 			const url = this.user.redirectUrl;
+ 			this.user.redirectUrl = '';
+
+ 			// redirect to URL
+ 			this.router.navigate([url]);
+ 			return;
+ 		}
+
+ 		// is username or password is dirty we need to reload on modal
+ 		if((controls.username.dirty || controls.password.dirty) && !this.isLogin){
 			location.reload();
+
+		} else if(controls.username.dirty || controls.password.dirty){
+			// if username/password dirty then redirect
+			this.router.navigate(['/']);
 		}
  	}
 
@@ -157,7 +192,6 @@ export class UserSettingsComponent implements OnInit {
  	*/
  	savePingSettings(){
  		let pingControlGroup = this.pings;
- 		console.log('pingControlGroup2: ', pingControlGroup);
 
  		let postData = {
  			fields: [
@@ -173,14 +207,6 @@ export class UserSettingsComponent implements OnInit {
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
  	}
-
-		
-
-	/**
-	*/
-	openUserSettings() {
-		this.modalInstance = this.modal.openModal();
-	}
 
 	/*
 	*/

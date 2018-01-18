@@ -181,7 +181,7 @@ export class TicketComponent {
 
 	/**
 	*/
-	openCommentModal() {
+	openModal() {
 		// create modal if doesn't exist
 		if(!this.commentComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketCommentsModalComponent);
@@ -198,7 +198,7 @@ export class TicketComponent {
 		}
 		
 		// open modal on next event loop to allow inputs to settle
-    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).openCommentModal();
+    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).openModal();
 	}
 
 	/**

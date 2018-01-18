@@ -8,14 +8,14 @@
 		<ul class="navbar-nav mr-auto">
 
 			<!-- itrack2 links -->
-			<li ngbDropdown class="d-inline-block">
+			<li ngbDropdown class="d-inline-block" *ngIf="!user.needRequiredCredentials()">
 				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Jira Links</a>
 
 				<ul ngbDropdownMenu aria-labelledby="devDropdown">
 
 					<!-- ticket lists -->
 					<li *ngFor='let link of config.teamTicketListNames'>
-						<a class="dropdown-item" *ngIf='link.link; else dividerTickets' [routerLink]="['/jira', link.link]">
+						<a class="dropdown-item" *ngIf='link.link; else dividerTickets' [routerLink]="['/jira', link.link]" routerLinkActive="active">
 							{{link.name}}
 						</a>
 						<ng-template #dividerTickets><div class="dropdown-divider"></div></ng-template>
@@ -60,7 +60,7 @@
 
 
 			<!-- dev links -->	
-			<li ngbDropdown class="d-inline-block">
+			<li ngbDropdown class="d-inline-block" *ngIf="!user.needRequiredCredentials()">
 				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Dev Links</a>
 				<ul ngbDropdownMenu aria-labelledby="devDropdown">
 
@@ -217,7 +217,8 @@
 		</ul>
 
 		<!-- jira ticket search -->
-		<form class="form-inline mr-30" #searchForm="ngForm" (ngSubmit)="searchTicket(searchForm)">
+		<form class="form-inline mr-30" #searchForm="ngForm" 
+		(ngSubmit)="searchTicket(searchForm)" *ngIf="!user.needRequiredCredentials()">
 			<input class="form-control mr-sm-2" type="text" placeholder="Search Jira ticket" 
 			aria-label="Search" name="ticketValue" [(ngModel)]="ticketValue">
 			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -225,19 +226,16 @@
 	
 		<!-- user dropdown -->
 		<ul class="navbar-nav position-relative mr-30">
-			<li ngbDropdown placement="bottom-right" class="d-inline-block" *ngIf='user.username'>
+			<li ngbDropdown placement="bottom-right" class="d-inline-block" *ngIf='!user.needRequiredCredentials()'>
 				<a class="nav-link dropdown-toggle" id="userDropdown" ngbDropdownToggle>
 					<img src={{user.userPicture}} alt="">
 					{{user.userData?.displayName}}
 				</a>
 				<div ngbDropdownMenu aria-labelledby="userDropdown">
-					<li><a class="dropdown-item" (click)='userSetting.openUserSettings()'>User Settings</a></li>
+					<li><a class="dropdown-item" (click)='userSetting.openModal()'>User Settings</a></li>
 					<li><div class="dropdown-divider"></div></li>
 					<li><a class="dropdown-item"(click)='resetUserSettings(logoutModal)'>Logout</a></li>
 				</div>
-			</li>
-			<li class="nav-item" *ngIf='!user.username'>
-				<a class="nav-link">Login</a>
 			</li>
 		</ul>
 	</div>
@@ -247,6 +245,6 @@
 
 
 
-<dc-user-settings #userSetting></dc-user-settings>
+<dc-user-settings-modal #userSetting></dc-user-settings-modal>
 <dc-logout></dc-logout>
 

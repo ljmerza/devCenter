@@ -4,6 +4,7 @@ import { ConfigService } from './config.service';
 
 @Injectable()
 export class UserService {
+	public redirectUrl:string;
 
 	public username:string;
 	public port:string;
@@ -99,7 +100,7 @@ export class UserService {
 
 	}
 
-	/*
+	/**
 	*/
 	public needRequiredCredentials() {
 		return !(this.username && this.password && this.port && this.emberUrl && this.teamUrl);

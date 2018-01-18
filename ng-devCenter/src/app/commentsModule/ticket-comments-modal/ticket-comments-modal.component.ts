@@ -31,14 +31,14 @@ export class TicketCommentsModalComponent {
 
   	/**
   	*/
-	openCommentModal(): void {
+	openModal(): void {
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
 	}
 
 	/**
 	*/
-	closeCommentModal() {
+	closeModal() {
 		this.modalRef.close();
 	}
 

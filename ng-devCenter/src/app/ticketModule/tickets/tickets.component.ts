@@ -4,11 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject, Observable, Subscription } from 'rxjs';
 import 'rxjs/add/observable/interval';
 
-import { UserService } from './../shared/services/user.service';
-import { JiraService } from './../shared/services/jira.service';
-import { ToastrService } from './../shared/services/toastr.service';
-import { WebSocketService } from './../shared/services/web-socket.service';
-import { LocalStorageService } from './../shared/services/local-storage.service';
+import { UserService } from './../../shared/services/user.service';
+import { JiraService } from './../../shared/services/jira.service';
+import { ToastrService } from './../../shared/services/toastr.service';
+import { WebSocketService } from './../../shared/services/web-socket.service';
+import { LocalStorageService } from './../../shared/services/local-storage.service';
 
 
 import { DataTableDirective } from 'angular-datatables';
@@ -17,7 +17,7 @@ import { NgProgress } from 'ngx-progressbar';
 import * as $ from 'jquery';
 
 @Component({
-	selector: 'app-tickets',
+	selector: 'dc-tickets',
 	templateUrl: './tickets.component.html',
 	styleUrls: ['./tickets.component.scss'],
 	encapsulation: ViewEncapsulation.None
