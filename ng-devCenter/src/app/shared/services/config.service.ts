@@ -29,9 +29,7 @@ export class ConfigService {
 	qa = encodeURIComponent(this.projectsJql + 'AND status in ("Ready for QA", "IN QA")');
 
 	uctready = encodeURIComponent(this.projectsJql + ' AND issuetype != Epic AND status IN ("Ready for UCT", "IN UCT") AND type != "Technical task" AND type != Sub-task AND assignee != ja2892');
-	
 	uctreadyNoRoccApollo = encodeURIComponent(this.projectsJql + ' AND issuetype != Epic AND status = "Ready for UCT" AND type != "Technical task" AND type != Sub-task AND assignee != ja2892 AND ("Epic Link" not in (apollo, ROCC) OR "Epic Link" is EMPTY)');
-	
 	allopen = encodeURIComponent(this.projectsJql+' AND status in ("ON HOLD", "IN DEVELOPMENT", "IN SPRINT", "Ready for Release", "Code Review", "Ready For QA", "IN QA", "IN UCT", "READY FOR UCT") OR assignee in (wc591w)');
 
 	sme = encodeURIComponent('(sprint in (3187, 3183, 3182, 3676, 3185, 3180, 3684, 3186, 3432, 3968) OR assignee in (dh6094, bb486m, cc216t, jc001b, bp215n, tt0163, sm6821, br591w, sr6855, na0952)) AND status != closed');
@@ -39,8 +37,7 @@ export class ConfigService {
 	scrum = encodeURIComponent('project = BDEUT AND status != closed');
 	teamdb_ember = encodeURIComponent(' labels = NewGUI');
 
-	dtiUnassigned = encodeURIComponent('(project in (AQE, "Customer DB", "Desktop Integration", "Taskmaster Dashboard", TeamDB, TQI, UPM, "Unified Desktop", WAM) OR project in (SASHA) AND labels = "Function" OR project in (SABLE) AND labels = "Function") AND status != closed AND issuetype != Epic AND assignee = EMPTY AND status != TRIAGE AND type != "Technical task" AND type != Sub-task ORDER BY "Ticket ID" DESC');
-
+	unassigned = encodeURIComponent('(project in (AQE, "Customer DB", "Desktop Integration", "Taskmaster Dashboard", TeamDB, TQI, UPM, "Unified Desktop", WAM) OR project in (SASHA) AND labels = "Function" OR project in (SABLE) AND labels = "Function") AND status != closed AND issuetype != Epic AND assignee = EMPTY AND status != TRIAGE AND type != "Technical task" AND type != Sub-task ORDER BY "Ticket ID" DESC');
 	apiDefects = encodeURIComponent(`(project in (AQE, "Customer DB", "Desktop Integration", "Taskmaster Dashboard", TeamDB, TQI, UPM, "Unified Desktop", WAM) OR project in (SASHA) AND labels = "Function" OR project in (SABLE) AND labels = "Function") AND status != closed AND issuetype != Epic AND component = "API Defect" AND type != "Technical task" ORDER BY status DESC, Rank ASC`);
 
 	// projects
@@ -51,9 +48,9 @@ export class ConfigService {
 	apigateway = encodeURIComponent('project = BPO AND component = "API Gateway" and status != Closed');
 	roccathonTickets = encodeURIComponent(`"Epic Link" ='ROCC-A-THON Program'`);
 	orchestration = encodeURIComponent(`project in ("GCS BizOps - Orchestration") AND status != closed`);
-	innovation = encodeURIComponent(`labels = "InnovationExpress(IX)"`);
+	innovation = encodeURIComponent(`project = "Innovation Express" and status != closed`);
 	sable = encodeURIComponent(`project = "SABLE" and status != closed`);
-	cartProject = encodeURIComponent(`project in  = "InnovationExpress(IX)"`);
+	cart = encodeURIComponent(`project = CART and status != closed`);
 	orderautomation = encodeURIComponent(`"Program Name" ="Order Automation" and status != Closed`);
 	apiTeamAccelerate = encodeURIComponent(`project in ("API Team") and status != closed and "Epic Link" in (GCSAPI-380, GCSAPI-896)`);
 	
@@ -61,8 +58,8 @@ export class ConfigService {
 
 	allProjectNames = [
 		{link: 'teamdb_ember', name: 'TeamDB Ember', displayName: 'TeamDB Ember'},
-		{link: 'rocc', name: 'ROCC Automation', displayName: 'ROCC Automation'},
-		{link: 'roccathon', name: 'ROCC-A-THON', displayName: 'Roccathon'},
+		{link: 'roccathonTickets', name: 'ROCC Automation', displayName: 'ROCC Automation'},
+		{link: 'rocc', name: 'ROCC-A-THON', displayName: 'Roccathon'},
 		{link: 'apollo', name: 'Apollo', displayName: 'Apollo'},
 		{link: 'starship', name: 'Starship', displayName: 'Starship'},
 		{link: 'rds', name: 'RDS', displayName: 'RDS'},
@@ -71,8 +68,10 @@ export class ConfigService {
 		{link: 'innovation', name: 'Innovation Express', displayName: 'Innovation Express'},
 		{link: 'sable', name: 'SABLE', displayName: 'SABLE'},
 		{link: 'cart', name: 'CART', displayName: 'CART'},
-		{link: 'apiud', name: 'API UD', displayName: 'API Team Accelerate'},
+		{link: 'apiTeamAccelerate', name: 'API UD', displayName: 'API Team Accelerate'},
 		{link: 'orderautomation', name: 'Order Automation', displayName: 'Order Automation'},
+		{link: 'unassigned', name: 'Unassigned Tickets', displayName: 'Unassigned'},
+		{link: 'apiDefects', name: 'API Defects', displayName: 'API Defect'},
 	];
 
 	teamTicketListNames = [
@@ -99,7 +98,7 @@ export class ConfigService {
 		{link: 'apiDefects', name: 'API Defects', displayName: 'API Defects'},
 	];
 	
-	pmTickets = encodeURIComponent('resolution = Unresolved AND assignee in ( wc591w, lk2973)');
+	pmTickets = encodeURIComponent(this.projectsJql + ` resolution = Unresolved AND assignee in (wc591w, lk2973)`);
 	allmy = encodeURIComponent(`assignee = ${this.username} ORDER BY updated DESC`);
 	mytickets = encodeURIComponent(`assignee = ${this.username} AND resolution = unresolved ORDER BY due DESC`);
 

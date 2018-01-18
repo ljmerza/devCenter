@@ -27,7 +27,6 @@ export class JiraService {
 	/**
 	*/
 	getFilterData(jiraListType:string, skipCache:boolean=false): Observable<any> {
-
 		// try to get ticket list data
 		const allProjectNames = this.config.allProjectNames.filter(ticketData=>ticketData.link===jiraListType);
 		const teamTicketListNames = this.config.teamTicketListNames.filter(ticketData=>ticketData.link===jiraListType);
