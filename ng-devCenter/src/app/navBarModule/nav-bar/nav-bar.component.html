@@ -1,0 +1,252 @@
+<nav class="navbar fixed-top navbar-expand-lg z-index-2">
+	<a [routerLink]="['/']" class="navbar-brand">Dev Center</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+
+			<!-- itrack2 links -->
+			<li ngbDropdown class="d-inline-block">
+				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Jira Links</a>
+
+				<ul ngbDropdownMenu aria-labelledby="devDropdown">
+
+					<!-- ticket lists -->
+					<li *ngFor='let link of config.teamTicketListNames'>
+						<a class="dropdown-item" *ngIf='link.link; else dividerTickets' [routerLink]="['/jira', link.link]">
+							{{link.name}}
+						</a>
+						<ng-template #dividerTickets><div class="dropdown-divider"></div></ng-template>
+					</li>
+					
+					<!-- projects -->
+					<li class="dropdown-submenu" dropdownSubmenu>
+						<a class="dropdown-item" data-toggle="dropdown">
+							Projects
+							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
+						</a>
+						<ul class="dropdown-menu" dropdownSubmenuMenu dropdownSubmenuMenu>
+							<li *ngFor='let project of config.allProjectNames'>
+								<a class="dropdown-item" [routerLink]="['/jira', project.link]">
+									{{project.name}}
+								</a>
+							</li>
+						</ul>
+					</li>
+
+					<!-- other project links -->
+					<li class="dropdown-submenu" dropdownSubmenu>
+						<a class="dropdown-item" data-toggle="dropdown">
+							Other Lists
+							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
+						</a>
+						<ul class="dropdown-menu" dropdownSubmenuMenu>
+							<li *ngFor='let project of config.otherTicketListNames'>
+								<a class="dropdown-item" [routerLink]="['/jira', project.link]">
+									{{project.name}}
+								</a>
+							</li>
+						</ul>
+					</li>
+
+					<li><div class="dropdown-divider"></div></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.crucibleUrl}}{{config.cruciblePath}}">Crucible</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.codeCloudUrl}}{{config.codeCloudPath}}">Code Cloud</a></li>
+					<li><a class="dropdown-item" target="_blank" href="{{config.jiraUrl}}{{config.scrumBoardPath}}">Scrum Board</a></li>
+				</ul>
+			</li>
+
+
+			<!-- dev links -->	
+			<li ngbDropdown class="d-inline-block">
+				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Dev Links</a>
+				<ul ngbDropdownMenu aria-labelledby="devDropdown">
+
+					<!-- ember links -->
+					<li class="dropdown-submenu" dropdownSubmenu>
+						<a class="dropdown-item" data-toggle="dropdown">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+						<ul class="dropdown-menu" dropdownSubmenuMenu>
+							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[0].link}}">{{config.ember_links[0].name}}</a></li>
+							
+							<!-- orders list -->
+							<li class="dropdown-submenu" dropdownSubmenu>
+								<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+								<ul class="dropdown-menu" dropdownSubmenuMenu>
+									<li>
+										<a *ngFor='let navLink of config.orderLinks' class="dropdown-item"  target="_blank" 
+										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}">
+											{{navLink.name}}
+										</a>
+									</li>
+									<!-- misc orders -->
+									<li class="dropdown-submenu" dropdownSubmenu>
+										<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+										<ul class="dropdown-menu" dropdownSubmenuMenu>
+											<li>
+												<a *ngFor='let navLink of config.otherOrders' class="dropdown-item" target="_blank" 
+												href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}">
+													{{navLink.name}}
+												</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+
+							<!-- WFA list -->
+							<li class="dropdown-submenu" dropdownSubmenu>
+								<a class="dropdown-item" data-toggle="dropdown">WFA Tickets <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+								<ul class="dropdown-menu" dropdownSubmenuMenu>
+									<li><a *ngFor='let navLink of config.wfaLinks' class="dropdown-item" target="_blank" 
+										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}"
+										>{{navLink.name}}
+									</a></li>
+								</ul>
+							</li>
+
+							<!-- ember list -->
+							<li><a *ngFor='let navLink of config.ember_links' class="dropdown-item" target="_blank" 
+								href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}"
+								>{{navLink.name}}
+							</a></li>
+						</ul>
+					</li>
+					
+					<!-- team ember links -->
+					<li class="dropdown-submenu" dropdownSubmenu>
+						<a class="dropdown-item" data-toggle="dropdown">TeamDB Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+						<ul class="dropdown-menu" dropdownSubmenuMenu>
+							<li>
+								<a *ngFor='let navLink of config.teamdb_ember_links' class="dropdown-item" target="_blank" 
+								href="{{user.teamUrl}}:{{user.teamPort}}{{navLink.link}}{{user.cache}}">
+									{{navLink.name}}
+								</a>
+							</li>
+						</ul>
+					</li>
+
+					<!-- dev links -->
+					<li>
+						<a *ngFor='let navLink of config.dev_links' class="dropdown-item" target="_blank" 
+						href="{{config.devUrl}}:{{user.port}}{{navLink.link}}">
+							{{navLink.name}}
+						</a>
+					</li>
+				</ul>
+			</li>
+
+			<!-- prod links -->
+			<li ngbDropdown class="d-inline-block">
+				<a class="nav-link dropdown-toggle" id="prodDropdown" ngbDropdownToggle>Prod Links</a>
+				<div ngbDropdownMenu aria-labelledby="prodDropdown">
+					<a *ngFor='let navLink of config.prod_links' class="dropdown-item" target="_blank" href="{{navLink.link}}">
+						{{navLink.name}}
+					</a>
+				</div>
+			</li>
+
+			<!-- beta links -->
+			<li ngbDropdown class="d-inline-block">
+				<a class="nav-link dropdown-toggle" id="betaDropdown" ngbDropdownToggle>Beta Links</a>
+				<div ngbDropdownMenu aria-labelledby="betaDropdown">
+					<a *ngFor='let navLink of config.beta_links' class="dropdown-item" target="_blank" href="{{navLink.link}}">
+						{{navLink.name}}
+					</a>
+				</div>
+			</li>
+
+			<!-- wiki links -->
+			<li ngbDropdown class="d-inline-block">
+				<a class="nav-link dropdown-toggle" id="wikiDropdown" ngbDropdownToggle>Helpful Links</a>
+				<ul ngbDropdownMenu aria-labelledby="wikiDropdown">
+
+					<li *ngFor='let link of config.wikiLinks' [ngClass]="{'dropdown-submenu': link.links}" dropdownSubmenu>
+						
+						<!-- links -->
+						<a *ngIf='link.link && link.wiki' class="dropdown-item" target="_blank" href="{{config.wikiUrl}}{{link.link}}">
+							{{link.name}}
+						</a>
+						<a *ngIf='link.link && !link.wiki' class="dropdown-item" target="_blank" href="{{link.link}}">
+							{{link.name}}
+						</a>
+
+						<!-- divider -->
+						<div *ngIf='link.divider' class="dropdown-divider"></div>
+
+						<!-- dropdowns -->
+						<a class="dropdown-item" data-toggle="dropdown" *ngIf='link.links'>
+							{{link.name}}
+							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
+						</a>
+						<ul class="dropdown-menu" dropdownSubmenuMenu *ngIf='link.links'>
+							<li *ngFor='let sublink of link.links'>
+								<a *ngIf='sublink.link && sublink.wiki; else subNoWiki'
+								class="dropdown-item" target="_blank" href="{{config.wikiUrl}}{{sublink.link}}">
+									{{sublink.name}}
+								</a>
+								<ng-template #subNoWiki>
+									<a class="dropdown-item" target="_blank" href="{{sublink.link}}">
+										{{sublink.name}}
+									</a>
+								</ng-template>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+
+			<!-- misc top level links -->
+			<li class="nav-item">
+				<a class="nav-link" target="_blank" href="{{config.msrpLink}}">MSRP</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" target="_blank" href="{{config.myApex}}">My APEX</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" target="_blank" href="{{config.jiraUrl}}">JIRA</a>
+			</li>
+			
+			<!-- log your hours -->
+			<li class="nav-item" *ngIf='isFriday'>
+				<a class="nav-link confirm_selection" target="_blank" href="{{config.myApex}}">
+					Log Your Hours
+				</a>
+			</li>
+		</ul>
+
+		<!-- jira ticket search -->
+		<form class="form-inline mr-30" #searchForm="ngForm" (ngSubmit)="searchTicket(searchForm)">
+			<input class="form-control mr-sm-2" type="text" placeholder="Search Jira ticket" 
+			aria-label="Search" name="ticketValue" [(ngModel)]="ticketValue">
+			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+		</form>
+	
+		<!-- user dropdown -->
+		<ul class="navbar-nav position-relative mr-30">
+			<li ngbDropdown placement="bottom-right" class="d-inline-block" *ngIf='user.username'>
+				<a class="nav-link dropdown-toggle" id="userDropdown" ngbDropdownToggle>
+					<img src={{user.userPicture}} alt="">
+					{{user.userData?.displayName}}
+				</a>
+				<div ngbDropdownMenu aria-labelledby="userDropdown">
+					<li><a class="dropdown-item" (click)='userSetting.openUserSettings()'>User Settings</a></li>
+					<li><div class="dropdown-divider"></div></li>
+					<li><a class="dropdown-item"(click)='resetUserSettings(logoutModal)'>Logout</a></li>
+				</div>
+			</li>
+			<li class="nav-item" *ngIf='!user.username'>
+				<a class="nav-link">Login</a>
+			</li>
+		</ul>
+	</div>
+</nav>
+
+
+
+
+
+<dc-user-settings #userSetting></dc-user-settings>
+<dc-logout></dc-logout>
+

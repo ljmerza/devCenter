@@ -4,11 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject, Observable, Subscription } from 'rxjs';
 import 'rxjs/add/observable/interval';
 
-import { UserService } from './../services/user.service';
-import { JiraService } from './../services/jira.service';
-import { ToastrService } from './../services/toastr.service';
-import { WebSocketService } from './../services/web-socket.service';
-import { LocalStorageService } from './../services/local-storage.service';
+import { UserService } from './../shared/services/user.service';
+import { JiraService } from './../shared/services/jira.service';
+import { ToastrService } from './../shared/services/toastr.service';
+import { WebSocketService } from './../shared/services/web-socket.service';
+import { LocalStorageService } from './../shared/services/local-storage.service';
 
 
 import { DataTableDirective } from 'angular-datatables';
