@@ -35,4 +35,4 @@ const routes: Routes = [
 
 
 export const appRoutingProviders: any[] = [ProfileGuard];
-export const routing = RouterModule.forRoot(routes, {useHash: true});
+export const routing = RouterModule.forRoot(routes);
