@@ -55,16 +55,15 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 				comment_response['data'] += ' but Crucible created: ' + cru_response['data']
 				return Response(comment_response, mimetype='application/json')
 
-			# add PCR needed component if wanted
+			# add PCR needed component and code reivew status if wanted
 			if data['autoPCR']:
+				# change component to PCR
 				data['status_type'] = 'pcrNeeded'
 				pcr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 				if not pcr_response['status']:
 					pcr_response['data'] += ' but Crucible created: ' + cru_response['data']
 					return Response(pcr_response, mimetype='application/json')
-
-			# add CR status if wanted
-			if data['autoCR']:
+				# then change status to CR
 				data['status_type'] = 'cr'
 				cr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 				if not cr_response['status']:

@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 import os
 import time
 import datetime
@@ -71,21 +70,19 @@ automationBot = AutomationBot.AutomationBot(
 
 ########################################################################
 
-while True:
-	# if between 6am-7pm monday-friday then update tickets else wait a minute
-	# prod server is in GMT so time shift if we are in prod mode
-	d = datetime.datetime.now()
-	if d.hour in range(6+time_shift, 19+time_shift) and d.isoweekday() in range(1, 6):
-		response = automationBot.update_jira()
+# if between 6am-7pm monday-friday then update tickets else wait a minute
+# prod server is in GMT so time shift if we are in prod mode
+d = datetime.datetime.now()
+if d.hour in range(6+time_shift, 19+time_shift) and d.isoweekday() in range(1, 6):
+	response = automationBot.update_jira()
 
-		# if error print it else send updated data to sockets
-		if not response['status']:
-			print('ERROR:', response['data'])
-		else:
-			session = requests.session()
-			session.trust_env=False
-			response = session.post(url=f"http://{host}:{port}/dev_center/socket_tickets", json=response)
+	# if error print it else send updated data to sockets
+	if not response['status']:
+		print('ERROR:', response['data'])
+	else:
+		session = requests.session()
+		session.trust_env=False
+		response = session.post(url=f"http://{host}:{port}/dev_center/socket_tickets", json=response)
 
-	time.sleep(60)
 
 ########################################################################

@@ -49,72 +49,57 @@ export class TicketComponent {
 	@ViewChild(TicketStatusComponent) ticketStatusRef: TicketStatusComponent;
 
 	/**
+	* @param allComments Comments array to replace all comments on this ticket.
+	* @param newStatus Set the new status.
+	* @param response New comment response from API. 
 	*/
-	commentChangeEvent({allComments, postData, qaGenUpdate, response}):void {
-		// if comment added the push comment onto comment array
-		if(postData && postData.comment){
-			const newCommentBody = [{
-				comment: response.data.renderedBody,
-				raw_comment: response.data.body,
-				created: response.data.created,
-				id: response.data.id,
-				updated: response.data.updated,
+	commentChangeEvent({allComments, newStatus, response}):void {		
+
+		// if comment added from API then push comment onto comment array
+		if(response && response.data && response.data.comment){
+
+			// get new comment data
+			const commentData = response.data.comment;
+			
+			// create new comment object
+			const newCommentBody = {
+				comment: commentData.renderedBody,
+				raw_comment: commentData.body,
+				created: commentData.created,
+				id: commentData.id,
+				updated: commentData.updated,
 				username: this.user.username,
 				display_name: this.user.userData.displayName,
-				key: postData.key,
+				key: this.ticket.key,
 				isEditing: false,
 				closeText: 'Edit Comment',
 				comment_type: 'info',
 				editId: `E${response.data.id}`,
 				email: this.user.userData.emailAddress,
 				visibility: 'Developers'
-			}];
+			};
+
+			// if cruicible ID given then set on ticket
+			if(response.data.crucible_id) {
+				this.ticket.crucibleId = response.data.crucible_id;
+			}
 
 			// merge comments to new array ref
-			this.ticket.comments = [...this.ticket.comments, ...newCommentBody];
+			this.ticket.comments = [...this.ticket.comments, newCommentBody];
 
 		} else if(allComments) {
 			// else just replace comment ref to trigger change detection
 			this.ticket.comments = allComments;
-
-		} else if(qaGenUpdate) {
-
-			// set crucible id
-			this.ticket.crucible_id = qaGenUpdate.crucibleId;
-
-			// add new comment if given
-			if(qaGenUpdate.comment){
-				const newCommentBody = [{
-					comment: response.data.renderedBody,
-					raw_comment: response.data.body,
-					created: qaGenUpdate.comment.created,
-					id: qaGenUpdate.comment.id,
-					updated: qaGenUpdate.comment.updated,
-					username: this.user.username,
-					display_name: this.user.userData.displayName,
-					key: this.ticket.key,
-					isEditing: false,
-					closeText: 'Edit Comment',
-					comment_type: 'info',
-					editId: `E${qaGenUpdate.comment.id}`,
-					email: this.user.userData.emailAddress,
-					visibility: 'Developers'
-				}];
-
-				// merge comments to new array ref
-				this.ticket.comments = [...this.ticket.comments, ...newCommentBody];
-			}
 		}
-
+			
+		// set new comments on comments component
 		if(this.commentComponentRef){
 			this.commentComponentRef.instance.comments = this.ticket.comments;
 		}
 
-		// check for removal of components
-		if(postData && postData.remove_merge){
-			this.ticket.status = 'Ready for UCT';
-		} else if(postData && postData.remove_conflict){
-			this.ticket.status = 'Ready for QA';
+		// check for status change
+		if(newStatus){
+			this.ticket.status = newStatus;
 		}
 	}
 

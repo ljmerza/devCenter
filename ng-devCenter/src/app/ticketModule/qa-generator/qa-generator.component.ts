@@ -164,19 +164,18 @@ export class QaGeneratorComponent {
 					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
 				`, 'success', true);
 
-				// only update status if we are updating Jira
+				// if qa steps given trigger comment change event
 				if(postData.qa_steps){
-
 					// update comments on ticket
-					this.commentChangeEvent.emit({
-						qaGenUpdate: {
-							comment: response.data.comment,
-							crucibleId: response.data.crucible_id	
-						}
-					});
-					this.statusChange.emit({cancelled: false, showMessage: false});
+					this.commentChangeEvent.emit({response});
 				}
-				
+
+				// if status given then trigger status change without comment
+				if(selections.pcrNeeded.value){
+					this.commentChangeEvent.emit({newStatus: 'PCR - Needed'});
+				} else if(selections.codeReview.value){
+					this.commentChangeEvent.emit({newStatus: 'Code Review'});
+				}				
 			},
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');

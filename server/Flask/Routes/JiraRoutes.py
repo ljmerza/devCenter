@@ -60,15 +60,17 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 		Returns:
 			
 		'''
-
+		response = ''
+		# get headers and data body
 		if(request.method == 'POST' or request.method == 'PUT'):
 			data=request.get_json()
 			data["cred_hash"] = g.cred_hash
-		response = ''
 
+		# PUT - edit a comment
 		if request.method == 'PUT':
 			response = JiraRequests.edit_comment(data=data, jira_obj=jira_obj)
 
+		# POST - add a comment
 		elif request.method == 'POST':
 			if data.get('log_time', False): 
 				response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
@@ -80,6 +82,8 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 				response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 			if data.get('comment', False) or data.get('uct_date', False):
 				response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
+		
+		# else get comments
 		else:
 			data = {
 				"comment_id": request.args.get('comment_id'),
