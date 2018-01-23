@@ -14,6 +14,9 @@ export class CommentFormatPipe implements PipeTransform {
 	/*
 	*/
 	transform(comment:any, attachments:any,): any {
+		// if false return empty string
+		if(!comment) return '';
+
 		comment = comment.replace(/confluenceTable/g, 'table');
 		comment = this._formatTable(comment);
 		return comment;

@@ -8,13 +8,11 @@ import logging
 import time
 import threading
 
-
 from JiraFields import *
 from Jira import Jira
 from Crucible import Crucible
 from DevCenterSQL import DevCenterSQL
 from Chat import Chat
-
 
 class AutomationBot(object):
 	'''Handles Scraping data from Jira and Crucible to Store in DB and handle any ping notifications'''
@@ -46,6 +44,7 @@ class AutomationBot(object):
 			'all':'11002', 
 			'pcr':'11128'
 		}
+		filter_names = ['uct', 'qa', 'cr', 'uct', 'beta', 'pcr']
 		################################################################################
 		# create DB object and connect
 		self.sql_object = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
@@ -96,16 +95,16 @@ class AutomationBot(object):
 				return {'status': False, 'data': message}
 
 			# print time to retrieve tickets
-			print('Processing '+str(len(jira_tickets['data']))+' Jira tickets')
+			logging.info('Processing '+str(len(jira_tickets['data']))+' Jira tickets')
 			end_get = time.time()
-			print('Retrieved Tickets:        {:.4}'.format(end_get-start_get))
+			logging.info('Retrieved Tickets: {:.4}'.format(end_get-start_get))
 			start_bot = time.time()
 
 			# create thread for chatbot to check pings and print time to start thread
 			for jira_ticket in jira_tickets['data']:	
 				self.check_for_pings(jira_ticket=jira_ticket)
 			end_bot = time.time()
-			print('Check for pings:          {:.4}'.format(end_bot-start_bot))
+			logging.info('Check for pings: {:.4}'.format(end_bot-start_bot))
 			start_update = time.time()
 
 			# for each jira ticket update DB table
@@ -116,7 +115,7 @@ class AutomationBot(object):
 
 			# print time to update tickets in DB
 			end_update = time.time()
-			print('Updated Tickets:          {:.4}'.format(end_update-start_update))
+			logging.info('Updated Tickets: {:.4}'.format(end_update-start_update))
 			start_commit = time.time()
 
 			# set all inactive tickets and print time it took
@@ -124,7 +123,7 @@ class AutomationBot(object):
 			self.sql_object.set_inactive_tickets(jira_tickets=jira_tickets, session=session)
 			self.sql_object.logout(session=session)
 			end_inactive = time.time()
-			print('Set Inactive Tickets:     {:.4}'.format(end_inactive-start_commit))		
+			logging.info('Set Inactive Tickets: {:.4}'.format(end_inactive-start_commit))		
 			
 			# if we want to add beta stuff and enough time has passed then show beta stats
 			if self.is_beta_week and (self.beta_wait_time == self.beta_wait_count):
@@ -133,12 +132,11 @@ class AutomationBot(object):
 				thr.start()
 				end_beta = time.time()
 				self.beta_wait_count = self.beta_wait_count + 1
-				print('Beta processing:          {:.4}'.format(end_beta-start_beta))
+				logging.info('Beta processing: {:.4}'.format(end_beta-start_beta))
 
 			# print cron runtime 
 			end_cron = time.time()
-			print('CRON end time:            {:.4}'.format(end_cron-start_get))
-			print('-'*20)
+			logging.info('CRON end time: {:.4}'.format(end_cron-start_get))
 
 			return jira_tickets
 
@@ -146,7 +144,6 @@ class AutomationBot(object):
 			# log error and stack trace
 			message = sys.exc_info()[0]
 			logging.exception(message)
-			self.sql_object.log_error( message=str(err) )
 			return {'status': False, 'data': str(err)}
 
 	def beta_week_stats(self):
@@ -159,10 +156,9 @@ class AutomationBot(object):
 			None
 		'''
 		filter_values = []
-		filter_names = ['uct', 'qa', 'cr', 'uct', 'beta', 'pcr']
 		
 		# for each beta filter get total number of tickets
-		for filter_name in filter_names:
+		for filter_name in self.filter_names:
 			jira_tickets = self.jira_obj.get_jira_tickets(cred_hash=self.cred_hash, filter_number=self.filters[filter_name])
 			filter_values.append( len(jira_tickets['data']) )
 

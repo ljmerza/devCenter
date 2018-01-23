@@ -96,7 +96,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 		this.modalRef.close();
 		if(!deleteComment) return;
 
-		// get index of comment and remove it there
+		// get index of comment and remove it from comments input var
 		const pos = this.comments.map(comm =>	comm.id).indexOf(this.commentId);
 		const deletedComment = this.comments.splice(pos, 1);
 
