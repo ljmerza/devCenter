@@ -91,14 +91,14 @@ export class ConfigService {
 
 	otherTicketListNames = [
 		{link: 'sme', name: 'SME', displayName: 'SME'},
-		{link: 'pm', name: 'PM', displayName: 'PM'},
+		{link: 'pmTickets', name: 'PM', displayName: 'PM'},
 		{link: 'scrum', name: 'Scrum Board', displayName: 'Scrum Board'},
 		{link: 'fullscrum', name: 'Full Scrum Board', displayName: 'Full Scrum Board'},
 		{link: 'dtiUnassigned', name: 'DTI Unassigned', displayName: 'DTI Unassigned'},
 		{link: 'apiDefects', name: 'API Defects', displayName: 'API Defects'},
 	];
 	
-	pmTickets = encodeURIComponent(this.projectsJql + ` resolution = Unresolved AND assignee in (wc591w, lk2973)`);
+	pmTickets = encodeURIComponent(this.projectsJql + ` AND resolution = Unresolved AND assignee in (wc591w, lk2973)`);
 	allmy = encodeURIComponent(`assignee = ${this.username} ORDER BY updated DESC`);
 	mytickets = encodeURIComponent(`assignee = ${this.username} AND resolution = unresolved ORDER BY due DESC`);
 

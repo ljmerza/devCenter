@@ -44,7 +44,8 @@ export class JiraServiceTest {
 					"label": "LABELS", 
 					"comments": [
 						{
-							"comment": "This is the first comment", 
+							"comment": "<p>This is the first comment</p>",
+							"raw_comment": "This is the first comment",
 							"id": "321438", 
 							"key": "TS-1234", 
 							"username": "tu1234", 
@@ -165,7 +166,8 @@ export class JiraServiceTest {
 					"label": "LABELS", 
 					"comments": [
 						{
-							"comment": "This is the first comment", 
+							"comment": "<p>This is the first comment2</p>",
+							"raw_comment": "This is the first comment2", 
 							"id": "321438", 
 							"key": "TS-1234", 
 							"username": "tu1234", 
@@ -286,7 +288,8 @@ export class JiraServiceTest {
 					"label": "LABELS", 
 					"comments": [
 						{
-							"comment": "This is the first comment", 
+							"comment": "<p>This is the first comment3</p>",
+							"raw_comment": "This is the first comment3", 
 							"id": "321438", 
 							"key": "TS-1234", 
 							"username": "tu1234", 
@@ -407,7 +410,8 @@ export class JiraServiceTest {
 					"label": "LABELS", 
 					"comments": [
 						{
-							"comment": "This is the first comment", 
+							"comment": "<p>This is the first comment4</p>",
+							"raw_comment": "This is the first comment4", 
 							"id": "321438", 
 							"key": "TS-1234", 
 							"username": "tu1234", 
@@ -548,7 +552,8 @@ export class JiraServiceTest {
 					"label": "LABELS", 
 					"comments": [
 						{
-							"comment": "This is the first comment", 
+							"comment": "<p>This is the first comment6</p>",
+							"raw_comment": "This is the first comment6", 
 							"id": "321438", 
 							"key": "TS-1234", 
 							"username": "tu1234", 
@@ -777,7 +782,8 @@ export class JiraServiceTest {
 				 	"active": true, 
 				 	"timeZone": "America/New_York"
 				 }, 
-				 "body": "TESTT", 
+				 "body": "test",
+				 "renderedBody": "<p>test</p>",
 				 "updateAuthor": {
 				 	"self": "http://jira.com/rest/api/2/user?username=testuser", 
 				 	"name": "testuser", 
@@ -800,8 +806,7 @@ export class JiraServiceTest {
 				 	"value": "Developers"
 				}
 			}
-		},
-		status: true
+		}
 	}
 
 	/**

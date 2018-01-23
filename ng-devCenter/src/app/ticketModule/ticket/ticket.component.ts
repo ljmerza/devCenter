@@ -53,19 +53,22 @@ export class TicketComponent {
 	* @param newStatus Set the new status.
 	* @param response New comment response from API. 
 	*/
-	commentChangeEvent({allComments, newStatus, response}):void {		
+	commentChangeEvent({allComments, newStatus, response}):void {
+	console.log('{allComments, newStatus, response}: ', {allComments, newStatus, response});	
 
 		// if comment added from API then push comment onto comment array
-		if(response && response.data && response.data.comment){
+		if(response && (response.data && response.data.comment) || response.comment){
 
 			// get new comment data
-			const commentData = response.data.comment;
+			const commentData = response.comment || response.data.comment;
+
+			console.log('commentData: ', commentData);
 			
 			// create new comment object
 			const newCommentBody = {
 				comment: commentData.renderedBody,
 				raw_comment: commentData.body,
-				created: commentData.created,
+				created: commentData.created, // <----- this is not a js date moment errors out on pipe in view
 				id: commentData.id,
 				updated: commentData.updated,
 				username: this.user.username,
@@ -74,13 +77,13 @@ export class TicketComponent {
 				isEditing: false,
 				closeText: 'Edit Comment',
 				comment_type: 'info',
-				editId: `E${response.data.id}`,
+				editId: `E${commentData.id}`,
 				email: this.user.userData.emailAddress,
 				visibility: 'Developers'
 			};
 
 			// if cruicible ID given then set on ticket
-			if(response.data.crucible_id) {
+			if(response.data && response.data.crucible_id) {
 				this.ticket.crucibleId = response.data.crucible_id;
 			}
 
