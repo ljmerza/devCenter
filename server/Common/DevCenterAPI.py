@@ -5,6 +5,9 @@ from requests.exceptions import ProxyError
 import json
 
 
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
 class DevCenterAPI():
 	
 	def __init__(self):
@@ -31,7 +34,7 @@ class DevCenterAPI():
 		'''
 		session_obj = requests.session()
 		try:
-			filter_data = session_obj.get(url=url, headers={ 'Authorization': cred_hash })
+			filter_data = session_obj.get(url=url, headers={ 'Authorization': cred_hash }, verify=False)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
@@ -49,7 +52,7 @@ class DevCenterAPI():
 		'''
 		session_obj = requests.session()
 		try:
-			filter_data = session_obj.get(url=url, headers={ 'Authorization': cred_hash })
+			filter_data = session_obj.get(url=url, headers={ 'Authorization': cred_hash }, verify=False)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return filter_data
@@ -70,9 +73,9 @@ class DevCenterAPI():
 		session_obj = requests.session()
 		try:
 			if data:
-				filter_data = session_obj.post(url=url, data=data, headers={ 'Authorization': cred_hash })
+				filter_data = session_obj.post(url=url, data=data, headers={ 'Authorization': cred_hash }, verify=False)
 			else:
-				filter_data = session_obj.post(url=url, headers={ 'Authorization': cred_hash })
+				filter_data = session_obj.post(url=url, headers={ 'Authorization': cred_hash }, verify=False)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
@@ -93,7 +96,7 @@ class DevCenterAPI():
 		session_obj = requests.session()
 		headers = { 'Content-Type': 'application/json', 'Authorization': cred_hash }
 		try:
-			filter_data = session_obj.post(url, json=json_data, headers=headers)
+			filter_data = session_obj.post(url, json=json_data, headers=headers, verify=False)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
@@ -114,7 +117,7 @@ class DevCenterAPI():
 		session_obj = requests.session()
 		headers = { 'Content-Type': 'application/json', 'Authorization': cred_hash }
 		try:
-			filter_data = session_obj.put(url, json=json_data, headers=headers)
+			filter_data = session_obj.put(url, json=json_data, headers=headers, verify=False)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
@@ -132,7 +135,7 @@ class DevCenterAPI():
 		'''
 		session_obj = requests.session()
 		try:
-			filter_data = session_obj.delete(url, headers={ 'Authorization': cred_hash })
+			filter_data = session_obj.delete(url, headers={ 'Authorization': cred_hash }, verify=False)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)

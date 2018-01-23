@@ -90,9 +90,7 @@ class AutomationBot(object):
 			# make sure we have Jira tickets
 			if not jira_tickets['status']:
 				message = 'Could not get Jira tickets: '+jira_tickets['data']
-				session = self.sql_object.login()
-				self.sql_object.log_error(message=message, session=session)
-				self.sql_object.logout(session=session)
+				self.sql_object.log_error(message=message)
 				return {'status': False, 'data': message}
 
 			# print time to retrieve tickets
