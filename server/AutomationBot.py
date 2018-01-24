@@ -134,7 +134,7 @@ class AutomationBot(object):
 
 			# print cron runtime 
 			end_cron = time.time()
-			logging.info('CRON end time: {:.4}'.format(end_cron-start_get))
+			logging.warning('CRON end time: {:.4}'.format(end_cron-start_get))
 
 			return jira_tickets
 
