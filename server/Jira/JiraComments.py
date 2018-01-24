@@ -37,7 +37,7 @@ class JiraComments():
 		# add uct not ready if wanted 
 		if uct_date:
 			uct_date = datetime.datetime.fromtimestamp(uct_date)
-			uct_comment = uct_date.strftime('h1. {color:red}UCT not ready as of %B %d, %Y %I:%M %p {color}')
+			uct_comment = uct_date.strftime('h3. {color:red}UCT not ready as of %B %d, %Y %I:%M %p {color}')
 			comment = f"{comment}\n{uct_comment}"
 
 		json_data = self._set_json(comment=comment, private_comment=private_comment)
