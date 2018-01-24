@@ -16,7 +16,7 @@ export class LoggerInterceptor implements HttpInterceptor {
 			if (event instanceof HttpResponse && event.status !== 304) {
 				const elapsed = Date.now() - started;
 				const baseUrl = req.urlWithParams.split('?')[0];
-				console.info(`Request for ${baseUrl} took ${elapsed} ms.`);
+				console.debug(`Request for ${baseUrl} took ${elapsed} ms.`);
 			}
 		});
 	}

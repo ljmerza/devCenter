@@ -58,7 +58,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 					return Response(comment_response, mimetype='application/json')
 				response['data']['comment'] = comment_response['data']
 
-		else if data['qa_steps']:
+		elif data['qa_steps']:
 			# else if 'qa steps' aka a comment given then add comment
 			data['comment'] = data['qa_steps']
 			comment_response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)

@@ -202,11 +202,10 @@ def get_jira_tickets(data, jira_obj):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 		
 	# check if we have a filer number or JQL string
-	if 'filter_number' in data:
-		filter_number = data['filter_number']
-	elif 'jql' in data:
-		jql = data['jql']
-	else:
+	filter_number = data.get('filter_number', False)
+	jql = data.get('jql', False)
+
+	if not filter_number and not jql:
 		return {"data": "A filter number or JQL is required", "status": False}
 
 	# get jira tickets

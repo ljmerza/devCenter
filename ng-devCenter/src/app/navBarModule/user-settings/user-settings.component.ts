@@ -50,38 +50,34 @@ export class UserSettingsComponent implements OnInit {
 	/*
 	*/
 	ngOnInit() {
-
 		// get route url
-		this.route.fragment.subscribe( (urlSegment:string) => {
+		this.route.url.subscribe( (urlSegment:UrlSegment[]) => {
+			// if no creds available then dont do anything
+			if(this.user.needRequiredCredentials()) return;
 
-			const hasCreds = !this.user.needRequiredCredentials();
-			// if we are in logiun path and dont needs creds redirect
-
-			if(hasCreds && /login/.test(urlSegment)){
+			// if we are in login path -> redirect out of login page
+			if(urlSegment.length > 0 && /login/.test(urlSegment[0].path)){
 				// if saved URL use to that else redirect to home
-				if(this.user.redirectUrl) {
-					this.router.navigate([this.user.redirectUrl]);
-				} else {
-					this.router.navigate(['/']);
-				}
-			}
-			
-			// if we have creds then try to get profile data
-			if(hasCreds){
-				this.jira.getProfile().subscribe(
-					response => {
-						if(response && response.data){
-							this.user.userData = response.data;
-							this.user.userPicture = response.data.avatarUrls['48x48'];
-
-							this.setUserPings(this.user.userData.ping_settings)
-						}
-					},
-					error => this.toastr.showToast(`Could not retrieve user profile: ${error}`,'error')
-				)
-			}
+				if(this.user.redirectUrl) return this.router.navigate([this.user.redirectUrl]);
+				else return this.router.navigate(['/']);
+			} 
+			else this.getProfile();
 		});
 	}
+
+	getProfile(){
+		this.jira.getProfile().subscribe(
+			response => {
+				if(response && response.data){
+					this.user.userData = response.data;
+					this.user.userPicture = response.data.avatarUrls['48x48'];
+
+					this.setUserPings(this.user.userData.ping_settings)
+				}
+			},
+			error => this.toastr.showToast(`Could not retrieve user profile: ${error}`,'error')
+		)
+		}
 
 	/**
 	*/

@@ -32,6 +32,11 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
 		CommonModule, HttpClientModule, BrowserAnimationsModule, 
 		NgbModule.forRoot(), ToastModule.forRoot()
 	],
+	providers: [
+		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+		{ provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
+		{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
+	],
 	declarations: [ModalComponent, ToastrComponent],
 	exports: [ModalComponent, ToastrComponent]
 })
@@ -44,10 +49,6 @@ export class SharedModule {
 				WebSocketService, MiscService,
 				// if in testing mode use test endpoint else use regular endpoints
 				{ provide: JiraService, useClass: environment.test ? JiraServiceTest : JiraService},
-				// add interceptors
-				{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-				{ provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
-				{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
 			]
 		}
 	}
