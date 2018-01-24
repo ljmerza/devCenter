@@ -35,58 +35,57 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 			"msrp": post_data.get('msrp', '')
 		}
 
-		# create crucible review
-		cru_response = CrucibleRequests.crucible_create_review(data=data, crucible_obj=crucible_obj, jira_obj=jira_obj)
-		if not cru_response['status']:
-			return Response(cru_response, mimetype='application/json')
+		response = {'status': True, 'data':{}}
 
-		# save cru id on data
-		data['crucible_id'] = cru_response['data']
-		comment_response = {}
+		# if repos given then create crucible
+		if len(data['repos']):
 
+			# create crucible review
+			cru_response = CrucibleRequests.crucible_create_review(data=data, crucible_obj=crucible_obj, jira_obj=jira_obj)
+			if not cru_response['status']:
+				return Response(cru_response, mimetype='application/json')
 
-		# add comment to Jira if QA step exist
-		if data['qa_steps']:
-
-			# try to add comment now
+			# save cru id on data and response
 			data['crucible_id'] = cru_response['data']
-			comment_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
+			response['data']['crucible_id'] = data['crucible_id'] 
+
+			# add comment to Jira if QA steps exist
+			if data['qa_steps']:
+				data['crucible_id'] = cru_response['data']
+				comment_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
+				if not comment_response['status']:
+					comment_response['data'] += ' but Crucible created: ' + cru_response['data']
+					return Response(comment_response, mimetype='application/json')
+				response['data']['comment'] = comment_response['data']
+
+		else if data['qa_steps']:
+			# else if 'qa steps' aka a comment given then add comment
+			data['comment'] = data['qa_steps']
+			comment_response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
 			if not comment_response['status']:
-				comment_response['data'] += ' but Crucible created: ' + cru_response['data']
 				return Response(comment_response, mimetype='application/json')
 
-			# add PCR needed component and code reivew status if wanted
-			if data['autoPCR']:
-				# change component to PCR
-				data['status_type'] = 'pcrNeeded'
-				pcr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-				if not pcr_response['status']:
-					pcr_response['data'] += ' but Crucible created: ' + cru_response['data']
-					return Response(pcr_response, mimetype='application/json')
-				# then change status to CR
-				data['status_type'] = 'cr'
-				cr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-				if not cr_response['status']:
-					cr_response['data'] += ' but Crucible created: ' + cru_response['data']
-					return Response(cr_response, mimetype='application/json')
+		# add PCR needed component and code review status if wanted
+		if data['autoPCR']:
+			# change component to PCR
+			data['status_type'] = 'pcrNeeded'
+			pcr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+			if not pcr_response['status']:
+				return Response(pcr_response, mimetype='application/json')
+			# then change status to CR
+			data['status_type'] = 'cr'
+			cr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+			if not cr_response['status']:
+				return Response(cr_response, mimetype='application/json')
 
-			# add worklog if wanted
-			if data['log_time']:
-				log_response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
-				if not log_response['status']:
-					log_response['data'] += ' but Jira log and Crucible created: ' + cru_response['data']
-					return Response(log_response, mimetype='application/json')
+		# add worklog if wanted
+		if data['log_time']:
+			log_response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
+			if not log_response['status']:
+				log_response['data'] += ' but Jira log and Crucible created: ' + cru_response['data']
+				return Response(log_response, mimetype='application/json')
 
-		# create response with crucible and jira comment response
-		response = {
-			'data': {
-				'crucible_id': cru_response.get('data', ''),
-				'comment': comment_response.get('data', '')
-			},
-			'status': True	
-		}
-
-		# return Crucible response with cru id and comment info
+		# return success response
 		return Response(response, mimetype='application/json')
 
 

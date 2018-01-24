@@ -50,7 +50,6 @@ export class QaGeneratorComponent {
 		this.qaForm = this.formBuilder.group({
 			selections: this.formBuilder.group({
 				pcrNeeded: this.formBuilder.control(true),
-				codeReview: this.formBuilder.control(true),
 				logTime: this.formBuilder.control({hour: 0, minute: 0}),
 			}),
 			qaSteps: this.formBuilder.control(''),
@@ -96,12 +95,6 @@ export class QaGeneratorComponent {
 	/*
 	*/
 	removeBranch(branchIndex:number): void {
-		// if only one left cant delete
-		if((this.qaForm.get('branches') as FormArray).length == 1){
-			this.toastr.showToast('Must have at least one repo.', 'error');
-			return;
-		}
-
 		(this.qaForm.get('branches') as FormArray).removeAt(branchIndex);
 	}
 
@@ -134,7 +127,6 @@ export class QaGeneratorComponent {
 		let postData = {
 			qa_steps: this.qaForm.controls.qaSteps.value,
 			log_time: selections.logTime.value.hour * 60 + selections.logTime.value.minute,
-			autoCR: selections.codeReview.value,
 			autoPCR: selections.pcrNeeded.value,
 			key: this.key,
 			msrp: this.msrp,
@@ -147,22 +139,32 @@ export class QaGeneratorComponent {
 			}),
 		};
 
-		// show informational toast
-		if(!postData.qa_steps){
-			this.toastr.showToast('Creating Crucible but not updating to Jira', 'info');
+		// if not transitioning status then cancel status on ticket 
+		if(!selections.pcrNeeded.value) {
 			this.statusChange.emit({cancelled: true, showMessage: false});
-		} else {
-			this.toastr.showToast('Creating Crucible and updating Jira', 'info');
 		}
+
+		// create info message based on form selections
+		let message = [];
+		if(postData.repos.length > 1) message.push('Creating Crucible');
+		if(postData.qa_steps) message.push('adding comment to Jira');
+		if(selections.pcrNeeded.value) message.push('transitioning to PCR Needed');
+
+		// create info message and display
+		if(message.length > 1) message[message.length-1] = 'and ' + message[message.length-1];
+		const joiner = message.length > 2 ? ', ' : ' ';
+		this.toastr.showToast(message.join(joiner), 'info');
 
 		// send POST request and notify results
 		this.jira.generateQA(postData).subscribe(
 			response => {
-				this.toastr.showToast(`
-					<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>
-					<br>
-					<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>
-				`, 'success', true);
+
+				// create and show toast message
+				let toastMessage = `<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>`;
+				if(response.data.crucible_id){
+					toastMessage += `<br><a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>`
+				}
+				this.toastr.showToast(toastMessage, 'success', true);
 
 				// if qa steps given trigger comment change event
 				if(postData.qa_steps){
@@ -170,12 +172,10 @@ export class QaGeneratorComponent {
 					this.commentChangeEvent.emit({response});
 				}
 
-				// if status given then trigger status change without comment
+				// if status given then trigger status change
 				if(selections.pcrNeeded.value){
 					this.commentChangeEvent.emit({newStatus: 'PCR - Needed'});
-				} else if(selections.codeReview.value){
-					this.commentChangeEvent.emit({newStatus: 'Code Review'});
-				}				
+				}
 			},
 			error => {
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
