@@ -51,17 +51,13 @@ export class UserSettingsComponent implements OnInit {
 	*/
 	ngOnInit() {
 
-		console.log('this.router', this.router, this.route)
 		// get route url
-		this.route.url.subscribe( (urlSegment:UrlSegment[]) => {
-
-			console.log('urlSegment', urlSegment[0].path)
+		this.route.fragment.subscribe( (urlSegment:string) => {
 
 			const hasCreds = !this.user.needRequiredCredentials();
-
 			// if we are in logiun path and dont needs creds redirect
-			if(hasCreds && urlSegment.length > 0 && urlSegment[0].path === 'login'){
-				
+
+			if(hasCreds && /login/.test(urlSegment)){
 				// if saved URL use to that else redirect to home
 				if(this.user.redirectUrl) {
 					this.router.navigate([this.user.redirectUrl]);
@@ -132,7 +128,7 @@ export class UserSettingsComponent implements OnInit {
 
 	/*
 	*/
-	submit(submitType){
+	submit(submitType): boolean {
 
 		// just close form if no submit type
 		if(!submitType){
@@ -157,6 +153,8 @@ export class UserSettingsComponent implements OnInit {
 			this.toastr.showToast('Saved User Settings', 'success');
 			this.reloadPage();
 		}
+
+		return false;
 	}
 
 	/**
@@ -167,6 +165,7 @@ export class UserSettingsComponent implements OnInit {
  		this.resetForm();
 
  		const controls = this.userSettingsForm.controls;
+
  		// if we were given a redirect URL then redirect to that
  		if(this.user.redirectUrl){
  			// save and reset redirect URL
@@ -181,9 +180,7 @@ export class UserSettingsComponent implements OnInit {
  		// is username or password is dirty we need to reload on modal
  		if((controls.username.dirty || controls.password.dirty) && !this.isLogin){
 			location.reload();
-
-		} else if(controls.username.dirty || controls.password.dirty){
-			// if username/password dirty then redirect
+		} else {
 			this.router.navigate(['/']);
 		}
  	}

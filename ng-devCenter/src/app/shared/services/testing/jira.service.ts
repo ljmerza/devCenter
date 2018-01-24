@@ -832,7 +832,6 @@ export class JiraServiceTest {
 	/**
 	*/
 	getProfile(): Observable<any> {
-		console.log('profile get')
 		return Observable.of({
 			status: true, 
 			data: {

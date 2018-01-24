@@ -4,6 +4,7 @@ import { ConfigService } from './config.service';
 
 @Injectable()
 export class UserService {
+	userValues = ['username', 'password', 'port', 'cache', 'emberUrl', 'teamUrl'];
 	public redirectUrl:string;
 
 	public username:string;
@@ -57,6 +58,7 @@ export class UserService {
 			value = value ? '1' : '';
 		}
 
+		// hash password so it's at least not plain text...
 		if(data === 'password'){
 			value = btoa(value);
 		}
@@ -69,12 +71,12 @@ export class UserService {
 	/*
 	*/
 	public resetUserData(): void {
-		localStorage.removeItem(`devCenter.emberUrl`);
-		localStorage.removeItem(`devCenter.teamUrl`);
-		localStorage.removeItem(`devCenter.password`);
-		localStorage.removeItem(`devCenter.port`);
-		localStorage.removeItem(`devCenter.username`);
-		localStorage.removeItem(`devCenter.cache`);
+		this.redirectUrl = '';
+
+		this.userValues.forEach(value => {
+			localStorage.removeItem(`devCenter.${value}`);
+			this[value] = null;
+		});
 	}
 
 	/*

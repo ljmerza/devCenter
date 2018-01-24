@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { NavbarModalComponent } from '../navbar-modal/navbar-modal.component';
 import { JiraService } from './../../shared/services/jira.service';
@@ -19,9 +19,6 @@ declare var $ :any;
 export class NavBarComponent {
 	ticketValue:string; // value of msrp/key search
 	isFriday:boolean; // boolean is friday for log hours notification
-
-	// get logout modal for confirm
-	@ViewChild(LogoutComponent) private logout: LogoutComponent;
 
 	/**
 	*/
@@ -63,11 +60,4 @@ export class NavBarComponent {
 			);
 		}
 	}
-
-	/**
-	*/
-	resetUserSettings(){
-		this.logout.resetUserSettings();
-	}
-
 }

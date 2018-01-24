@@ -234,7 +234,7 @@
 				<div ngbDropdownMenu aria-labelledby="userDropdown">
 					<li><a class="dropdown-item" (click)='userSetting.openModal()'>User Settings</a></li>
 					<li><div class="dropdown-divider"></div></li>
-					<li><a class="dropdown-item"(click)='resetUserSettings(logoutModal)'>Logout</a></li>
+					<li><a class="dropdown-item"(click)='logout.openModal()'>Logout</a></li>
 				</div>
 			</li>
 		</ul>
@@ -246,5 +246,5 @@
 
 
 <dc-user-settings-modal #userSetting></dc-user-settings-modal>
-<dc-logout></dc-logout>
+<dc-logout #logout></dc-logout>
 

@@ -1,13 +1,14 @@
 import { 
-	Component, ViewChild,
-	ElementRef, ViewContainerRef, 
-	ViewEncapsulation, ChangeDetectionStrategy
+	Component, ViewChild, ViewContainerRef, 
+	ChangeDetectionStrategy
 } from '@angular/core';
 import { Router } from '@angular/router';
 
 
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from './../../shared/services/user.service';
+import { ModalComponent } from './../../shared/modal/modal.component';
+
 
 @Component({
 	selector: 'dc-logout',
@@ -16,26 +17,27 @@ import { UserService } from './../../shared/services/user.service';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LogoutComponent {
-	@ViewChild('logoutModal') content:ElementRef;
+	@ViewChild(ModalComponent) modal: ModalComponent;
+	modalRef: NgbModalRef;
 
-	constructor(
-		public user: UserService, private modalService:NgbModal,
-		private router: Router
-	) { }
+	constructor(public user: UserService, private router: Router) { }
+
 
 	/*
 	*/
-	public resetUserSettings(): void {
+	public closeModal(resetUser?): void {
+		this.modalRef.close();
 
-		this.modalService.open(this.content).result.then( confirm => {
+		if(resetUser){
+			this.user.resetUserData();
+			this.router.navigate(['/login']);
+		}
+	}
 
-			// if we logout delete user data then reload page
-			if(confirm){
-				// this.user.resetUserData();
-				this.router.navigate(['/login']);
-			}
-		});
-
+	/**
+	*/
+	public openModal(){
+		this.modalRef = this.modal.openModal();
 	}
 
 }

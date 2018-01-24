@@ -41,7 +41,6 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	ngOnInit() {
 		// add isEditing boolean to each comments
 		this.comments = this.comments.map(comment => {
-			console.log('comment',comment)
 			comment.isEditing = false;
 			comment.closeText = 'Edit Comment';
 			comment.editId = 'E'+comment.id.toString();

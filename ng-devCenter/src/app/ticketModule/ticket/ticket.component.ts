@@ -98,7 +98,6 @@ export class TicketComponent {
 		}
 
 		// check for status change
-		console.log('newStatus',newStatus)
 		if(newStatus){
 			this.ticket.status = newStatus;
 			this.cd.detectChanges();
