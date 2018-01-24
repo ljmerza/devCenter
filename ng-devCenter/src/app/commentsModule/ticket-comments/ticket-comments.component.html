@@ -19,8 +19,8 @@
 		<!-- body -->
 		<ng-template ngbPanelContent>
 
-			<!-- editing buttons -->
-			<span class='edit-buttons'>
+			<!-- editing buttons only if belongs to current user -->
+			<span class='edit-buttons' *ngIf='comment.username == user.username'>
 				<button type="button" class="btn btn-outline-primary" (click)="toggleEditing(comment)">
 					{{comment.closeText}}
 				</button>
@@ -31,7 +31,7 @@
 				</button>
 
 				<button type="button" class="btn btn-outline-danger" (click)="deleteComment(comment.id)"
-				*ngIf='!comment.isEditing && comment.username == user.username' >
+				*ngIf='!comment.isEditing'>
 					Delete Comment
 				</button>
 			</span>

@@ -1,6 +1,6 @@
 import { 
 	Component, Input, ViewChild, ComponentFactoryResolver, ViewEncapsulation,
-	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy
+	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy, ChangeDetectorRef
 } from '@angular/core';
 
 import { TicketCommentsModalComponent } from './../../commentsModule/ticket-comments-modal/ticket-comments-modal.component';
@@ -40,7 +40,7 @@ export class TicketComponent {
 	constructor(
 		private toastr: ToastrService, public jira: JiraService, public config: ConfigService, 
 		public user: UserService, private factoryResolver: ComponentFactoryResolver, 
-		private viewContRef: ViewContainerRef, public misc: MiscService
+		private viewContRef: ViewContainerRef, public misc: MiscService, private cd: ChangeDetectorRef
 	) { }
 
 	@Input() ticket;
@@ -53,24 +53,21 @@ export class TicketComponent {
 	* @param newStatus Set the new status.
 	* @param response New comment response from API. 
 	*/
-	commentChangeEvent({allComments, newStatus, response}):void {
-	console.log('{allComments, newStatus, response}: ', {allComments, newStatus, response});	
+	commentChangeEvent({ allComments, newStatus, response }):void {
 
 		// if comment added from API then push comment onto comment array
-		if(response && (response.data && response.data.comment) || response.comment){
+		if(response && ((response.data && response.data.comment) || response.comment)){
 
 			// get new comment data
 			const commentData = response.comment || response.data.comment;
-
-			console.log('commentData: ', commentData);
 			
 			// create new comment object
 			const newCommentBody = {
 				comment: commentData.renderedBody,
 				raw_comment: commentData.body,
-				created: commentData.created, // <----- this is not a js date moment errors out on pipe in view
+				created: new Date(commentData.created),
 				id: commentData.id,
-				updated: commentData.updated,
+				updated: new Date(commentData.updated),
 				username: this.user.username,
 				display_name: this.user.userData.displayName,
 				key: this.ticket.key,
@@ -103,6 +100,7 @@ export class TicketComponent {
 		// check for status change
 		if(newStatus){
 			this.ticket.status = newStatus;
+			this.cd.detectChanges();
 		}
 	}
 

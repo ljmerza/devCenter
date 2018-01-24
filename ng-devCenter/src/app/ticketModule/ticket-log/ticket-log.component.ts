@@ -36,10 +36,7 @@ export class TicketLogComponent	{
 	@Input() key:string;
 	modalRef: NgbModalRef;
 
-	constructor(
-		public jira:JiraService, public toastr: ToastrService, 
-		private cd: ChangeDetectorRef
-	) {}
+	constructor(public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef) {}
 
 	/*
 	*/

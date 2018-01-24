@@ -730,12 +730,7 @@ export class JiraServiceTest {
 		return Observable.of({
 			status: true, 
 			data: {
-				comment: {
-					body: "QA comment added", 
-					id: "321438", 
-					created: "2017-12-27T20:36:41.633+0000", 
-					updated: "2017-12-27T20:38:10.067+0000"
-				},
+				comment: this.commentResponse.data,
 				crucible_id: 'CR-123456'
 			}
 		}).delay(1000);
@@ -762,49 +757,47 @@ export class JiraServiceTest {
 	}
 
 	commentResponse = {
-		data:{
-			status: true, 
-			data: {
-				"self": "http://jira.com/rest/api/2/issue/83338/comment/323759",
-				 "id": "323759", 
-				 "author": {
-				 	"self": "http://jira.com/rest/api/2/user?username=testuser", 
-				 	"name": "testuser", 
-				 	"key": "testuser", 
-				 	"emailAddress": "testuser@test.com", 
-				 	"avatarUrls": {
-				 		"48x48": "http://jira.com/secure/useravatar?ownerId=testuser&avatarId=11051", 
-				 		"24x24": "http://jira.com/secure/useravatar?size=small&ownerId=testuser&avatarId=11051", 
-				 		"16x16": "http://jira.com/secure/useravatar?size=xsmall&ownerId=testuser&avatarId=11051", 
-				 		"32x32": "http://jira.com/secure/useravatar?size=medium&ownerId=testuser&avatarId=11051"
-				 	}, 
-				 	"displayName": "User, Test (testuser)", 
-				 	"active": true, 
-				 	"timeZone": "America/New_York"
-				 }, 
-				 "body": "test",
-				 "renderedBody": "<p>test</p>",
-				 "updateAuthor": {
-				 	"self": "http://jira.com/rest/api/2/user?username=testuser", 
-				 	"name": "testuser", 
-				 	"key": "testuser", 
-				 	"emailAddress": "testuser@test.com",
-				 	"avatarUrls": {
-				 		"48x48": "http://jira.com/secure/useravatar?ownerId=testuser&avatarId=11051", 
-				 		"24x24": "http://jira.com/secure/useravatar?size=small&ownerId=testuser&avatarId=11051", 
-				 		"16x16": "http://jira.com/secure/useravatar?size=xsmall&ownerId=testuser&avatarId=11051", 
-				 		"32x32": "http://jira.com/secure/useravatar?size=medium&ownerId=testuser&avatarId=11051"
-				 	}, 
-				 	"displayName": "User, Test (testuser)", 
-				 	"active": true, 
-				 	"timeZone": "America/New_York"
-				}, 
-				"created": (new Date()).toISOString(), 
-				"updated": (new Date()).toISOString(), 
-				"visibility": {
-				 	"type": "role", 
-				 	"value": "Developers"
-				}
+		status: true, 
+		data: {
+			"self": "http://jira.com/rest/api/2/issue/83338/comment/323759",
+			 "id": "323759", 
+			 "author": {
+			 	"self": "http://jira.com/rest/api/2/user?username=testuser", 
+			 	"name": "testuser", 
+			 	"key": "testuser", 
+			 	"emailAddress": "testuser@test.com", 
+			 	"avatarUrls": {
+			 		"48x48": "http://jira.com/secure/useravatar?ownerId=testuser&avatarId=11051", 
+			 		"24x24": "http://jira.com/secure/useravatar?size=small&ownerId=testuser&avatarId=11051", 
+			 		"16x16": "http://jira.com/secure/useravatar?size=xsmall&ownerId=testuser&avatarId=11051", 
+			 		"32x32": "http://jira.com/secure/useravatar?size=medium&ownerId=testuser&avatarId=11051"
+			 	}, 
+			 	"displayName": "User, Test (testuser)", 
+			 	"active": true, 
+			 	"timeZone": "America/New_York"
+			 }, 
+			 "body": "test",
+			 "renderedBody": "<p>test</p>",
+			 "updateAuthor": {
+			 	"self": "http://jira.com/rest/api/2/user?username=testuser", 
+			 	"name": "testuser", 
+			 	"key": "testuser", 
+			 	"emailAddress": "testuser@test.com",
+			 	"avatarUrls": {
+			 		"48x48": "http://jira.com/secure/useravatar?ownerId=testuser&avatarId=11051", 
+			 		"24x24": "http://jira.com/secure/useravatar?size=small&ownerId=testuser&avatarId=11051", 
+			 		"16x16": "http://jira.com/secure/useravatar?size=xsmall&ownerId=testuser&avatarId=11051", 
+			 		"32x32": "http://jira.com/secure/useravatar?size=medium&ownerId=testuser&avatarId=11051"
+			 	}, 
+			 	"displayName": "User, Test (testuser)", 
+			 	"active": true, 
+			 	"timeZone": "America/New_York"
+			}, 
+			"created": (new Date()).toISOString(), 
+			"updated": (new Date()).toISOString(), 
+			"visibility": {
+			 	"type": "role", 
+			 	"value": "Developers"
 			}
 		}
 	}
