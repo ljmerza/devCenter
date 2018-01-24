@@ -70,7 +70,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	ngOnInit():void {
 		// if we are authed then get list of repos once
 		if( !this.user.needRequiredCredentials() ){
-			console.log('test1');
 			this.jira.getRepos().subscribe( 
 				branches => { 
 					if(branches) this.repos = branches.data;
@@ -80,7 +79,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		}
 
 		this.route.paramMap.subscribe( params => {
-			console.log('test2');
 			// default to my tickets
 			this.ticketType = params.get('filter') || 'mytickets';
 			// destroy any existing subscriptions

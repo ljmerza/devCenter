@@ -19,7 +19,7 @@ import { DropdownSubmenuDirective, DropdownSubmenuMenuDirective } from './dropdo
 
 @NgModule({
 	imports: [
-		CommonModule, SharedModule.forRoot(), NgbModule.forRoot(),
+		CommonModule, SharedModule, NgbModule,
 		RouterModule, FormsModule, ReactiveFormsModule
 	],
 	declarations: [

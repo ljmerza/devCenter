@@ -26,7 +26,7 @@ import { WorkTimePipe } from './work-time.pipe';
 
 @NgModule({
 	imports: [
-		CommonModule, SharedModule.forRoot(), NgbModule.forRoot(),
+		CommonModule, SharedModule, NgbModule,
 		RouterModule, FormsModule, ReactiveFormsModule, MomentModule,
 		NgProgressModule, DataTablesModule
 	],

@@ -58,13 +58,15 @@ export class UserService {
 			value = value ? '1' : '';
 		}
 
+		// save value
+		this[data] = value;
+
 		// hash password so it's at least not plain text...
 		if(data === 'password'){
 			value = btoa(value);
 		}
-
 		localStorage.setItem(`devCenter.${data}`, value);
-		this[data] = value;
+
 		this.setUrls();
 	}
 

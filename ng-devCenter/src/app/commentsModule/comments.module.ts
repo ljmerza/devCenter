@@ -12,7 +12,7 @@ import { SafehtmlPipe } from './safehtml.pipe';
 import { CommentFormatPipe } from './comment-format.pipe';
 
 @NgModule({
-	imports: [CommonModule, NgbModule.forRoot(), MomentModule, SharedModule.forRoot()],
+	imports: [CommonModule, NgbModule, MomentModule, SharedModule],
 	declarations: [
 		TicketCommentsComponent, TicketCommentsModalComponent,
 		SafehtmlPipe, CommentFormatPipe,

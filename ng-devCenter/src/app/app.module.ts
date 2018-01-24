@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HashLocationStrategy, Location, LocationStrategy } from '@angular/common';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 // custom modules
 import { routing, appRoutingProviders } from './app-routing.module';
@@ -19,7 +20,7 @@ import { environment } from '../environments/environment';
 	declarations: [AppComponent, FooterComponent],
 	imports: [
 		BrowserModule, routing, SharedModule.forRoot(), 
-		TicketModule, NavbarModule, CommentsModule
+		TicketModule, NavbarModule, CommentsModule, NgbModule.forRoot()
 	],
 	providers: [
 		appRoutingProviders, Location, 

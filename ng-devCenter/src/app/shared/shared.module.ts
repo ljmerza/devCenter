@@ -1,7 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
 
@@ -28,15 +28,7 @@ import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 
 @NgModule({
-	imports: [
-		CommonModule, HttpClientModule, BrowserAnimationsModule, 
-		NgbModule.forRoot(), ToastModule.forRoot()
-	],
-	providers: [
-		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-		{ provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
-		{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
-	],
+	imports: [HttpClientModule, NgbModule, ToastModule.forRoot(), BrowserAnimationsModule], // BrowserAnimationsModule needed for ToastModule
 	declarations: [ModalComponent, ToastrComponent],
 	exports: [ModalComponent, ToastrComponent]
 })
@@ -49,6 +41,9 @@ export class SharedModule {
 				WebSocketService, MiscService,
 				// if in testing mode use test endpoint else use regular endpoints
 				{ provide: JiraService, useClass: environment.test ? JiraServiceTest : JiraService},
+				{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+				{ provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
+				{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
 			]
 		}
 	}
