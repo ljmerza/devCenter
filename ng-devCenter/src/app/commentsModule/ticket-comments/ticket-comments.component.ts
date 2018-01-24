@@ -31,10 +31,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	@Input() attachments;
 	@Output() commentChangeEvent = new EventEmitter();
 
-	constructor(
-		private toastr: ToastrService, public user:UserService,
-		public jira:JiraService, private misc: MiscService
-	) {}
+	constructor(private toastr: ToastrService, public user:UserService, public jira:JiraService, private misc: MiscService) {}
 
 	/**
 	*/
@@ -91,7 +88,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 
 	/**
 	*/
-	closeDeleteModal(deleteComment){
+	closeDeleteModal(deleteComment?){
 
 		this.modalRef.close();
 		if(!deleteComment) return;
