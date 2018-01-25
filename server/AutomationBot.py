@@ -98,6 +98,12 @@ class AutomationBot(object):
 			logging.info('Retrieved Tickets: {:.4}'.format(end_get-start_get))
 			start_bot = time.time()
 
+			# for each jira ticket update DB table
+			session = self.sql_object.login()
+			for jira_ticket  in jira_tickets['data']:
+				self.sql_object.update_ticket(jira_ticket=jira_ticket, session=session)
+			self.sql_object.logout(session=session)
+			
 			# create thread for chatbot to check pings and print time to start thread
 			for jira_ticket in jira_tickets['data']:	
 				self.check_for_pings(jira_ticket=jira_ticket)
@@ -105,11 +111,6 @@ class AutomationBot(object):
 			logging.info('Check for pings: {:.4}'.format(end_bot-start_bot))
 			start_update = time.time()
 
-			# for each jira ticket update DB table
-			session = self.sql_object.login()
-			for jira_ticket  in jira_tickets['data']:
-				self.sql_object.update_ticket(jira_ticket=jira_ticket, session=session)
-			self.sql_object.logout(session=session)
 
 			# print time to update tickets in DB
 			end_update = time.time()
@@ -182,15 +183,17 @@ class AutomationBot(object):
 		# log into SQL
 		session = self.sql_object.login()
 		# if user not pinged yet then try
-		if( not self.sql_object.get_ping(field='new_ping', key=jira_ticket['key'], session=session) ):
-			self.check_for_new_ping(jira_ticket=jira_ticket, session=session)
+		ticket_exists = self.sql_object.get_ping(field='new_ping', key=jira_ticket['key'], session=session)
+		if not ticket_exists:
+			print('ticket_exists', jira_ticket.get('key', ''), jira_ticket.get('user_details', {}).get('username', ''))
+			self.ping_new_ticket(jira_ticket=jira_ticket, session=session)
 		else:
 			# else check for any other pings based on component and status
 			self.check_for_status_pings(jira_ticket=jira_ticket, session=session)
 		# log out of SQL
 		self.sql_object.logout(session=session)
 
-	def check_for_new_ping(self, jira_ticket, session):
+	def ping_new_ticket(self, jira_ticket, session):
 		'''checks Jira ticket for any new pings and update DB
 
 		Args:
@@ -213,10 +216,13 @@ class AutomationBot(object):
 
 		# if user wants ping then ping them
 		if(wants_ping == 1):
-			# get pcr estimate
-			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point)
 			# send new ticket ping to user and update ping
 			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
+
+			# get pcr estimate
+			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point)
+
+			# ping ticket to user
 			thr = threading.Thread(
 				target=self.chat_obj.send_new_ticket, 
 				kwargs={
@@ -228,8 +234,8 @@ class AutomationBot(object):
 				'username': username
 			})
 			thr.start()
-			# send me new ticket if it's not my ticket
-			# even if ive already been pinged (like for pm ticket)
+
+			# send me new ticket ping if it's not my ticket
 			if(username != self.username):
 				thr = threading.Thread(
 					target=self.chat_obj.send_me_ticket_info, 
@@ -237,20 +243,21 @@ class AutomationBot(object):
 				)
 				thr.start()
 
-		# else if project manager then ping me if not my ticket 
-		# but do not update ping user and update my ping so I don't get it again
+		# else if project manager then ping me if not my ticket and update my ping so I don't get it again 
 		elif(wants_ping == 2):
+			# update ping and get if ive been pinged alraedy
 			self.sql_object.update_ping(key=key, field='me_ping', value=1, session=session)
-			if(username != self.username and not self.sql_object.get_ping(key=key, field='me_ping', session=session)):
-				# then ping me that a new user has been assigned
+			me_pinged = self.sql_object.get_ping(key=key, field='me_ping', session=session)
+
+			# ping me if i havent been pinged of this new ticket
+			if(username != self.username and not me_pinged):
 				thr = threading.Thread(
 					target=self.chat_obj.send_me_ticket_info, 
 					kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':'New Ticket'}
 				)
 				thr.start()
-			
 
-		# else user doesn't want ping so update new ping and send me ticket
+		# else user doesn't want ping so update new ping and send me ticket if its not mine
 		else:
 			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
 			if(username != self.username):

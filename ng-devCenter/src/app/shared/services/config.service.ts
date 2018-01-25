@@ -266,6 +266,10 @@ export class ConfigService {
 			name: 'LBS065263001 (EvcMultiPointSite)'
 		},
 		{
+			link: `order/ethernet/NFS244485001 ?cache=`,
+			name: 'NFS244485001 (EVC P2P)'
+		},
+		{
 			link: `order/ethernet/WTS252804001?cache=`,
 			name: 'WTS252804001 (multi-evc)'
 		},
