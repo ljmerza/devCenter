@@ -185,7 +185,6 @@ class AutomationBot(object):
 		# if user not pinged yet then try
 		ticket_exists = self.sql_object.get_ping(field='new_ping', key=jira_ticket['key'], session=session)
 		if not ticket_exists:
-			print('ticket_exists', jira_ticket.get('key', ''), jira_ticket.get('user_details', {}).get('username', ''))
 			self.ping_new_ticket(jira_ticket=jira_ticket, session=session)
 		else:
 			# else check for any other pings based on component and status
