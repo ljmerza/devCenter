@@ -1,7 +1,19 @@
-.toast-top-right {
-	top: 65px;
-}
+$infoColor: #0275d8;
 
 #toast-container {
 	z-index: 1000;
+
+	>div {
+		border-radius: 0;
+		box-shadow: none;
+	}
+
+	&.toast-top-right {
+		top: 70px;
+	}
+
+	.toast-info {
+		background-color: $infoColor !important;
+	}
 }
+

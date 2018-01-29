@@ -8,7 +8,7 @@ export class ToastrService {
 		showCloseButton: true, 
 		animate: 'fade', 
 		enableHTML: true,
-		toastLife: 2000
+		toastLife: 5000
 	};
 
 	toastObject: ToastsManager;
