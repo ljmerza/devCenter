@@ -20,7 +20,7 @@
 		<ng-template ngbPanelContent>
 
 			<!-- editing buttons only if belongs to current user -->
-			<span class='edit-buttons'>
+			<span class='edit-buttons' *ngIf='comment.username == user.username'>
 				<button type="button" class="btn btn-outline-primary" (click)="toggleEditing(comment)">
 					{{comment.closeText}}
 				</button>
