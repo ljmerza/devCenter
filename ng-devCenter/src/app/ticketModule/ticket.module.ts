@@ -22,7 +22,8 @@ import { TicketsComponent } from './tickets/tickets.component';
 
 // pipes
 import { WorkTimePipe } from './work-time.pipe';
-
+// directives
+import { TicketExpandDirective } from './ticket-expand.directive';
 
 @NgModule({
 	imports: [
@@ -33,7 +34,7 @@ import { WorkTimePipe } from './work-time.pipe';
 	declarations: [
 		SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent,
 		TicketLogComponent, TicketStatusComponent, StatusModalComponent,
-		TicketsComponent, TicketComponent, WorkTimePipe
+		TicketsComponent, TicketComponent, WorkTimePipe, TicketExpandDirective
 	],
 	exports: [TicketsComponent]
 })

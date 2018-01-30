@@ -49,7 +49,8 @@
 					</thead>
 
 					<tbody>
-						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}}' class="appTicket" [ticket]=ticket [repos]=repos>
+						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}}' class="appTicket" 
+						[ticket]=ticket [repos]=repos dcTicketExpand>
 						</tr>
 					</tbody>
 				</table>
