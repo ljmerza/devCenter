@@ -777,7 +777,7 @@ export class JiraServiceTest {
 			 	"timeZone": "America/New_York"
 			 }, 
 			 "body": "test",
-			 "renderedBody": "<p>test</p>",
+			 "renderedBody": "<p>test</p><hr><br><br>test",
 			 "updateAuthor": {
 			 	"self": "http://jira.com/rest/api/2/user?username=testuser", 
 			 	"name": "testuser", 
@@ -805,10 +805,7 @@ export class JiraServiceTest {
 	/**
 	*/
 	editComment(postData): Observable<any> {
-		return Observable.of({
-			data:this.commentResponse,
-			status: true
-		}).delay(1000);
+		return Observable.of(this.commentResponse).delay(1000);
 	}
 
 	/**

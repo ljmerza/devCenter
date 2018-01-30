@@ -136,7 +136,20 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 		comment.comment = postData.comment;
 
 		this.jira.editComment(postData).subscribe(
-			() => {
+			response => {
+				// get new comment to save new details
+				const newComment = response.data;
+
+				this.comments = this.comments.map(comment => {
+					// if id match save new comment details
+					if(comment.id === postData.comment_id){
+						comment.updated = newComment.response;
+						comment.raw_comment = newComment.body;
+						comment.comment = newComment.renderedBody;
+					}
+					return comment;
+				});
+
 				this.commentChangeEvent.emit({allComments: this.comments});
 				this.toastr.showToast('Comment Edited Successfully', 'success');
 			},
