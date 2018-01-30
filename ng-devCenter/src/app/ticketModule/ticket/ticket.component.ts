@@ -54,17 +54,12 @@ export class TicketComponent {
 	* @param response New comment response from API. 
 	*/
 	commentChangeEvent({ allComments, newStatus, response }):void {
-
-		console.log('{ allComments, newStatus, response : ', { allComments, newStatus, response });
-
 		// if comment added from API then push comment onto comment array
 		if(response && ((response.data && response.data.comment) || response.comment)){
 
 			// get new comment data
 			const commentData = response.comment || response.data.comment;
 
-			console.log('commentData: ', commentData);
-			
 			// create new comment object
 			const newCommentBody = {
 				comment: commentData.renderedBody,
