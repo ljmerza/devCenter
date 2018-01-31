@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { select } from '@angular-redux/store';
 
 import { Subject, Observable, Subscription } from 'rxjs';
 import 'rxjs/add/observable/interval';
@@ -9,8 +8,8 @@ import { UserService } from './../../shared/services/user.service';
 import { JiraService } from './../../shared/services/jira.service';
 import { ToastrService } from './../../shared/services/toastr.service';
 import { WebSocketService } from './../../shared/services/web-socket.service';
-import { LocalStorageService } from './../../shared/services/local-storage.service';
 
+import { select } from '@angular-redux/store';
 import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
 
@@ -55,8 +54,9 @@ export class TicketsComponent implements OnInit {
         }
 	};
 
-	constructor(public lStore:LocalStorageService, public ngProgress: NgProgress, public route:ActivatedRoute, 
-		public jira:JiraService, public user:UserService, public toastr: ToastrService, public webSock: WebSocketService
+	constructor(
+		public ngProgress: NgProgress, public route:ActivatedRoute, 
+		public jira:JiraService, public user:UserService, public toastr: ToastrService
 	) {}
 	
 	/**
