@@ -64,17 +64,22 @@ export class TicketsComponent implements OnInit {
 	 * of tickets based on URL parameter if user has credentials
 	 */
 	ngOnInit():void {
-		if( !this.user.needRequiredCredentials() ){
-			this.jira.getRepos().subscribe( 
-				branches => this.repos = branches.data,
-				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-			);
-		}
-
+		if( !this.user.needRequiredCredentials() ) this.getRepos();
+		
 		this.route.paramMap.subscribe(params => {
 			this.ticketType = params.get('filter') || 'mytickets';
 			if( !this.user.needRequiredCredentials() ) this.getTickets();
 		});
+	}
+
+	/** 
+	 * Gets a list of repositories for QA generator.
+	 */
+	private getRepos() {
+		this.jira.getRepos().subscribe( 
+			branches => this.repos = branches.data,
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
 	}
 
 	/**
@@ -89,16 +94,22 @@ export class TicketsComponent implements OnInit {
 		this.jira.getTickets(this.ticketType, isHardRefresh);
 
 		this.openTickets$.subscribe(
-			tickets => {
-				console.log('tickets: ', tickets);
-				if(tickets && tickets.length > 0){
-					this.ngProgress.done();
-					this.loadingTickets = false;
-					this.rerender();
-				}	
-			},
+			tickets => this.processTickets(tickets),
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
+	}
+
+	/**
+	 * If a list of tickets exist then process the end of ticket retrieval
+	 * @param {Array<Tickets>} tickets
+	 */
+	private processTickets(tickets) {
+		console.log('tickets: ', tickets);
+		if(tickets && tickets.length > 0){
+			this.ngProgress.done();
+			this.loadingTickets = false;
+			this.rerender();
+		}
 	}
 
 	/**
