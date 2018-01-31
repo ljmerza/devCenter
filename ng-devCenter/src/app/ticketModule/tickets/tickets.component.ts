@@ -64,7 +64,7 @@ export class TicketsComponent implements OnInit {
 	 * of tickets based on URL parameter if user has credentials
 	 */
 	ngOnInit():void {
-		// if we are authed then get list of repos once
+		// if we are authorized then get list of repositories once
 		if( !this.user.needRequiredCredentials() ){
 			this.jira.getRepos().subscribe( 
 				branches => { 
@@ -84,8 +84,8 @@ export class TicketsComponent implements OnInit {
 	}
 
 	/**
-	 * Start laoding animations and get tickets. Once store triggers tickets event,
-	 * stop loading animations and rerender the datatable. If error then Toast error message.
+	 * Start loading animations and get tickets. Once store triggers tickets event,
+	 * stop loading animations and re-render the data-table. If error then Toast error message.
 	 * @param {Boolean} isHardRefresh if hard refresh skip localStorage retrieval and loading animations
 	 */
 	getTickets(isHardRefresh:Boolean=false) {
@@ -108,7 +108,7 @@ export class TicketsComponent implements OnInit {
 	}
 
 	/**
-	 * render the datatable. If instance of datatable already exists then
+	 * render the data-table. If instance of data-table already exists then
 	 * destroy it first then render it
 	 */
 	rerender():void {
