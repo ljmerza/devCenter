@@ -6,9 +6,6 @@ import { Watcher } from './Watcher';
 import { CodeReviewer } from './CodeReviewer';
 import { Link } from './Link';
 
-
-
-
 export interface Ticket {
 	key: String,
 	msrp: String,

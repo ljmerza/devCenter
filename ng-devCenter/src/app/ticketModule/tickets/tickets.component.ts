@@ -10,9 +10,11 @@ import { ToastrService } from './../../shared/services/toastr.service';
 import { WebSocketService } from './../../shared/services/web-socket.service';
 import { LocalStorageService } from './../../shared/services/local-storage.service';
 
-
 import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
+
+import { NgRedux } from 'ng2-redux';
+import { IAppState, Actions } from './../../shared/store/store';
 
 import { Ticket } from './../../shared/store/models/ticket';
 import * as $ from 'jquery';
@@ -60,7 +62,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	/*
 	*/
 	constructor(
-		public lStore:LocalStorageService,
+		public lStore:LocalStorageService, ngRedux: NgRedux<IAppState>,
 		public ngProgress: NgProgress, public route:ActivatedRoute, 
 		public jira:JiraService, public user:UserService,
 		public toastr: ToastrService, public webSock: WebSocketService
