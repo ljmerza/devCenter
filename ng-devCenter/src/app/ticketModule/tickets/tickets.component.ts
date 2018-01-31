@@ -24,11 +24,12 @@ import { Ticket } from './../../shared/store/models/ticket';
 })
 export class TicketsComponent implements OnInit {
 	loadingTickets:boolean = true;
-	ticketType:string;
+	ticketType:string; // type of tickets to get
 	repos;
+
 	dtTrigger:Subject<any> = new Subject();
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
-	@select('tickets') openTickets$:Observable<Array<Ticket>>;
+	@select('tickets') openTickets$: Observable<Array<Ticket>>;
 
 	dtOptions = {
 		order: [[4, 'desc']],
@@ -87,7 +88,7 @@ export class TicketsComponent implements OnInit {
 	 * stop loading animations and re-render the data-table. If error then Toast error message.
 	 * @param {Boolean} isHardRefresh if hard refresh skip localStorage retrieval and loading animations
 	 */
-	getTickets(isHardRefresh:Boolean=false) {
+	private getTickets(isHardRefresh:Boolean=false) {
 		if(isHardRefresh) this.loadingTickets = false;
 
 		this.ngProgress.start();
@@ -116,7 +117,7 @@ export class TicketsComponent implements OnInit {
 	 * render the data-table. If instance of data-table already exists then
 	 * destroy it first then render it
 	 */
-	rerender():void {
+	private rerender():void {
 
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
