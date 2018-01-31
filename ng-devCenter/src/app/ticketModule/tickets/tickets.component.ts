@@ -64,8 +64,6 @@ export class TicketsComponent implements OnInit {
 	 * of tickets based on URL parameter if user has credentials
 	 */
 	ngOnInit():void {
-
-		// if we are authorized then get list of repositories once
 		if( !this.user.needRequiredCredentials() ){
 			this.jira.getRepos().subscribe( 
 				branches => this.repos = branches.data,
