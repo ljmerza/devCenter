@@ -14,6 +14,7 @@ import { LocalStorageService } from './../../shared/services/local-storage.servi
 import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
 
+import { Ticket } from './../../shared/store/models/ticket';
 import * as $ from 'jquery';
 
 @Component({
@@ -24,7 +25,7 @@ import * as $ from 'jquery';
 })
 export class TicketsComponent implements OnInit, OnDestroy {
 	loadingTickets:boolean = true;
-	openTickets:Array<any>;
+	openTickets:Array<Ticket>;
 	ticketType;
 	repos;
 	searchTicket$;

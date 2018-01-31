@@ -534,7 +534,8 @@ export class JiraServiceTest {
 						"email": "tu1234@test.com", 
 						"display_name": "LASTNAME TEST", 
 						"phone_number": "null"
-					}, "dates": {
+					}, 
+					"dates": {
 						"estimate": "3d", 
 						"logged": "", 
 						"duedate": "2018-01-10", 

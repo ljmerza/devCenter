@@ -3,7 +3,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
-
+import { NgRedux, NgReduxModule } from 'ng2-redux';
+import { IAppState, rootReducer } from './store/store';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from './../../environments/environment';
@@ -28,11 +29,19 @@ import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 
 @NgModule({
-	imports: [HttpClientModule, NgbModule, ToastModule.forRoot(), BrowserAnimationsModule], // BrowserAnimationsModule needed for ToastModule
+	imports: [
+		HttpClientModule, NgbModule, 
+		ToastModule.forRoot(), BrowserAnimationsModule,
+		NgReduxModule
+	], // BrowserAnimationsModule needed for ToastModule
 	declarations: [ModalComponent, ToastrComponent],
 	exports: [ModalComponent, ToastrComponent]
 })
 export class SharedModule {
+	constructor(ngRedux:NgRedux<IAppState>){
+		ngRedux.configureStore(rootReducer, {});
+	}
+
 	static forRoot(): ModuleWithProviders {
 		return {
 			ngModule: SharedModule,
