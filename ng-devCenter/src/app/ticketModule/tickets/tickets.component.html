@@ -1,5 +1,5 @@
 <ng-progress [showSpinner]="false" [color]="'blue'"></ng-progress>
-
+<!-- ticket loading -->
 <div class='loading' [hidden]="!loadingTickets">
 	<div class='container'>
 		<div class='loader'>
@@ -15,6 +15,7 @@
 </div>
 
 <div class="container-fluid table-spacing" [hidden]='loadingTickets'>
+	<!-- header -->
 	<div class="row">
 		<div class="col-12">
 			<h1 class='text-center ticket-title'>{{jira.title}} Tickets
@@ -23,38 +24,34 @@
 			</h1>
 		</div>
 	</div>
+	<!-- table -->
 	<div class="row">
 		<div class="col-12">
-			<div [hidden]='!openTickets'>
-				<table 
-					[ngClass]="{'table-striped': jira.title != 'All Open'}" 
-					datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
-				>
-					<thead>
-						<tr>
-							<th>Key</th>
-							<th>MSRP</th>
-							<th>Summary</th>
-							<th>Status</th>
-							<th>Start Date</th>
-							<th>Due Date</th>
-							<th>Estimate</th>
-							<th>Logged</th>
-							<th>Last Update</th>
-							<th>Created</th>
-							<th>Crucible</th>
-							<th>Assignee</th>
-							<th>Customer</th>
-						</tr>
-					</thead>
+			<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+				<thead>
+					<tr>
+						<th>Key</th>
+						<th>MSRP</th>
+						<th>Summary</th>
+						<th>Status</th>
+						<th>Start Date</th>
+						<th>Due Date</th>
+						<th>Estimate</th>
+						<th>Logged</th>
+						<th>Last Update</th>
+						<th>Created</th>
+						<th>Crucible</th>
+						<th>Assignee</th>
+						<th>Customer</th>
+					</tr>
+				</thead>
 
-					<tbody>
-						<tr *ngFor='let ticket of openTickets' id='{{ticket.key}}' class="appTicket" 
-						[ticket]=ticket [repos]=repos dcTicketExpand>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+				<tbody>
+					<tr *ngFor='let ticket of openTickets$ | async' id='{{ticket.key}}' class="appTicket" 
+					[ticket]=ticket [repos]=repos dcTicketExpand>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>

@@ -8,24 +8,24 @@ export interface Link {
 
 interface LinkType {
 	id: String,
-	name: String,
 	inward: String,
+	name: String,
 	outward: String,
 	self: String
 }
 
 interface Issue {
+	fields: Fields
 	id: String, 
 	key: String,
 	self: String,
-	fields: Fields
 }
 
 interface Fields {
-	summary: String,
-	status: Status,
-	priority: Priority,
 	issueType: IssueType
+	priority: Priority,
+	status: Status,
+	summary: String,
 }						
 
 interface Status {
@@ -53,10 +53,10 @@ interface Priority {
 }
 
 interface IssueType {
-	self: String,
-	id: String,
 	description: String,
 	iconUrl: String,
+	id: String,
 	name: String,
-	subtask: String
+	self: String,
+	subtask: Boolean
 }

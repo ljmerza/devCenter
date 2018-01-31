@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { select } from '@angular-redux/store';
 
 import { Subject, Observable, Subscription } from 'rxjs';
 import 'rxjs/add/observable/interval';
@@ -13,11 +14,7 @@ import { LocalStorageService } from './../../shared/services/local-storage.servi
 import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
 
-import { NgRedux } from 'ng2-redux';
-import { IAppState, Actions } from './../../shared/store/store';
-
 import { Ticket } from './../../shared/store/models/ticket';
-import * as $ from 'jquery';
 
 @Component({
 	selector: 'dc-tickets',
@@ -25,15 +22,13 @@ import * as $ from 'jquery';
 	styleUrls: ['./tickets.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class TicketsComponent implements OnInit, OnDestroy {
+export class TicketsComponent implements OnInit {
 	loadingTickets:boolean = true;
-	openTickets:Array<Ticket>;
-	ticketType;
+	ticketType:string;
 	repos;
-	searchTicket$;
-	webSock$;
 	dtTrigger:Subject<any> = new Subject();
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
+	@select('tickets') openTickets$:Observable<Array<Ticket>>;
 
 	dtOptions = {
 		order: [[4, 'desc']],
@@ -59,17 +54,15 @@ export class TicketsComponent implements OnInit, OnDestroy {
         }
 	};
 
-	/*
-	*/
-	constructor(
-		public lStore:LocalStorageService, ngRedux: NgRedux<IAppState>,
-		public ngProgress: NgProgress, public route:ActivatedRoute, 
-		public jira:JiraService, public user:UserService,
-		public toastr: ToastrService, public webSock: WebSocketService
+	constructor(public lStore:LocalStorageService, public ngProgress: NgProgress, public route:ActivatedRoute, 
+		public jira:JiraService, public user:UserService, public toastr: ToastrService, public webSock: WebSocketService
 	) {}
 	
-	/*
-	*/
+	/**
+	 * On initialization of component, if user credentials exist get repository list.
+	 * on route parameter event trigger, get URL parameter and get list
+	 * of tickets based on URL parameter if user has credentials
+	 */
 	ngOnInit():void {
 		// if we are authed then get list of repos once
 		if( !this.user.needRequiredCredentials() ){
@@ -81,99 +74,43 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			);
 		}
 
-		this.route.paramMap.subscribe( params => {
-			// default to my tickets
+		this.route.paramMap.subscribe(params => {
 			this.ticketType = params.get('filter') || 'mytickets';
-			// destroy any existing subscriptions
-			this.destorySubscritions();
-			// if required user info exists then get tickets and repos
+
 			if( !this.user.needRequiredCredentials() ){
-				this.searchTicket$ = this.getTickets();
+				this.getTickets();
 			}
 		});
 	}
 
-	/*
-	*/
-	ngOnDestroy(){
-		this.destorySubscritions();
-	}
+	/**
+	 * Start laoding animations and get tickets. Once store triggers tickets event,
+	 * stop loading animations and rerender the datatable. If error then Toast error message.
+	 * @param {Boolean} isHardRefresh if hard refresh skip localStorage retrieval and loading animations
+	 */
+	getTickets(isHardRefresh:Boolean=false) {
+		if(isHardRefresh) this.loadingTickets = false;
 
-	/*
-	*/
-	destorySubscritions() {
-		if(this.searchTicket$) this.searchTicket$.unsubscribe();
-		if(this.webSock$) this.webSock$.unsubscribe();
-	}
-
-	/*
-	*/
-	startWebSocket() {
-
-		// create websocket to receive ticket updates - skip first to get 'old' data
-		return this.webSock.getTickets()
-		.map(data => {
-
-			switch(this.ticketType){
-				case 'pcr':
-					return data.filter(ticket => ticket.status === 'PCR - Needed');
-				case 'qa':
-					return data.filter(ticket => ['Ready for QA', 'In QA'].includes(ticket.status) );
-				case 'mytickets':
-					return data.filter(ticket => ticket.username === this.user.username);
-				case 'allopen':
-					return data;
-				case 'cr':
-					return data.filter(ticket => ['PCR - Completed', 'Code Review - Working'].includes(ticket.status) );
-			}
-		})
-		.distinctUntilChanged( (old_tickets, new_tickets) => {
-			return JSON.stringify(old_tickets) === JSON.stringify(new_tickets) 
-		})
-		.skip(1)
-		.subscribe( data => {
-
-			// save new tickets locally if my tickets
-			if(!this.ticketType || this.ticketType == 'mytickets'){
-				this.lStore.setItem('mytickets', JSON.stringify(data));
-			}
-
-			this.openTickets = data;
-			this.rerender();
-
-		});
-	}
-
-	/*
-	*/
-	getTickets(skipCache=false):Subscription {
 		this.ngProgress.start();
-		if(!skipCache) this.loadingTickets = false;
+		this.jira.getTickets(this.ticketType, isHardRefresh);
 
-		return this.jira.getFilterData(this.ticketType, skipCache)
-		.subscribe(issues => {
-
-			if(issues && issues.data) {
-				// save tickets and re-render data tables
-				this.openTickets = issues.data;
-				
-				this.ngProgress.done();
-				this.loadingTickets = false;
-				
-				this.rerender();
-
-				// enable websockets
-				// if( !this.ticketType || ['pcr','qa','cr','allopen','mytickets'].includes(this.ticketType) ) {
-				// 	this.webSock$ = this.startWebSocket();
-				// }
-			}
-		},
+		this.openTickets$.subscribe(
+			tickets => {
+				console.log('tickets: ', tickets);
+				if(tickets && tickets.length > 0){
+					this.ngProgress.done();
+					this.loadingTickets = false;
+					this.rerender();
+				}	
+			},
 			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 		);
 	}
 
-	/*
-	*/
+	/**
+	 * render the datatable. If instance of datatable already exists then
+	 * destroy it first then render it
+	 */
 	rerender():void {
 
 		if(this.dtElement && this.dtElement.dtInstance){
@@ -183,20 +120,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			});
 		} else {
 			this.dtTrigger.next();
-		}
-	}
-
-	/*
-	*/
-	pcrPassEvent({key, isTransitioned, showToast=true}):void {
-
-		// if success then remove ticket
-		if(isTransitioned){
-			this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-				dtInstance.row( $(`#${key}`)[0] ).remove();
-				this.rerender();
-			});
-
 		}
 	}
 }

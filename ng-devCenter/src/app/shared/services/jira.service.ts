@@ -6,6 +6,11 @@ import { UserService } from './user.service';
 import { ConfigService } from './config.service';
 import { LocalStorageService } from './local-storage.service';
 
+import { NgRedux } from '@angular-redux/store';
+import { RootState } from './../store/store';
+import { Actions } from './../store/actions';
+
+
 import { environment } from '../../../environments/environment';
 
 @Injectable()
@@ -19,14 +24,14 @@ export class JiraService {
 	constructor(
 		public http:HttpClient, public config:ConfigService,
 		public lStore:LocalStorageService,
-		public user:UserService
+		public user:UserService, public ngRedux:NgRedux<RootState>
 	) { }
 
 	apiUrl:string = `${environment.apiUrl}:${environment.port}/dev_center`;
 
 	/**
 	*/
-	getFilterData(jiraListType:string, skipCache:boolean=false): Observable<any> {
+	getTickets(jiraListType:string, skipCache:Boolean=false): void {
 		// try to get ticket list data
 		const allProjectNames = this.config.allProjectNames.filter(ticketData=>ticketData.link===jiraListType);
 		const teamTicketListNames = this.config.teamTicketListNames.filter(ticketData=>ticketData.link===jiraListType);
@@ -45,8 +50,11 @@ export class JiraService {
 		params = params.append('fields', this.config.fields);
 		params = params.append('skipCache', skipCache.toString());
 
-		// return request
-		return this.http.get(`${this.apiUrl}/jira/tickets`, {params});
+		// get tickets and save in store
+		this.http.get(`${this.apiUrl}/jira/tickets`, {params})
+		.subscribe( (response:any) => {
+			this.ngRedux.dispatch({type: Actions.newTickets, payload: response.data });
+		});
 	}
 
 	/**

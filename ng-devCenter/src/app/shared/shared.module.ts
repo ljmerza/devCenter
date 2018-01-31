@@ -3,8 +3,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
-import { NgRedux, NgReduxModule } from 'ng2-redux';
-import { IAppState, rootReducer } from './store/store';
+import { NgRedux, NgReduxModule, DevToolsExtension } from '@angular-redux/store';
+import { RootState, initialState, rootReducer } from './store/store';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from './../../environments/environment';
@@ -15,7 +15,6 @@ import { ToastrComponent } from './toastr/toastr.component';
 
 // services
 import { JiraService } from './services/jira.service';
-import { JiraServiceTest } from './services/testing/jira.service';
 import { LocalStorageService } from './services/local-storage.service';
 import { MiscService } from './services/misc.service';
 import { UserService } from './services/user.service';
@@ -38,8 +37,8 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
 	exports: [ModalComponent, ToastrComponent]
 })
 export class SharedModule {
-	constructor(ngRedux:NgRedux<IAppState>){
-		ngRedux.configureStore(rootReducer, {});
+	constructor(private ngRedux:NgRedux<RootState>, private devTools: DevToolsExtension){
+		ngRedux.configureStore(rootReducer, initialState, [], [devTools.enhancer()]);
 	}
 
 	static forRoot(): ModuleWithProviders {
@@ -47,9 +46,7 @@ export class SharedModule {
 			ngModule: SharedModule,
 			providers: [
 				UserService, LocalStorageService, ToastrService, ConfigService, 
-				WebSocketService, MiscService,
-				// if in testing mode use test endpoint else use regular endpoints
-				{ provide: JiraService, useClass: environment.test ? JiraServiceTest : JiraService},
+				WebSocketService, MiscService, JiraService,
 				{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
 				{ provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
 				{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}

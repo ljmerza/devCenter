@@ -41,6 +41,8 @@ def set_status(data, jira_obj):
 		return jira_obj.set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'removeMergeConflict':
 		return jira_obj.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status_type'] == 'uctReady':
+		return jira_obj.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'removeMergeCode':
 		return jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 

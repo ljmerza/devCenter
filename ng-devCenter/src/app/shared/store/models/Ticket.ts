@@ -17,7 +17,7 @@ export interface Ticket {
 	summary: String,
 	component: String,
 	status: String,
-	story_point: String,
+	story_point: Number,
 	sprint: String,
 	epic_link: String,
 	label: String,
