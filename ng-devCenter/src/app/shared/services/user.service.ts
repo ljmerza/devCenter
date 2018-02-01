@@ -98,7 +98,7 @@ export class UserService {
 			this.teamLocal = '#/';
 			this.teamPort = this.teamLocalPort;
 		} else {
-			this.teamLocal = '';
+			this.teamLocal = '#/';
 			this.teamPort = this.teamApiPort+this.port;
 		}
 

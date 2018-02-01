@@ -120,7 +120,7 @@
 						<ul class="dropdown-menu" dropdownSubmenuMenu>
 							<li>
 								<a *ngFor='let navLink of config.teamdb_ember_links' class="dropdown-item" target="_blank" 
-								href="{{user.teamUrl}}:{{user.teamPort}}{{navLink.link}}{{user.cache}}">
+								href="{{user.teamUrl}}:{{user.teamPort}}/teamdb/{{user.teamLocal}}{{navLink.link}}{{user.cache}}">
 									{{navLink.name}}
 								</a>
 							</li>
