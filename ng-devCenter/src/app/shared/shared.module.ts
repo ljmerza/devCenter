@@ -26,6 +26,7 @@ import { WebSocketService } from './services/web-socket.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
+import { TestInterceptor } from './interceptors/test.interceptor';
 
 @NgModule({
 	imports: [
@@ -49,7 +50,8 @@ export class SharedModule {
 				WebSocketService, MiscService, JiraService,
 				{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
 				{ provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
-				{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
+				{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true},
+				{ provide: HTTP_INTERCEPTORS, useClass: TestInterceptor, multi: true}
 			]
 		}
 	}

@@ -29,6 +29,7 @@ export class TicketsComponent implements OnInit {
 	dtTrigger:Subject<any> = new Subject();
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
 	@select('tickets') openTickets$: Observable<Array<Ticket>>;
+	@select('repos') repos$: Observable<any>;
 
 	dtOptions = {
 		order: [[4, 'desc']],
@@ -77,10 +78,10 @@ export class TicketsComponent implements OnInit {
 	 * Gets a list of repositories for QA generator.
 	 */
 	private getRepos() {
-		this.jira.getRepos().subscribe( 
-			branches => this.repos = branches.data,
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
+		this.jira.getRepos();
+		this.repos$.subscribe(branches => {
+			if(branches) this.repos = branches.data;
+		});
 	}
 
 	/**
@@ -93,11 +94,7 @@ export class TicketsComponent implements OnInit {
 
 		this.ngProgress.start();
 		this.jira.getTickets(this.ticketType, isHardRefresh);
-
-		this.openTickets$.subscribe(
-			tickets => this.processTickets(tickets),
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
+		this.openTickets$.subscribe(this.processTickets.bind(this));
 	}
 
 	/**

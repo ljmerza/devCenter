@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { UserService } from './user.service';
 import { ConfigService } from './config.service';
 import { LocalStorageService } from './local-storage.service';
+import { ToastrService } from './toastr.service';
 
 import { NgRedux } from '@angular-redux/store';
 import { RootState } from './../store/store';
@@ -23,7 +24,7 @@ export class JiraService {
 	*/
 	constructor(
 		public http:HttpClient, public config:ConfigService,
-		public lStore:LocalStorageService,
+		public lStore:LocalStorageService, public toastr:ToastrService,
 		public user:UserService, public ngRedux:NgRedux<RootState>
 	) { }
 
@@ -31,7 +32,7 @@ export class JiraService {
 
 	/**
 	*/
-	getTickets(jiraListType:string, skipCache:Boolean=false): void {
+	getTickets(jiraListType:string, isHardRefresh:Boolean=false):void {
 		// try to get ticket list data
 		const allProjectNames = this.config.allProjectNames.filter(ticketData=>ticketData.link===jiraListType);
 		const teamTicketListNames = this.config.teamTicketListNames.filter(ticketData=>ticketData.link===jiraListType);
@@ -48,13 +49,18 @@ export class JiraService {
 		let params = new HttpParams();
 		params = params.append('jql', this.jql);
 		params = params.append('fields', this.config.fields);
-		params = params.append('skipCache', skipCache.toString());
+		params = params.append('isHardRefresh', isHardRefresh.toString());
 
 		// get tickets and save in store
 		this.http.get(`${this.apiUrl}/jira/tickets`, {params})
-		.subscribe( (response:any) => {
-			this.ngRedux.dispatch({type: Actions.newTickets, payload: response.data });
-		});
+		.subscribe( 
+			(response:any) => {
+				if(response){
+					this.ngRedux.dispatch({type: Actions.newTickets, payload: response.data });
+				}
+			},
+			this.processErrorResponse.bind(this)
+		);
 	}
 
 	/**
@@ -76,7 +82,7 @@ export class JiraService {
 	*/
 	searchTicket(msrp:string): Observable<any> {
 		let params = new HttpParams();
-		params = params.append('skipCache', `true`);
+		params = params.append('isHardRefresh', `true`);
 		return this.http.get(`${this.apiUrl}/jira/getkey/${msrp}`, {params});
 	}
 
@@ -84,14 +90,24 @@ export class JiraService {
 	*/
 	getTicketBranches(msrp:string): Observable<any> {
 		let params = new HttpParams();
-		params = params.append('skipCache', `true`);
+		params = params.append('isHardRefresh', `true`);
 		return this.http.get(`${this.apiUrl}/git/branches/${msrp}`, {params});
 	}
 
 	/**
 	*/
-	getRepos(): Observable<any>{
-		return this.http.get(`${this.apiUrl}/git/repos`);
+	getRepos():void {
+		this.http.get(`${this.apiUrl}/git/repos`)
+		.subscribe( 
+			(response:any) => {
+				console.log('git', response)
+				if(response) {
+					this.ngRedux.dispatch({type: Actions.repos, payload: response.data });
+				}
+			},
+			this.processErrorResponse.bind(this)
+
+		);
 	}
 
 	/**
@@ -110,7 +126,7 @@ export class JiraService {
 	*/
 	getBranches(repoName): Observable<any> {
 		let params = new HttpParams();
-		params = params.append('skipCache', `true`);
+		params = params.append('isHardRefresh', `true`);
 		return this.http.get(`${this.apiUrl}/git/repo/${repoName}`, {params});
 	}
 
@@ -157,8 +173,11 @@ export class JiraService {
 
 	/**
 	*/
-	public processErrorResponse(response:HttpErrorResponse): string {
-		return response.error.data || response.message || response.error;
+	public processErrorResponse(response:HttpErrorResponse):string {
+		console.log('error',response)
+		const message = response.error.data || response.message || response.error;
+		this.toastr.showToast(message, 'error');
+		return message;
 	}
 
 }

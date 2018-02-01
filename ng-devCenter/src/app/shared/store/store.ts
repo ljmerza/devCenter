@@ -23,10 +23,13 @@ export function rootReducer(state, action){
 			return removeComment(state, action);
 		case Actions.editComment:
 			return editComment(state, action);
+		case Actions.repos:
+			return { ...state, ...{repos:action.payload} };
 		default:
 			return state;
 	}	
 }
+
 
 /**
  *
