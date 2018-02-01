@@ -78,7 +78,7 @@ export class TicketsComponent implements OnInit {
 		
 		this.route.paramMap.subscribe(params => {
 			this.ticketType = params.get('filter') || 'mytickets';
-			if( !this.user.needRequiredCredentials() ) this.getTickets();
+			if( !this.user.needRequiredCredentials() ) this.getTickets(true, true);
 		});
 	}
 
@@ -98,8 +98,8 @@ export class TicketsComponent implements OnInit {
 	 * stop loading animations and re-render the data-table. If error then Toast error message.
 	 * @param {Boolean} isHardRefresh if hard refresh skip localStorage retrieval and loading animations
 	 */
-	private getTickets(isHardRefresh:Boolean=false) {
-		if(isHardRefresh) this.loadingTickets = false;
+	private getTickets(isHardRefresh:Boolean=false, showLoading:Boolean=false) {
+		if(showLoading) this.loadingTickets = true;
 		this.ngProgress.start();
 		this.jira.getTickets(this.ticketType, isHardRefresh);
 	}
