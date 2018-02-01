@@ -13,7 +13,7 @@ declare var hljs :any;
 declare var $ :any;
 
 @Component({
-	selector: 'dev-center-ticket-comments',
+	selector: 'dc-ticket-comments',
 	templateUrl: './ticket-comments.component.html',
 	styleUrls: ['./ticket-comments.component.scss'],
 	encapsulation: ViewEncapsulation.None,
@@ -44,11 +44,8 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 			return comment;
 		});
 
-		this.openPanelIds = this.comments.map((c,i) => {
-			if(this.comments.length<6 || (this.comments.length>6 && i>this.comments.length-4)){
-				return `${this.key}${i}`;
-			}
-		});
+		// only open the last comment section
+		this.openPanelIds = [`${this.key}${this.comments.length-1}`];
 	}
 
 	/**

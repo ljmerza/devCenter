@@ -4,4 +4,5 @@ export const Actions = {
 	removeComment: 'REMOVE_COMMENT',
 	editComment: 'EDIT_COMMENT',
 	repos: 'ADD_REPOS',
+	userProfile: 'USER_PROFILE',
 };

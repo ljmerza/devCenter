@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
-
+import { select } from '@angular-redux/store';
+import { Observable } from 'rxjs/Observable';
 
 import { UserService } from './../../shared/services/user.service'
 import { JiraService } from './../../shared/services/jira.service';
@@ -15,6 +16,7 @@ import { ToastrService } from './../../shared/services/toastr.service';
 export class UserSettingsComponent implements OnInit {
 	userSettingsForm: FormGroup;
 	@Input() isLogin:boolean = true;
+	@select('userProfile') getProfile$: Observable<any>;
 
 	constructor(
 		public user: UserService, private jira: JiraService, 
@@ -66,18 +68,16 @@ export class UserSettingsComponent implements OnInit {
 	}
 
 	getProfile(){
-		this.jira.getProfile().subscribe(
-			response => {
-				if(response && response.data){
-					this.user.userData = response.data;
-					this.user.userPicture = response.data.avatarUrls['48x48'];
+		this.jira.getProfile();
+		this.getProfile$.subscribe(branches => {
+			if(branches){
+				this.user.userData = branches;
+				this.user.userPicture = branches.avatarUrls['48x48'];
 
-					this.setUserPings(this.user.userData.ping_settings)
-				}
-			},
-			error => this.toastr.showToast(`Could not retrieve user profile: ${error}`,'error')
-		)
-		}
+				this.setUserPings(this.user.userData.ping_settings)
+			}
+		});
+	}
 
 	/**
 	*/

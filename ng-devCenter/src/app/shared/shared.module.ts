@@ -43,16 +43,21 @@ export class SharedModule {
 	}
 
 	static forRoot(): ModuleWithProviders {
+		let providers = [
+			UserService, LocalStorageService, ToastrService, ConfigService, 
+			WebSocketService, MiscService, JiraService,
+			{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+			{ provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
+			{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
+		];
+
+		if(environment.test){
+			providers.push({ provide: HTTP_INTERCEPTORS, useClass: TestInterceptor, multi: true});
+		}
+
 		return {
 			ngModule: SharedModule,
-			providers: [
-				UserService, LocalStorageService, ToastrService, ConfigService, 
-				WebSocketService, MiscService, JiraService,
-				{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-				{ provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
-				{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true},
-				{ provide: HTTP_INTERCEPTORS, useClass: TestInterceptor, multi: true}
-			]
+			providers
 		}
 	}
 }

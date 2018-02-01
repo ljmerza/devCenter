@@ -9,6 +9,7 @@ import { DataTablesModule } from 'angular-datatables';
 // custom modules
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared.module';
+import { CommentsModule } from '../commentsModule/comments.module';
 
 // components
 import { SetPingsComponent } from './set-pings/set-pings.component';
@@ -27,7 +28,7 @@ import { UserDetailsComponent } from './user-details/user-details.component';
 
 @NgModule({
 	imports: [
-		CommonModule, SharedModule, NgbModule,
+		CommonModule, SharedModule, NgbModule, CommentsModule,
 		RouterModule, FormsModule, ReactiveFormsModule, MomentModule,
 		NgProgressModule, DataTablesModule
 	],

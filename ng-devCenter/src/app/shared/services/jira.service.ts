@@ -11,6 +11,9 @@ import { NgRedux } from '@angular-redux/store';
 import { RootState } from './../store/store';
 import { Actions } from './../store/actions';
 
+import { APIResponse } from './../../shared/store/models/apiResponse';
+
+
 
 import { environment } from '../../../environments/environment';
 
@@ -54,10 +57,8 @@ export class JiraService {
 		// get tickets and save in store
 		this.http.get(`${this.apiUrl}/jira/tickets`, {params})
 		.subscribe( 
-			(response:any) => {
-				if(response){
-					this.ngRedux.dispatch({type: Actions.newTickets, payload: response.data });
-				}
+			(response:APIResponse) => {
+				this.ngRedux.dispatch({type: Actions.newTickets, payload: response.data });
 			},
 			this.processErrorResponse.bind(this)
 		);
@@ -98,12 +99,9 @@ export class JiraService {
 	*/
 	getRepos():void {
 		this.http.get(`${this.apiUrl}/git/repos`)
-		.subscribe( 
-			(response:any) => {
-				console.log('git', response)
-				if(response) {
-					this.ngRedux.dispatch({type: Actions.repos, payload: response.data });
-				}
+		.subscribe(
+			(response:APIResponse) => {
+				this.ngRedux.dispatch({type: Actions.repos, payload: response.data });
 			},
 			this.processErrorResponse.bind(this)
 
@@ -160,8 +158,14 @@ export class JiraService {
 
 	/**
 	*/
-	getProfile(): Observable<any> {
-		return this.http.get(`${this.apiUrl}/jira/profile/${this.user.username}`);
+	getProfile():void {
+		 this.http.get(`${this.apiUrl}/jira/profile/${this.user.username}`)
+		.subscribe( 
+			(response:APIResponse) => {
+				this.ngRedux.dispatch({type: Actions.userProfile, payload: response.data });
+			},
+			this.processErrorResponse.bind(this)
+		);
 	}
 
 	/**

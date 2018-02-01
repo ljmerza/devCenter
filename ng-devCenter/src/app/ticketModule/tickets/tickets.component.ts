@@ -14,6 +14,7 @@ import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
 
 import { Ticket } from './../../shared/store/models/ticket';
+import { Repo } from './../../shared/store/models/repo';
 
 @Component({
 	selector: 'dc-tickets',
@@ -24,12 +25,13 @@ import { Ticket } from './../../shared/store/models/ticket';
 export class TicketsComponent implements OnInit {
 	loadingTickets:boolean = true;
 	ticketType:string; // type of tickets to get
-	repos;
+	repos: Array<Repo>;
 
 	dtTrigger:Subject<any> = new Subject();
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
-	@select('tickets') openTickets$: Observable<Array<Ticket>>;
-	@select('repos') repos$: Observable<any>;
+
+	@select('tickets') getTickets$: Observable<Array<Ticket>>;
+	@select('repos') getRepos$: Observable<Array<Repo>>;
 
 	dtOptions = {
 		order: [[4, 'desc']],
@@ -79,8 +81,8 @@ export class TicketsComponent implements OnInit {
 	 */
 	private getRepos() {
 		this.jira.getRepos();
-		this.repos$.subscribe(branches => {
-			if(branches) this.repos = branches.data;
+		this.getRepos$.subscribe(branches => {
+			if(branches) this.repos = branches;
 		});
 	}
 
@@ -94,7 +96,7 @@ export class TicketsComponent implements OnInit {
 
 		this.ngProgress.start();
 		this.jira.getTickets(this.ticketType, isHardRefresh);
-		this.openTickets$.subscribe(this.processTickets.bind(this));
+		this.getTickets$.subscribe(this.processTickets.bind(this));
 	}
 
 	/**

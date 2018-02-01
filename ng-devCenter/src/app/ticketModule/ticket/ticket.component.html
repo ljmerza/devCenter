@@ -5,7 +5,7 @@
 	</div>
 	<div class="float-right">
 		<i (click)="openPingModel()" class="material-icons success" title='Branch Information'>record_voice_over</i>
-	</div>
+	</div>	
 </td>
 
 <!-- msrp -->
@@ -62,4 +62,6 @@
 <td><dc-user-details [msrp]=ticket.msrp [user]=ticket.user_details></dc-user-details></td>
 
 <!-- customer data -->
-<td><dc-user-details [msrp]=ticket.msrp [user]=ticket.customer_details></dc-user-details></td>
+<td>
+	<dc-user-details [msrp]=ticket.msrp [user]=ticket.customer_details></dc-user-details>
+</td>
