@@ -32,6 +32,8 @@ export class TicketsComponent implements OnInit {
 
 	@select('tickets') getTickets$: Observable<Array<Ticket>>;
 	@select('repos') getRepos$: Observable<Array<Repo>>;
+	getTicketsSub$;
+	getReposSub$;
 
 	dtOptions = {
 		order: [[4, 'desc']],
@@ -68,7 +70,11 @@ export class TicketsComponent implements OnInit {
 	 * of tickets based on URL parameter if user has credentials
 	 */
 	ngOnInit():void {
-		if( !this.user.needRequiredCredentials() ) this.getRepos();
+		if( !this.user.needRequiredCredentials() ){
+			this.jira.getRepos();
+			this.getRepos$.subscribe(this.processRepos.bind(this))
+			this.getTickets$.subscribe(this.processTickets.bind(this));
+		} 
 		
 		this.route.paramMap.subscribe(params => {
 			this.ticketType = params.get('filter') || 'mytickets';
@@ -77,13 +83,14 @@ export class TicketsComponent implements OnInit {
 	}
 
 	/** 
-	 * Gets a list of repositories for QA generator.
+	 * saves list of repositories and un-subscribed from getting list
+	 * @param {Array<Repo>} the array of repositories to save on instance
 	 */
-	private getRepos() {
-		this.jira.getRepos();
-		this.getRepos$.subscribe(branches => {
-			if(branches) this.repos = branches;
-		});
+	private processRepos(repos) {
+		if(repos){
+			this.repos = repos;
+			if(this.getReposSub$) this.getReposSub$.unsubscribe();
+		}
 	}
 
 	/**
@@ -93,10 +100,8 @@ export class TicketsComponent implements OnInit {
 	 */
 	private getTickets(isHardRefresh:Boolean=false) {
 		if(isHardRefresh) this.loadingTickets = false;
-
 		this.ngProgress.start();
 		this.jira.getTickets(this.ticketType, isHardRefresh);
-		this.getTickets$.subscribe(this.processTickets.bind(this));
 	}
 
 	/**
@@ -104,8 +109,8 @@ export class TicketsComponent implements OnInit {
 	 * @param {Array<Tickets>} tickets
 	 */
 	private processTickets(tickets) {
-		console.log('tickets: ', tickets);
 		if(tickets && tickets.length > 0){
+			// this.getTicketsSub$.unsubscribe();
 			this.ngProgress.done();
 			this.loadingTickets = false;
 			this.rerender();

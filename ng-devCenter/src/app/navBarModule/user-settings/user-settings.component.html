@@ -6,7 +6,7 @@
 				<!-- username -->
 				<div class="form-group">
 					<label for="username">Username:</label>
-					<input formControlName="username" placeholder="Enter username"
+					<input formControlName="username" placeholder="Enter username" autocomplete="username"
 					type="text" class="form-control" [class.invalid]="username.invalid">
 					<!-- invalids -->
 					<div class='text-danger' *ngIf='username.invalid'>
@@ -19,7 +19,7 @@
 				<div class="form-group">
 					<label for="password">Password:</label>
 					<input type="password" class="form-control" [class.invalid]="password.invalid"
-					formControlName='password' placeholder="Password">
+					formControlName='password' placeholder="Password" autocomplete="current-password">
 					<!-- invalids -->
 					<div class='text-danger' *ngIf='password.invalid'>
 						<span *ngIf="password.errors.required">Password required</span>
@@ -30,7 +30,7 @@
 				<div class="form-group">
 					<label for="port">Port:</label>
 					<input type="text" class="form-control" [class.invalid]="port.invalid" 
-					formControlName='port' placeholder="Port">
+					formControlName='port' placeholder="Port" autocomplete="off">
 					<!-- invalids -->
 					<div class='text-danger' *ngIf='port.invalid'>
 						<span *ngIf="port.errors.required">Port required</span>

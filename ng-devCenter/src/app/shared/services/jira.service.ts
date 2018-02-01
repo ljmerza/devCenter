@@ -161,7 +161,7 @@ export class JiraService {
 	getProfile():void {
 		 this.http.get(`${this.apiUrl}/jira/profile/${this.user.username}`)
 		.subscribe( 
-			(response:APIResponse) => {
+			(response:any) => {
 				this.ngRedux.dispatch({type: Actions.userProfile, payload: response.data });
 			},
 			this.processErrorResponse.bind(this)

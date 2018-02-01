@@ -1,4 +1,5 @@
 export interface APIResponse {
 	data: any,
-	satus: boolean
+	status: boolean,
+	hardRequest: boolean
 }
