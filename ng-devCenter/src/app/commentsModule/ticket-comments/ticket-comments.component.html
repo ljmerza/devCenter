@@ -1,13 +1,14 @@
-<ngb-accordion #acc="ngbAccordion" activeIds='{{openPanelIds}}' [destroyOnHide]='false'>
+<ngb-accordion #acc="ngbAccordion" [destroyOnHide]='false'>
 
 	<!-- a comment panel -->
-	<ngb-panel *ngFor='let comment of comments; index as i' [id]="key+i">
+	<ngb-panel *ngFor='let comment of commentsRedux$ | async; index as i' [id]="key+i">
 
 		<!-- title -->
 		<ng-template ngbPanelTitle>
 			<div class='comment-header' data-id={{comment.id}}>
 				<span>
 					{{comment.display_name}}
+					{{openPanelIds}}
 					<img src="http://presence.q.att.com/presence/{{comment.username}}.gif">
 				</span>
 				<span class="float-right">

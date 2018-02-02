@@ -2,8 +2,11 @@ import {
 	Component, ViewChild, ElementRef, EventEmitter, AfterViewInit,
 	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy
 } from '@angular/core';
+
 import { NgRedux } from '@angular-redux/store';
 import { RootState } from './../../shared/store/store';
+import { Comment } from './../../shared/store/models/Comment';
+import { Actions } from './../../shared/store/actions';
 
 import { ModalComponent } from './../../shared/modal/modal.component';
 import { JiraService } from './../../shared/services/jira.service';
@@ -22,14 +25,13 @@ declare var $ :any;
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TicketCommentsComponent implements OnInit, AfterViewInit {
-	openPanelIds = [];
 	commentId;
 	modalRef;
 	customModalCss = 'ticketComment';
+	comments: Array<Comment>;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key;
-	@Input() comments;
 	@Input() attachments;
 	@Output() commentChangeEvent = new EventEmitter();
 	commentsRedux$;
@@ -37,54 +39,40 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	constructor(
 		private toastr: ToastrService, public user:UserService, 
 		public jira:JiraService, private misc: MiscService,
-		store: NgRedux<RootState>
-	) {
-		console.log('store: ', store);
-	}
+		public store:NgRedux<RootState>
+	) { }
 
 	/**
-	*/
-	ngOnInit() {
-		this.formatComments();
-		// this.commentsRedux$ = this.store.select(this.commentSelector);
-
-		this.commentsRedux$.subscribe(comments => {
-			console.log('comments: ', comments);
-		});
-	}
-
-	commentSelector(state) {
-		console.log('state: ', state);
-		let comments = state.tickets.map(ticket => ticket.comments)
-		console.log('comments: ', comments, this.key);
-
-		comments.filter(comments => {
-			comments.length > 0 && comments[0].key === this.key
-		});
-
-		return comments;
-	}
-
-	/**
-	 *
-	 *
+	 * redux selector for this ticket's comments. On new comments save to this instance.
 	 */
-	formatComments(){
-		this.comments = this.comments.map(comment => {
-			comment.isEditing = false;
-			comment.closeText = 'Edit Comment';
-			comment.editId = 'E'+comment.id.toString();
-			return comment;
+	ngOnInit():void {
+		this.syncComments();
+	}
+	
+	syncComments():void {
+		this.commentsRedux$ = this.store.select(this.commentSelector.bind(this));
+		this.commentsRedux$.subscribe(comments => {
+			this.comments = comments;
+			this.commentsRedux$.unsubscribe();
 		});
-
-		// only open the last comment section
-		this.openPanelIds = [`${this.key}${this.comments.length-1}`];
 	}
 
 	/**
-	*/
-	ngAfterViewInit(): void {
-		const self=this;
+	 * filters out comments for this ticket only from the redux store
+	 * @param {RootState} state the current redux state when comment event is triggered
+	 */
+	commentSelector(state):Array<Comment> {
+		return state.tickets
+		.map(ticket => ticket.comments)
+		.filter(comments => comments.length > 0 && comments[0].key === this.key)[0];
+	}
+
+	/**
+	 * add code highlighting to each comment and add copy text
+	 * functionality to each table item
+	 */
+	ngAfterViewInit():void {
+		const misc=this.misc;
 		
 		setTimeout(() => {
 			// highlight code needs to be triggered after modal opens
@@ -95,21 +83,26 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 			// for each table item add click event for copying text
 			$('.tableCopy').each(function(i, block) {
 				$(this).click(function(){
-					self.misc.copyText( $(this).children('input').get(0) );
+					misc.copyText( $(this).children('input').get(0) );
 				});
 			});
 		});
 	}
 
 	/**
-	*/
+	 * toggle editing boolean on a comment object and change close text
+	 * based on editing or not
+	 * @param {Comment} comment the comment to change editing values on
+	 */
 	toggleEditing(comment){
 		comment.isEditing = !comment.isEditing;
 		comment.closeText = comment.closeText == 'Cancel Editing' ? 'Edit Comment' : 'Cancel Editing';
 	}
 
 	/**
-	*/
+	 * saves commentId and opens verify dialog for deletion of comment
+	 * @param {String} commentId the comment ID of the comment to delete
+	 */
 	deleteComment(commentId) {
 		this.commentId = commentId;
 		// open delete modal
@@ -117,15 +110,20 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	}
 
 	/**
-	*/
+	 * If delete confirmation then remove comment from comments
+	 * array and send commentId to API to persist delete
+	 * @param {Boolean} deleteComment do we delete the comment?
+	 */
 	closeDeleteModal(deleteComment?){
 
 		this.modalRef.close();
 		if(!deleteComment) return;
 
-		// get index of comment and remove it from comments input var
+		// get index of comment and remove it from store and locally
 		const pos = this.comments.map(comm =>	comm.id).indexOf(this.commentId);
 		const deletedComment = this.comments.splice(pos, 1);
+		this.store.dispatch({type: Actions.removeComment, payload:deletedComment[0] });
+		this.syncComments();
 
 		this.jira.deleteComment(this.commentId, this.key).subscribe(
 			() => {
@@ -141,7 +139,9 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	}
 
 	/**
-	*/
+	 * Edit's a comment's body and persists to backend
+	 * @param {Comment} comment the comment object to edit
+	 */
 	editComment(comment){
 
 		// toggle editing text
@@ -170,8 +170,9 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 				// get new comment to save new details
 				const newComment = response.data;
 
+				// add data from new comment response to local new comment object
 				this.comments = this.comments.map(comment => {
-					// if id match save new comment details
+					// if ID match save new comment details
 					if(comment.id === postData.comment_id){
 						comment.updated = newComment.response;
 						comment.raw_comment = newComment.body;

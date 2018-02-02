@@ -9,5 +9,8 @@ export interface Comment {
 	comment_type: String,
 	created: Date,
 	updated: Date,
-	visibility: String
+	visibility: String,
+	isEditing?: Boolean,
+	closeText?: String,
+	editId?: String
 }

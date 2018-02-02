@@ -239,6 +239,9 @@ def get_comments(issue):
 			'comment_type': comment_type,
 			'created': comment.get('created', ''),
 			'updated': comment.get('updated', ''),
+			'isEditing': False,
+			'closeText': 'Edit Comment',
+			'editId': 'E' + comment.get('id', ''),
 			'visibility': 'Developers' if 'visibility' in comment else ''
 
 		})

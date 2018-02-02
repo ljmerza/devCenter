@@ -2,9 +2,9 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { ToastModule } from 'ng2-toastr/ng2-toastr';
 import { NgRedux, NgReduxModule, DevToolsExtension } from '@angular-redux/store';
 import { RootState, initialState, rootReducer } from './store/store';
+import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from './../../environments/environment';
@@ -34,22 +34,33 @@ import { TestInterceptor } from './interceptors/test.interceptor';
 		ToastModule.forRoot(), BrowserAnimationsModule
 	], // BrowserAnimationsModule needed for ToastModule
 	declarations: [ModalComponent, ToastrComponent],
-	exports: [ModalComponent, ToastrComponent]
+	exports: [ModalComponent, ToastrComponent],
+	providers: [
+		UserService, LocalStorageService, ToastrService, ConfigService, 
+		WebSocketService, MiscService, JiraService,
+		{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+		{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
+		{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
+	]
 })
 export class SharedModule {
+	constructor(private ngRedux:NgRedux<RootState>, private devTools: DevToolsExtension){
+		ngRedux.configureStore(rootReducer, initialState, [], [devTools.enhancer()]);
+	}
+
 	static forRoot(): ModuleWithProviders {
 		let providers = [
 			UserService, LocalStorageService, ToastrService, ConfigService, 
 			WebSocketService, MiscService, JiraService,
-			{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-			{ provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
-			{ provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
+			{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+			{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
+			{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
 		];
 
 		if(environment.test){
 			providers.push({ provide: HTTP_INTERCEPTORS, useClass: TestInterceptor, multi: true});
 		}
 
-		return {ngModule: SharedModule, providers}
+		return {ngModule: SharedModule, providers};
 	}
 }
