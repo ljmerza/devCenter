@@ -24,7 +24,6 @@ import { TicketsComponent } from './tickets/tickets.component';
 // pipes
 import { WorkTimePipe } from './work-time.pipe';
 import { UserDetailsComponent } from './user-details/user-details.component';
-// directives
 
 @NgModule({
 	imports: [

@@ -30,18 +30,13 @@ import { TestInterceptor } from './interceptors/test.interceptor';
 
 @NgModule({
 	imports: [
-		HttpClientModule, NgbModule, 
-		ToastModule.forRoot(), BrowserAnimationsModule,
-		NgReduxModule
+		HttpClientModule, NgbModule, NgReduxModule,
+		ToastModule.forRoot(), BrowserAnimationsModule
 	], // BrowserAnimationsModule needed for ToastModule
 	declarations: [ModalComponent, ToastrComponent],
 	exports: [ModalComponent, ToastrComponent]
 })
 export class SharedModule {
-	constructor(private ngRedux:NgRedux<RootState>, private devTools: DevToolsExtension){
-		ngRedux.configureStore(rootReducer, initialState, [], [devTools.enhancer()]);
-	}
-
 	static forRoot(): ModuleWithProviders {
 		let providers = [
 			UserService, LocalStorageService, ToastrService, ConfigService, 
@@ -55,9 +50,6 @@ export class SharedModule {
 			providers.push({ provide: HTTP_INTERCEPTORS, useClass: TestInterceptor, multi: true});
 		}
 
-		return {
-			ngModule: SharedModule,
-			providers
-		}
+		return {ngModule: SharedModule, providers}
 	}
 }

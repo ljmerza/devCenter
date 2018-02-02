@@ -2,6 +2,8 @@ import {
 	Component, ViewChild, ElementRef, EventEmitter, AfterViewInit,
 	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy
 } from '@angular/core';
+import { NgRedux } from '@angular-redux/store';
+import { RootState } from './../../shared/store/store';
 
 import { ModalComponent } from './../../shared/modal/modal.component';
 import { JiraService } from './../../shared/services/jira.service';
@@ -30,13 +32,44 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	@Input() comments;
 	@Input() attachments;
 	@Output() commentChangeEvent = new EventEmitter();
+	commentsRedux$;
 
-	constructor(private toastr: ToastrService, public user:UserService, public jira:JiraService, private misc: MiscService) {}
+	constructor(
+		private toastr: ToastrService, public user:UserService, 
+		public jira:JiraService, private misc: MiscService,
+		store: NgRedux<RootState>
+	) {
+		console.log('store: ', store);
+	}
 
 	/**
 	*/
 	ngOnInit() {
-		// add isEditing boolean to each comments
+		this.formatComments();
+		// this.commentsRedux$ = this.store.select(this.commentSelector);
+
+		this.commentsRedux$.subscribe(comments => {
+			console.log('comments: ', comments);
+		});
+	}
+
+	commentSelector(state) {
+		console.log('state: ', state);
+		let comments = state.tickets.map(ticket => ticket.comments)
+		console.log('comments: ', comments, this.key);
+
+		comments.filter(comments => {
+			comments.length > 0 && comments[0].key === this.key
+		});
+
+		return comments;
+	}
+
+	/**
+	 *
+	 *
+	 */
+	formatComments(){
 		this.comments = this.comments.map(comment => {
 			comment.isEditing = false;
 			comment.closeText = 'Edit Comment';
