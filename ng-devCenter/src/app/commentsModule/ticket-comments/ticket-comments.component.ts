@@ -7,6 +7,7 @@ import { NgRedux } from '@angular-redux/store';
 import { RootState } from './../../shared/store/store';
 import { Comment } from './../../shared/store/models/Comment';
 import { Actions } from './../../shared/store/actions';
+import { Ticket } from './../../shared/store/models/ticket';
 
 import { ModalComponent } from './../../shared/modal/modal.component';
 import { JiraService } from './../../shared/services/jira.service';
@@ -49,11 +50,17 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 		this.syncComments();
 	}
 	
+	/**
+	 *
+	 *
+	 */
 	syncComments():void {
-		this.commentsRedux$ = this.store.select(this.commentSelector.bind(this));
-		this.commentsRedux$.subscribe(comments => {
+		this.commentsRedux$ = this.store.select('tickets')
+		.filter( (ticket:Ticket) => ticket.key == this.key)
+		.map( (ticket:Ticket) => ticket.comments)
+		.subscribe( (comments:Array<Comment>) => {
+			console.log('comments: ', comments);
 			this.comments = comments;
-			this.commentsRedux$.unsubscribe();
 		});
 	}
 
