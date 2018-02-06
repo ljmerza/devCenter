@@ -216,36 +216,44 @@ def get_comments(issue):
 	'''
 	comments = []
 	raw_comment = ''
+	key = issue.get('key')
+
 	# for each comment save it and see if QA steps
 	for index, comment in enumerate(issue.get('renderedFields', {}).get('comment', {}).get('comments', [])):
 
 		# try toget raw comment data
 		raw_comments = issue.get('fields', {}).get('comment', {}).get('comments', [])
 		if len(raw_comments) > index-1:
-			raw_comment = raw_comments[index].get('body', '')
+			comment['renderedBody'] = raw_comments[index].get('body', '')
 
 		comment_type = 'info'
 		if 'QA Steps' in comment.get('body', ''):
-			comment_type = True
+			comment['comment_type'] = True
 
-		comments.append({
-			'comment': comment.get('body', ''),
-			'raw_comment': raw_comment,
-			'id': comment.get('id', ''),
-			'key': issue.get('key', ''),
-			'username': comment.get('updateAuthor', {}).get('name', ''),
-			'email': comment.get('updateAuthor', {}).get('emailAddress', ''),
-			'display_name': comment.get('updateAuthor', {}).get('displayName', ''),
-			'comment_type': comment_type,
-			'created': comment.get('created', ''),
-			'updated': comment.get('updated', ''),
-			'isEditing': False,
-			'closeText': 'Edit Comment',
-			'editId': 'E' + comment.get('id', ''),
-			'visibility': 'Developers' if 'visibility' in comment else ''
-
-		})
+		comments.append( format_comment(comment, key) )
 	return comments
+
+def format_comment(comment, key):
+	'''
+	'''
+
+	return {
+		'comment': comment.get('renderedBody', ''),
+		'raw_comment': comment.get('body', ''),
+		'id': comment.get('id', ''),
+		'key': key,
+		'username': comment.get('updateAuthor', {}).get('name', ''),
+		'email': comment.get('updateAuthor', {}).get('emailAddress', ''),
+		'display_name': comment.get('updateAuthor', {}).get('displayName', ''),
+		'comment_type': comment.get('comment_type', ''),
+		'created': comment.get('created', ''),
+		'updated': comment.get('updated', ''),
+		'isEditing': False,
+		'closeText': 'Edit Comment',
+		'editId': 'E' + comment.get('id', ''),
+		'visibility': 'Developers' if 'visibility' in comment else ''
+
+	}
 
 def get_qa_steps(issue):
 	'''finds an issue's QA steps in the comments if they exist

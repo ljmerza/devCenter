@@ -1,5 +1,5 @@
 import { 
-	Component, ViewChild, ElementRef, EventEmitter, AfterViewInit,
+	Component, ViewChild, ElementRef, EventEmitter, AfterViewInit, ChangeDetectorRef,
 	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy
 } from '@angular/core';
 
@@ -38,40 +38,15 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	commentsRedux$;
 
 	constructor(
-		private toastr: ToastrService, public user:UserService, 
-		public jira:JiraService, private misc: MiscService,
-		public store:NgRedux<RootState>
+		private toastr: ToastrService, private user:UserService, private jira:JiraService, 
+		private misc: MiscService, private store:NgRedux<RootState>, private cd: ChangeDetectorRef 
 	) { }
 
 	/**
-	 * redux selector for this ticket's comments. On new comments save to this instance.
+	 * On init of this component instance listen for tickets event from Redux.
 	 */
 	ngOnInit():void {
 		this.syncComments();
-	}
-	
-	/**
-	 *
-	 *
-	 */
-	syncComments():void {
-		this.commentsRedux$ = this.store.select('tickets')
-		.filter( (ticket:Ticket) => ticket.key == this.key)
-		.map( (ticket:Ticket) => ticket.comments)
-		.subscribe( (comments:Array<Comment>) => {
-			console.log('comments: ', comments);
-			this.comments = comments;
-		});
-	}
-
-	/**
-	 * filters out comments for this ticket only from the redux store
-	 * @param {RootState} state the current redux state when comment event is triggered
-	 */
-	commentSelector(state):Array<Comment> {
-		return state.tickets
-		.map(ticket => ticket.comments)
-		.filter(comments => comments.length > 0 && comments[0].key === this.key)[0];
 	}
 
 	/**
@@ -95,22 +70,28 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 			});
 		});
 	}
-
+	
 	/**
-	 * toggle editing boolean on a comment object and change close text
-	 * based on editing or not
-	 * @param {Comment} comment the comment to change editing values on
+	 * listen for tickets event from Redux and extracts the comments for this ticket.
 	 */
-	toggleEditing(comment){
-		comment.isEditing = !comment.isEditing;
-		comment.closeText = comment.closeText == 'Cancel Editing' ? 'Edit Comment' : 'Cancel Editing';
+	private syncComments():void {
+		this.commentsRedux$ = this.store.select('tickets')
+		.map( (tickets:Array<Ticket>) =>{ 
+			const ticket = tickets.find(ticket => ticket.key === this.key);
+			return ticket.comments;
+		})
+		.subscribe(comments =>{
+			this.comments = comments;
+			console.log('comments: ', comments);
+			this.cd.detectChanges();
+		});
 	}
 
 	/**
 	 * saves commentId and opens verify dialog for deletion of comment
 	 * @param {String} commentId the comment ID of the comment to delete
 	 */
-	deleteComment(commentId) {
+	private deleteComment(commentId) {
 		this.commentId = commentId;
 		// open delete modal
 		this.modalRef = this.modal.openModal();
@@ -121,35 +102,19 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	 * array and send commentId to API to persist delete
 	 * @param {Boolean} deleteComment do we delete the comment?
 	 */
-	closeDeleteModal(deleteComment?){
+	public closeDeleteModal(deleteComment?){
 
 		this.modalRef.close();
 		if(!deleteComment) return;
 
-		// get index of comment and remove it from store and locally
-		const pos = this.comments.map(comm =>	comm.id).indexOf(this.commentId);
-		const deletedComment = this.comments.splice(pos, 1);
-		this.store.dispatch({type: Actions.removeComment, payload:deletedComment[0] });
-		this.syncComments();
-
-		this.jira.deleteComment(this.commentId, this.key).subscribe(
-			() => {
-				this.commentChangeEvent.emit({allComments: this.comments});
-				this.toastr.showToast('Comment Deleted Successfully', 'success');
-			},
-			error => {
-				// if error revert comment and show error
-				this.comments.splice(pos, 0, ...deletedComment);
-				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-			}
-		);
+		this.jira.deleteComment(this.commentId, this.key);
 	}
 
 	/**
-	 * Edit's a comment's body and persists to backend
+	 * Edits a comment's body
 	 * @param {Comment} comment the comment object to edit
 	 */
-	editComment(comment){
+	public editComment(comment){
 
 		// toggle editing text
 		this.toggleEditing(comment);
@@ -167,36 +132,16 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 			comment_id: comment.id,
 			comment: newComment
 		};
+		this.jira.editComment(postData);
+	}
 
-		// save old comment if error and replace new comment with old
-		const oldComment = comment.comment;
-		comment.comment = postData.comment;
-
-		this.jira.editComment(postData).subscribe(
-			response => {
-				// get new comment to save new details
-				const newComment = response.data;
-
-				// add data from new comment response to local new comment object
-				this.comments = this.comments.map(comment => {
-					// if ID match save new comment details
-					if(comment.id === postData.comment_id){
-						comment.updated = newComment.response;
-						comment.raw_comment = newComment.body;
-						comment.comment = newComment.renderedBody;
-					}
-					return comment;
-				});
-
-				this.commentChangeEvent.emit({allComments: this.comments});
-				this.toastr.showToast('Comment Edited Successfully', 'success');
-			},
-			error => {
-				// if error revert comment and show error
-				comment.comment = oldComment;
-				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-
-			}
-		);
+	/**
+	 * toggle editing boolean on a comment object and change close text
+	 * based on editing or not
+	 * @param {Comment} comment the comment to change editing values on
+	 */
+	private toggleEditing(comment){
+		comment.isEditing = !comment.isEditing;
+		comment.closeText = comment.closeText == 'Cancel Editing' ? 'Edit Comment' : 'Cancel Editing';
 	}
 }

@@ -3,6 +3,7 @@
 import datetime
 from time import gmtime, strftime
 from JiraUtils import *
+from JiraFields import *
 
 
 class JiraComments():
@@ -47,7 +48,15 @@ class JiraComments():
 		'''
 		'''
 		json_data = self._set_json(comment=comment, private_comment=private_comment)
-		return self.jira_api.put_json(url=f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}?expand=renderedBody', json_data=json_data, cred_hash=cred_hash)
+		response = self.jira_api.put_json(url=f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}?expand=renderedBody', json_data=json_data, cred_hash=cred_hash)
+
+		if not response.get('status', False):
+			return response
+		else:
+			return {
+				'status': True,
+				'data':  format_comment(comment=response.get('data'), key=key)
+			}
 
 	def delete_comment(self, key, comment_id, cred_hash):
 		return self.jira_api.delete(url=f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}', cred_hash=cred_hash)

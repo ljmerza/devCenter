@@ -1,7 +1,7 @@
 <ngb-accordion #acc="ngbAccordion" [destroyOnHide]='false'>
 
 	<!-- a comment panel -->
-	<ngb-panel *ngFor='let comment of commentsRedux$ | async; index as i' [id]="key+i">
+	<ngb-panel *ngFor='let comment of comments; index as i' [id]="key+i">
 
 		<!-- title -->
 		<ng-template ngbPanelTitle>

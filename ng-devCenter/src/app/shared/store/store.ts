@@ -28,8 +28,8 @@ export function rootReducer(state, action){
 			return { ...state, ...{userProfile:action.payload} };
 		case Actions.addComment:
 			return commentActions.addComment(state, action);
-		case Actions.removeComment:
-			return commentActions.removeComment(state, action);
+		case Actions.deleteComment:
+			return commentActions.deleteComment(state, action);
 		case Actions.editComment:
 			return commentActions.editComment(state, action);
 		default:

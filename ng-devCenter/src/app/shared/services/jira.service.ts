@@ -135,18 +135,42 @@ export class JiraService {
 	}
 
 	/**
-	*/
-	editComment(postData): Observable<any> {
-		return this.http.put(`${this.apiUrl}/jira/comment`, postData);
+	 * deletes a comment from a ticket and updates the store
+	 * @param {Comment} postData new comment skeleton object to add to ticket
+	 */
+	editComment(postData):void {
+		this.http.put(`${this.apiUrl}/jira/comment`, postData).subscribe(
+			(response:any) => {
+
+				// get new comment and add what ticket it belongs to
+				let payload = response.data;
+				payload.key = postData.key;
+
+				// update redux and show toast
+				this.ngRedux.dispatch({ type: Actions.editComment, payload });
+				this.toastr.showToast('Comment Deleted Successfully', 'success');
+			},
+			this.processErrorResponse.bind(this)
+		);;
 	}
 
 	/**
-	*/
-	deleteComment(comment_id, key): Observable<any> {
+	 * deletes a comment from a ticket and updates the store
+	 * @param {String} comment_id the id of the comment to delete
+	 * @param {String} key the key of the ticket
+	 */
+	deleteComment(commentId, key): void {
 		let params = new HttpParams();
-		params = params.append('comment_id', comment_id);
+		params = params.append('comment_id', commentId);
 		params = params.append('key', key);
-		return this.http.delete(`${this.apiUrl}/jira/comment`, {params});
+
+		this.http.delete(`${this.apiUrl}/jira/comment`, {params})
+		.subscribe( 
+			(response:any) => {
+				this.ngRedux.dispatch({ type: Actions.deleteComment, payload: {key, id: commentId} });
+			},
+			this.processErrorResponse.bind(this)
+		);
 	}
 
 	/**

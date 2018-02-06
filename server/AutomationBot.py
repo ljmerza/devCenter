@@ -44,7 +44,7 @@ class AutomationBot(object):
 			'all':'11002', 
 			'pcr':'11128'
 		}
-		filter_names = ['uct', 'qa', 'cr', 'uct', 'beta', 'pcr']
+		self.filter_names = ['uct', 'qa', 'cr', 'uct', 'beta', 'pcr']
 		################################################################################
 		# create DB object and connect
 		self.sql_object = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
@@ -162,7 +162,7 @@ class AutomationBot(object):
 			filter_values.append( len(jira_tickets['data']) )
 
 		# create kwargs for pinging beta stats and ping stats
-		stat_results = dict(zip(filter_names, filter_values))
+		stat_results = dict(zip(self.filter_names, filter_values))
 		self.chat_obj.beta_statistics(**stat_results)
 		
 		# reset beta stat counter
