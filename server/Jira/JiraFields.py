@@ -220,15 +220,13 @@ def get_comments(issue):
 
 	# for each comment save it and see if QA steps
 	for index, comment in enumerate(issue.get('renderedFields', {}).get('comment', {}).get('comments', [])):
+		# normalize rendered body
+		comment['renderedBody'] = comment.get('body', '')
 
-		# try toget raw comment data
+		# try to get raw comment data
 		raw_comments = issue.get('fields', {}).get('comment', {}).get('comments', [])
 		if len(raw_comments) > index-1:
-			comment['raw_comments'] = raw_comments[index].get('body', '')
-
-		comment_type = 'info'
-		if 'QA Steps' in comment.get('body', ''):
-			comment['comment_type'] = True
+			comment['body'] = raw_comments[index].get('body', '')
 
 		comments.append( format_comment(comment, key) )
 	return comments
@@ -237,21 +235,20 @@ def format_comment(comment, key):
 	'''
 	'''
 
-	print('comment', comment)
-
-	body = comment.get('body', '')
-	if not body:
-		body = comment.get('renderedBody', '')
+	# set comment type
+	comment_type = 'info'
+	if 'QA Steps' in comment.get('body', ''):
+		comment_type = 'qa_steps'
 
 	return {
-		'comment': body,
-		'raw_comment': comment.get('raw_comments', ''),
+		'comment': comment.get('renderedBody', ''),
+		'raw_comment': comment.get('body', ''),
 		'id': comment.get('id', ''),
 		'key': key,
 		'username': comment.get('updateAuthor', {}).get('name', ''),
 		'email': comment.get('updateAuthor', {}).get('emailAddress', ''),
 		'display_name': comment.get('updateAuthor', {}).get('displayName', ''),
-		'comment_type': comment.get('comment_type', ''),
+		'comment_type': comment_type,
 		'created': comment.get('created', ''),
 		'updated': comment.get('updated', ''),
 		'isEditing': False,
