@@ -224,7 +224,7 @@ def get_comments(issue):
 		# try toget raw comment data
 		raw_comments = issue.get('fields', {}).get('comment', {}).get('comments', [])
 		if len(raw_comments) > index-1:
-			comment['renderedBody'] = raw_comments[index].get('body', '')
+			comment['raw_comments'] = raw_comments[index].get('body', '')
 
 		comment_type = 'info'
 		if 'QA Steps' in comment.get('body', ''):
@@ -237,9 +237,15 @@ def format_comment(comment, key):
 	'''
 	'''
 
+	print('comment', comment)
+
+	body = comment.get('body', '')
+	if not body:
+		body = comment.get('renderedBody', '')
+
 	return {
-		'comment': comment.get('renderedBody', ''),
-		'raw_comment': comment.get('body', ''),
+		'comment': body,
+		'raw_comment': comment.get('raw_comments', ''),
 		'id': comment.get('id', ''),
 		'key': key,
 		'username': comment.get('updateAuthor', {}).get('name', ''),
