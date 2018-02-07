@@ -28,6 +28,19 @@ import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 import { TestInterceptor } from './interceptors/test.interceptor';
 
+
+let providers = [
+	UserService, LocalStorageService, ToastrService, ConfigService, 
+	WebSocketService, MiscService, JiraService,
+	{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+	{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
+	{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
+];
+
+if(environment.test){
+	providers.push({ provide: HTTP_INTERCEPTORS, useClass: TestInterceptor, multi: true});
+}
+
 @NgModule({
 	imports: [
 		HttpClientModule, NgbModule, NgReduxModule,
@@ -35,13 +48,7 @@ import { TestInterceptor } from './interceptors/test.interceptor';
 	], // BrowserAnimationsModule needed for ToastModule
 	declarations: [ModalComponent, ToastrComponent],
 	exports: [ModalComponent, ToastrComponent],
-	providers: [
-		UserService, LocalStorageService, ToastrService, ConfigService, 
-		WebSocketService, MiscService, JiraService,
-		{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-		{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
-		{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
-	]
+	providers
 })
 export class SharedModule {
 	constructor(private ngRedux:NgRedux<RootState>, private devTools: DevToolsExtension){
@@ -49,18 +56,6 @@ export class SharedModule {
 	}
 
 	static forRoot(): ModuleWithProviders {
-		let providers = [
-			UserService, LocalStorageService, ToastrService, ConfigService, 
-			WebSocketService, MiscService, JiraService,
-			{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-			{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
-			{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
-		];
-
-		if(environment.test){
-			providers.push({ provide: HTTP_INTERCEPTORS, useClass: TestInterceptor, multi: true});
-		}
-
 		return {ngModule: SharedModule, providers};
 	}
 }

@@ -9,12 +9,17 @@ import * as test from './../mock-data';
 export class TestInterceptor implements HttpInterceptor {
 
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-		
+
 		let body = {};
+
 		if( /repos/.test(req.url) ) body = test.getRepos;
 		else if( /tickets/.test(req.url) ) body = test.getTickets;
 		else if( /getProfile/.test(req.url) ) body = test.getProfile;
-		// else if( //.test() ) body = test.;
+		else if( /jira\/comment/.test(req.url) ){
+			if(req.method === 'PUT') body = test.editComment;
+			if(req.method === 'DELETE') body = test.deleteComment;
+			if(req.method === 'POST') body = test.commentResponse;
+		} 
 		// else if( //.test() ) body = test.;
 		// else if( //.test() ) body = test.;
 

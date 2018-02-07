@@ -1,13 +1,15 @@
 import { 
-	Component, ViewChild, ElementRef, EventEmitter, AfterViewInit, ChangeDetectorRef,
-	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy
+	Component, ViewChild, AfterViewInit, ChangeDetectorRef,
+	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy, OnDestroy
 } from '@angular/core';
 
 import { NgRedux } from '@angular-redux/store';
 import { RootState } from './../../shared/store/store';
-import { Comment } from './../../shared/store/models/Comment';
 import { Actions } from './../../shared/store/actions';
+
+import { Comment } from './../../shared/store/models/Comment';
 import { Ticket } from './../../shared/store/models/ticket';
+import { Attachment } from './../../shared/store/models/attachment';
 
 import { ModalComponent } from './../../shared/modal/modal.component';
 import { JiraService } from './../../shared/services/jira.service';
@@ -15,8 +17,8 @@ import { ToastrService } from './../../shared/services/toastr.service';
 import { UserService } from './../../shared/services/user.service';
 import { MiscService } from './../../shared/services/misc.service';
 
-declare var hljs :any;
-declare var $ :any;
+declare const hljs:any;
+declare const $:any;
 
 @Component({
 	selector: 'dc-ticket-comments',
@@ -25,17 +27,17 @@ declare var $ :any;
 	encapsulation: ViewEncapsulation.None,
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TicketCommentsComponent implements OnInit, AfterViewInit {
-	commentId;
+export class TicketCommentsComponent implements OnInit, AfterViewInit, OnDestroy {
+	commentId: string;
 	modalRef;
-	customModalCss = 'ticketComment';
+	customModalCss:string = 'ticketComment';
 	comments: Array<Comment>;
+	attachments:Array<Attachment>;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
-	@Input() key;
-	@Input() attachments;
-	@Output() commentChangeEvent = new EventEmitter();
-	commentsRedux$;
+	@Input() key:string;
+	comments$;
+	attachments$;
 
 	constructor(
 		private toastr: ToastrService, private user:UserService, private jira:JiraService, 
@@ -43,10 +45,19 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	) { }
 
 	/**
-	 * On init of this component instance listen for tickets event from Redux.
+	 * On init of this component instance listen for ticket events from Redux.
 	 */
 	ngOnInit():void {
 		this.syncComments();
+		this.syncAttachments();
+	}
+
+	/**
+	 * on destroy of component unsubscribe any observables.
+	 */
+	ngOnDestroy():void {
+		if(this.comments$) this.comments$.unsubscribe();
+		if(this.attachments$) this.attachments$.unsubscribe();
 	}
 
 	/**
@@ -75,23 +86,31 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	 * listen for tickets event from Redux and extracts the comments for this ticket.
 	 */
 	private syncComments():void {
-		this.commentsRedux$ = this.store.select('tickets')
+		this.comments$ = this.store.select('tickets')
 		.map( (tickets:Array<Ticket>) =>{ 
-			const ticket = tickets.find(ticket => ticket.key === this.key);
+			const ticket = tickets.find((ticket:Ticket) => ticket.key === this.key);
 			return ticket.comments;
 		})
-		.subscribe(comments =>{
+		.subscribe( (comments:Array<Comment>) =>{
 			this.comments = comments;
 			console.log('comments: ', comments);
 			this.cd.detectChanges();
 		});
+	}
+	private syncAttachments():void {
+		this.attachments$ = this.store.select('tickets')
+		.map( (tickets:Array<Ticket>) =>{ 
+			const ticket = tickets.find((ticket:Ticket) => ticket.key === this.key);
+			return ticket.attachments;
+		})
+		.subscribe( (attachments:Array<Attachment>) => this.attachments = attachments);
 	}
 
 	/**
 	 * saves commentId and opens verify dialog for deletion of comment
 	 * @param {String} commentId the comment ID of the comment to delete
 	 */
-	private deleteComment(commentId) {
+	private deleteComment(commentId:string):void {
 		this.commentId = commentId;
 		// open delete modal
 		this.modalRef = this.modal.openModal();
@@ -102,19 +121,23 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	 * array and send commentId to API to persist delete
 	 * @param {Boolean} deleteComment do we delete the comment?
 	 */
-	public closeDeleteModal(deleteComment?){
-
+	public closeDeleteModal(deleteComment?:boolean):void {
 		this.modalRef.close();
 		if(!deleteComment) return;
 
-		this.jira.deleteComment(this.commentId, this.key);
+		this.jira.deleteComment(this.commentId, this.key)
+		.subscribe((response:any) => {
+				this.store.dispatch({ type: Actions.deleteComment, payload: {key: this.key, id: this.commentId} });
+			},
+			this.jira.processErrorResponse.bind(this)
+		);
 	}
 
 	/**
 	 * Edits a comment's body
 	 * @param {Comment} comment the comment object to edit
 	 */
-	public editComment(comment){
+	public editComment(comment:Comment):void {
 
 		// toggle editing text
 		this.toggleEditing(comment);
@@ -132,7 +155,19 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 			comment_id: comment.id,
 			comment: newComment
 		};
-		this.jira.editComment(postData);
+		this.jira.editComment(postData)
+		.subscribe((response:any) => {
+
+				// get new comment and add what ticket it belongs to
+				let payload = response.data;
+				payload.key = postData.key;
+
+				// update redux and show toast
+				this.store.dispatch({ type: Actions.editComment, payload });
+				this.toastr.showToast('Comment Deleted Successfully', 'success');
+			},
+			this.jira.processErrorResponse.bind(this)
+		);
 	}
 
 	/**
@@ -140,7 +175,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit {
 	 * based on editing or not
 	 * @param {Comment} comment the comment to change editing values on
 	 */
-	private toggleEditing(comment){
+	private toggleEditing(comment:Comment):void {
 		comment.isEditing = !comment.isEditing;
 		comment.closeText = comment.closeText == 'Cancel Editing' ? 'Edit Comment' : 'Cancel Editing';
 	}

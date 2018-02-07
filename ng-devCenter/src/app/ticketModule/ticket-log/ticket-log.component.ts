@@ -9,6 +9,12 @@ import { ModalComponent } from './../../shared/modal/modal.component';
 import { JiraService } from './../../shared/services/jira.service';
 import { ToastrService } from './../../shared/services/toastr.service';
 
+import { NgRedux } from '@angular-redux/store';
+import { RootState } from './../../shared/store/store';
+import { Comment } from './../../shared/store/models/Comment';
+import { Actions } from './../../shared/store/actions';
+import { Ticket } from './../../shared/store/models/ticket';
+
 @Component({
 	selector: 'dc-ticket-log',
 	templateUrl: './ticket-log.component.html',
@@ -36,7 +42,9 @@ export class TicketLogComponent	{
 	@Input() key:string;
 	modalRef: NgbModalRef;
 
-	constructor(public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef) {}
+	constructor(
+		public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef,
+		private ngRedux:NgRedux<RootState>) {}
 
 	/*
 	*/
@@ -82,7 +90,7 @@ export class TicketLogComponent	{
 
 		// log work and show results
 		this.jira.workLog(postData).subscribe( 
-			(response) => {
+			response => {
 				// show tasks completed
 				this.toastr.showToast(`Tasks updated: ${tasks}`, 'success');
 
@@ -95,7 +103,10 @@ export class TicketLogComponent	{
 				}
 
 				// notify update comments
-				this.commentChangeEvent.emit({newStatus, response:{comment:response.data}});
+				this.commentChangeEvent.emit({newStatus});
+
+				response.data.key = this.key;
+				this.ngRedux.dispatch({ type: Actions.addComment, payload:response.data });
 
 				// then reset form - manual reset because logTime object becomes null on formObj.formReset()
 				this._resetForm();

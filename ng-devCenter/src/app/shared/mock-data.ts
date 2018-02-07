@@ -1,46 +1,17 @@
 export const commentResponse = {
 	status: true, 
 	data: {
-		"self": "http://jira.com/rest/api/2/issue/83338/comment/323759",
-		 "id": "323759", 
-		 "author": {
-		 	"self": "http://jira.com/rest/api/2/user?username=testuser", 
-		 	"name": "testuser", 
-		 	"key": "testuser", 
-		 	"emailAddress": "testuser@test.com", 
-		 	"avatarUrls": {
-		 		"48x48": "http://jira.com/secure/useravatar?ownerId=testuser&avatarId=11051", 
-		 		"24x24": "http://jira.com/secure/useravatar?size=small&ownerId=testuser&avatarId=11051", 
-		 		"16x16": "http://jira.com/secure/useravatar?size=xsmall&ownerId=testuser&avatarId=11051", 
-		 		"32x32": "http://jira.com/secure/useravatar?size=medium&ownerId=testuser&avatarId=11051"
-		 	}, 
-		 	"displayName": "User, Test (testuser)", 
-		 	"active": true, 
-		 	"timeZone": "America/New_York"
-		 }, 
-		 "body": "test",
-		 "renderedBody": "<p>test</p><hr><br><br>test",
-		 "updateAuthor": {
-		 	"self": "http://jira.com/rest/api/2/user?username=testuser", 
-		 	"name": "testuser", 
-		 	"key": "testuser", 
-		 	"emailAddress": "testuser@test.com",
-		 	"avatarUrls": {
-		 		"48x48": "http://jira.com/secure/useravatar?ownerId=testuser&avatarId=11051", 
-		 		"24x24": "http://jira.com/secure/useravatar?size=small&ownerId=testuser&avatarId=11051", 
-		 		"16x16": "http://jira.com/secure/useravatar?size=xsmall&ownerId=testuser&avatarId=11051", 
-		 		"32x32": "http://jira.com/secure/useravatar?size=medium&ownerId=testuser&avatarId=11051"
-		 	}, 
-		 	"displayName": "User, Test (testuser)", 
-		 	"active": true, 
-		 	"timeZone": "America/New_York"
-		}, 
-		"created": (new Date()).toISOString(), 
-		"updated": (new Date()).toISOString(), 
-		"visibility": {
-		 	"type": "role", 
-		 	"value": "Developers"
-		}
+		"comment": "<p>This is the first comment</p>",
+		"raw_comment": "This is the first comment",
+		"id": "321438", 
+		"key": "TS-1234", 
+		"username": "tu1234", 
+		"email": "tu1234@test.com", 
+		"display_name": "TEST, TEST (tu1234)", 
+		"comment_type": "info", 
+		"created": "2017-12-27T20:36:41.633+0000", 
+		"updated": "2017-12-27T20:38:10.067+0000", 
+		"visibility": ""
 	}
 }
 export const workLog = this.commentResponse;

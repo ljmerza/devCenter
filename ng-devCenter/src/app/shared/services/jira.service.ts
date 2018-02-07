@@ -138,20 +138,8 @@ export class JiraService {
 	 * deletes a comment from a ticket and updates the store
 	 * @param {Comment} postData new comment skeleton object to add to ticket
 	 */
-	editComment(postData):void {
-		this.http.put(`${this.apiUrl}/jira/comment`, postData).subscribe(
-			(response:any) => {
-
-				// get new comment and add what ticket it belongs to
-				let payload = response.data;
-				payload.key = postData.key;
-
-				// update redux and show toast
-				this.ngRedux.dispatch({ type: Actions.editComment, payload });
-				this.toastr.showToast('Comment Deleted Successfully', 'success');
-			},
-			this.processErrorResponse.bind(this)
-		);;
+	editComment(postData) {
+		return this.http.put(`${this.apiUrl}/jira/comment`, postData);
 	}
 
 	/**
@@ -159,18 +147,12 @@ export class JiraService {
 	 * @param {String} comment_id the id of the comment to delete
 	 * @param {String} key the key of the ticket
 	 */
-	deleteComment(commentId, key): void {
+	deleteComment(commentId, key) {
 		let params = new HttpParams();
 		params = params.append('comment_id', commentId);
 		params = params.append('key', key);
 
-		this.http.delete(`${this.apiUrl}/jira/comment`, {params})
-		.subscribe( 
-			(response:any) => {
-				this.ngRedux.dispatch({ type: Actions.deleteComment, payload: {key, id: commentId} });
-			},
-			this.processErrorResponse.bind(this)
-		);
+		return this.http.delete(`${this.apiUrl}/jira/comment`, {params});
 	}
 
 	/**
@@ -200,9 +182,10 @@ export class JiraService {
 	}
 
 	/**
-	*/
+	 * processes a thrown observable httpClient response to show toastr error notification.
+	 * @param {HttpErrorResponse} response
+	 */
 	public processErrorResponse(response:HttpErrorResponse):string {
-		console.log('error',response)
 		const message = response.error.data || response.message || response.error;
 		this.toastr.showToast(message, 'error');
 		return message;
