@@ -1,5 +1,5 @@
 import { 
-	Component, ViewChild, EventEmitter, ChangeDetectorRef,
+	Component, ViewChild, ChangeDetectorRef,
 	ViewEncapsulation, Input, Output, ChangeDetectionStrategy
 } from '@angular/core';
 
@@ -22,9 +22,6 @@ export class TicketCommentsModalComponent {
 	modalRef: NgbModalRef;
 	customModalCss = 'ticketComments';
 	@Input() key;
-	@Input() comments;
-	@Input() attachments;
-	@Output() commentChangeEvent = new EventEmitter();
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(private cd: ChangeDetectorRef) {}
@@ -40,11 +37,5 @@ export class TicketCommentsModalComponent {
 	*/
 	closeModal() {
 		this.modalRef.close();
-	}
-
-	/**
-	*/
-	commentChangeEventBubble(event){
-		this.commentChangeEvent.emit(event);
 	}
 }

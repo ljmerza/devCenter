@@ -1,7 +1,10 @@
 import { 
-	Component, ViewChild, AfterViewInit, ChangeDetectorRef,
+	Component, ViewChild, AfterViewChecked, ChangeDetectorRef,
 	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy, OnDestroy
 } from '@angular/core';
+
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { Subject, Observable, Subscription } from 'rxjs';
 
 import { NgRedux } from '@angular-redux/store';
 import { RootState } from './../../shared/store/store';
@@ -27,17 +30,17 @@ declare const $:any;
 	encapsulation: ViewEncapsulation.None,
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TicketCommentsComponent implements OnInit, AfterViewInit, OnDestroy {
-	commentId: string;
-	modalRef;
+export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDestroy {
+	commentId:string;
+	modalRef:NgbModalRef;
 	customModalCss:string = 'ticketComment';
-	comments: Array<Comment>;
+	comments:Array<Comment>;
 	attachments:Array<Attachment>;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;
-	comments$;
-	attachments$;
+	comments$:Subscription;
+	attachments$:Subscription;
 
 	constructor(
 		private toastr: ToastrService, private user:UserService, private jira:JiraService, 
@@ -64,7 +67,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit, OnDestroy
 	 * add code highlighting to each comment and add copy text
 	 * functionality to each table item
 	 */
-	ngAfterViewInit():void {
+	ngAfterViewChecked():void {
 		const misc=this.misc;
 		
 		setTimeout(() => {
@@ -87,13 +90,13 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit, OnDestroy
 	 */
 	private syncComments():void {
 		this.comments$ = this.store.select('tickets')
-		.map( (tickets:Array<Ticket>) =>{ 
+		.map( (tickets:Array<Ticket>) =>{
+
+			console.log('this.key: ', this.key);
 			const ticket = tickets.find((ticket:Ticket) => ticket.key === this.key);
 			return ticket.comments;
-		})
-		.subscribe( (comments:Array<Comment>) =>{
+		}).subscribe( (comments:Array<Comment>) =>{
 			this.comments = comments;
-			console.log('comments: ', comments);
 			this.cd.detectChanges();
 		});
 	}
@@ -102,8 +105,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit, OnDestroy
 		.map( (tickets:Array<Ticket>) =>{ 
 			const ticket = tickets.find((ticket:Ticket) => ticket.key === this.key);
 			return ticket.attachments;
-		})
-		.subscribe( (attachments:Array<Attachment>) => this.attachments = attachments);
+		}).subscribe( (attachments:Array<Attachment>) => this.attachments = attachments);
 	}
 
 	/**
@@ -125,12 +127,13 @@ export class TicketCommentsComponent implements OnInit, AfterViewInit, OnDestroy
 		this.modalRef.close();
 		if(!deleteComment) return;
 
-		this.jira.deleteComment(this.commentId, this.key)
-		.subscribe((response:any) => {
+		// this.jira.deleteComment(this.commentId, this.key)
+		// .subscribe((response:any) => {
+			console.log('test: ');
 				this.store.dispatch({ type: Actions.deleteComment, payload: {key: this.key, id: this.commentId} });
-			},
-			this.jira.processErrorResponse.bind(this)
-		);
+			// },
+			// this.jira.processErrorResponse.bind(this)
+		// );
 	}
 
 	/**

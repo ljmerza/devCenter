@@ -13,7 +13,7 @@ export function addComment(state, action) {
 
 	// replace new ticket object with old one
 	const newTickets = state.tickets.map(ticket => {
-		if(!newTicket.key === ticket.key) return newTicket;
+		if(newTicket.key === ticket.key) return newTicket;
 		else return ticket;
 	});
 
@@ -36,7 +36,7 @@ export function deleteComment(state, action) {
 
 	// replace new ticket object with old one
 	const newTickets = state.tickets.map(ticket => {
-		if(!newTicket.key === ticket.key) return newTicket;
+		if(newTicket.key === ticket.key) return newTicket;
 		else return ticket;
 	});
 

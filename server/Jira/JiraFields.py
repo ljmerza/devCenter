@@ -2,7 +2,7 @@ import re
 
 qa_regex_begin = re.compile(r"h3\. ==== QA Steps ====")
 qa_regex_end = re.compile(r"h3\. ===============")
-
+qa_step_regex = re.compile("qa step", flags=re.IGNORECASE)
 
 def get_key(issue):
 	'''gets an issue's key
@@ -220,13 +220,13 @@ def get_comments(issue):
 
 	# for each comment save it and see if QA steps
 	for index, comment in enumerate(issue.get('renderedFields', {}).get('comment', {}).get('comments', [])):
-		# normalize rendered body
-		comment['renderedBody'] = comment.get('body', '')
 
-		# try to get raw comment data
+		# try toget raw comment data
 		raw_comments = issue.get('fields', {}).get('comment', {}).get('comments', [])
 		if len(raw_comments) > index-1:
-			comment['body'] = raw_comments[index].get('body', '')
+			comment['raw_comment'] = raw_comments[index].get('body', '')
+
+		
 
 		comments.append( format_comment(comment, key) )
 	return comments
@@ -234,15 +234,21 @@ def get_comments(issue):
 def format_comment(comment, key):
 	'''
 	'''
+	raw_comment = comment.get('raw_comment', '')
+	rendered_comment = comment.get('renderedBody', '')
 
-	# set comment type
+	if not raw_comment:
+		raw_comment = comment.get('body', '')
+	if not rendered_comment:
+		rendered_comment = comment.get('body', '')
+
 	comment_type = 'info'
-	if 'QA Steps' in comment.get('body', ''):
-		comment_type = 'qa_steps'
+	if re.match(qa_step_regex, raw_comment):
+		comment['comment_type'] = 'qa_steps'
 
 	return {
-		'comment': comment.get('renderedBody', ''),
-		'raw_comment': comment.get('body', ''),
+		'comment': rendered_comment,
+		'raw_comment': raw_comment,
 		'id': comment.get('id', ''),
 		'key': key,
 		'username': comment.get('updateAuthor', {}).get('name', ''),

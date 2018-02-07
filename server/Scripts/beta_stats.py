@@ -35,13 +35,12 @@ for jira_ticket in jira_tickets['data']:
 	status = jira_ticket['status']
 	summary = jira_ticket['summary']
 	msrp = jira_ticket['msrp']
-
 	# print table
-	if component in ['Code Review - Working']:
-		print(" {0:20} {1:28} {2}".format(msrp, 'Code Review - Working', summary))
-	elif component in ['PCR - Completed']:
+	if 'Code Review - Working' in component:
+		print(" {0:20} {1:24} {2}".format(msrp, 'Code Review - Working', summary))
+	elif 'PCR - Completed' in component:
 		print(" {0:20} {1:28} {2}".format(msrp, 'PCR - Completed', summary))
-	elif component in ['Merge Code']:
+	elif 'Merge Code' in component:
 		print(" {0:20} {1:32} {2}".format(msrp, 'PCR - Completed', summary))
 
 	elif status in ['Ready for Release']:
@@ -54,6 +53,8 @@ for jira_ticket in jira_tickets['data']:
 		print(" {0:20} {1:36} {2}".format(msrp, status, summary))
 	elif status in ['In Sprint']:
 		print(" {0:20} {1:37} {2}".format(msrp, status, summary))
+	elif status in ['Ready for QA']:
+		print(" {0:20} {1:31} {2}".format(msrp, status, summary))
 	else:
 		print(" {0:20} {1:30} {2}".format(msrp, status, summary))
 

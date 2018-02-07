@@ -171,15 +171,7 @@ export class TicketComponent {
 		if(!this.commentComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketCommentsModalComponent);
 	    	this.commentComponentRef = this.viewContRef.createComponent(factory);
-
-	    	// add inputs
 	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).key = this.ticket.key;
-	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).attachments = this.ticket.attachments;
-	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).comments = this.ticket.comments;
-	    	// add output event
-	    	
-	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance)
-	    		.commentChangeEvent.subscribe($event => this.commentChangeEvent($event));
 		}
 		
 		// open modal on next event loop to allow inputs to settle

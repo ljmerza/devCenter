@@ -106,6 +106,7 @@ export class TicketLogComponent	{
 				this.commentChangeEvent.emit({newStatus});
 
 				response.data.key = this.key;
+				console.log('response.data: ', response.data);
 				this.ngRedux.dispatch({ type: Actions.addComment, payload:response.data });
 
 				// then reset form - manual reset because logTime object becomes null on formObj.formReset()
