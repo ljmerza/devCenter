@@ -23,16 +23,16 @@ import { Ticket } from './../../shared/store/models/ticket';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TicketLogComponent	{
-	modalReference;
+	modalRef: NgbModalRef;
 
-	uctNotReady: false;
-	mergedCode: false;
-	conflictCode: false;
-	comment:string;
+	// form input values
+	uctNotReady:boolean = false;
+	mergedCode:boolean = false;
+	conflictCode:boolean = false;
+	comment:string = '';
 	logTime = {hour: 0, minute: 0};
-
-	hourStep = 1;
-	minuteStep = 15;
+	hourStep:number = 1;
+	minuteStep:number = 15;
 
 	customModalCss = 'timeLog';
 
@@ -40,21 +40,66 @@ export class TicketLogComponent	{
 	@Output() commentChangeEvent = new EventEmitter();
 	@Output() statusChangeCancel = new EventEmitter();
 	@Input() key:string;
-	modalRef: NgbModalRef;
 
-	constructor(
-		public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef,
-		private ngRedux:NgRedux<RootState>) {}
+	constructor(public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef, private store:NgRedux<RootState>) {}
 
-	/*
-	*/
+	/**
+	 * Submits a work log form to add/remove components, log time, and add a comment.
+	 * @param {NgForm} formObj the reactive form object with all the inputs' values 
+	 */
 	submitLog(formObj?:NgForm) {
-
-		// close modal
 		this.modalRef.close();
-
 		if(!formObj) return;
-		
+
+		const tasks = this.buildToastMessage(formObj);
+		this.toastr.showToast(`Running the following tasks: ${tasks}`, 'info');
+
+		// create POST body
+		let postData = {
+			comment: formObj.value.comment || '',
+			remove_merge: formObj.value.mergedCode || false,
+			remove_conflict: formObj.value.conflictCode || false,
+			uct_date: formObj.value.uctNotReady ? ((new Date).getTime())/1000 : 0,
+			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
+			key: this.key
+		};
+
+		// log work and show results
+		this.jira.workLog(postData).subscribe( 
+			response => {
+				this.toastr.showToast(`Tasks updated: ${tasks}`, 'success');
+				this.checkStatusChange(postData);
+			
+				response.data.key = this.key;
+				this.store.dispatch({ type: Actions.addComment, payload:response.data });
+				this._resetForm();
+			},
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
+	}
+
+	/**
+	 * Checks if we made a status change on the ticket.
+	 * @param {any} postData data sent to server
+	 */
+	checkStatusChange(postData:any){
+
+		let newStatus;
+		if(postData.remove_merge){
+			newStatus = 'Ready for UCT';
+		} else if(postData.remove_conflict){
+			newStatus = 'Ready for QA';
+		}
+
+		if(newStatus) this.commentChangeEvent.emit({newStatus});
+	}
+
+	/**
+	 * Builds a toastr message based on form input.
+	 * @param {NgForm} formObj the form object with all the input values.
+	 * @return {string} the message string to show on the toastr message.
+	 */
+	buildToastMessage(formObj:NgForm): string {
 		// check for change type
 		let message = [];
 		if (formObj.value.logTime.hour || formObj.value.logTime.minute){
@@ -70,61 +115,20 @@ export class TicketLogComponent	{
 			message.push('posting UCT Not Ready comment');
 		}
 		// get string of all tasks to complete
-		const tasks = message.join(', ');
-
-		// show composed info message
-		this.toastr.showToast(`Running the following tasks: ${tasks}`, 'info');
-
-		// do we construct UCT not ready comment?
-		const uct_date = formObj.value.uctNotReady ? ((new Date).getTime())/1000 : 0;
-
-		// create POST body
-		let postData = {
-			comment: formObj.value.comment || '',
-			remove_merge: formObj.value.mergedCode || false,
-			remove_conflict: formObj.value.conflictCode || false,
-			uct_date: formObj.value.uctNotReady ? ((new Date).getTime())/1000 : 0,
-			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
-			key: this.key
-		};
-
-		// log work and show results
-		this.jira.workLog(postData).subscribe( 
-			response => {
-				// show tasks completed
-				this.toastr.showToast(`Tasks updated: ${tasks}`, 'success');
-
-				// set change status
-				let newStatus;
-				if(postData.remove_merge){
-					newStatus = 'Ready for UCT';
-				} else if(postData.remove_conflict){
-					newStatus = 'Ready for QA';
-				}
-
-				// notify update comments
-				this.commentChangeEvent.emit({newStatus});
-
-				response.data.key = this.key;
-				console.log('response.data: ', response.data);
-				this.ngRedux.dispatch({ type: Actions.addComment, payload:response.data });
-
-				// then reset form - manual reset because logTime object becomes null on formObj.formReset()
-				this._resetForm();
-			},
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
+		return message.join(', ');
 	}
 
-	/*
-	*/
+	/**
+	 * Opens the work log dialog
+	 */
 	openLogModal():void {
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
 	}
 
-	/*
-	*/
+	/**
+	 * Manually resets the form values.
+	 */
 	_resetForm(){
 		this.uctNotReady = false;
 		this.mergedCode = false;
@@ -132,5 +136,4 @@ export class TicketLogComponent	{
 		this.comment = '';
 		this.logTime = {hour: 0, minute: 0};
 	}
-
 }
