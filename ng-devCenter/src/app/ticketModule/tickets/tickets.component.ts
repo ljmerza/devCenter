@@ -8,6 +8,7 @@ import { UserService } from './../../shared/services/user.service';
 import { JiraService } from './../../shared/services/jira.service';
 import { ToastrService } from './../../shared/services/toastr.service';
 import { WebSocketService } from './../../shared/services/web-socket.service';
+import { GitService } from './../../shared/services/git.service';
 
 import { select } from '@angular-redux/store';
 import { DataTableDirective } from 'angular-datatables';
@@ -59,10 +60,7 @@ export class TicketsComponent implements OnInit {
         }
 	};
 
-	constructor(
-		public ngProgress: NgProgress, public route:ActivatedRoute, 
-		public jira:JiraService, public user:UserService, public toastr: ToastrService
-	) {}
+	constructor(public ngProgress: NgProgress, public route:ActivatedRoute, public jira:JiraService, public user:UserService, public toastr: ToastrService, private git:GitService) {}
 	
 	/**
 	 * On initialization of component, if user credentials exist get repository list.
@@ -71,7 +69,7 @@ export class TicketsComponent implements OnInit {
 	 */
 	ngOnInit():void {
 		if( !this.user.needRequiredCredentials() ){
-			this.jira.getRepos();
+			this.git.getRepos();
 			this.getRepos$.subscribe(this.processRepos.bind(this))
 			this.getTickets$.subscribe(this.processTickets.bind(this));
 		} 

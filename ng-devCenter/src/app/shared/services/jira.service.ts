@@ -4,8 +4,8 @@ import { Observable } from 'rxjs/Observable';
 
 import { UserService } from './user.service';
 import { ConfigService } from './config.service';
-import { LocalStorageService } from './local-storage.service';
 import { ToastrService } from './toastr.service';
+import { DataService } from './data.service';
 
 import { NgRedux } from '@angular-redux/store';
 import { RootState } from './../store/store';
@@ -13,52 +13,54 @@ import { Actions } from './../store/actions';
 
 import { APIResponse } from './../../shared/store/models/apiResponse';
 
-
-
-import { environment } from '../../../environments/environment';
-
 @Injectable()
-export class JiraService {
+export class JiraService extends DataService {
 	title:string = '';
-	jql:string=''
-	firstLoad = true;
+
+	constructor(public http:HttpClient, public config:ConfigService, public toastr:ToastrService, public user:UserService, public store:NgRedux<RootState>) {
+		super(http, config, toastr, user, store);
+	}
 
 	/**
-	*/
-	constructor(
-		public http:HttpClient, public config:ConfigService,
-		public lStore:LocalStorageService, public toastr:ToastrService,
-		public user:UserService, public ngRedux:NgRedux<RootState>
-	) { }
-
-	apiUrl:string = `${environment.apiUrl}:${environment.port}/dev_center`;
-
-	/**
-	*/
-	getTickets(jiraListType:string, isHardRefresh:Boolean=false):void {
+	 * gets a selected ticket filter's title and JQL.
+	 * @param {string} filterName the ticket filter name
+	 * @return {Object} returns an object with jql and title string properties
+	 */
+	_getFilterTitleAndJql(filterName:string){
 		// try to get ticket list data
-		const allProjectNames = this.config.allProjectNames.filter(ticketData=>ticketData.link===jiraListType);
-		const teamTicketListNames = this.config.teamTicketListNames.filter(ticketData=>ticketData.link===jiraListType);
-		const otherTicketListNames = this.config.otherTicketListNames.filter(ticketData=>ticketData.link===jiraListType);
+		const allProjectNames = this.config.allProjectNames.filter(ticketData=>ticketData.link===filterName);
+		const teamTicketListNames = this.config.teamTicketListNames.filter(ticketData=>ticketData.link===filterName);
+		const otherTicketListNames = this.config.otherTicketListNames.filter(ticketData=>ticketData.link===filterName);
 
 		// see which array came back with data
 		const ticketListData = allProjectNames[0] || teamTicketListNames[0] || otherTicketListNames[0];
 
 		// set JQL and title if found match or default to my ticket
-		this.jql = ticketListData ? this.config[ticketListData.link] : this.config.mytickets;
-		this.title = ticketListData ? ticketListData.displayName : this.config.teamTicketListNames[0].name;
+		const jql = ticketListData ? this.config[ticketListData.link] : this.config.mytickets;
+		const title = ticketListData ? ticketListData.displayName : this.config.teamTicketListNames[0].name;
 
-		// set url params
+		return {jql, title};
+	}
+
+	/**
+	 * gets a ticket filter's list of tickets and dispatches the 
+	 * http response to the Redux store on success.
+	 * @param {string} filterName the name of the filter to get tickets from.
+	 * @param {Boolean=false} isHardRefresh a hard refresh skips the cache and only gets from the API.
+	 */
+	getTickets(filterName:string, isHardRefresh:Boolean=false):void {
+		const {jql, title} = this._getFilterTitleAndJql(filterName);
+		this.title = title;
+
 		let params = new HttpParams();
-		params = params.append('jql', this.jql);
+		params = params.append('jql', jql);
 		params = params.append('fields', this.config.fields);
 		params = params.append('isHardRefresh', isHardRefresh.toString());
 
-		// get tickets and save in store
 		this.http.get(`${this.apiUrl}/jira/tickets`, {params})
 		.subscribe( 
 			(response:APIResponse) => {
-				this.ngRedux.dispatch({type: Actions.newTickets, payload: response.data });
+				this.store.dispatch({type: Actions.newTickets, payload: response.data});
 			},
 			this.processErrorResponse.bind(this)
 		);
@@ -87,26 +89,7 @@ export class JiraService {
 		return this.http.get(`${this.apiUrl}/jira/getkey/${msrp}`, {params});
 	}
 
-	/**
-	*/
-	getTicketBranches(msrp:string): Observable<any> {
-		let params = new HttpParams();
-		params = params.append('isHardRefresh', `true`);
-		return this.http.get(`${this.apiUrl}/git/branches/${msrp}`, {params});
-	}
 
-	/**
-	*/
-	getRepos():void {
-		this.http.get(`${this.apiUrl}/git/repos`)
-		.subscribe(
-			(response:APIResponse) => {
-				this.ngRedux.dispatch({type: Actions.repos, payload: response.data });
-			},
-			this.processErrorResponse.bind(this)
-
-		);
-	}
 
 	/**
 	*/
@@ -118,14 +101,6 @@ export class JiraService {
 
 		// create crucible and post comment
 		return this.http.post(`${this.apiUrl}/crucible/create`, postData);
-	}
-
-	/**
-	*/
-	getBranches(repoName): Observable<any> {
-		let params = new HttpParams();
-		params = params.append('isHardRefresh', `true`);
-		return this.http.get(`${this.apiUrl}/git/repo/${repoName}`, {params});
 	}
 
 	/**
@@ -162,17 +137,7 @@ export class JiraService {
 		return this.http.post(`${this.apiUrl}/jira/status`, postData);
 	}
 
-	/**
-	*/
-	getProfile():void {
-		 this.http.get(`${this.apiUrl}/jira/profile/${this.user.username}`)
-		.subscribe( 
-			(response:any) => {
-				this.ngRedux.dispatch({type: Actions.userProfile, payload: response.data });
-			},
-			this.processErrorResponse.bind(this)
-		);
-	}
+	
 
 	/**
 	*/
@@ -180,15 +145,4 @@ export class JiraService {
 		postData.username = this.user.username;
 		return this.http.post(`${this.apiUrl}/chat/user_pings`, postData);
 	}
-
-	/**
-	 * processes a thrown observable httpClient response to show toastr error notification.
-	 * @param {HttpErrorResponse} response
-	 */
-	public processErrorResponse(response:HttpErrorResponse):string {
-		const message = response.error.data || response.message || response.error;
-		this.toastr.showToast(message, 'error');
-		return message;
-	}
-
 }

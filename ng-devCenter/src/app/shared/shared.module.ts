@@ -21,6 +21,9 @@ import { UserService } from './services/user.service';
 import { ToastrService } from './services/toastr.service';
 import { ConfigService } from './services/config.service';
 import { WebSocketService } from './services/web-socket.service';
+import { ProfileService } from './services/profile.service';
+import { GitService } from './services/git.service';
+import { DataService } from './services/data.service';
 
 // interceptors
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -31,7 +34,8 @@ import { TestInterceptor } from './interceptors/test.interceptor';
 
 let providers = [
 	UserService, LocalStorageService, ToastrService, ConfigService, 
-	WebSocketService, MiscService, JiraService,
+	WebSocketService, MiscService, JiraService, ProfileService,
+	DataService, GitService,
 	{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
 	{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
 	{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
@@ -48,7 +52,7 @@ if(environment.test){
 	], // BrowserAnimationsModule needed for ToastModule
 	declarations: [ModalComponent, ToastrComponent],
 	exports: [ModalComponent, ToastrComponent],
-	providers
+	providers,
 })
 export class SharedModule {
 	constructor(private ngRedux:NgRedux<RootState>, private devTools: DevToolsExtension){

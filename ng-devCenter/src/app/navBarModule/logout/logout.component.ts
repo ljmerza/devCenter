@@ -25,7 +25,7 @@ export class LogoutComponent {
 
 	/*
 	*/
-	public closeModal(resetUser?): void {
+	public closeModal(resetUser:boolean=false): void {
 		this.modalRef.close();
 
 		if(resetUser){

@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { UserService } from './../../shared/services/user.service'
 import { JiraService } from './../../shared/services/jira.service';
 import { ToastrService } from './../../shared/services/toastr.service';
+import { ProfileService } from './../../shared/services/profile.service';
 
 @Component({
 	selector: 'dc-user-settings',
@@ -18,11 +19,7 @@ export class UserSettingsComponent implements OnInit {
 	@Input() isLogin:boolean = true;
 	@select('userProfile') getProfile$: Observable<any>;
 
-	constructor(
-		public user: UserService, private jira: JiraService, 
-		private toastr: ToastrService, public route: ActivatedRoute,
-		private router: Router
-	) {
+	constructor(public user: UserService, private jira: JiraService, private toastr: ToastrService, public route: ActivatedRoute, private router: Router, private profile: ProfileService) {
 
 		// create form group
 		this.userSettingsForm = new FormGroup({
@@ -49,17 +46,17 @@ export class UserSettingsComponent implements OnInit {
 		});
 	}
 
-	/*
-	*/
+	/**
+	 * Subscribe to URL route changes to see if user needs credentials,
+	 * if yes then if login page then redirect else get user profile.
+	 */
 	ngOnInit() {
-		// get route url
 		this.route.url.subscribe( (urlSegment:UrlSegment[]) => {
-			// if no creds available then dont do anything
 			if(this.user.needRequiredCredentials()) return;
 
 			// if we are in login path -> redirect out of login page
+			// if saved URL use to that else redirect to home
 			if(urlSegment.length > 0 && /login/.test(urlSegment[0].path)){
-				// if saved URL use to that else redirect to home
 				if(this.user.redirectUrl) return this.router.navigate([this.user.redirectUrl]);
 				else return this.router.navigate(['/']);
 			} 
@@ -67,20 +64,21 @@ export class UserSettingsComponent implements OnInit {
 		});
 	}
 
+	/**
+	 * Gets a user's profile. When saved to Redux, is retrieved and user form is set.
+	 */
 	getProfile(){
-		this.jira.getProfile();
-		this.getProfile$.subscribe(branches => {
-			if(branches){
-				this.user.userData = branches;
-				this.user.userPicture = branches.avatarUrls['48x48'];
-
-				this.setUserPings(this.user.userData.ping_settings)
+		this.profile.getProfile();
+		this.getProfile$.subscribe(profile => {
+			if(profile){
+				this.setUserPings(this.user.userData.ping_settings);
 			}
 		});
 	}
 
 	/**
-	*/
+	 * sets a user's ping values on the form
+	 */
 	setUserPings(pingSettings){
 		let pingControlGroup = this.pings;
 
@@ -122,9 +120,12 @@ export class UserSettingsComponent implements OnInit {
 	get cache(){ return this.userSettingsForm.get('cache'); }
 	get pings() { return this.userSettingsForm.get('pings'); }
 
-	/*
-	*/
-	submit(submitType): boolean {
+	/**
+	 * submits changes to a user's profile
+	 * @param {boolean} submitType are we canceling or submitting user profile changes?
+	 *
+	 */
+	submit(submitType:boolean): boolean {
 
 		// just close form if no submit type
 		if(!submitType){
@@ -136,12 +137,13 @@ export class UserSettingsComponent implements OnInit {
 		if(this.userSettingsForm.invalid) return;
 
 		// save data to localstorage
-		this.user.setUserData('username', this.userSettingsForm.controls.username.value);
-		this.user.setUserData('password', this.userSettingsForm.controls.password.value);
-		this.user.setUserData('port', this.userSettingsForm.controls.port.value);
-		this.user.setUserData('emberUrl', this.userSettingsForm.controls.emberUrl.value);
-		this.user.setUserData('teamUrl', this.userSettingsForm.controls.teamUrl.value);
-		this.user.setUserData('cache', this.userSettingsForm.controls.cache.value);
+		const userData = this.userSettingsForm.controls;
+		this.user.setUserData('username', userData.username.value);
+		this.user.setUserData('password', userData.password.value);
+		this.user.setUserData('port', userData.port.value);
+		this.user.setUserData('emberUrl', userData.emberUrl.value);
+		this.user.setUserData('teamUrl', userData.teamUrl.value);
+		this.user.setUserData('cache', userData.cache.value);
 
 		if(!this.pings.pristine){
 			this.savePingSettings();
@@ -154,35 +156,27 @@ export class UserSettingsComponent implements OnInit {
 	}
 
 	/**
-	*/
- 	reloadPage(){
-
- 		// reload values saved into form
+	 * if saved URL exists redirects user to a saved URL (from a previous redirection), reloads
+	 * the current page if username/password changed, or default navigates to home page.
+	 */
+ 	reloadPage():void {
  		this.resetForm();
-
  		const controls = this.userSettingsForm.controls;
 
- 		// if we were given a redirect URL then redirect to that
  		if(this.user.redirectUrl){
- 			// save and reset redirect URL
  			const url = this.user.redirectUrl;
  			this.user.redirectUrl = '';
-
- 			// redirect to URL
- 			this.router.navigate([url]);
- 			return;
- 		}
-
- 		// is username or password is dirty we need to reload on modal
- 		if((controls.username.dirty || controls.password.dirty) && !this.isLogin){
+ 			this.router.navigate([url]); 		
+ 		} else if((controls.username.dirty || controls.password.dirty) && !this.isLogin){
 			location.reload();
-		} else {
-			this.router.navigate(['/']);
 		}
+			
+		this.router.navigate(['/']);
  	}
 
  	/**
- 	*/
+ 	 * saves user's ping settings
+ 	 */
  	savePingSettings(){
  		let pingControlGroup = this.pings;
 
@@ -201,15 +195,22 @@ export class UserSettingsComponent implements OnInit {
 		);
  	}
 
-	/*
-	*/
+	/**
+	 * Validator for the username form input. Requires 6 cahracters with ccnnnc or ccnnnn format
+	 * where c is a character and n is a number.
+	 * @param {AbstractionControl} the username control object to test
+	 * @return {boolean} is the username valid?
+	 */
 	static usernameValidator(control: AbstractControl): {[key: string]:any} {
 		const invalidUsername = control.value && /^[A-Za-z]{2}[0-9]{3}[A-Za-z0-9]$/.test(control.value);
 		return invalidUsername ? null : {usernameValidator: {value: control.value}} ;
 	}
 
-	/*
-	*/
+	/**
+	 * Validator for the port form input. A valid port must be four numbers long.
+	 * @param {AbstractionControl} the port control object to test
+	 * @return {boolean} is the port valid?
+	 */
 	static portValidator(control: AbstractControl): {[key: string]:any} {
 		const validPort = control.value && /^[0-9]{4}$/.test(control.value);
 		return validPort ? null : {portValidator: {value: control.value}} ;

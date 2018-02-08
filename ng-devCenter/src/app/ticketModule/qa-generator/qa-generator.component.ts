@@ -15,6 +15,7 @@ import { JiraService } from './../../shared/services/jira.service';
 import { ToastrService } from './../../shared/services/toastr.service';
 import { ConfigService } from './../../shared/services/config.service'
 import { UserService } from './../../shared/services/user.service'
+import { GitService } from './../../shared/services/git.service';
 
 @Component({
 	selector: 'dc-qa-generator',
@@ -42,10 +43,7 @@ export class QaGeneratorComponent {
 	@Input() repos;
 	customModalCss = 'qaGen';
 
-	constructor(
-		public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef,
-		public config: ConfigService, public formBuilder: FormBuilder, public user: UserService
-	) {
+	constructor(public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef, public config: ConfigService, public formBuilder: FormBuilder, public user: UserService, private git: GitService) {
 		// create form object
 		this.qaForm = this.formBuilder.group({
 			selections: this.formBuilder.group({
@@ -81,9 +79,9 @@ export class QaGeneratorComponent {
 
 		// on repo change get all branches of repo and set on FormGroup
 		repositoryName.valueChanges.subscribe(repoName => {
-			this.jira.getBranches(repoName).subscribe( 
+			this.git.getBranches(repoName).subscribe( 
 				branches => branch.setControl('allBranches', this.formBuilder.array(branches.data.length > 0 ? branches.data:[])),
-				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+				error => this.toastr.showToast(this.git.processErrorResponse(error), 'error')
 			);
 		});
 
@@ -210,7 +208,7 @@ export class QaGeneratorComponent {
 		this.cd.detectChanges();
 
 		// get all branches associated with this msrp
-		this.repoLookUp$ = this.jira.getTicketBranches(this.msrp).subscribe(
+		this.repoLookUp$ = this.git.getTicketBranches(this.msrp).subscribe(
 			response => {
 				this.loadingBranches = false;
 				this.processBranches(response.data);
