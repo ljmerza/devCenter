@@ -7,6 +7,7 @@ sys.path.append('Chat')
 sys.path.append('Crucible')
 sys.path.append('Jira')
 sys.path.append('Flask')
+sys.path.append('SQL')
 
 from Flask import DevCenterServer
 

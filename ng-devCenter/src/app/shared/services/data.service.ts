@@ -1,15 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { HttpErrorResponse } from '@angular/common/http';
 
-import { UserService } from './user.service';
-import { ConfigService } from './config.service';
-import { LocalStorageService } from './local-storage.service';
 import { ToastrService } from './toastr.service';
-
-import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../store/store';
-
 import { environment } from '../../../environments/environment';
 
 
@@ -17,11 +9,7 @@ import { environment } from '../../../environments/environment';
 export class DataService {
 	apiUrl:string = `${environment.apiUrl}:${environment.port}/dev_center`;
 	
-	constructor(
-		public http:HttpClient, public config:ConfigService,
-		public toastr:ToastrService,
-		public user:UserService, public store:NgRedux<RootState>
-	) { }
+	constructor(public toastr:ToastrService) { }
 
 	/**
 	 * processes a thrown observable httpClient response to show toastr error notification.

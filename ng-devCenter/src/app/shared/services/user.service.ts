@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+
 import { ConfigService } from './config.service';
+import { ToastrService } from './toastr.service';
+import { DataService } from './data.service';
+
 
 @Injectable()
-export class UserService {
-	userValues = ['username', 'password', 'port', 'cache', 'emberUrl', 'teamUrl'];
+export class UserService extends DataService {
+	userValues:Array<string> = ['username', 'password', 'port', 'cache', 'emberUrl', 'teamUrl'];
 	public redirectUrl:string;
 
 	public username:string;
@@ -32,7 +37,9 @@ export class UserService {
 		{'label':'Locally', 'value':'http://localhost'}
 	];
 
-	constructor(public config:ConfigService) { 
+	constructor(public http:HttpClient, public config:ConfigService, public toastr:ToastrService) {
+		super(toastr);
+
 		this.username = localStorage.getItem('devCenter.username') || '';
 		this.port = localStorage.getItem('devCenter.port') || '';
 
@@ -108,5 +115,9 @@ export class UserService {
 	*/
 	public needRequiredCredentials() {
 		return !(this.username && this.password && this.port && this.emberUrl && this.teamUrl);
+	}
+
+	getNavbarItems(){
+		return this.http.get(`${this.apiUrl}/navbar`);
 	}
 }

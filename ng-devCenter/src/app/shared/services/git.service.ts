@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { UserService } from './user.service';
-import { ConfigService } from './config.service';
 import { ToastrService } from './toastr.service';
 import { DataService } from './data.service';
 
@@ -17,8 +15,8 @@ import { APIResponse } from './../../shared/store/models/apiResponse';
 export class GitService extends DataService {
 	title:string = '';
 
-	constructor(public http:HttpClient, public config:ConfigService, public toastr:ToastrService, public user:UserService, public store:NgRedux<RootState>) {
-		super(http, config, toastr, user, store);
+	constructor(public http:HttpClient, public toastr:ToastrService, public store:NgRedux<RootState>) {
+		super(toastr);
 	}
 
 	/**

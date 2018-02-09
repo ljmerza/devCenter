@@ -17,14 +17,11 @@ declare var $ :any;
 	styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent {
-	ticketValue:string; // value of msrp/key search
-	isFriday:boolean; // boolean is friday for log hours notification
+	ticketValue:string; // value of MSRP/key search
+	isFriday:boolean; // boolean is Friday for log hours notification
+	navbaritems;
 
-	/**
-	*/
-	constructor(
-		private toastr: ToastrService, public jira:JiraService,
-		 public config:ConfigService, public user: UserService) { 
+	constructor(private toastr: ToastrService, public jira:JiraService, public config:ConfigService, public user: UserService) { 
 
 		// is it current friday?
 		const isFriday = () => (new Date()).getDay() == 5;
@@ -32,10 +29,14 @@ export class NavBarComponent {
 
 		// check every hour
 		setInterval(isFriday, 60*60*1);
+
+		this.getNavbarItems();
 	}
 
 	/**
-	*/
+	 * Searches for a Jira ticket by key or MSRP. If ticket found opens in new tab.
+	 * @param {NgForm} formObj
+	 */
 	public searchTicket(formObj: NgForm):void {
 
 		// get form values and reset form
@@ -60,4 +61,14 @@ export class NavBarComponent {
 			);
 		}
 	}
+
+	/**
+	 * Gets all of the navbar items to populate the navbar dropdowns.
+	 */
+	 getNavbarItems(){
+	 	this.user.getNavbarItems().subscribe(
+	 		(response:any) => this.navbaritems = response.data,
+	 		error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+	 	)
+	 }
 }

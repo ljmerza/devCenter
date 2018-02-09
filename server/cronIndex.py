@@ -11,10 +11,10 @@ sys.path.append('Chat')
 sys.path.append('Crucible')
 sys.path.append('Jira')
 sys.path.append('Flask')
+sys.path.append('SQL')
 
 
 import AutomationBot
-from Common.DevCenterSQL import DevCenterSQL
 
 ########################################################################
 devbot = True

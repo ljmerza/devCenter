@@ -18,7 +18,7 @@ export class JiraService extends DataService {
 	title:string = '';
 
 	constructor(public http:HttpClient, public config:ConfigService, public toastr:ToastrService, public user:UserService, public store:NgRedux<RootState>) {
-		super(http, config, toastr, user, store);
+		super(toastr);
 	}
 
 	/**

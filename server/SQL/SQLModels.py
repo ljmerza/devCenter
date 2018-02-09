@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, DateTime, SMALLINT
+from sqlalchemy import Column, ForeignKey, DateTime, SMALLINT, Integer
 from sqlalchemy.dialects.mysql import VARCHAR, TEXT, CHAR
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -75,4 +75,11 @@ class Users(Modal):
 	merge_ping = Column(SMALLINT, default=0)
 	never_ping = Column(SMALLINT, default=0)
 	qa_fail_ping = Column(SMALLINT, default=0)
+
+class NavbarItems(Modal):
+	__tablename__ = 'navbar_items'
+	id = Column(Integer, primary_key=True)
+	type = Column(VARCHAR(30))
+	link = Column(VARCHAR(50))
+	name = Column(VARCHAR(30))
 	
