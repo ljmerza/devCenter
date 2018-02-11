@@ -23,6 +23,8 @@ export class DataService extends HttpClient {
 		let responseError = response.error ? response.error.data : null; 
 		responseError = responseError || response.message || response.error;
 
+		if(!this.toastr) return responseError;
+
 		this.toastr.showToast(responseError, 'error');
 		return responseError;
 	}

@@ -6,9 +6,13 @@ import { ConfigService } from './config.service';
 import { ToastrService } from './toastr.service';
 import { DataService } from './data.service';
 
+import { select } from '@angular-redux/store';
 
 @Injectable()
 export class UserService {
+	@select('userProfile') getProfile$: Observable<any>;
+
+
 	userValues:Array<string> = ['username', 'password', 'port', 'cache', 'emberUrl', 'teamUrl'];
 	public redirectUrl:string;
 
@@ -53,6 +57,17 @@ export class UserService {
 		this.teamUrl = localStorage.getItem('devCenter.teamUrl') || '';
 		this.cache = localStorage.getItem('devCenter.cache') || '';
 		this.setUrls();
+
+		this.getProfile$.subscribe(this.loadProfile.bind(this));
+	}
+
+	/**
+	*/
+	loadProfile(profile){
+
+		console.log('profile', profile);
+		this.userData = profile;
+		this.userPicture = (profile.avatarUrls) && profile.avatarUrls['48x48'];
 	}
 
 	/*
@@ -117,6 +132,7 @@ export class UserService {
 	}
 
 	getNavbarItems(){
-		return this.dataService.get(`${this.dataService.apiUrl}/navbar`);
+		return this.dataService.get(`${this.dataService.apiUrl}/navbar`)
+		.catch( error => this.dataService.processErrorResponse(error) );
 	}
 }

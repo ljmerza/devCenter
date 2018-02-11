@@ -66,9 +66,7 @@ export class NavBarComponent {
 	 * Gets all of the navbar items to populate the navbar dropdowns.
 	 */
 	 getNavbarItems(){
-	 	this.user.getNavbarItems().subscribe(
-	 		(response:any) => this.navbaritems = response.data,
-	 		error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-	 	)
+	 	this.user.getNavbarItems()
+	 	.subscribe((response:any) => this.navbaritems = response.data)
 	 }
 }

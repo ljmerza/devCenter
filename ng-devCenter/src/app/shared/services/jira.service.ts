@@ -57,9 +57,7 @@ export class JiraService {
 
 		this.dataService.get(`${this.dataService.apiUrl}/jira/tickets`, {params})
 		.subscribe( 
-			(response:APIResponse) => {
-				this.store.dispatch({type: Actions.newTickets, payload: response.data});
-			},
+			(response:APIResponse) => this.store.dispatch({type: Actions.newTickets, payload: response.data}),
 			this.dataService.processErrorResponse.bind(this)
 		);
 	}

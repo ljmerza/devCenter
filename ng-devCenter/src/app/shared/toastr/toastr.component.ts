@@ -3,7 +3,7 @@ import { ToastrService } from './../../shared/services/toastr.service';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 @Component({
-	selector: 'app-toastr',
+	selector: 'dc-toastr',
 	templateUrl: './toastr.component.html',
 	styleUrls: ['./toastr.component.scss'],
 	encapsulation: ViewEncapsulation.None,

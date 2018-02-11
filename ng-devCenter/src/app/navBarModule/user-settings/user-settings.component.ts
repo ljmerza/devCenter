@@ -70,7 +70,7 @@ export class UserSettingsComponent implements OnInit {
 	getProfile(){
 		this.profile.getProfile();
 		this.getProfile$.subscribe(profile => {
-			if(profile){
+			if(profile && this.user.userData){
 				this.setUserPings(this.user.userData.ping_settings);
 			}
 		});
@@ -79,7 +79,7 @@ export class UserSettingsComponent implements OnInit {
 	/**
 	 * sets a user's ping values on the form
 	 */
-	setUserPings(pingSettings){
+	setUserPings(pingSettings:any={}):void{
 		let pingControlGroup = this.pings;
 
 		// set form group ping settings from what we got back from the DB

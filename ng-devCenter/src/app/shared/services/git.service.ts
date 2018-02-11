@@ -31,9 +31,7 @@ export class GitService {
 	getRepos():void {
 		this.dataService.get(`${this.dataService.apiUrl}/git/repos`)
 		.subscribe(
-			(response:APIResponse) => {
-				this.store.dispatch({type: Actions.repos, payload: response.data });
-			},
+			(response:APIResponse) => this.store.dispatch({type: Actions.repos, payload: response.data }),
 			this.dataService.processErrorResponse.bind(this)
 		);
 	}

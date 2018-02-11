@@ -24,16 +24,8 @@ export class ProfileService {
 	getProfile():void {
 		 this.dataService.get(`${this.dataService.apiUrl}/jira/profile/${this.user.username}`)
 		.subscribe( 
-			(response:any) => {
-				// save profile to user service
-				const profile = response.data;
-				this.user.userData = profile;
-				this.user.userPicture = profile.avatarUrls['48x48'];
-				
-				// notify store of user profile saved
-				this.store.dispatch({type: Actions.userProfile, payload: response.data });
-			},
-			this.dataService.processErrorResponse.bind(this)
+			(response:any) => this.store.dispatch({type: Actions.userProfile, payload: response.data }),
+			this.dataService.processErrorResponse.bind(DataService)
 		);
 	}
 

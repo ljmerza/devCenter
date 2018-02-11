@@ -3,6 +3,7 @@ import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 
 @Injectable()
 export class ToastrService {
+	toastObject: ToastsManager;
 
 	private toastrOptions = {
 		showCloseButton: true, 
@@ -11,12 +12,10 @@ export class ToastrService {
 		toastLife: 5000
 	};
 
-	toastObject: ToastsManager;
 
 	/*
 	*/
 	public showToast(message:string, message_type:string, sticky=false, toastLife=0): void {
-
 		let toastrOptions = {...this.toastrOptions};
 
 		// set custom life of the toast if geiven
