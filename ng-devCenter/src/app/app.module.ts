@@ -19,7 +19,7 @@ import { environment } from '../environments/environment';
 @NgModule({
 	declarations: [AppComponent, FooterComponent],
 	imports: [
-		BrowserModule, routing, SharedModule,
+		BrowserModule, routing, SharedModule.forRoot(),
 		TicketModule, NavbarModule, CommentsModule, NgbModule.forRoot()
 	],
 	providers: [

@@ -26,7 +26,6 @@ import { GitService } from './services/git.service';
 import { DataService } from './services/data.service';
 
 // interceptors
-import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 import { TestInterceptor } from './interceptors/test.interceptor';
@@ -36,7 +35,6 @@ let providers = [
 	UserService, LocalStorageService, ToastrService, ConfigService, 
 	WebSocketService, MiscService, JiraService, ProfileService,
 	DataService, GitService,
-	{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
 	{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
 	{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
 ];

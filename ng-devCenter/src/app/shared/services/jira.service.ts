@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams, HttpHandler } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { UserService } from './user.service';
@@ -14,12 +14,10 @@ import { Actions } from './../store/actions';
 import { APIResponse } from './../../shared/store/models/apiResponse';
 
 @Injectable()
-export class JiraService extends DataService {
+export class JiraService {
 	title:string = '';
 
-	constructor(public http:HttpClient, public config:ConfigService, public toastr:ToastrService, public user:UserService, public store:NgRedux<RootState>) {
-		super(toastr);
-	}
+	constructor(public dataService:DataService, public config:ConfigService, public user:UserService, public store:NgRedux<RootState>) {}
 
 	/**
 	 * gets a selected ticket filter's title and JQL.
@@ -57,12 +55,12 @@ export class JiraService extends DataService {
 		params = params.append('fields', this.config.fields);
 		params = params.append('isHardRefresh', isHardRefresh.toString());
 
-		this.http.get(`${this.apiUrl}/jira/tickets`, {params})
+		this.dataService.get(`${this.dataService.apiUrl}/jira/tickets`, {params})
 		.subscribe( 
 			(response:APIResponse) => {
 				this.store.dispatch({type: Actions.newTickets, payload: response.data});
 			},
-			this.processErrorResponse.bind(this)
+			this.dataService.processErrorResponse.bind(this)
 		);
 	}
 
@@ -70,7 +68,7 @@ export class JiraService extends DataService {
 	*/
 	setPing({key, ping_type}): Observable<any> {
 		const postData = { key, ping_type, username: this.user.username };
-		return this.http.post(`${this.apiUrl}/chat/send_ping`, postData);
+		return this.dataService.post(`${this.dataService.apiUrl}/chat/send_ping`, postData);
 	}
 
 	/**
@@ -78,7 +76,7 @@ export class JiraService extends DataService {
 	getATicketDetails(key){
 		let params = new HttpParams();
 		params = params.append('jql', `key%3D%20${key}`);
-		return this.http.get(`${this.apiUrl}/jira/tickets`, {params});
+		return this.dataService.get(`${this.dataService.apiUrl}/jira/tickets`, {params});
 	}
 
 	/**
@@ -86,7 +84,7 @@ export class JiraService extends DataService {
 	searchTicket(msrp:string): Observable<any> {
 		let params = new HttpParams();
 		params = params.append('isHardRefresh', `true`);
-		return this.http.get(`${this.apiUrl}/jira/getkey/${msrp}`, {params});
+		return this.dataService.get(`${this.dataService.apiUrl}/jira/getkey/${msrp}`, {params});
 	}
 
 
@@ -100,13 +98,13 @@ export class JiraService extends DataService {
 		postData.password = this.user.password;
 
 		// create crucible and post comment
-		return this.http.post(`${this.apiUrl}/crucible/create`, postData);
+		return this.dataService.post(`${this.dataService.apiUrl}/crucible/create`, postData);
 	}
 
 	/**
 	*/
 	workLog(postData): Observable<any> {
-		return this.http.post(`${this.apiUrl}/jira/comment`, postData);
+		return this.dataService.post(`${this.dataService.apiUrl}/jira/comment`, postData);
 	}
 
 	/**
@@ -114,7 +112,7 @@ export class JiraService extends DataService {
 	 * @param {Comment} postData new comment skeleton object to add to ticket
 	 */
 	editComment(postData) {
-		return this.http.put(`${this.apiUrl}/jira/comment`, postData);
+		return this.dataService.put(`${this.dataService.apiUrl}/jira/comment`, postData);
 	}
 
 	/**
@@ -127,14 +125,14 @@ export class JiraService extends DataService {
 		params = params.append('comment_id', commentId);
 		params = params.append('key', key);
 
-		return this.http.delete(`${this.apiUrl}/jira/comment`, {params});
+		return this.dataService.delete(`${this.dataService.apiUrl}/jira/comment`, {params});
 	}
 
 	/**
 	*/
 	changeStatus(postData): Observable<any> {
 		postData.username = this.user.username;
-		return this.http.post(`${this.apiUrl}/jira/status`, postData);
+		return this.dataService.post(`${this.dataService.apiUrl}/jira/status`, postData);
 	}
 
 	
@@ -143,6 +141,10 @@ export class JiraService extends DataService {
 	*/
 	setPingSettings(postData): Observable<any> {
 		postData.username = this.user.username;
-		return this.http.post(`${this.apiUrl}/chat/user_pings`, postData);
+		return this.dataService.post(`${this.dataService.apiUrl}/chat/user_pings`, postData);
+	}
+
+	processErrorResponse(message){
+		return this.dataService.processErrorResponse(message);
 	}
 }

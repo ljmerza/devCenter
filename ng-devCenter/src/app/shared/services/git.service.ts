@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-
-import { ToastrService } from './toastr.service';
 import { DataService } from './data.service';
 
 import { NgRedux } from '@angular-redux/store';
@@ -12,12 +10,10 @@ import { Actions } from './../store/actions';
 import { APIResponse } from './../../shared/store/models/apiResponse';
 
 @Injectable()
-export class GitService extends DataService {
+export class GitService {
 	title:string = '';
 
-	constructor(public http:HttpClient, public toastr:ToastrService, public store:NgRedux<RootState>) {
-		super(toastr);
-	}
+	constructor(public store:NgRedux<RootState>, private dataService:DataService) {}
 
 	/**
 	 * gets a Jira ticket's related Git branches.
@@ -26,20 +22,19 @@ export class GitService extends DataService {
 	getTicketBranches(msrp:string): Observable<any> {
 		let params = new HttpParams();
 		params = params.append('isHardRefresh', `true`);
-		return this.http.get(`${this.apiUrl}/git/branches/${msrp}`, {params});
+		return this.dataService.get(`${this.dataService.apiUrl}/git/branches/${msrp}`, {params});
 	}
 
 	/**
 	 * gets all valid Repos from Crucible. On success store in Redux store.
 	 */
 	getRepos():void {
-		this.http.get(`${this.apiUrl}/git/repos`)
+		this.dataService.get(`${this.dataService.apiUrl}/git/repos`)
 		.subscribe(
 			(response:APIResponse) => {
 				this.store.dispatch({type: Actions.repos, payload: response.data });
 			},
-			this.processErrorResponse.bind(this)
-
+			this.dataService.processErrorResponse.bind(this)
 		);
 	}
 
@@ -50,7 +45,11 @@ export class GitService extends DataService {
 	getBranches(repoName:string): Observable<any> {
 		let params = new HttpParams();
 		params = params.append('isHardRefresh', `true`);
-		return this.http.get(`${this.apiUrl}/git/repo/${repoName}`, {params});
+		return this.dataService.get(`${this.dataService.apiUrl}/git/repo/${repoName}`, {params});
+	}
+
+	processErrorResponse(message){
+		return this.dataService.processErrorResponse(message);
 	}
 
 }

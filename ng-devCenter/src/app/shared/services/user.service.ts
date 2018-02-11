@@ -8,7 +8,7 @@ import { DataService } from './data.service';
 
 
 @Injectable()
-export class UserService extends DataService {
+export class UserService {
 	userValues:Array<string> = ['username', 'password', 'port', 'cache', 'emberUrl', 'teamUrl'];
 	public redirectUrl:string;
 
@@ -37,8 +37,7 @@ export class UserService extends DataService {
 		{'label':'Locally', 'value':'http://localhost'}
 	];
 
-	constructor(public http:HttpClient, public config:ConfigService, public toastr:ToastrService) {
-		super(toastr);
+	constructor(public dataService:DataService, public config:ConfigService) {
 
 		this.username = localStorage.getItem('devCenter.username') || '';
 		this.port = localStorage.getItem('devCenter.port') || '';
@@ -118,6 +117,6 @@ export class UserService extends DataService {
 	}
 
 	getNavbarItems(){
-		return this.http.get(`${this.apiUrl}/navbar`);
+		return this.dataService.get(`${this.dataService.apiUrl}/navbar`);
 	}
 }
