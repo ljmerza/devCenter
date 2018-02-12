@@ -15,6 +15,9 @@ import { ToastrComponent } from './toastr/toastr.component';
 
 // services
 import { JiraService } from './services/jira.service';
+import { JiraCommentsService } from './services/jira/jira-comments.service';
+import { JiraPingsService } from './services/jira/jira-pings.service';
+
 import { LocalStorageService } from './services/local-storage.service';
 import { MiscService } from './services/misc.service';
 import { UserService } from './services/user.service';
@@ -33,8 +36,8 @@ import { TestInterceptor } from './interceptors/test.interceptor';
 
 let providers = [
 	UserService, LocalStorageService, ToastrService, ConfigService, 
-	WebSocketService, MiscService, JiraService, ProfileService,
-	DataService, GitService,
+	WebSocketService, MiscService, JiraService, ProfileService, JiraPingsService,
+	DataService, GitService, JiraCommentsService,
 	{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
 	{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
 ];

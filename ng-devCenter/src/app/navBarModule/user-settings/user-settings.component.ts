@@ -5,13 +5,13 @@ import { select } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
 
 import { UserService } from './../../shared/services/user.service'
-import { JiraService } from './../../shared/services/jira.service';
+import { JiraPingsService } from './../../shared/services/jira/jira-pings.service';
 import { ToastrService } from './../../shared/services/toastr.service';
 import { ProfileService } from './../../shared/services/profile.service';
 
 @Component({
 	selector: 'dc-user-settings',
-	templateUrl: './user-settings.component.html',
+templateUrl: './user-settings.component.html',
 	styleUrls: ['./user-settings.component.scss']
 })
 export class UserSettingsComponent implements OnInit {
@@ -19,7 +19,7 @@ export class UserSettingsComponent implements OnInit {
 	@Input() isLogin:boolean = true;
 	@select('userProfile') getProfile$: Observable<any>;
 
-	constructor(public user: UserService, private jira: JiraService, private toastr: ToastrService, public route: ActivatedRoute, private router: Router, private profile: ProfileService) {
+	constructor(public user: UserService, private jira: JiraPingsService, private toastr: ToastrService, public route: ActivatedRoute, private router: Router, private profile: ProfileService) {
 
 		// create form group
 		this.userSettingsForm = new FormGroup({
@@ -94,8 +94,9 @@ export class UserSettingsComponent implements OnInit {
 		pingControlGroup.markAsPristine();
 	}
 
-	/*
-	*/
+	/**
+	 * Resets the user form to default seetings. Checks for ping setting resets.
+	 */
 	resetForm(){
 		this.userSettingsForm.reset({
 			username: this.user.username,
@@ -110,8 +111,9 @@ export class UserSettingsComponent implements OnInit {
 		if(this.user.userData) this.setUserPings(this.user.userData.ping_settings);
 	}
 
-	/*
-	*/
+	/**
+	 * getters for ngform objects
+	 */
 	get username(){ return this.userSettingsForm.get('username'); }
 	get password(){ return this.userSettingsForm.get('password'); }
 	get port(){ return this.userSettingsForm.get('port'); }
@@ -123,7 +125,7 @@ export class UserSettingsComponent implements OnInit {
 	/**
 	 * submits changes to a user's profile
 	 * @param {boolean} submitType are we canceling or submitting user profile changes?
-	 *
+	 * @return {boolean} return false to prevent bubbling.
 	 */
 	submit(submitType:boolean): boolean {
 
@@ -175,24 +177,21 @@ export class UserSettingsComponent implements OnInit {
  	}
 
  	/**
- 	 * saves user's ping settings
+ 	 * saves user's ping settings. (currently only saves the allPing setting)
  	 */
  	savePingSettings(){
  		let pingControlGroup = this.pings;
 
- 		let postData = {
+ 		const postData = {
  			fields: [
  				{name:'all_ping', value:pingControlGroup.get('allPing').value ? 1 : 0}
  			]
  		}
 
- 		this.jira.setPingSettings(postData).subscribe(
- 			response => {
- 				this.toastr.showToast('Saved User Settings', 'success');
- 				this.reloadPage();
- 			},
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
+ 		this.jira.setPingSettings(postData).subscribe(response => {
+ 			this.toastr.showToast('Saved User Settings', 'success');
+ 			this.reloadPage();
+		});
  	}
 
 	/**

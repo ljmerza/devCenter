@@ -6,7 +6,7 @@ import { NgForm } from '@angular/forms';
 import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import { ModalComponent } from './../../shared/modal/modal.component';
-import { JiraService } from './../../shared/services/jira.service';
+import { JiraCommentsService } from './../../shared/services/jira/jira-comments.service';
 import { ToastrService } from './../../shared/services/toastr.service';
 
 import { NgRedux } from '@angular-redux/store';
@@ -41,7 +41,7 @@ export class TicketLogComponent	{
 	@Output() statusChangeCancel = new EventEmitter();
 	@Input() key:string;
 
-	constructor(public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef, private store:NgRedux<RootState>) {}
+	constructor(public jira:JiraCommentsService, public toastr: ToastrService, private cd: ChangeDetectorRef, private store:NgRedux<RootState>) {}
 
 	/**
 	 * Submits a work log form to add/remove components, log time, and add a comment.
@@ -61,21 +61,14 @@ export class TicketLogComponent	{
 			remove_conflict: formObj.value.conflictCode || false,
 			uct_date: formObj.value.uctNotReady ? ((new Date).getTime())/1000 : 0,
 			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
-			key: this.key
+			key: this.key,
+			tasks: tasks
 		};
 
-		// log work and show results
-		this.jira.workLog(postData).subscribe( 
-			response => {
-				this.toastr.showToast(`Tasks updated: ${tasks}`, 'success');
-				this.checkStatusChange(postData);
-			
-				response.data.key = this.key;
-				this.store.dispatch({ type: Actions.addComment, payload:response.data });
-				this._resetForm();
-			},
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
+		this.jira.workLog(postData).subscribe(() => {
+			this.toastr.showToast(`Tasks updated: ${postData.tasks}`, 'success');
+			this._resetForm();
+		});
 	}
 
 	/**

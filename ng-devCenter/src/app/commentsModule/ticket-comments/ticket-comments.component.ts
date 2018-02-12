@@ -15,7 +15,7 @@ import { Ticket } from './../../shared/store/models/ticket';
 import { Attachment } from './../../shared/store/models/attachment';
 
 import { ModalComponent } from './../../shared/modal/modal.component';
-import { JiraService } from './../../shared/services/jira.service';
+import { JiraCommentsService } from './../../shared/services/jira/jira-comments.service';
 import { ToastrService } from './../../shared/services/toastr.service';
 import { UserService } from './../../shared/services/user.service';
 import { MiscService } from './../../shared/services/misc.service';
@@ -42,10 +42,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	comments$:Subscription;
 	attachments$:Subscription;
 
-	constructor(
-		private toastr: ToastrService, private user:UserService, private jira:JiraService, 
-		private misc: MiscService, private store:NgRedux<RootState>, private cd: ChangeDetectorRef 
-	) { }
+	constructor(private toastr: ToastrService, private user:UserService, private jira:JiraCommentsService, private misc: MiscService, private store:NgRedux<RootState>, private cd: ChangeDetectorRef) { }
 
 	/**
 	 * On init of this component instance listen for ticket events from Redux.
@@ -68,7 +65,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 * functionality to each table item
 	 */
 	ngAfterViewChecked():void {
-		const misc=this.misc;
+		const misc = this.misc;
 		
 		setTimeout(() => {
 			// highlight code needs to be triggered after modal opens
@@ -90,16 +87,18 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 */
 	private syncComments():void {
 		this.comments$ = this.store.select('tickets')
-		.map( (tickets:Array<Ticket>) =>{
-
-			console.log('this.key: ', this.key);
+		.map( (tickets:Array<Ticket>) => {
 			const ticket = tickets.find((ticket:Ticket) => ticket.key === this.key);
 			return ticket.comments;
-		}).subscribe( (comments:Array<Comment>) =>{
+		}).subscribe( (comments:Array<Comment>) => {
 			this.comments = comments;
 			this.cd.detectChanges();
 		});
 	}
+
+	/**
+	 * listen for tickets event from Redux and extracts the attachments for this ticket
+	 */
 	private syncAttachments():void {
 		this.attachments$ = this.store.select('tickets')
 		.map( (tickets:Array<Ticket>) =>{ 
@@ -127,13 +126,8 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 		this.modalRef.close();
 		if(!deleteComment) return;
 
-		// this.jira.deleteComment(this.commentId, this.key)
-		// .subscribe((response:any) => {
-			console.log('test: ');
-				this.store.dispatch({ type: Actions.deleteComment, payload: {key: this.key, id: this.commentId} });
-			// },
-			// this.jira.processErrorResponse.bind(this)
-		// );
+		this.jira.deleteComment(this.commentId, this.key)
+		.subscribe(()=> this.toastr.showToast('Comment deleted successfully', 'success'));
 	}
 
 	/**
@@ -153,24 +147,8 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 			return;
 		}
 
-		const postData = {
-			key: this.key,
-			comment_id: comment.id,
-			comment: newComment
-		};
-		this.jira.editComment(postData)
-		.subscribe((response:any) => {
-
-				// get new comment and add what ticket it belongs to
-				let payload = response.data;
-				payload.key = postData.key;
-
-				// update redux and show toast
-				this.store.dispatch({ type: Actions.editComment, payload });
-				this.toastr.showToast('Comment Deleted Successfully', 'success');
-			},
-			this.jira.processErrorResponse.bind(this)
-		);
+		this.jira.editComment({key: this.key, comment_id: comment.id, comment: newComment})
+		.subscribe(() => this.toastr.showToast('Comment Edited Successfully', 'success'));
 	}
 
 	/**
