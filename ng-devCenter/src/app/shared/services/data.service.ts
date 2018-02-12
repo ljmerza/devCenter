@@ -4,7 +4,7 @@ import { HttpErrorResponse, HttpClient, HttpHandler, HttpHeaders } from '@angula
 import { LocalStorageService } from '../services/local-storage.service';
 import { ToastrService } from './toastr.service';
 import { environment } from '../../../environments/environment';
-
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class DataService extends HttpClient {
@@ -46,6 +46,22 @@ export class DataService extends HttpClient {
 		}catch(e){
 			return '';
 		}
+	}
+
+	get(url, options?): Observable<any>{
+		return super.get(url, options);
+	}
+
+	post(url, body?, options?): Observable<any>{
+		return super.post(url, body, options);
+	}
+
+	put(url, body?, options?): Observable<any>{
+		return super.put(url, body, options);
+	}
+
+	delete(url, options?): Observable<any>{
+		return super.delete(url, options);
 	}
 
 }

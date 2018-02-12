@@ -70,9 +70,7 @@ export class UserSettingsComponent implements OnInit {
 	getProfile(){
 		this.profile.getProfile();
 		this.getProfile$.subscribe(profile => {
-			if(profile && this.user.userData){
-				this.setUserPings(this.user.userData.ping_settings);
-			}
+			if(profile.pingSettings) this.setUserPings(profile.pingSettings);
 		});
 	}
 
@@ -108,7 +106,7 @@ export class UserSettingsComponent implements OnInit {
 		});
 
 		// reset user ping settings if they exist
-		if(this.user.userData) this.setUserPings(this.user.userData.ping_settings);
+		// if(this.user.userData) this.setUserPings(this.user.userData.ping_settings);
 	}
 
 	/**

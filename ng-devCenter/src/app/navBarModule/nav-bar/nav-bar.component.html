@@ -228,8 +228,8 @@
 		<ul class="navbar-nav position-relative mr-30">
 			<li ngbDropdown placement="bottom-right" class="d-inline-block" *ngIf='!user.needRequiredCredentials()'>
 				<a class="nav-link dropdown-toggle" id="userDropdown" ngbDropdownToggle>
-					<img src={{user.userPicture}} alt="">
-					{{user.userData?.displayName}}
+					<img src={{userProfile?.userPicture}} alt="">
+					{{userProfile?.displayName}}
 				</a>
 				<div ngbDropdownMenu aria-labelledby="userDropdown">
 					<li><a class="dropdown-item" (click)='userSetting.openModal()'>User Settings</a></li>

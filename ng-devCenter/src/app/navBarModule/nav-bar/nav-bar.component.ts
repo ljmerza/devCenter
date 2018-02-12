@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { NavbarModalComponent } from '../navbar-modal/navbar-modal.component';
 import { JiraService } from './../../shared/services/jira.service';
@@ -9,6 +9,12 @@ import { UserService } from '../../shared/services/user.service';
 import { LogoutComponent } from '../logout/logout.component';
 import { NgForm } from '@angular/forms';
 
+import { NgRedux } from '@angular-redux/store';
+import { RootState } from './../../shared/store/store';
+import { Actions } from './../../shared/store/actions';
+
+import { APIResponse } from './../../shared/store/models/apiResponse';
+
 declare var $ :any;
 
 @Component({
@@ -16,21 +22,39 @@ declare var $ :any;
 	templateUrl: './nav-bar.component.html',
 	styleUrls: ['./nav-bar.component.scss']
 })
-export class NavBarComponent {
+export class NavBarComponent implements OnInit, OnDestroy {
 	ticketValue:string; // value of MSRP/key search
 	isFriday:boolean; // boolean is Friday for log hours notification
 	navbaritems;
+	userProfile;
+	userProfile$;
 
-	constructor(private toastr: ToastrService, public jira:JiraService, public config:ConfigService, public user: UserService) { 
+	constructor(private toastr: ToastrService, public jira:JiraService, public config:ConfigService, public user: UserService, private store:NgRedux<RootState>) { }
 
-		// is it current friday?
+	/**
+	 * starts checker for Friday, gets navbar items, and watches for user profile in Redux.
+	 */
+	ngOnInit(){
+		this.setFridayChecker();
+		this.getNavbarItems();
+
+		this.userProfile$ = this.store.select('userProfile').subscribe(profile => this.userProfile = profile);
+	}
+
+	/**
+	 * destorys any left overt subscriptions.
+	 */
+	ngOnDestroy(){
+		if(this.userProfile$) this.userProfile$.unscubscribe();
+	}
+
+	/**
+	 * checks if it's friday every hour to show log hours
+	 */
+	setFridayChecker(){
 		const isFriday = () => (new Date()).getDay() == 5;
 		this.isFriday = isFriday();
-
-		// check every hour
 		setInterval(isFriday, 60*60*1);
-
-		this.getNavbarItems();
 	}
 
 	/**

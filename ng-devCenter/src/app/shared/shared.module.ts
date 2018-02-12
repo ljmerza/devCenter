@@ -39,8 +39,7 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
 		ToastModule.forRoot(), BrowserAnimationsModule
 	],
 	declarations: [ModalComponent, ToastrComponent],
-	exports: [ModalComponent, ToastrComponent],
-	providers,
+	exports: [ModalComponent, ToastrComponent]
 })
 export class SharedModule {
 	constructor(private ngRedux:NgRedux<RootState>, private devTools: DevToolsExtension){

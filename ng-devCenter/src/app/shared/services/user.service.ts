@@ -1,18 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
 
 import { ConfigService } from './config.service';
 import { ToastrService } from './toastr.service';
 import { DataService } from './data.service';
 
-import { select } from '@angular-redux/store';
 
 @Injectable()
 export class UserService {
-	@select('userProfile') getProfile$: Observable<any>;
-
-
 	userValues:Array<string> = ['username', 'password', 'port', 'cache', 'emberUrl', 'teamUrl'];
 	public redirectUrl:string;
 
@@ -32,8 +27,6 @@ export class UserService {
 	public teamLocalPort:string = '4200';
 	public teamApiPort:string = '5';
 
-	public userData;
-	public userPicture;
 	public cache;
 
 	emberBuilds:Array<Object> = [
@@ -57,17 +50,6 @@ export class UserService {
 		this.teamUrl = localStorage.getItem('devCenter.teamUrl') || '';
 		this.cache = localStorage.getItem('devCenter.cache') || '';
 		this.setUrls();
-
-		this.getProfile$.subscribe(this.loadProfile.bind(this));
-	}
-
-	/**
-	*/
-	loadProfile(profile){
-
-		console.log('profile', profile);
-		this.userData = profile;
-		this.userPicture = (profile.avatarUrls) && profile.avatarUrls['48x48'];
 	}
 
 	/*
