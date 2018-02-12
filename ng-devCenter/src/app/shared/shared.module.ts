@@ -31,26 +31,13 @@ import { DataService } from './services/data.service';
 // interceptors
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
-import { TestInterceptor } from './interceptors/test.interceptor';
 
-
-let providers = [
-	UserService, LocalStorageService, ToastrService, ConfigService, 
-	WebSocketService, MiscService, JiraService, ProfileService, JiraPingsService,
-	DataService, GitService, JiraCommentsService,
-	{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
-	{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
-];
-
-if(environment.test){
-	providers.push({ provide: HTTP_INTERCEPTORS, useClass: TestInterceptor, multi: true});
-}
 
 @NgModule({
 	imports: [
 		HttpClientModule, NgbModule, NgReduxModule,
 		ToastModule.forRoot(), BrowserAnimationsModule
-	], // BrowserAnimationsModule needed for ToastModule
+	],
 	declarations: [ModalComponent, ToastrComponent],
 	exports: [ModalComponent, ToastrComponent],
 	providers,
@@ -61,6 +48,15 @@ export class SharedModule {
 	}
 
 	static forRoot(): ModuleWithProviders {
-		return {ngModule: SharedModule, providers};
+		return {
+			ngModule: SharedModule, 
+			providers: [
+				UserService, LocalStorageService, ToastrService, ConfigService, 
+				WebSocketService, MiscService, JiraService, ProfileService, JiraPingsService,
+				DataService, GitService, JiraCommentsService,
+				{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
+				{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
+			]
+		};
 	}
 }
