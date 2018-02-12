@@ -1,2 +1,3 @@
 *.pyc
 ng-devCenter/src/app/shared/services/config.service.ts
+ng-devCenter/mock-server/node_modules
