@@ -1,14 +1,6 @@
-import { 
-	Component, ViewChild, ElementRef, ChangeDetectorRef,
-	ViewEncapsulation, ChangeDetectionStrategy,
-	EventEmitter, Output, Input
-} from '@angular/core';
-
+import { Component, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, ChangeDetectionStrategy,	EventEmitter, Output, Input } from '@angular/core';
+import { NgForm, FormGroup, FormControl, Validators, FormBuilder, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
 import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
-import { 
-	NgForm, FormGroup, FormControl, Validators, FormBuilder,
-	AbstractControl, ValidationErrors, FormArray
-} from '@angular/forms';
 
 import { ModalComponent } from './../../shared/modal/modal.component';
 import { JiraService } from './../../shared/services/jira.service';
@@ -16,6 +8,11 @@ import { ToastrService } from './../../shared/services/toastr.service';
 import { ConfigService } from './../../shared/services/config.service'
 import { UserService } from './../../shared/services/user.service'
 import { GitService } from './../../shared/services/git.service';
+
+import { NgRedux } from '@angular-redux/store';
+import { RootState } from './../../shared/store/store';
+import { Actions } from './../../shared/store/actions';
+import { STATUSES } from './../../shared/store/models/ticket-statuses';
 
 @Component({
 	selector: 'dc-qa-generator',
@@ -36,14 +33,12 @@ export class QaGeneratorComponent {
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	modalRef: NgbModalRef;
 
-	@Output() statusChange = new EventEmitter();
-	@Output() commentChangeEvent = new EventEmitter();
 	@Input() msrp;
 	@Input() key;
 	@Input() repos;
 	customModalCss = 'qaGen';
 
-	constructor(public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef, public config: ConfigService, public formBuilder: FormBuilder, public user: UserService, private git: GitService) {
+	constructor(public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef, public config: ConfigService, public formBuilder: FormBuilder, public user: UserService, private git: GitService, private store:NgRedux<RootState>) {
 		// create form object
 		this.qaForm = this.formBuilder.group({
 			selections: this.formBuilder.group({
@@ -55,19 +50,22 @@ export class QaGeneratorComponent {
 		});
 	}
 
-	/*
-	*/
+	/**
+	 * getter for branches aray in formGroup
+	 * @return {FormArray}
+	 */
 	get branches(): FormArray {
 		return this.qaForm.get('branches') as FormArray;
 	};
 
-	/*
-	*/
+	/**
+	 * Adds a new branch to the branches form array. Adds subscription to
+	 * value change on repository selection to get all branches for that repository.
+	 * @param {Object} the new branch object to add to the ngForm
+	 */
 	addBranch(newBranch){
-		// create repo name control
 		let repositoryName = this.formBuilder.control(newBranch.repositoryName || '');
 
-		// create repo branch group
 		const branch = this.formBuilder.group({
 			allRepos: this.formBuilder.array(this.repos.map(repo => repo.name)),
 			allBranches: this.formBuilder.array(newBranch.allBranches || []),
@@ -77,21 +75,26 @@ export class QaGeneratorComponent {
 			baseBranch: this.formBuilder.control(newBranch.baseBranch || '')
 		});
 
-		// on repo change get all branches of repo and set on FormGroup
-		repositoryName.valueChanges.subscribe(repoName => {
+		repositoryName.valueChanges.subscribe(repoName => this.getBranches(repoName, branch));
+		(this.qaForm.get('branches') as FormArray).push(branch);
+	}
+
+	/**
+	 * gets a repository's branch list and adds it to the corresponding branch form control.
+	 * @param {string} repoName the name of the repository
+	 * @param {FormControl} branch 
+	 */
+	 getBranches(repoName, branch) {
 			this.git.getBranches(repoName).subscribe( 
 				branches => branch.setControl('allBranches', this.formBuilder.array(branches.data.length > 0 ? branches.data:[])),
 				error => this.toastr.showToast(this.git.processErrorResponse(error), 'error')
 			);
-		});
+		}
 
-		// add new branch to branches array
-		(this.qaForm.get('branches') as FormArray).push(branch);
-
-	}
-
-	/*
-	*/
+	/**
+	 * removes a branch from the branch form array.
+	 * @param {number} branchIndex the index of the branch to remove from the array.
+	 */
 	removeBranch(branchIndex:number): void {
 		(this.qaForm.get('branches') as FormArray).removeAt(branchIndex);
 	}
@@ -100,28 +103,60 @@ export class QaGeneratorComponent {
 	*/
 	submitQA(isSaving): void {
 
-		// end here if we are just closing modal
 		if(!isSaving){
-
-			// notify of status cancel and reset branches
-			this.statusChange.emit({cancelled: true, showMessage: true});
-
-			// close modal and end here
+			this.cancelStatusChange();
 			this.modalRef.close();
 			return;
 		}
 
-		// if invalid form then just return
 		if(this.qaForm.invalid) return;
-
-		// close modal since we dont need it anymore
 		this.modalRef.close();
+		
+		const postData = this.generatePostBody();
+		if(!postData.autoPCR) this.cancelStatusChange();
+		this.showSubmitMessage(postData);
 
-		// get selections sub formGroup and branches sub formArray
+		this.jira.generateQA(postData).subscribe(
+			response => {
+				this.showQaSubmitSuccessMessage(response);
+				this.checkForStateChange(postData, response.data);
+			},
+			error => {
+				this.jira.processErrorResponse(error);
+				this.cancelStatusChange();
+			}
+		);
+	}
+
+	/**
+	*/
+	cancelStatusChange(){
+		this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: STATUSES.INDEV }});
+		this.toastr.showToast(`Ticket ${this.key} status cancelled.`, 'info');
+	}
+
+	/**
+	*/
+	showSubmitMessage(postData):void {
+		// create info message based on form selections
+		let message = [];
+		if(postData.repos.length > 1) message.push('Creating Crucible');
+		if(postData.qa_steps) message.push('adding comment to Jira');
+		if(postData.autoPCR) message.push('transitioning to PCR Needed');
+
+		// create info message and display
+		if(message.length > 1) message[message.length-1] = 'and ' + message[message.length-1];
+		const joiner = message.length > 2 ? ', ' : ' ';
+		this.toastr.showToast(message.join(joiner), 'info');
+	}
+
+	/**
+	* Generates QA generator POST data
+	*/
+	generatePostBody(){
 		const selections = this.qaForm.controls.selections.controls;
 		const branches = this.qaForm.controls.branches.controls
 
-		// create POST data structure
 		let postData = {
 			qa_steps: this.qaForm.controls.qaSteps.value,
 			log_time: selections.logTime.value.hour * 60 + selections.logTime.value.minute,
@@ -137,73 +172,48 @@ export class QaGeneratorComponent {
 			}),
 		};
 
-		// if not transitioning status then cancel status on ticket 
-		if(!selections.pcrNeeded.value) {
-			this.statusChange.emit({cancelled: true, showMessage: false});
+		return postData;
+	}
+
+	/**
+	*/
+	showQaSubmitSuccessMessage(response){
+		let toastMessage = `<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>`;
+		
+		if(response.data.crucible_id){
+			toastMessage += `<br><a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>`
+		}
+		this.toastr.showToast(toastMessage, 'success', true);
+	}
+
+	/**
+	*/
+	checkForStateChange(postData, response){
+		if(postData.qa_steps) {
+			this.store.dispatch({type: Actions.addComment, payload:{ key:this.key, comment: response.comment }});
+
 		}
 
-		// create info message based on form selections
-		let message = [];
-		if(postData.repos.length > 1) message.push('Creating Crucible');
-		if(postData.qa_steps) message.push('adding comment to Jira');
-		if(selections.pcrNeeded.value) message.push('transitioning to PCR Needed');
+		if(postData.autoPCR) {
+			this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: STATUSES.PCRNEED }});
+		}
 
-		// create info message and display
-		if(message.length > 1) message[message.length-1] = 'and ' + message[message.length-1];
-		const joiner = message.length > 2 ? ', ' : ' ';
-		this.toastr.showToast(message.join(joiner), 'info');
-
-		// send POST request and notify results
-		this.jira.generateQA(postData).subscribe(
-			response => {
-
-				// create and show toast message
-				let toastMessage = `<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>`;
-				if(response.data.crucible_id){
-					toastMessage += `<br><a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>`
-				}
-				this.toastr.showToast(toastMessage, 'success', true);
-
-				// if qa steps given trigger comment change event
-				if(postData.qa_steps){
-					// update comments on ticket
-					this.commentChangeEvent.emit({response});
-				}
-
-				// if status given then trigger status change
-				if(selections.pcrNeeded.value){
-					this.commentChangeEvent.emit({newStatus: 'PCR - Needed'});
-				}
-			},
-			error => {
-				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-				
-				// only update status if we are updating Jira
-				if(postData.qa_steps){
-					this.statusChange.emit({cancelled: true, showMessage: true});
-				}
-			}
-		);
+		if(response.crucible_id) {
+			this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: response.crucible_id }});
+		}
 	}
 
 	/*
 	*/
 	openQAModal(): void {
-		// detect css input changes then open modal
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
-
-		this.modalRef.result.then(
-    		() => null,
-    		() => this.statusChange.emit({showMessage:true, cancelled:true})
-    	)
 
 		// if we already have branches then don't reload them
 		if( (this.qaForm.get('branches') as FormArray).length > 0 ) {
 			return;
 		}
 
-		// disabled submit button for QA gen
 		this.loadingBranches = true;
 		this.cd.detectChanges();
 
@@ -212,15 +222,11 @@ export class QaGeneratorComponent {
 			response => {
 				this.loadingBranches = false;
 				this.processBranches(response.data);
-
-				// manually tell Angular of change
 				this.cd.detectChanges();
 			},
 			error => {
 				this.loadingBranches = false;
 				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
-
-				// manually tell Angular of change
 				this.cd.detectChanges();
 			}
 		);
@@ -234,28 +240,18 @@ export class QaGeneratorComponent {
 
 			// for each matching dev branch found get list of branches
 			const newBranch = repo.branches.map( devBranch => {
-				let selection = {
+				let baseBranch;
+				if(repo.repo === 'external_modules') baseBranch = ['dev'];
+				else baseBranch = this.getBaseBranch(repo.all);
+
+				return {
 					allRepos: this.repos,
 					allBranches: repo.all,
-
 					repositoryName: repo.repo,
 					reviewedBranch: devBranch,
-					baseBranch: '',
+					baseBranch: baseBranch.length == 1 ? baseBranch[0] : ''
 				};
-
-				// get base branch of current selection
-				let baseBranch;
-				if(repo.repo === 'external_modules'){
-					baseBranch = ['dev'];
-				} else {
-					baseBranch = this.getBaseBranch(repo.all);
-				}
-
-				selection.baseBranch = baseBranch.length == 1 ? baseBranch[0] : '';
-
-				return selection;
 			})[0];
-
 
 			this.addBranch(newBranch);
 		});
@@ -268,12 +264,12 @@ export class QaGeneratorComponent {
 
 		// get all short branch names with numbers in them and sort
 		const selections = repos
-		.filter( branch => branch.length < 15)
-		.map( branch => branch.replace(/[^0-9.]/g,''))
-		.sort();
+			.filter( branch => branch.length < 15)
+			.map( branch => branch.replace(/[^0-9.]/g,''))
+			.sort();
 
 		// get branch short branch name that has highest version found
 		return repos
-		.filter( branch => branch.length < 15 && branch.includes(selections[selections.length-1]));
+			.filter( branch => branch.length < 15 && branch.includes(selections[selections.length-1]));
 	}
 }
