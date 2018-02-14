@@ -24,7 +24,9 @@ import { STATUSES } from './../../shared/store/models/ticket-statuses';
 export class QaGeneratorComponent {
 	loadingBranches:boolean = false; // are we loading branches?
 	repoLookUp$;
+	selectedRepos;
 	qaForm;
+	selectedBranches:Array<any> = [];
 
 	hourStep = 1;
 	minuteStep = 15;
@@ -39,24 +41,8 @@ export class QaGeneratorComponent {
 	customModalCss = 'qaGen';
 
 	constructor(public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef, public config: ConfigService, public formBuilder: FormBuilder, public user: UserService, private git: GitService, private store:NgRedux<RootState>) {
-		// create form object
-		this.qaForm = this.formBuilder.group({
-			selections: this.formBuilder.group({
-				pcrNeeded: this.formBuilder.control(true),
-				logTime: this.formBuilder.control({hour: 0, minute: 0}),
-			}),
-			qaSteps: this.formBuilder.control(''),
-			branches: this.formBuilder.array([])
-		});
-	}
 
-	/**
-	 * getter for branches aray in formGroup
-	 * @return {FormArray}
-	 */
-	get branches(): FormArray {
-		return this.qaForm.get('branches') as FormArray;
-	};
+	}
 
 	/**
 	 * Adds a new branch to the branches form array. Adds subscription to
@@ -64,19 +50,7 @@ export class QaGeneratorComponent {
 	 * @param {Object} the new branch object to add to the ngForm
 	 */
 	addBranch(newBranch){
-		let repositoryName = this.formBuilder.control(newBranch.repositoryName || '');
-
-		const branch = this.formBuilder.group({
-			allRepos: this.formBuilder.array(this.repos.map(repo => repo.name)),
-			allBranches: this.formBuilder.array(newBranch.allBranches || []),
-			allBranchedFrom: this.formBuilder.array(newBranch.allBranches || []),
-			repositoryName,
-			reviewedBranch: this.formBuilder.control(newBranch.reviewedBranch || ''),
-			baseBranch: this.formBuilder.control(newBranch.baseBranch || '')
-		});
-
-		repositoryName.valueChanges.subscribe(repoName => this.getBranches(repoName, branch));
-		(this.qaForm.get('branches') as FormArray).push(branch);
+		this.selectedBranches.push(newBranch);
 	}
 
 	/**
@@ -193,7 +167,6 @@ export class QaGeneratorComponent {
 	 */
 	checkForStateChange(postData, response_data):void {
 
-		console.log('response_data: ', response_data);
 		if(response_data.comment_response.status) {
 			this.store.dispatch({type: Actions.addComment, payload:{ key:this.key, comment: response_data.comment_response.data }});
 		}
@@ -201,7 +174,6 @@ export class QaGeneratorComponent {
 		// check for status changes okay
 		if(response_data.cr_response.status && response_data.pcr_response.status) {
 			this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: STATUSES.PCRNEED }});
-
 		} else if(postData.autoPCR){
 			// if we wanted PCR and we got here then there was a failure
 			const cr_message = response_data.cr_response.status ? '' : 'Code Review status change';
@@ -210,7 +182,6 @@ export class QaGeneratorComponent {
 		}
 
 		if(response_data.cru_response.status) {
-			console.log('response_data.cru_response.data: ', response_data.cru_response.data);
 			this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: response_data.cru_response.data }});
 		}
 	}
