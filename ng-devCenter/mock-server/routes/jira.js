@@ -1,7 +1,7 @@
-var express = require('express');
-var router = express.Router();
+let express = require('express');
+let router = express.Router();
 
-router.get('/jira/tickets', function(req, res, next) {
+router.get('/tickets', function(req, res, next) {
 	res.json({
 		total_tickets: 4, 
 		data: [

@@ -140,7 +140,7 @@ export class QaGeneratorComponent {
 	showSubmitMessage(postData):void {
 		// create info message based on form selections
 		let message = [];
-		if(postData.repos.length > 1) message.push('Creating Crucible');
+		if(postData.repos.length > 0) message.push('creating Crucible');
 		if(postData.qa_steps) message.push('adding comment to Jira');
 		if(postData.autoPCR) message.push('transitioning to PCR Needed');
 
@@ -187,25 +187,34 @@ export class QaGeneratorComponent {
 	}
 
 	/**
-	*/
-	checkForStateChange(postData, response){
-		if(postData.qa_steps) {
-			this.store.dispatch({type: Actions.addComment, payload:{ key:this.key, comment: response.comment }});
+	 * checks for any state changes such as ticket status, crucible ids added, and added comments.
+	 * @param {Object} postData the data used in the POST call to QA generator endpoint.
+	 * @param {Object} response_data the data in the response from the QA generator endpoint.
+	 */
+	checkForStateChange(postData, response_data):void {
 
+		console.log('response_data: ', response_data);
+		if(response_data.comment_response.status) {
+			this.store.dispatch({type: Actions.addComment, payload:{ key:this.key, comment: response_data.comment_response.data }});
 		}
 
-		if(postData.autoPCR) {
+		// check for status changes okay
+		if(response_data.cr_response.status && response_data.pcr_response.status) {
 			this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: STATUSES.PCRNEED }});
+		} else {
+			const cr_message = response_data.cr_response.status ? '' : 'Code Review status change';
+			const pcr_message = response_data.pcr_response.status ? '' : 'PCR Needed component change';
+			this.toastr.showToast('error', 'The following transitions failed: ${cr_message} ${pcr_message}');
 		}
 
-		if(response.crucible_id) {
-			this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: response.crucible_id }});
+		if(response_data.cru_response.status) {
+			this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: response_data.cru_response.data }});
 		}
 	}
 
 	/*
 	*/
-	openQAModal(): void {
+	openQAModal():void {
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
 

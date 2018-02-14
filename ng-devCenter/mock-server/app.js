@@ -6,6 +6,7 @@ const cors = require('cors');
 const profile = require('./routes/profile');
 const git = require('./routes/git');
 const jira = require('./routes/jira');
+const comments = require('./routes/comments');
 
 let app = express();
 
@@ -13,9 +14,10 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/dev_center', profile);
-app.use('/dev_center', git);
-app.use('/dev_center', jira);
+app.use('/dev_center/jira/profile', profile);
+app.use('/dev_center/git', git);
+app.use('/dev_center/jira', jira);
+app.use('/dev_center/jira/comments', comments);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

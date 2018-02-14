@@ -1,7 +1,4 @@
-import { 
-	Component, Input, ViewChild, ComponentFactoryResolver, ViewEncapsulation,
-	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy, ChangeDetectorRef
-} from '@angular/core';
+import { Component, Input, ViewChild, ComponentFactoryResolver, ViewEncapsulation, EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 import { TicketCommentsModalComponent } from './../../commentsModule/ticket-comments-modal/ticket-comments-modal.component';
 import { TicketLogComponent } from './../ticket-log/ticket-log.component';
@@ -49,25 +46,7 @@ export class TicketComponent {
 	@ViewChild(TicketStatusComponent) ticketStatusRef: TicketStatusComponent;
 
 	/**
-	* @param allComments Comments array to replace all comments on this ticket.
-	* @param newStatus Set the new status.
-	* @param response New comment response from API. 
-	*/
-	commentChangeEvent({ allComments, newStatus, response }):void {
-			
-		// set new comments on comments component
-		if(this.commentComponentRef){
-			this.commentComponentRef.instance.comments = this.ticket.comments;
-		}
-
-		// check for status change
-		if(newStatus){
-			this.ticket.status = newStatus;
-			this.cd.detectChanges();
-		}
-	}
-
-	/**
+	* 
 	*/
 	addReviewer(){
 
@@ -152,10 +131,6 @@ export class TicketComponent {
 
 	    	// add input/outputs
 	    	(<TicketLogComponent>this.worklogComponentRef.instance).key = this.ticket.key;
-	    	(<TicketLogComponent>this.worklogComponentRef.instance)
-	    		.commentChangeEvent.subscribe($event => this.commentChangeEvent($event) );
-	    	(<TicketLogComponent>this.worklogComponentRef.instance)
-	    		.statusChangeCancel.subscribe($event => this.ticketStatusRef.statusChange($event) );
 		}
 		
 		// open modal

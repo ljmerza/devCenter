@@ -25,7 +25,6 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 	@Input() ticketMsrp;
 	@Input() ticketCrucible;
 	@Input() repos;
-	@Output() commentChangeEvent = new EventEmitter();
 
 	ngOnInit() {
 		this.validateTransitions();
@@ -207,12 +206,6 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).key = this.ticketKey;
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).repos = this.repos;
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.ticketMsrp;
-	    	(<QaGeneratorComponent>this.qaComponentRef.instance)
-	    		.statusChange.subscribe($event => this.statusChange($event) );
-	    		(<QaGeneratorComponent>this.qaComponentRef.instance)
-	    		.commentChangeEvent.subscribe($event => {
-	    			this.commentChangeEvent.emit($event);
-	    		});
 		}
 		
 		// open modal

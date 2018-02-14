@@ -36,7 +36,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(){
 		this.setFridayChecker();
-		this.getNavbarItems();
+		// this.getNavbarItems();
 
 		this.userProfile$ = this.store.select('userProfile').subscribe(profile => this.userProfile = profile);
 	}

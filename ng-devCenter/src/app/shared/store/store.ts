@@ -37,9 +37,9 @@ export function rootReducer(state, action){
 			return commentActions.editComment(state, action);
 			
 		case Actions.updateStatus:
-			return statusActions.updateStatus(state, action);
+			return statusActions.updateStatus(state, action.payload);
 		case Actions.updateCrucible:
-			return statusActions.updateCrucible(state, action);
+			return statusActions.updateCrucible(state, action.payload);
 
 		default:
 			return state;

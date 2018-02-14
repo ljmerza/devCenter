@@ -14,12 +14,13 @@ export class ProfileGuard implements CanActivate {
 		// Store the attempted URL for redirecting
     	this.user.redirectUrl = url;
 
+    	console.log('this.user.needRequiredCredentials(): ', this.user.needRequiredCredentials());
+
     	// does user need creds set?
 		if(!this.user.needRequiredCredentials()) return true;
 		
 		// user needs creds so redirect to login page
 		this.router.navigate(['/login']);
     	return false;
-
 	}
 }

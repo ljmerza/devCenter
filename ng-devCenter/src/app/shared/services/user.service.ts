@@ -110,7 +110,7 @@ export class UserService {
 	/**
 	*/
 	public needRequiredCredentials() {
-		return !(this.username && this.password && this.port && this.emberUrl && this.teamUrl);
+		return !(this.username || this.password || this.port || this.emberUrl || this.teamUrl);
 	}
 
 	getNavbarItems(){

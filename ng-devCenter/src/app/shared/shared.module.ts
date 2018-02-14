@@ -18,15 +18,12 @@ import { JiraService } from './services/jira.service';
 import { JiraCommentsService } from './services/jira/jira-comments.service';
 import { JiraPingsService } from './services/jira/jira-pings.service';
 
-import { LocalStorageService } from './services/local-storage.service';
-import { MiscService } from './services/misc.service';
-import { UserService } from './services/user.service';
-import { ToastrService } from './services/toastr.service';
-import { ConfigService } from './services/config.service';
-import { WebSocketService } from './services/web-socket.service';
-import { ProfileService } from './services/profile.service';
-import { GitService } from './services/git.service';
 import { DataService } from './services/data.service';
+import { ConfigService } from './services/config.service';
+import { LocalStorageService } from './services/local-storage.service';
+import { UserService } from './services/user.service';
+
+import { MiscService, ToastrService, WebSocketService, ProfileService, GitService } from './services';
 
 // interceptors
 import { LoggerInterceptor } from './interceptors/logger.interceptor';

@@ -15,8 +15,16 @@ export class LocalStorageService {
 	/**
 	*/
 	getItem(data) {
-		let response = localStorage.getItem(`devCenter.${data}`);
-		return JSON.parse(response);
+		let value = localStorage.getItem(`devCenter.${data}`) || '';
+
+		try {
+			if(data === 'password'){
+				value = atob(value);
+			}
+			return JSON.parse(value);
+		} catch(e){
+			return value || '';
+		}
 	}
 
 	/**

@@ -31,7 +31,7 @@ export class DataService extends HttpClient {
 
 	private _createHeaders() {
 		return new HttpHeaders()
-			.set('Authorization', this._authorizationHeader() )
+			.set('Authorization',  this._authorizationHeader() )
 			.set('Content-Type', 'application/json');
 	}
 
@@ -42,25 +42,29 @@ export class DataService extends HttpClient {
 		const password = this.ls.getItem('password');
 
 		try {
-			return "Basic " + btoa(`${this.user.username}:${this.user.password}`);
+			return "Basic " + btoa(`${username}:${password}`);
 		}catch(e){
 			return '';
 		}
 	}
 
-	get(url, options?): Observable<any>{
+	get(url, options:any={}): Observable<any>{
+		options.headers = this._createHeaders();
 		return super.get(url, options);
 	}
 
-	post(url, body?, options?): Observable<any>{
+	post(url, body?, options:any={}): Observable<any>{
+		options.headers = this._createHeaders();
 		return super.post(url, body, options);
 	}
 
-	put(url, body?, options?): Observable<any>{
+	put(url, body?, options:any={}): Observable<any>{
+		options.headers = this._createHeaders();
 		return super.put(url, body, options);
 	}
 
-	delete(url, options?): Observable<any>{
+	delete(url, options:any={}): Observable<any>{
+		options.headers = this._createHeaders();
 		return super.delete(url, options);
 	}
 

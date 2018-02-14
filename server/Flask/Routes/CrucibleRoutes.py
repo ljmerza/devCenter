@@ -36,6 +36,11 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		}
 
 		response = {'status': True, 'data':{}}
+		comment_response = {'status': True}
+		log_response = {'status': True}
+		cr_response = {'status': True}
+		pcr_response = {'status': True}
+		cru_response = {'status': True}
 
 		# if repos given then create crucible
 		if len(data['repos']):
@@ -45,10 +50,6 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 			if not cru_response['status']:
 				return Response(cru_response, mimetype='application/json')
 
-			# save cru id on data and response
-			data['crucible_id'] = cru_response['data']
-			response['data']['crucible_id'] = data['crucible_id'] 
-
 			# add comment to Jira if QA steps exist
 			if data['qa_steps']:
 				data['crucible_id'] = cru_response['data']
@@ -56,7 +57,6 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 				if not comment_response['status']:
 					comment_response['data'] += ' but Crucible created: ' + cru_response['data']
 					return Response(comment_response, mimetype='application/json')
-				response['data']['comment'] = comment_response['data']
 
 		elif data['qa_steps']:
 			# else if 'qa steps' aka a comment given then add comment
@@ -85,7 +85,12 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 				log_response['data'] += ' but Jira log and Crucible created: ' + cru_response['data']
 				return Response(log_response, mimetype='application/json')
 
-		# return success response
+		# return responses from each call
+		response['data']['comment_response'] = comment_response
+		response['data']['log_response'] = log_response
+		response['data']['cr_response'] = cr_response
+		response['data']['pcr_response'] = pcr_response
+		response['data']['cru_response'] = cru_response
 		return Response(response, mimetype='application/json')
 
 

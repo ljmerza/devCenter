@@ -1,7 +1,7 @@
 let express = require('express');
 let router = express.Router();
 
-router.get('/git/repo/:repoName', function(req, res, next) {
+router.get('/repo/:repoName', function(req, res, next) {
 	res.json({
 		data:[
 			"test",
@@ -13,7 +13,7 @@ router.get('/git/repo/:repoName', function(req, res, next) {
 	});
 });
 
-router.get('/git/repos', function(req, res, next) {
+router.get('/repos', function(req, res, next) {
 	res.json({
 		status: true, 
 		data: [
@@ -30,7 +30,7 @@ router.get('/git/repos', function(req, res, next) {
 	});
 });
 
-router.get('/git/branches/:msrp', function(req, res, next) {
+router.get('/branches/:msrp', function(req, res, next) {
 	res.json({
 		status: true, 
 		data: [

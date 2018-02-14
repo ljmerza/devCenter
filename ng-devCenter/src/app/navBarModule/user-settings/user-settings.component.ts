@@ -70,7 +70,7 @@ export class UserSettingsComponent implements OnInit {
 	getProfile(){
 		this.profile.getProfile();
 		this.getProfile$.subscribe(profile => {
-			if(profile.pingSettings) this.setUserPings(profile.pingSettings);
+			if(profile && profile.pingSettings) this.setUserPings(profile.pingSettings);
 		});
 	}
 

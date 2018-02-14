@@ -28,6 +28,7 @@ export class JiraCommentsService {
 		resp$.subscribe( 
 			(response:any) => {			
 				response.data.key = postData.key;
+				console.log('response: ', response);
 				this.store.dispatch({ type: Actions.addComment, payload:response.data });
 			},
 			this.dataService.processErrorResponse.bind(this.dataService)
@@ -47,7 +48,7 @@ export class JiraCommentsService {
 				response.data.key = postData.key;
 				this.store.dispatch({ type: Actions.editComment, payload:response.data });
 			},
-			this.dataService.processErrorResponse.bind(this)
+			this.dataService.processErrorResponse.bind(this.dataService)
 		);
 		return resp$;
 	}
@@ -69,7 +70,7 @@ export class JiraCommentsService {
 				this.dataService.toastr.showToast('Comment Deleted Successfully', 'success');
 				this.store.dispatch({type: Actions.deleteComment, payload: {key, id:commentId}});
 			},
-			this.dataService.processErrorResponse.bind(this)
+			this.dataService.processErrorResponse.bind(this.dataService)
 		);
 		return resp$;
 	}

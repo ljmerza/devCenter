@@ -24,8 +24,11 @@ export class ProfileService {
 	getProfile():void {
 		 this.dataService.get(`${this.dataService.apiUrl}/jira/profile/${this.user.username}`)
 		.subscribe( 
-			(response:any) => this.store.dispatch({type: Actions.userProfile, payload: response.data }),
-			this.dataService.processErrorResponse.bind(DataService)
+			(response:any) => {
+				console.log('response: ', response);
+				this.store.dispatch({type: Actions.userProfile, payload: response.data })
+			},
+			this.dataService.processErrorResponse.bind(this.dataService)
 		);
 	}
 

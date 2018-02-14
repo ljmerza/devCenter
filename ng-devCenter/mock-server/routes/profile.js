@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-router.get('/jira/profile/:username', function(req, res, next) {
+router.get('/:username', function(req, res, next) {
 	return res.json({
 		status: true, 
 		data: {

@@ -37,8 +37,6 @@ export class TicketLogComponent	{
 	customModalCss = 'timeLog';
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
-	@Output() commentChangeEvent = new EventEmitter();
-	@Output() statusChangeCancel = new EventEmitter();
 	@Input() key:string;
 
 	constructor(public jira:JiraCommentsService, public toastr: ToastrService, private cd: ChangeDetectorRef, private store:NgRedux<RootState>) {}
@@ -83,8 +81,6 @@ export class TicketLogComponent	{
 		} else if(postData.remove_conflict){
 			newStatus = 'Ready for QA';
 		}
-
-		if(newStatus) this.commentChangeEvent.emit({newStatus});
 	}
 
 	/**
