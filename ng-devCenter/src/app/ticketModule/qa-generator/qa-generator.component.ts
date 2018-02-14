@@ -201,13 +201,16 @@ export class QaGeneratorComponent {
 		// check for status changes okay
 		if(response_data.cr_response.status && response_data.pcr_response.status) {
 			this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: STATUSES.PCRNEED }});
-		} else {
+
+		} else if(postData.autoPCR){
+			// if we wanted PCR and we got here then there was a failure
 			const cr_message = response_data.cr_response.status ? '' : 'Code Review status change';
 			const pcr_message = response_data.pcr_response.status ? '' : 'PCR Needed component change';
 			this.toastr.showToast('error', 'The following transitions failed: ${cr_message} ${pcr_message}');
 		}
 
 		if(response_data.cru_response.status) {
+			console.log('response_data.cru_response.data: ', response_data.cru_response.data);
 			this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: response_data.cru_response.data }});
 		}
 	}

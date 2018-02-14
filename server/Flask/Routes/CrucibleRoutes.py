@@ -36,17 +36,18 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		}
 
 		response = {'status': True, 'data':{}}
-		comment_response = {'status': True}
-		log_response = {'status': True}
-		cr_response = {'status': True}
-		pcr_response = {'status': True}
-		cru_response = {'status': True}
+		comment_response = {'status': False}
+		log_response = {'status': False}
+		cr_response = {'status': False}
+		pcr_response = {'status': False}
+		cru_response = {'status': False}
 
 		# if repos given then create crucible
 		if len(data['repos']):
 
 			# create crucible review
 			cru_response = CrucibleRequests.crucible_create_review(data=data, crucible_obj=crucible_obj, jira_obj=jira_obj)
+			# crucible id required to move forward
 			if not cru_response['status']:
 				return Response(cru_response, mimetype='application/json')
 
@@ -54,36 +55,22 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 			if data['qa_steps']:
 				data['crucible_id'] = cru_response['data']
 				comment_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
-				if not comment_response['status']:
-					comment_response['data'] += ' but Crucible created: ' + cru_response['data']
-					return Response(comment_response, mimetype='application/json')
 
 		elif data['qa_steps']:
 			# else if 'qa steps' aka a comment given then add comment
 			data['comment'] = data['qa_steps']
 			comment_response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
-			if not comment_response['status']:
-				return Response(comment_response, mimetype='application/json')
 
 		# add PCR needed component and code review status if wanted
 		if data['autoPCR']:
-			# change component to PCR
 			data['status_type'] = 'pcrNeeded'
 			pcr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-			if not pcr_response['status']:
-				return Response(pcr_response, mimetype='application/json')
-			# then change status to CR
 			data['status_type'] = 'cr'
 			cr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-			if not cr_response['status']:
-				return Response(cr_response, mimetype='application/json')
 
 		# add worklog if wanted
 		if data['log_time']:
 			log_response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
-			if not log_response['status']:
-				log_response['data'] += ' but Jira log and Crucible created: ' + cru_response['data']
-				return Response(log_response, mimetype='application/json')
 
 		# return responses from each call
 		response['data']['comment_response'] = comment_response
