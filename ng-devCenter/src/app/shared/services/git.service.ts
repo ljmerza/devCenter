@@ -28,12 +28,8 @@ export class GitService {
 	/**
 	 * gets all valid Repos from Crucible. On success store in Redux store.
 	 */
-	getRepos():void {
-		this.dataService.get(`${this.dataService.apiUrl}/git/repos`)
-		.subscribe(
-			(response:APIResponse) => this.store.dispatch({type: Actions.repos, payload: response.data }),
-			this.dataService.processErrorResponse.bind(this)
-		);
+	getRepos(): Observable<any>  {
+		return this.dataService.get(`${this.dataService.apiUrl}/git/repos`);
 	}
 
 	/**

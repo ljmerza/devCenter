@@ -1,6 +1,7 @@
-import { Component, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, ChangeDetectionStrategy,	EventEmitter, Output, Input } from '@angular/core';
+import { Component, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, ChangeDetectionStrategy, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { NgForm, FormGroup, FormControl, Validators, FormBuilder, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
 import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { Subject, Observable, Subscription } from 'rxjs';
 
 import { ModalComponent } from './../../shared/modal/modal.component';
 import { JiraService } from './../../shared/services/jira.service';
@@ -9,10 +10,15 @@ import { ConfigService } from './../../shared/services/config.service'
 import { UserService } from './../../shared/services/user.service'
 import { GitService } from './../../shared/services/git.service';
 
+import { select } from '@angular-redux/store';
 import { NgRedux } from '@angular-redux/store';
 import { RootState } from './../../shared/store/store';
 import { Actions } from './../../shared/store/actions';
+
 import { STATUSES } from './../../shared/store/models/ticket-statuses';
+import { Repo } from './../../shared/store/models/repo';
+import { Ticket } from './../../shared/store/models/ticket';
+import { APIResponse } from './../../shared/store/models/apiResponse';
 
 @Component({
 	selector: 'dc-qa-generator',
@@ -21,25 +27,25 @@ import { STATUSES } from './../../shared/store/models/ticket-statuses';
 	encapsulation: ViewEncapsulation.None,
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class QaGeneratorComponent {
+export class QaGeneratorComponent implements OnInit {
 	loadingBranches:boolean = false; // are we loading branches?
-	repoLookUp$;
-	selectedRepos;
 	qaForm;
-
 	hourStep = 1;
 	minuteStep = 15;
-
+	customModalCss = 'qaGen';
+	repos:Array<Repo>;
+	repos$;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	modalRef: NgbModalRef;
-
 	@Input() msrp;
 	@Input() key;
-	@Input() repos;
-	customModalCss = 'qaGen';
 
-	constructor(public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef, public config: ConfigService, public formBuilder: FormBuilder, public user: UserService, private git: GitService, private store:NgRedux<RootState>) {
+	constructor(
+		public jira:JiraService, private git: GitService, public toastr: ToastrService, 
+		private cd: ChangeDetectorRef, public config: ConfigService, public formBuilder: FormBuilder, 
+		public user: UserService, private store:NgRedux<RootState>
+	) {
 		  // create form object
 		this.qaForm = this.formBuilder.group({
 			selections: this.formBuilder.group({
@@ -50,9 +56,23 @@ export class QaGeneratorComponent {
 			branches: this.formBuilder.array([])
 		});
 	}
+
+	/**
+ 	 * watch for store changes of repository list.
+	 */
+	ngOnInit(){
+		this.repos$ = this.store.select('repos').subscribe((repos:Array<Repo>) => this.repos = repos);
+	}
+
+	/**
+	 * Unsubscribe from any subscriptions before component exit.
+	 */
+	ngOnDestory(){
+		if(this.repos$) this.repos$.unsubscribe();
+	}
 	
 	/**
-	* getter for branches aray in formGroup
+	* getter for branches array in formGroup
 	* @return {FormArray}
 	*/
 	get branches(): FormArray {
@@ -83,7 +103,7 @@ export class QaGeneratorComponent {
 	/**
 	 * gets a repository's branch list and adds it to the corresponding branch form control.
 	 * @param {string} repoName the name of the repository
-	 * @param {FormControl} branch 
+	 * @param {FormControl} branch
 	 */
 	 getBranches(repoName, branch) {
 			this.git.getBranches(repoName).subscribe( 
@@ -228,7 +248,7 @@ export class QaGeneratorComponent {
 		this.cd.detectChanges();
 
 		// get all branches associated with this msrp
-		this.repoLookUp$ = this.git.getTicketBranches(this.msrp).subscribe(
+		this.git.getTicketBranches(this.msrp).subscribe(
 			response => {
 				this.loadingBranches = false;
 				this.processBranches(response.data);

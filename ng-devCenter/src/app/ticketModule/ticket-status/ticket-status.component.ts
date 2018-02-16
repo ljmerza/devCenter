@@ -24,7 +24,6 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 	@Input() ticketKey;
 	@Input() ticketMsrp;
 	@Input() ticketCrucible;
-	@Input() repos;
 
 	ngOnInit() {
 		this.validateTransitions();
@@ -204,7 +203,6 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 
 	    	// add input/outputs
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).key = this.ticketKey;
-	    	(<QaGeneratorComponent>this.qaComponentRef.instance).repos = this.repos;
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.ticketMsrp;
 		}
 		

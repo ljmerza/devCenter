@@ -10,12 +10,16 @@ import { ToastrService } from './../../shared/services/toastr.service';
 import { WebSocketService } from './../../shared/services/web-socket.service';
 import { GitService } from './../../shared/services/git.service';
 
-import { select } from '@angular-redux/store';
 import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
 
-import { Ticket } from './../../shared/store/models/ticket';
+import { select } from '@angular-redux/store';
+import { NgRedux } from '@angular-redux/store';
+import { RootState } from './../../shared/store/store';
+import { Actions } from './../../shared/store/actions';
 import { Repo } from './../../shared/store/models/repo';
+import { Ticket } from './../../shared/store/models/ticket';
+import { APIResponse } from './../../shared/store/models/apiResponse';
 
 @Component({
 	selector: 'dc-tickets',
@@ -33,7 +37,6 @@ export class TicketsComponent implements OnInit {
 
 	@select('tickets') getTickets$: Observable<Array<Ticket>>;
 	@select('repos') getRepos$: Observable<Array<Repo>>;
-	getTicketsSub$;
 	getReposSub$;
 
 	dtOptions = {
@@ -60,7 +63,10 @@ export class TicketsComponent implements OnInit {
         }
 	};
 
-	constructor(public ngProgress: NgProgress, public route:ActivatedRoute, public jira:JiraService, public user:UserService, public toastr: ToastrService, private git:GitService) {}
+	constructor(
+		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>,
+		public jira:JiraService, public user:UserService, public toastr: ToastrService, private git:GitService
+	) {}
 	
 	/**
 	 * On initialization of component, if user credentials exist get repository list.
@@ -68,16 +74,21 @@ export class TicketsComponent implements OnInit {
 	 * of tickets based on URL parameter if user has credentials
 	 */
 	ngOnInit():void {
+
 		if( !this.user.needRequiredCredentials() ){
-			this.git.getRepos();
-			this.getRepos$.subscribe(this.processRepos.bind(this))
+			this.git.getRepos().subscribe(
+				this.processRepos.bind(this),
+				this.git.processErrorResponse.bind(this.git)
+			);
 			this.getTickets$.subscribe(this.processTickets.bind(this));
+
+			this.route.paramMap.subscribe(params => {
+				this.ticketType = params.get('filter') || 'mytickets';
+				this.getTickets(true, true);
+			});
 		} 
 		
-		this.route.paramMap.subscribe(params => {
-			this.ticketType = params.get('filter') || 'mytickets';
-			if( !this.user.needRequiredCredentials() ) this.getTickets(true, true);
-		});
+		
 	}
 
 	/** 
@@ -85,10 +96,7 @@ export class TicketsComponent implements OnInit {
 	 * @param {Array<Repo>} the array of repositories to save on instance
 	 */
 	private processRepos(repos) {
-		if(repos){
-			this.repos = repos;
-			if(this.getReposSub$) this.getReposSub$.unsubscribe();
-		}
+		this.store.dispatch({type: Actions.repos, payload: repos.data });
 	}
 
 	/**
@@ -108,7 +116,6 @@ export class TicketsComponent implements OnInit {
 	 */
 	private processTickets(tickets) {
 		if(tickets && tickets.length > 0){
-			// this.getTicketsSub$.unsubscribe();
 			this.ngProgress.done();
 			this.loadingTickets = false;
 			this.rerender();
@@ -120,7 +127,6 @@ export class TicketsComponent implements OnInit {
 	 * destroy it first then render it
 	 */
 	private rerender():void {
-
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
 				dtInstance.destroy();

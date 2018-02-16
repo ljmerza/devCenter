@@ -47,7 +47,7 @@
 				</thead>
 
 				<tbody>
-					<tr class="appTicket" *ngFor='let ticket of getTickets$ | async' [ticket]=ticket [repos]=repos id='{{ticket.key}}'></tr>
+					<tr class="appTicket" *ngFor='let ticket of getTickets$ | async' [ticket]=ticket id='{{ticket.key}}'></tr>
 				</tbody>
 			</table>
 		</div>
