@@ -63,10 +63,55 @@ export class TicketLogComponent	{
 			tasks: tasks
 		};
 
-		this.jira.workLog(postData).subscribe(() => {
+		this.jira.workLog(postData).subscribe(
+			(response:any) => this.checkWorklogEvents(response.data, postData),
+			this.jira.processErrorResponse.bind(this.jira)
+		);
+	}
+
+	/**
+	 * check for the status of updating a comment, adding worklog, or changing a merge/conflict status.
+	 * @param {ApiResponse} responseData
+	 * @param {Object} postData
+	 */
+	checkWorklogEvents(responseData:any, postData:any){
+		let errorMessage = '';
+		responseData.key = this.key;
+		console.log('checkWorklogEvents::responseData: ', responseData);
+		console.log('checkWorklogEvents::postData: ', postData);
+
+		// check for comment response
+		if(responseData.comment_response.status){
+			this.store.dispatch({ type: Actions.addComment, payload: responseData.comment_response });	
+		} else if(responseData.comment_response.status === false){
+			errorMessage += responseData.comment_response.data;
+		}
+
+		// check for work log response
+		if(responseData.log_response.status){
+			// this.store.dispatch({ type: Actions.workLog, payload: responseData.log_response });	
+		} else if(responseData.log_response.status === false){
+			errorMessage += responseData.comment_response.data;
+		}
+
+		// check for status change responses
+		if(responseData.merge_response.status || responseData.conflict_response.status){
+			const merge = responseData.merge_response.status;
+			const statusChangeType = merge ? 'Ready For UCT' : 'Ready For QA';
+			// this.store.dispatch({ type: Actions.changeStatus, payload: {status: statusChangeType} });	
+		} else if(responseData.merge_response.status === false){
+			errorMessage += responseData.comment_response.data;
+		} else if(responseData.conflict_response.status === false){
+			errorMessage += responseData.comment_response.data;
+		}
+
+		// show any errors
+		if(errorMessage) {
+			this.toastr.showToast('error', errorMessage);
+		} else {			
 			this.toastr.showToast(`Tasks updated: ${postData.tasks}`, 'success');
 			this._resetForm();
-		});
+		}
 	}
 
 	/**

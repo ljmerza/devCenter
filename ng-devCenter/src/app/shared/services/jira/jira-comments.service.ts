@@ -24,16 +24,7 @@ export class JiraCommentsService {
 	 * @return {Observable} the http observable
 	 */
 	workLog(postData): Observable<any> {
-		const resp$ = this.dataService.post(`${this.dataService.apiUrl}/jira/comment`, postData)
-		resp$.subscribe( 
-			(response:any) => {			
-				response.data.key = postData.key;
-				console.log('response: ', response);
-				this.store.dispatch({ type: Actions.addComment, payload:response.data });
-			},
-			this.dataService.processErrorResponse.bind(this.dataService)
-		);
-		return resp$;
+		return this.dataService.post(`${this.dataService.apiUrl}/jira/comment`, postData);
 	}
 
 	/**
@@ -73,6 +64,10 @@ export class JiraCommentsService {
 			this.dataService.processErrorResponse.bind(this.dataService)
 		);
 		return resp$;
+	}
+
+	processErrorResponse(error){
+		this.dataService.processErrorResponse(error);
 	}
 
 }

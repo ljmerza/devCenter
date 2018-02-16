@@ -26,7 +26,6 @@ export class QaGeneratorComponent {
 	repoLookUp$;
 	selectedRepos;
 	qaForm;
-	selectedBranches:Array<any> = [];
 
 	hourStep = 1;
 	minuteStep = 15;
@@ -41,8 +40,24 @@ export class QaGeneratorComponent {
 	customModalCss = 'qaGen';
 
 	constructor(public jira:JiraService, public toastr: ToastrService, private cd: ChangeDetectorRef, public config: ConfigService, public formBuilder: FormBuilder, public user: UserService, private git: GitService, private store:NgRedux<RootState>) {
-
+		  // create form object
+		this.qaForm = this.formBuilder.group({
+			selections: this.formBuilder.group({
+				pcrNeeded: this.formBuilder.control(true),
+				logTime: this.formBuilder.control({hour: 0, minute: 0}),
+			}),
+			qaSteps: this.formBuilder.control(''),
+			branches: this.formBuilder.array([])
+		});
 	}
+	
+	/**
+	* getter for branches aray in formGroup
+	* @return {FormArray}
+	*/
+	get branches(): FormArray {
+		return this.qaForm.get('branches') as FormArray;
+	};
 
 	/**
 	 * Adds a new branch to the branches form array. Adds subscription to
@@ -50,7 +65,19 @@ export class QaGeneratorComponent {
 	 * @param {Object} the new branch object to add to the ngForm
 	 */
 	addBranch(newBranch){
-		this.selectedBranches.push(newBranch);
+		let repositoryName = this.formBuilder.control(newBranch.repositoryName || '');
+
+		const branch = this.formBuilder.group({
+			allRepos: this.formBuilder.array(this.repos.map(repo => repo.name)),
+			allBranches: this.formBuilder.array(newBranch.allBranches || []),
+			allBranchedFrom: this.formBuilder.array(newBranch.allBranches || []),
+			repositoryName,
+			reviewedBranch: this.formBuilder.control(newBranch.reviewedBranch || ''),
+			baseBranch: this.formBuilder.control(newBranch.baseBranch || '')
+		});
+
+		repositoryName.valueChanges.subscribe(repoName => this.getBranches(repoName, branch));
+		(this.qaForm.get('branches') as FormArray).push(branch);
 	}
 
 	/**

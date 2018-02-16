@@ -60,29 +60,38 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 		Returns:
 			
 		'''
-		response = ''
-		# get headers and data body
-		if(request.method == 'POST' or request.method == 'PUT'):
-			data=request.get_json()
-			data["cred_hash"] = g.cred_hash
+		response = {'status':True, 'data': ''}
 
 		# PUT - edit a comment
 		if request.method == 'PUT':
+			data=request.get_json()
+			data["cred_hash"] = g.cred_hash
 			response = JiraRequests.edit_comment(data=data, jira_obj=jira_obj)
 
 		# POST - add a comment
 		elif request.method == 'POST':
+			data=request.get_json()
+			data["cred_hash"] = g.cred_hash
+			log_response = {}
+			conflict_response = {}
+			merge_response = {}
+			comment_response = {}
+
 			if data.get('log_time', False): 
-				response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
+				log_response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
 			if data.get('remove_conflict', False):
 				data['status_type'] = 'removeMergeConflict'
-				response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+				conflict_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 			if data.get('remove_merge', False):
 				data['status_type'] = 'removeMergeCode'
-				response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+				merge_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 			if data.get('comment', False) or data.get('uct_date', False):
-				response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
-		
+				comment_response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
+			response['data']['log_response'] = log_response
+			response['data']['conflict_response'] = conflict_response
+			response['data']['merge_response'] = merge_response
+			response['data']['comment_response'] = comment_response
+
 		# else get comments
 		else:
 			data = {
