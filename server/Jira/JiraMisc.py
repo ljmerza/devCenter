@@ -102,7 +102,18 @@ class JiraMisc():
 	def get_profile(self, cred_hash):
 		'''
 		'''
-		return self.jira_api.get(url=f'{self.jira_api.api_base}/myself', cred_hash=cred_hash)
+		response = self.jira_api.get(url=f'{self.jira_api.api_base}/myself', cred_hash=cred_hash)
+		if not response['status']:
+			return response
+		else:
+			response['data']['avatar'] = response['data']['avatarUrls']['24x24']
+			del response['data']['applicationRoles']
+			del response['data']['avatarUrls']
+			del response['data']['active']
+			del response['data']['groups']
+			del response['data']['locale']
+			del response['data']['expand']
+			return response
 
 	
 	

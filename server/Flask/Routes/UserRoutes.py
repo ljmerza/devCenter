@@ -22,7 +22,7 @@ def define_routes(app, app_name, jira_obj, sql_obj, g):
 
 	@app.route(f'/{app_name}/navbar')
 	@cross_origin()
-	def get_navbar(username):
+	def get_navbar():
 		'''
 		'''
 		data = UserRequests.get_navbar_items(sql_obj=sql_obj)

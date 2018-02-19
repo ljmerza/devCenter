@@ -13,4 +13,16 @@ class SQLNavBar():
 				All entries in navbar_items table
 
 		'''
-		return session.query(NavbarItems)
+		items = session.query(NavbarItems)
+		response = []
+		for item in items:
+			response.append( self.row2dict(item) )
+		return response
+
+	def row2dict(self, row):
+		'''
+		'''
+		d = {}
+		for column in row.__table__.columns:
+			d[column.name] = str(getattr(row, column.name))
+		return d

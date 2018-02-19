@@ -60,7 +60,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 		Returns:
 			
 		'''
-		response = {'status':True, 'data': ''}
+		response = {'status':True, 'data': {}}
 
 		# PUT - edit a comment
 		if request.method == 'PUT':

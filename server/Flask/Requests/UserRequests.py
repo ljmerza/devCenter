@@ -2,7 +2,7 @@
 
 from Flask import FlaskUtils
 
-def get_navbar_items(data, sql_obj):
+def get_navbar_items(sql_obj):
 	'''
 	'''
 

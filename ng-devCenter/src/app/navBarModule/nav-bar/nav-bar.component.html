@@ -75,7 +75,7 @@
 								<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 								<ul class="dropdown-menu" dropdownSubmenuMenu>
 									<li>
-										<a *ngFor='let navLink of config.orderLinks' class="dropdown-item"  target="_blank" 
+										<a *ngFor='let navLink of orders' class="dropdown-item"  target="_blank" 
 										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}">
 											{{navLink.name}}
 										</a>
@@ -85,7 +85,7 @@
 										<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 										<ul class="dropdown-menu" dropdownSubmenuMenu>
 											<li>
-												<a *ngFor='let navLink of config.otherOrders' class="dropdown-item" target="_blank" 
+												<a *ngFor='let navLink of otherOrders' class="dropdown-item" target="_blank" 
 												href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}">
 													{{navLink.name}}
 												</a>
@@ -228,7 +228,7 @@
 		<ul class="navbar-nav position-relative mr-30">
 			<li ngbDropdown placement="bottom-right" class="d-inline-block" *ngIf='!user.needRequiredCredentials()'>
 				<a class="nav-link dropdown-toggle" id="userDropdown" ngbDropdownToggle>
-					<img src={{userProfile?.userPicture}} alt="">
+					<img src={{userProfile?.avatar}} alt="">
 					{{userProfile?.displayName}}
 				</a>
 				<div ngbDropdownMenu aria-labelledby="userDropdown">

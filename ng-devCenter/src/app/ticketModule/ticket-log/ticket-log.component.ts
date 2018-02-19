@@ -83,14 +83,14 @@ export class TicketLogComponent	{
 		// check for comment response
 		if(responseData.comment_response.status){
 			this.store.dispatch({ type: Actions.addComment, payload: responseData.comment_response });	
-		} else if(responseData.comment_response.status === false){
+		} else if( responseData.comment_response.status === false && (postData.comment || postData.uct_date) ){
 			errorMessage += responseData.comment_response.data;
 		}
 
 		// check for work log response
 		if(responseData.log_response.status){
 			// this.store.dispatch({ type: Actions.workLog, payload: responseData.log_response });	
-		} else if(responseData.log_response.status === false){
+		} else if(responseData.log_response.status === false && postData.log_time){
 			errorMessage += responseData.comment_response.data;
 		}
 
@@ -99,9 +99,9 @@ export class TicketLogComponent	{
 			const merge = responseData.merge_response.status;
 			const statusChangeType = merge ? 'Ready For UCT' : 'Ready For QA';
 			// this.store.dispatch({ type: Actions.changeStatus, payload: {status: statusChangeType} });	
-		} else if(responseData.merge_response.status === false){
+		} else if(responseData.merge_response.status === false && postData.remove_merge){
 			errorMessage += responseData.comment_response.data;
-		} else if(responseData.conflict_response.status === false){
+		} else if(responseData.conflict_response.status === false && postData.remove_conflict){
 			errorMessage += responseData.comment_response.data;
 		}
 

@@ -25,9 +25,11 @@ declare var $ :any;
 export class NavBarComponent implements OnInit, OnDestroy {
 	ticketValue:string; // value of MSRP/key search
 	isFriday:boolean; // boolean is Friday for log hours notification
-	navbaritems;
 	userProfile;
 	userProfile$;
+
+	otherOrders;
+	orders;
 
 	constructor(private toastr: ToastrService, public jira:JiraService, public config:ConfigService, public user: UserService, private store:NgRedux<RootState>) { }
 
@@ -36,9 +38,11 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(){
 		this.setFridayChecker();
-		// this.getNavbarItems();
+		this.getNavbarItems();
 
-		this.userProfile$ = this.store.select('userProfile').subscribe(profile => this.userProfile = profile);
+		this.userProfile$ = this.store.select('userProfile').subscribe(profile => {
+			if(profile) this.userProfile = profile;
+		});
 	}
 
 	/**
@@ -91,6 +95,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 */
 	 getNavbarItems(){
 	 	this.user.getNavbarItems()
-	 	.subscribe((response:any) => this.navbaritems = response.data)
+	 	.subscribe((response:any) => {
+	 		this.orders =  response.data.filter(link => link.type === 'order');
+	 		this.otherOrders = response.data.filter(link => link.type === 'other_order');
+	 		console.log('this.otherOrders: ', this.otherOrders);
+	 	})
 	 }
 }

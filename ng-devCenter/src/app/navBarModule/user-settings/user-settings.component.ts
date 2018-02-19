@@ -9,6 +9,10 @@ import { JiraPingsService } from './../../shared/services/jira/jira-pings.servic
 import { ToastrService } from './../../shared/services/toastr.service';
 import { ProfileService } from './../../shared/services/profile.service';
 
+import { NgRedux } from '@angular-redux/store';
+import { RootState } from './../../shared/store/store';
+import { Actions } from './../../shared/store/actions';
+
 @Component({
 	selector: 'dc-user-settings',
 templateUrl: './user-settings.component.html',
@@ -19,7 +23,10 @@ export class UserSettingsComponent implements OnInit {
 	@Input() isLogin:boolean = true;
 	@select('userProfile') getProfile$: Observable<any>;
 
-	constructor(public user: UserService, private jira: JiraPingsService, private toastr: ToastrService, public route: ActivatedRoute, private router: Router, private profile: ProfileService) {
+	constructor(
+		public user: UserService, private jira: JiraPingsService, private toastr: ToastrService, 
+		public route: ActivatedRoute, private router: Router, private profile: ProfileService, public store:NgRedux<RootState>
+	) {
 
 		// create form group
 		this.userSettingsForm = new FormGroup({
@@ -65,17 +72,21 @@ export class UserSettingsComponent implements OnInit {
 	}
 
 	/**
-	 * Gets a user's profile. When saved to Redux, is retrieved and user form is set.
+	 * Gets a user's profile. Saved to Redux and user form is set.
 	 */
 	getProfile(){
-		this.profile.getProfile();
-		this.getProfile$.subscribe(profile => {
-			if(profile && profile.pingSettings) this.setUserPings(profile.pingSettings);
-		});
+		this.profile.getProfile().subscribe(
+			profile => {
+				this.setUserPings(profile.data.pingSettings);
+				this.store.dispatch({type: Actions.userProfile, payload: profile.data });
+			},
+			this.profile.processErrorResponse.bind(this.profile)
+		);
 	}
 
 	/**
 	 * sets a user's ping values on the form
+	 * @param {Object} pingSettings
 	 */
 	setUserPings(pingSettings:any={}):void{
 		let pingControlGroup = this.pings;

@@ -6,30 +6,26 @@ import { UserService } from './user.service';
 import { ToastrService } from './toastr.service';
 import { DataService } from './data.service';
 
-import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../store/store';
-import { Actions } from './../store/actions';
-
 import { APIResponse } from './../../shared/store/models/apiResponse';
 
 @Injectable()
 export class ProfileService {
 	title:string = '';
 
-	constructor(private dataService:DataService, public user:UserService, public store:NgRedux<RootState>) {}
+	constructor(private dataService:DataService, public user:UserService) {}
 
 	/**
 	 * gets a user's Jira profile and on success, stores it in the Redux store.
 	 */
-	getProfile():void {
-		 this.dataService.get(`${this.dataService.apiUrl}/jira/profile/${this.user.username}`)
-		.subscribe( 
-			(response:any) => {
-				console.log('response: ', response);
-				this.store.dispatch({type: Actions.userProfile, payload: response.data })
-			},
-			this.dataService.processErrorResponse.bind(this.dataService)
-		);
+	getProfile(): Observable<any> {
+		return this.dataService.get(`${this.dataService.apiUrl}/jira/profile/${this.user.username}`)
+	}
+
+	/**
+	 *
+	 */
+	processErrorResponse(error){
+		this.dataService.processErrorResponse(error);
 	}
 
 }
