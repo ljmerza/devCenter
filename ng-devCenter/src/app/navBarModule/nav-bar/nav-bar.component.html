@@ -118,7 +118,7 @@
 						<a class="dropdown-item" data-toggle="dropdown">TeamDB Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 						<ul class="dropdown-menu" dropdownSubmenuMenu>
 							<li>
-								<a *ngFor='let navLink of config.teamdb_ember_links' class="dropdown-item" target="_blank" 
+								<a *ngFor='let navLink of teamdbEmberLinks' class="dropdown-item" target="_blank" 
 								href="{{user.teamUrl}}:{{user.teamPort}}/teamdb/{{user.teamLocal}}{{navLink.link}}">
 									{{navLink.name}}
 								</a>

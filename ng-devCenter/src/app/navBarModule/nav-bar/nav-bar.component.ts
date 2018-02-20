@@ -124,7 +124,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 		.filter(link => link.type === 'beta_links')
 	 		.map(this.addUserNameToUrl.bind(this))
  			.map(link => {
- 				if( !/^http/.test(link.link) ) link.link = `${this.config.betaUrl}${link.link}`;
+ 				if( !/^http/.test(link.link) ) link.link = `${this.config.betaUrl}/${link.link}`;
  				return link;
  			});
 
@@ -136,7 +136,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
  			.filter(link => link.type === 'dev_links')
  			.map(this.addUserNameToUrl.bind(this))
  			.map(link => {
- 				if( !/^http/.test(link.link) ) link.link = `${this.config.devUrl}:${this.user.port}${link.link}`;
+ 				if( !/^http/.test(link.link) ) link.link = `${this.config.devUrl}:${this.user.port}/${link.link}`;
  				return link;
  			});
 
@@ -145,21 +145,21 @@ export class NavBarComponent implements OnInit, OnDestroy {
  			.map(this.addCacheParameter.bind(this))
  			.map(this.addUserNameToUrl.bind(this));
 
+ 			this.teamdbEmberLinks = response.data
+ 			.filter(link => link.type === 'teamdb_ember')
+ 			.map(this.addCacheParameter.bind(this))
+ 			.map(this.addUserNameToUrl.bind(this));
+
 	 	});
 	}
+	teamdbEmberLinks;
 
 	/**
 	 * adds username to any URLs that need it
 	 * @param {Object} navbarItem
 	 */
 	addUserNameToUrl(navbarItem){
-		const lowerCasedUrl = navbarItem.link.toLowerCase();
-		const matchName = 'attuid=';
-		const usernameIndex = lowerCasedUrl.indexOf(matchName);
-		if(usernameIndex > -1){
-			const sliceIndex = usernameIndex+matchName.length;
-			navbarItem.link = `${navbarItem.link.slice(0, sliceIndex)}${this.user.username}${navbarItem.link.slice(sliceIndex)}`;
-		}
+		navbarItem.link = navbarItem.link.replace('##username##', this.user.username);
  		return navbarItem;
 	}
 

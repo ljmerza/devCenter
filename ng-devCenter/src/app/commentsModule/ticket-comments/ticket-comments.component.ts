@@ -86,12 +86,10 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 * listen for tickets event from Redux and extracts the comments for this ticket.
 	 */
 	private syncComments():void {
-		this.comments$ = this.store.select('tickets')
-		.map( (tickets:Array<Ticket>) => {
-			const ticket = tickets.find((ticket:Ticket) => ticket.key === this.key);
-			return ticket.comments;
-		}).subscribe( (comments:Array<Comment>) => {
-			this.comments = comments;
+		this.comments$ = this.store.select('comments')
+		.subscribe((Allcomments:any) => {
+			const ticketComments = Allcomments.find(comments => comments.key === this.key);
+			this.comments = (ticketComments && ticketComments.comments) || [];
 			this.cd.detectChanges();
 		});
 	}

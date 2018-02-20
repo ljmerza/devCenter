@@ -4,21 +4,28 @@
 export function addComment(state, action) {
 	const newComment = action.payload;
 
-	// get ticket we are adding a new comment to
-	const ticket = state.tickets.find(ticket => ticket.key === newComment.key);
+	// get where the ticket comments are -> add new comment
+	const commentIndex = state.comments.indexOf(ticketComments => ticketComments.key === newComment.key);
+	console.log('commentIndex: ', commentIndex);
+	const oldTicketComments = state.comments[commentIndex] || [];
+	console.log('oldTicketComments: ', oldTicketComments);
+	const newTicketComments = [...oldTicketComments, newComment];
+	console.log('newTicketComments: ', newTicketComments);
 
-	// create new comments array for ticket then whole new ticket object
-	const ticketComments = [...ticket.comments, newComment];
-	const newTicket = { ...ticket, ...{comments: ticketComments} };
 
-	// replace new ticket object with old one
-	const newTickets = state.tickets.map(ticket => {
-		if(newTicket.key === ticket.key) return newTicket;
-		else return ticket;
+	// get a ticket's comments
+	const ticketComments = state.comments.find(allComments => allComments.key === newComment.key);
+	const comments = (ticketComments && ticketComments.comments) || [];
+
+	const newAllComments = state.comments.map(allComments => {
+		if(allComments.key === newComment.key) return {key: newComment.key, comments};
+		else return allComments;
 	});
 
+	console.log('newAllComments: ', newAllComments);
+
 	// create new state and return it
-	return { ...state, ...{tickets: newTickets} };
+	return { ...state, ...{comments: newAllComments} };
 }
 
 /**
