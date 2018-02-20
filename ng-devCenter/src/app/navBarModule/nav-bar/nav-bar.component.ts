@@ -30,8 +30,16 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 	otherOrders;
 	orders;
+	wfaTickets;
+	prodLinks;
+	betaLinks;
+	devLinks;
+	emberLinks;
 
-	constructor(private toastr: ToastrService, public jira:JiraService, public config:ConfigService, public user: UserService, private store:NgRedux<RootState>) { }
+	constructor(
+		private toastr: ToastrService, public jira:JiraService, public config:ConfigService, 
+		public user: UserService, private store:NgRedux<RootState>
+	) {}
 
 	/**
 	 * starts checker for Friday, gets navbar items, and watches for user profile in Redux.
@@ -96,9 +104,72 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 getNavbarItems(){
 	 	this.user.getNavbarItems()
 	 	.subscribe((response:any) => {
-	 		this.orders =  response.data.filter(link => link.type === 'order');
-	 		this.otherOrders = response.data.filter(link => link.type === 'other_order');
-	 		console.log('this.otherOrders: ', this.otherOrders);
-	 	})
-	 }
+
+	 		this.orders = response.data
+	 		.filter(link => link.type === 'order')
+	 		.map(this.addCacheParameter.bind(this))
+	 		.map(this.addUserNameToUrl.bind(this));
+
+	 		this.otherOrders = response.data
+	 		.filter(link => link.type === 'other_order')
+	 		.map(this.addCacheParameter.bind(this))
+	 		.map(this.addUserNameToUrl.bind(this));
+
+	 		this.wfaTickets = response.data
+	 		.filter(link => link.type === 'wfa')
+	 		.map(this.addCacheParameter.bind(this))
+	 		.map(this.addUserNameToUrl.bind(this));
+
+	 		this.betaLinks = response.data
+	 		.filter(link => link.type === 'beta_links')
+	 		.map(this.addUserNameToUrl.bind(this))
+ 			.map(link => {
+ 				if( !/^http/.test(link.link) ) link.link = `${this.config.betaUrl}${link.link}`;
+ 				return link;
+ 			});
+
+	 		this.prodLinks = response.data
+	 		.filter(link => link.type === 'prod_links')
+	 		.map(this.addUserNameToUrl.bind(this));
+
+ 			this.devLinks = response.data
+ 			.filter(link => link.type === 'dev_links')
+ 			.map(this.addUserNameToUrl.bind(this))
+ 			.map(link => {
+ 				if( !/^http/.test(link.link) ) link.link = `${this.config.devUrl}:${this.user.port}${link.link}`;
+ 				return link;
+ 			});
+
+ 			this.emberLinks = response.data
+ 			.filter(link => link.type === 'ember_links')
+ 			.map(this.addCacheParameter.bind(this))
+ 			.map(this.addUserNameToUrl.bind(this));
+
+	 	});
+	}
+
+	/**
+	 * adds username to any URLs that need it
+	 * @param {Object} navbarItem
+	 */
+	addUserNameToUrl(navbarItem){
+		const lowerCasedUrl = navbarItem.link.toLowerCase();
+		const matchName = 'attuid=';
+		const usernameIndex = lowerCasedUrl.indexOf(matchName);
+		if(usernameIndex > -1){
+			const sliceIndex = usernameIndex+matchName.length;
+			navbarItem.link = `${navbarItem.link.slice(0, sliceIndex)}${this.user.username}${navbarItem.link.slice(sliceIndex)}`;
+		}
+ 		return navbarItem;
+	}
+
+	/**
+	 * adds cache query parameter to URLs
+	 * @param {Object} navbarItem
+	 */
+	addCacheParameter(navbarItem){
+		const queryAddition = navbarItem.link.includes('?') ? '&' : '?';
+		navbarItem.link += `${queryAddition}cache=${this.user.cache}`;
+		return navbarItem;
+	}
 }

@@ -67,30 +67,29 @@
 					<!-- ember links -->
 					<li class="dropdown-submenu" dropdownSubmenu>
 						<a class="dropdown-item" data-toggle="dropdown">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-						<ul class="dropdown-menu" dropdownSubmenuMenu>
-							<li><a class="dropdown-item" target="_blank" href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{config.ember_links[0].link}}">{{config.ember_links[0].name}}</a></li>
-							
+						<ul class="dropdown-menu" dropdownSubmenuMenu>					
 							<!-- orders list -->
 							<li class="dropdown-submenu" dropdownSubmenu>
 								<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 								<ul class="dropdown-menu" dropdownSubmenuMenu>
-									<li>
-										<a *ngFor='let navLink of orders' class="dropdown-item"  target="_blank" 
-										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}">
-											{{navLink.name}}
-										</a>
-									</li>
+
 									<!-- misc orders -->
 									<li class="dropdown-submenu" dropdownSubmenu>
 										<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 										<ul class="dropdown-menu" dropdownSubmenuMenu>
 											<li>
 												<a *ngFor='let navLink of otherOrders' class="dropdown-item" target="_blank" 
-												href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}">
+												href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}">
 													{{navLink.name}}
 												</a>
 											</li>
 										</ul>
+									</li>
+									<li>
+										<a *ngFor='let navLink of orders' class="dropdown-item"  target="_blank" 
+										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}">
+											{{navLink.name}}
+										</a>
 									</li>
 								</ul>
 							</li>
@@ -99,16 +98,16 @@
 							<li class="dropdown-submenu" dropdownSubmenu>
 								<a class="dropdown-item" data-toggle="dropdown">WFA Tickets <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 								<ul class="dropdown-menu" dropdownSubmenuMenu>
-									<li><a *ngFor='let navLink of config.wfaLinks' class="dropdown-item" target="_blank" 
-										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}"
+									<li><a *ngFor='let navLink of wfaTickets' class="dropdown-item" target="_blank" 
+										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
 										>{{navLink.name}}
 									</a></li>
 								</ul>
 							</li>
 
 							<!-- ember list -->
-							<li><a *ngFor='let navLink of config.ember_links' class="dropdown-item" target="_blank" 
-								href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}{{user.cache}}"
+							<li><a *ngFor='let navLink of emberLinks' class="dropdown-item" target="_blank" 
+								href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
 								>{{navLink.name}}
 							</a></li>
 						</ul>
@@ -120,7 +119,7 @@
 						<ul class="dropdown-menu" dropdownSubmenuMenu>
 							<li>
 								<a *ngFor='let navLink of config.teamdb_ember_links' class="dropdown-item" target="_blank" 
-								href="{{user.teamUrl}}:{{user.teamPort}}/teamdb/{{user.teamLocal}}{{navLink.link}}{{user.cache}}">
+								href="{{user.teamUrl}}:{{user.teamPort}}/teamdb/{{user.teamLocal}}{{navLink.link}}">
 									{{navLink.name}}
 								</a>
 							</li>
@@ -129,8 +128,8 @@
 
 					<!-- dev links -->
 					<li>
-						<a *ngFor='let navLink of config.dev_links' class="dropdown-item" target="_blank" 
-						href="{{config.devUrl}}:{{user.port}}{{navLink.link}}">
+						<a *ngFor='let navLink of devLinks' class="dropdown-item" target="_blank" 
+						href="{{navLink.link}}">
 							{{navLink.name}}
 						</a>
 					</li>
@@ -141,7 +140,7 @@
 			<li ngbDropdown class="d-inline-block">
 				<a class="nav-link dropdown-toggle" id="prodDropdown" ngbDropdownToggle>Prod Links</a>
 				<div ngbDropdownMenu aria-labelledby="prodDropdown">
-					<a *ngFor='let navLink of config.prod_links' class="dropdown-item" target="_blank" href="{{navLink.link}}">
+					<a *ngFor='let navLink of prodLinks' class="dropdown-item" target="_blank" href="{{navLink.link}}">
 						{{navLink.name}}
 					</a>
 				</div>
@@ -151,7 +150,7 @@
 			<li ngbDropdown class="d-inline-block">
 				<a class="nav-link dropdown-toggle" id="betaDropdown" ngbDropdownToggle>Beta Links</a>
 				<div ngbDropdownMenu aria-labelledby="betaDropdown">
-					<a *ngFor='let navLink of config.beta_links' class="dropdown-item" target="_blank" href="{{navLink.link}}">
+					<a *ngFor='let navLink of betaLinks' class="dropdown-item" target="_blank" href="{{navLink.link}}">
 						{{navLink.name}}
 					</a>
 				</div>
