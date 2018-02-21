@@ -105,6 +105,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 	this.user.getNavbarItems()
 	 	.subscribe((response:any) => {
 
+	 		if(!response.data) return;
+
 	 		this.orders = response.data
 	 		.filter(link => link.type === 'order')
 	 		.map(this.addCacheParameter.bind(this))

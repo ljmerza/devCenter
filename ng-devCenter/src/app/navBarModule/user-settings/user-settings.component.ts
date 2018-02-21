@@ -77,6 +77,7 @@ export class UserSettingsComponent implements OnInit {
 	getProfile(){
 		this.profile.getProfile().subscribe(
 			profile => {
+				if(!profile.data) return;
 				this.setUserPings(profile.data.pingSettings);
 				this.store.dispatch({type: Actions.userProfile, payload: profile.data });
 			},

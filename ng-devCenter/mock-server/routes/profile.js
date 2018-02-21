@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+let express = require('express');
+let router = express.Router();
 
 router.get('/:username', function(req, res, next) {
 	return res.json({
@@ -26,7 +26,5 @@ router.get('/:username', function(req, res, next) {
 		}
 	})
 });
-
-
 
 module.exports = router;

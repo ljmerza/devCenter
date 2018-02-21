@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+let express = require('express');
+let router = express.Router();
 
 router.post('/', function(req, res, next) {
 	res.json({
@@ -26,10 +26,10 @@ router.post('/', function(req, res, next) {
 			log_response: {
 				status: true
 			},
-			conflict_response{
+			conflict_response: {
 				status: true
 			},
-			merge_response{
+			merge_response: {
 				status: true
 			}
 		}
@@ -58,5 +58,7 @@ router.put('/', function(req, res, next) {
 });
 
 router.delete('/', function(req, res, next) {
-	res.json(status:true});
+	res.json({status:true});
 });
+
+module.exports = router;

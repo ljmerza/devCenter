@@ -28,3 +28,5 @@ router.get('/repo/:repoName', function(req, res, next) {
 		}
 	})
 });
+
+module.exports = router;
