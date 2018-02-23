@@ -153,7 +153,7 @@ export class TicketLogComponent	{
 	}
 
 	/**
-	 * Opens the work log dialog
+	 * Opens the work log dialog.
 	 */
 	openLogModal():void {
 		this.cd.detectChanges();
