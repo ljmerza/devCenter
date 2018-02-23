@@ -128,7 +128,7 @@ router.get('/tickets', function(req, res, next) {
 				"branch": "testuser-1029386-branch-testing"
 			},
 			{
-				"key": "TS-1234", 
+				"key": "TS-1235", 
 				"msrp": "1029386", 
 				"user_details": {
 					"username": "testuser", 
@@ -250,7 +250,7 @@ router.get('/tickets', function(req, res, next) {
 				"branch": "testuser-1029386-branch-testing"
 			},
 			{
-				"key": "TS-1234", 
+				"key": "TS-1236", 
 				"msrp": "1029386", 
 				"user_details": {
 					"username": "testuser", 
@@ -372,7 +372,7 @@ router.get('/tickets', function(req, res, next) {
 				"branch": "testuser-1029386-branch-testing"
 			},
 			{
-				"key": "TS-1234", 
+				"key": "TS-1238", 
 				"msrp": "1029386", 
 				"user_details": {
 					"username": "testuser", 

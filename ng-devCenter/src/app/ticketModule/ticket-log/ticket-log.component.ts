@@ -82,7 +82,7 @@ export class TicketLogComponent	{
 
 		// check for comment response
 		if(responseData.comment_response.status){
-			this.store.dispatch({ type: Actions.addComment, payload: responseData.comment_response });	
+			this.store.dispatch({ type: Actions.addComment, payload: responseData.comment_response.data });	
 		} else if( responseData.comment_response.status === false && (postData.comment || postData.uct_date) ){
 			errorMessage += responseData.comment_response.data;
 		}

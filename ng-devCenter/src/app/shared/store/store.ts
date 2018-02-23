@@ -33,11 +33,11 @@ export function rootReducer(state, action){
 			return { ...state, ...{userProfile:action.payload} };
 
 		case Actions.addComment:
-			return commentActions.addComment(state, action);
+			return commentActions.addComment(state, action.payload);
 		case Actions.deleteComment:
-			return commentActions.deleteComment(state, action);
+			return commentActions.deleteComment(state, action.payload);
 		case Actions.editComment:
-			return commentActions.editComment(state, action);
+			return commentActions.editComment(state, action.payload);
 			
 		case Actions.updateStatus:
 			return statusActions.updateStatus(state, action.payload);
@@ -49,6 +49,9 @@ export function rootReducer(state, action){
 	}	
 }
 
+/**
+ *
+ */
 function addTickets(state, allTickets){
 	const comments = allTickets.map(ticket => {
 		return {

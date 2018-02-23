@@ -1,78 +1,65 @@
 /**
- *
+ * add a comment to a ticket to the redux comments array
+ * @param {RootState} state
+ * @param {Comment} newComment
+ * @return {RootState} a new state
  */
-export function addComment(state, action) {
-	const newComment = action.payload;
+export function addComment(state, newComment) {
 
 	// get where the ticket comments are -> add new comment
-	const commentIndex = state.comments.indexOf(ticketComments => ticketComments.key === newComment.key);
-	console.log('commentIndex: ', commentIndex);
-	const oldTicketComments = state.comments[commentIndex] || [];
-	console.log('oldTicketComments: ', oldTicketComments);
-	const newTicketComments = [...oldTicketComments, newComment];
-	console.log('newTicketComments: ', newTicketComments);
+	const oldTicketComments = state.comments.find(ticketComments => newComment.key === ticketComments.key);
+	const newTicketComments = {key:newComment.key, comments:[...oldTicketComments.comments, newComment] };
 
-
-	// get a ticket's comments
-	const ticketComments = state.comments.find(allComments => allComments.key === newComment.key);
-	const comments = (ticketComments && ticketComments.comments) || [];
-
+	// create new tickets comments array
 	const newAllComments = state.comments.map(allComments => {
-		if(allComments.key === newComment.key) return {key: newComment.key, comments};
+		if(allComments.key === newTicketComments.key) return newTicketComments;
 		else return allComments;
 	});
-
-	console.log('newAllComments: ', newAllComments);
 
 	// create new state and return it
 	return { ...state, ...{comments: newAllComments} };
 }
 
 /**
- *
+ * delete a comment from a ticket to the redux comments array
+ * @param {RootState} state
+ * @param {Comment} removedComment
+ * @return {RootState} a new state
  */
-export function deleteComment(state, action) {
-	const removedComment = action.payload;
+export function deleteComment(state, removedComment) {
 
 	// get ticket we are removing a comment from
-	const ticket = state.tickets.find(ticket => ticket.key === removedComment.key);
+	const oldTicketComments = state.comments.find(ticketComments => removedComment.key === ticketComments.key);
 
-	// filter out removed comment and replace comments on ticket
-	const newComments = ticket.comments.filter(comment => comment.id !== removedComment.id);
-	const newTicket = { ...ticket, ...{comments:newComments} };
+	// create new ticket's comments object
+	const newTicketComments = {key: removedComment.key, comments: oldTicketComments.comments.filter(comment => comment.id !== removedComment.id)};
 
-	// replace new ticket object with old one
-	const newTickets = state.tickets.map(ticket => {
-		if(newTicket.key === ticket.key) return newTicket;
-		else return ticket;
-	});
+	// create new comment state
+	const newComments = state.comments.map(comments => (newTicketComments.key === comments.key) ? newTicketComments : comments);
 
-	return { ...state, ...{tickets: newTickets} };
+	return { ...state, ...{comments: newComments} };
 }
 
 
 /**
- *
+ * edit a comment from a ticket into the redux comments array
+ * @param {RootState} state
+ * @param {Comment} editedComment
+ * @return {RootState} a new state
  */
-export function editComment(state, action) {
-	const editedComment = action.payload;
+export function editComment(state, editedComment) {
 
 	// get ticket we are editing a comment from
-	const ticket = state.tickets.find(ticket => ticket.key === editedComment.key);
+	const oldTicketComments = state.comments.find(ticketComments => editedComment.key === ticketComments.key);
 
-	// replace edited comment and create new ticket
-	const newComments = ticket.comments.map(comment => {
+	// replace edited comment and create new ticket's comment
+	const newTicketComments = oldTicketComments.comments.map(comment => {
 		if(comment.id === editedComment.id) return editedComment;
 		else return comment;
 	});
 
-	const newTicket = { ...ticket, ...{comments:newComments} };
+	// replace old ticket comments with new one
+	const newComments = state.comments.map(comments => (editedComment.key === comments.key) ? {key:editedComment.key, comments:newTicketComments} : comments);
 
-	// replace new ticket object with old one
-	const newTickets = state.tickets.map(ticket => {
-		if(newTicket.key === ticket.key) return newTicket;
-		else return ticket;
-	});
-
-	return { ...state, ...{tickets: newTickets} };
+	return { ...state, ...{comments: newComments} };
 }
