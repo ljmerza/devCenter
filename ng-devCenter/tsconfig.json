@@ -15,6 +15,14 @@
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "baseUrl": "src",
+    "paths": {
+      "@services": ["app/shared/services/index"],
+      "@modal": ["app/shared/modal/modal.component"],
+      "@models": ["app/shared/store/models/index"],
+      "@store": ["app/shared/store/index"],
+      "@environment": ["environments/environment"]
+    }
   }
 }

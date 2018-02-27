@@ -4,11 +4,9 @@ import {
 } from '@angular/core';
 
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent } from './../../shared/modal/modal.component';
-import { JiraService } from './../../shared/services/jira.service';
-import { ToastrService } from './../../shared/services/toastr.service';
-import { UserService } from './../../shared/services/user.service';
-import { MiscService } from './../../shared/services/misc.service';
+import { ModalComponent } from '@modal';
+import { JiraService, ToastrService, MiscService, UserService } from '@services';
+import { DataService } from './../../shared/services/data.service';
 
 @Component({
 	selector: 'ticket-comments-modal',

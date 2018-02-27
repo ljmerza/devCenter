@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { NgRedux } from '@angular-redux/store';
 
 import { UserService } from './../user.service';
 import { DataService } from './../data.service';
 
-import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../../store/store';
-import { Actions } from './../../store/actions';
-
-import { APIResponse } from './../../../shared/store/models/apiResponse';
+import { RootState, Actions } from '@store';
+import { APIResponse } from '@models';
 
 @Injectable()
 export class JiraPingsService {

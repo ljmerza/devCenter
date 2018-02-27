@@ -1,6 +1,6 @@
 import { Component, ViewContainerRef, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
-import { ToastrService } from './../../shared/services/toastr.service';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService } from '@services';
 
 @Component({
 	selector: 'dc-toastr',

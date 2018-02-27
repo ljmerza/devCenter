@@ -2,23 +2,12 @@ import { Component, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation,
 import { NgForm, FormGroup, FormControl, Validators, FormBuilder, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
 import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable, Subscription } from 'rxjs';
+import { select, NgRedux } from '@angular-redux/store';
 
-import { ModalComponent } from './../../shared/modal/modal.component';
-import { JiraService } from './../../shared/services/jira.service';
-import { ToastrService } from './../../shared/services/toastr.service';
-import { ConfigService } from './../../shared/services/config.service'
-import { UserService } from './../../shared/services/user.service'
-import { GitService } from './../../shared/services/git.service';
-
-import { select } from '@angular-redux/store';
-import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../../shared/store/store';
-import { Actions } from './../../shared/store/actions';
-
-import { STATUSES } from './../../shared/store/models/ticket-statuses';
-import { Repo } from './../../shared/store/models/repo';
-import { Ticket } from './../../shared/store/models/ticket';
-import { APIResponse } from './../../shared/store/models/apiResponse';
+import { ModalComponent } from '@modal';
+import { JiraService, ToastrService, GitService, ConfigService, UserService } from '@services';
+import { RootState, Actions } from '@store';
+import { STATUSES, Repo, Ticket, APIResponse } from '@models';
 
 @Component({
 	selector: 'dc-qa-generator',

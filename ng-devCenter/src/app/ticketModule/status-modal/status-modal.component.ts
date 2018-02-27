@@ -4,14 +4,12 @@ import {
 } from '@angular/core';
 
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent } from './../../shared/modal/modal.component';
-import { UserService } from './../../shared/services/user.service';
-import { ToastrService } from './../../shared/services/toastr.service';
-import { JiraService } from './../../shared/services/jira.service';
+import { ModalComponent } from '@modal';
+import { JiraService, ToastrService, UserService } from '@services';
 
 
 @Component({
-	selector: 'app-status-modal',
+	selector: 'dc-modal',
 	templateUrl: './status-modal.component.html',
 	styleUrls: ['./status-modal.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,8 +1,4 @@
-import { 
-	Component, Output, Input, ViewEncapsulation,
-	EventEmitter, ViewChild, ChangeDetectionStrategy 
-} from '@angular/core';
-
+import { Component, Output, Input, ViewEncapsulation, EventEmitter, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({

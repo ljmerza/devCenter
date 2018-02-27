@@ -1,17 +1,11 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
-import { select } from '@angular-redux/store';
+import { select, NgRedux } from '@angular-redux/store';
 import { Observable } from 'rxjs/Observable';
 
-import { UserService } from './../../shared/services/user.service'
-import { JiraPingsService } from './../../shared/services/jira/jira-pings.service';
-import { ToastrService } from './../../shared/services/toastr.service';
-import { ProfileService } from './../../shared/services/profile.service';
-
-import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../../shared/store/store';
-import { Actions } from './../../shared/store/actions';
+import { ProfileService, ToastrService, JiraPingsService, UserService } from '@services';
+import { RootState, Actions } from '@store';
 
 @Component({
 	selector: 'dc-user-settings',

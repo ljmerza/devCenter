@@ -1,16 +1,9 @@
-import { 
-	Component, ViewChild,
-	ViewEncapsulation, ChangeDetectionStrategy
-} from '@angular/core';
-
+import { Component, ViewChild, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent } from './../../shared/modal/modal.component';
+
+import { ModalComponent } from '@modal';
 import { UserSettingsComponent } from './../user-settings/user-settings.component';
-
-import { UserService } from './../../shared/services/user.service'
-import { JiraService } from './../../shared/services/jira.service';
-import { ToastrService } from './../../shared/services/toastr.service';
-
+import { JiraService, ToastrService, UserService } from '@services';
 
 @Component({
   selector: 'dc-user-settings-modal',

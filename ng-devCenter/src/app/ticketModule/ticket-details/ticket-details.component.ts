@@ -1,11 +1,7 @@
-import { 
-	Component, Input, ViewChild, ChangeDetectorRef,
-	ElementRef, ChangeDetectionStrategy, ViewEncapsulation
-} from '@angular/core';
+import { Component, Input, ViewChild, ChangeDetectorRef, ElementRef, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-
-import { ConfigService } from './../../shared/services/config.service'
-import { ModalComponent } from './../../shared/modal/modal.component';
+import { ConfigService } from '@services'
+import { ModalComponent } from '@modal';
 
 @Component({
 	selector: 'dc-ticket-details',

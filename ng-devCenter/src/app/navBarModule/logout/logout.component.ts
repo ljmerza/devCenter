@@ -1,14 +1,9 @@
-import { 
-	Component, ViewChild, ViewContainerRef, 
-	ChangeDetectionStrategy
-} from '@angular/core';
+import { Component, ViewChild, ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-
-
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { UserService } from './../../shared/services/user.service';
-import { ModalComponent } from './../../shared/modal/modal.component';
 
+import { UserService } from '@services';
+import { ModalComponent } from '@modal';
 
 @Component({
 	selector: 'dc-logout',

@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse} from '@angular/common/http';
-import {Observable} from 'rxjs/Observable';
-import {LocalStorageService} from '../services/local-storage.service';
+import { Injectable } from '@angular/core';
+import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
 
+import { LocalStorageService } from '@services';
 
 @Injectable()
 export class CacheInterceptor implements HttpInterceptor {

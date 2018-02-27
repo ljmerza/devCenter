@@ -1,6 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { MiscService } from './../../shared/services/misc.service';
-
+import { MiscService } from '@services';
 
 @Component({
 	selector: 'dc-user-details',

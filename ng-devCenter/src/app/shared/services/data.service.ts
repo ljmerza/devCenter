@@ -1,10 +1,10 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpErrorResponse, HttpClient, HttpHandler, HttpHeaders } from '@angular/common/http';
-
-import { LocalStorageService } from '../services/local-storage.service';
-import { ToastrService } from './toastr.service';
-import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
+
+import { LocalStorageService } from './local-storage.service';
+import { ToastrService } from './toastr.service';
+import { environment } from '@environment';
 
 @Injectable()
 export class DataService extends HttpClient {

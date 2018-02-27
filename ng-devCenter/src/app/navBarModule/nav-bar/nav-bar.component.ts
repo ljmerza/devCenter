@@ -1,19 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { NgRedux } from '@angular-redux/store';
 
 import { NavbarModalComponent } from '../navbar-modal/navbar-modal.component';
-import { JiraService } from './../../shared/services/jira.service';
-import { ToastrService } from './../../shared/services/toastr.service';
-import { ConfigService } from '../../shared/services/config.service';
-import { UserService } from '../../shared/services/user.service';
-
 import { LogoutComponent } from '../logout/logout.component';
-import { NgForm } from '@angular/forms';
 
-import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../../shared/store/store';
-import { Actions } from './../../shared/store/actions';
-
-import { APIResponse } from './../../shared/store/models/apiResponse';
+import { Actions, RootState } from '@store';
+import { APIResponse } from '@models';
+import { UserService, ConfigService, ToastrService, JiraService } from '@services';
 
 declare var $ :any;
 

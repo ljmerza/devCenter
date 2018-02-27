@@ -6,7 +6,7 @@ import { UserService } from './user.service';
 import { ToastrService } from './toastr.service';
 import { DataService } from './data.service';
 
-import { APIResponse } from './../../shared/store/models/apiResponse';
+import { APIResponse } from '@models';
 
 @Injectable()
 export class ProfileService {

@@ -1,25 +1,15 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
-import { Subject, Observable, Subscription } from 'rxjs';
-import 'rxjs/add/observable/interval';
-
-import { UserService } from './../../shared/services/user.service';
-import { JiraService } from './../../shared/services/jira.service';
-import { ToastrService } from './../../shared/services/toastr.service';
-import { WebSocketService } from './../../shared/services/web-socket.service';
-import { GitService } from './../../shared/services/git.service';
-
 import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
 
-import { select } from '@angular-redux/store';
-import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../../shared/store/store';
-import { Actions } from './../../shared/store/actions';
-import { Repo } from './../../shared/store/models/repo';
-import { Ticket } from './../../shared/store/models/ticket';
-import { APIResponse } from './../../shared/store/models/apiResponse';
+import { Subject, Observable, Subscription } from 'rxjs';
+import 'rxjs/add/observable/interval';
+import { select, NgRedux } from '@angular-redux/store';
+
+import { UserService, JiraService, ToastrService, WebSocketService, GitService } from '@services';
+import { RootState, Actions } from '@store';
+import { Repo, Ticket, APIResponse } from '@models';
 
 @Component({
 	selector: 'dc-tickets',

@@ -1,9 +1,7 @@
 import { Component, Input, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from './../../shared/modal/modal.component';
-import { JiraPingsService } from './../../shared/services/jira/jira-pings.service';
-import { ToastrService } from './../../shared/services/toastr.service';
+import { ToastrService, JiraPingsService } from '@services';
 
 @Component({
 	selector: 'dc-set-pings',

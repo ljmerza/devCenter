@@ -6,12 +6,7 @@ import { SetPingsComponent } from './../set-pings/set-pings.component';
 import { TicketDetailsComponent } from './../ticket-details/ticket-details.component';
 import { TicketStatusComponent } from './../ticket-status/ticket-status.component';
 
-import { ToastrService } from './../../shared/services/toastr.service';
-import { JiraService } from './../../shared/services/jira.service';
-import { ConfigService } from './../../shared/services/config.service';
-import { UserService } from './../../shared/services/user.service';
-import { MiscService } from './../../shared/services/misc.service';
-
+import { MiscService, UserService, ConfigService, JiraService, ToastrService } from '@services';
 
 @Component({
 	selector: '.appTicket',

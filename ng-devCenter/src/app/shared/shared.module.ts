@@ -10,18 +10,16 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from './../../environments/environment';
 
 // components
-import { ModalComponent } from './modal/modal.component';
+import { ModalComponent } from '@modal';
 import { ToastrComponent } from './toastr/toastr.component';
 
 // services
-import { JiraService } from './services/jira.service';
-import { JiraCommentsService } from './services/jira/jira-comments.service';
-import { JiraPingsService } from './services/jira/jira-pings.service';
-
+import { JiraService, JiraCommentsService, JiraPingsService } from '@services';
+import { LocalStorageService } from './services/local-storage.service';
 import { DataService } from './services/data.service';
 import { ConfigService } from './services/config.service';
-import { LocalStorageService } from './services/local-storage.service';
 import { UserService } from './services/user.service';
+
 
 import { MiscService, ToastrService, WebSocketService, ProfileService, GitService } from './services';
 

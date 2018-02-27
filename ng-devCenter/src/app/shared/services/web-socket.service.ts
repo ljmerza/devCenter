@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import { map, catchError } from 'rxjs/operators';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@environment';
 
 export interface Socket {
 	on(event: string, callback: (data: any) => void );

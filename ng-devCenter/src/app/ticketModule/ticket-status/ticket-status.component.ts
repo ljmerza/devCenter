@@ -5,7 +5,7 @@ import {
 
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 import { StatusModalComponent } from './../status-modal/status-modal.component';
-import { ToastrService } from './../../shared/services/toastr.service';
+import { ToastrService } from '@services';
 
 @Component({
 	selector: 'dc-ticket-status',

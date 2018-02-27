@@ -5,20 +5,13 @@ import {
 
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable, Subscription } from 'rxjs';
-
 import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../../shared/store/store';
-import { Actions } from './../../shared/store/actions';
 
-import { Comment } from './../../shared/store/models/Comment';
-import { Ticket } from './../../shared/store/models/ticket';
-import { Attachment } from './../../shared/store/models/attachment';
+import { Actions, RootState } from '@store';
+import { Comment, Ticket, Attachment } from '@models';
+import { ModalComponent } from '@modal';
+import { JiraCommentsService, ToastrService, MiscService, UserService } from '@services';
 
-import { ModalComponent } from './../../shared/modal/modal.component';
-import { JiraCommentsService } from './../../shared/services/jira/jira-comments.service';
-import { ToastrService } from './../../shared/services/toastr.service';
-import { UserService } from './../../shared/services/user.service';
-import { MiscService } from './../../shared/services/misc.service';
 
 declare const hljs:any;
 declare const $:any;

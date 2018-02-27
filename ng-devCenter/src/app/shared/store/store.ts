@@ -1,10 +1,7 @@
-import { Ticket } from './models/ticket';
-import { Comment } from './models/comment';
-import { Repo } from './models/repo';
-import { Actions } from './actions';
+import { Ticket, Comment, Repo } from '@models';
 
-import * as commentActions from './reducers/comment-actions';
-import * as statusActions from './reducers/status-actions';
+import { addComment, deleteComment, editComment, updateStatus, updateCrucible } from './reducers';
+import { Actions } from './actions';
 
 export interface RootState {
 	tickets: Array<Ticket>,
@@ -33,16 +30,16 @@ export function rootReducer(state, action){
 			return { ...state, ...{userProfile:action.payload} };
 
 		case Actions.addComment:
-			return commentActions.addComment(state, action.payload);
+			return addComment(state, action.payload);
 		case Actions.deleteComment:
-			return commentActions.deleteComment(state, action.payload);
+			return deleteComment(state, action.payload);
 		case Actions.editComment:
-			return commentActions.editComment(state, action.payload);
+			return editComment(state, action.payload);
 			
 		case Actions.updateStatus:
-			return statusActions.updateStatus(state, action.payload);
+			return updateStatus(state, action.payload);
 		case Actions.updateCrucible:
-			return statusActions.updateCrucible(state, action.payload);
+			return updateCrucible(state, action.payload);
 
 		default:
 			return state;

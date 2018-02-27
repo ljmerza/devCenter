@@ -1,19 +1,12 @@
-import { 
-	Component, ViewChild, EventEmitter, ChangeDetectionStrategy,
-	ElementRef, ViewEncapsulation, Output, Input, ChangeDetectorRef
-} from '@angular/core';
+import { Component, ViewChild, EventEmitter, ChangeDetectionStrategy, ElementRef, ViewEncapsulation, Output, Input, ChangeDetectorRef } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
-
-import { ModalComponent } from './../../shared/modal/modal.component';
-import { JiraCommentsService } from './../../shared/services/jira/jira-comments.service';
-import { ToastrService } from './../../shared/services/toastr.service';
-
 import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../../shared/store/store';
-import { Comment } from './../../shared/store/models/Comment';
-import { Actions } from './../../shared/store/actions';
-import { Ticket } from './../../shared/store/models/ticket';
+
+import { ModalComponent } from '@modal';
+import { JiraCommentsService, ToastrService } from '@services';
+import { RootState, Actions } from '@store';
+import { Ticket, Comment } from '@models';
 
 @Component({
 	selector: 'dc-ticket-log',

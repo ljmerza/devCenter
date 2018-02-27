@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
+import { NgRedux } from '@angular-redux/store';
 
 import { UserService } from './user.service';
 import { ConfigService } from './config.service';
 import { DataService } from './data.service';
 
-import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../store/store';
-import { Actions } from './../store/actions';
-
-import { APIResponse } from './../../shared/store/models/apiResponse';
+import { RootState, Actions } from '@store';
+import { APIResponse } from '@models';
 
 @Injectable()
 export class JiraService {
@@ -62,7 +60,10 @@ export class JiraService {
 	}
 
 	/**
-	*/
+	 * Gets extra details about a Jira ticket
+	 * @param {string} key the Jira ticket key to get details from
+	 * @return {Observable} 
+	 */
 	getATicketDetails(key){
 		let params = new HttpParams();
 		params = params.append('jql', `key%3D%20${key}`);
@@ -70,7 +71,10 @@ export class JiraService {
 	}
 
 	/**
-	*/
+	 * Searches for the key of a Jira ticket given its MSRP
+	 * @param {string} msrp the Jira ticket msrp
+	 * @return {Observable} 
+	 */
 	searchTicket(msrp:string): Observable<any> {
 		let params = new HttpParams();
 		params = params.append('isHardRefresh', `true`);
@@ -78,7 +82,10 @@ export class JiraService {
 	}
 
 	/**
-	*/
+	 * Generates QA fields - Crucible review, Jira comment, Log time, and state transition to PCR
+	 * @param {Object} postData
+	 * @return {Observable} 
+	 */
 	generateQA(postData): Observable<any> {
 
 		// add creds to POST data
@@ -90,14 +97,21 @@ export class JiraService {
 	}
 
 	/**
-	*/
+	 * Changes a Jira ticket's status
+	 * @param {Object} postData
+	 * @return {Observable} 
+	 */
 	changeStatus(postData): Observable<any> {
 		postData.username = this.user.username;
 		return this.dataService.post(`${this.dataService.apiUrl}/jira/status`, postData);
 	}
 
 	
-
+	/**
+	 * Processes an httpClient error response
+	 * @param {} message
+	 * @return {string} 
+	 */
 	processErrorResponse(message){
 		return this.dataService.processErrorResponse(message);
 	}

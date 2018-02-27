@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ConfigService } from '../shared/services/config.service';
+import { ConfigService } from '@services';
+import { Comment } from '@models';
 
 @Pipe({
 	name: 'commentFormat'

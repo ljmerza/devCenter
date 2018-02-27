@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { DataService } from './data.service';
-
 import { NgRedux } from '@angular-redux/store';
-import { RootState } from './../store/store';
-import { Actions } from './../store/actions';
 
-import { APIResponse } from './../../shared/store/models/apiResponse';
+import { DataService } from './data.service';
+import { RootState, Actions } from '@store';
+import { APIResponse } from '@models';
 
 @Injectable()
 export class GitService {
