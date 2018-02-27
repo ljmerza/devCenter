@@ -128,7 +128,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 		.subscribe(
 			()=> {
 				this.toastr.showToast('Comment deleted successfully', 'success');
-				this.store.dispatch({type: Actions.deleteComment, payload: {key:this.key, id:this.commentId}});
+				this.store.dispatch({type: Actions.deleteComment, payload: {key:this.key, id:this.commentId} });
 			},
 			this.jira.processErrorResponse.bind(this.jira)
 		);
