@@ -215,7 +215,7 @@ export class QaGeneratorComponent implements OnInit {
 	checkForStateChange(postData, response_data):void {
 
 		if(response_data.comment_response.status) {
-			this.store.dispatch({type: Actions.addComment, payload:{ key:this.key, comment: response_data.comment_response.data }});
+			this.store.dispatch({type: Actions.addComment, payload:response_data.comment_response.data});
 		}
 
 		// check for status changes okay
