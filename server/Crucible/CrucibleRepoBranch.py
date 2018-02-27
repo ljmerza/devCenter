@@ -16,7 +16,7 @@ class CrucibleRepoBranch():
 		self.crucible_api = crucible_api
 
 		# hard coded repos
-		self.repos = ["aqe","devtools","external_modules","modules","nightwatch","sasha","taskmaster","teamdb","teamdb_api","teamdb_ember","templates","tqi","ud","ud_api","ud_ember","upm","upm_api","wam","wam_api"]
+		self.repos = ["aqe","devtools","external_modules","modules","nightwatch","sasha","taskmaster","teamdb","teamdbapi","teamdb_ember","templates","tqi","ud","ud_api","ud_ember","upm","upm_api","wam","wam_api"]
 
 	def get_repos_of_review(self, crucible_id, cred_hash):
 		'''get all repos tied to a review
