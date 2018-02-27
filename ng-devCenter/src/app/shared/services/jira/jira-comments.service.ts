@@ -55,15 +55,7 @@ export class JiraCommentsService {
 		params = params.append('comment_id', commentId);
 		params = params.append('key', key);
 
-		const resp$ = this.dataService.delete(`${this.dataService.apiUrl}/jira/comment`, {params})
-		resp$.subscribe(
-			(response:any) => {
-				this.dataService.toastr.showToast('Comment Deleted Successfully', 'success');
-				this.store.dispatch({type: Actions.deleteComment, payload: {key, id:commentId}});
-			},
-			this.dataService.processErrorResponse.bind(this.dataService)
-		);
-		return resp$;
+		return this.dataService.delete(`${this.dataService.apiUrl}/jira/comment`, {params});
 	}
 
 	processErrorResponse(error){
