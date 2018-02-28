@@ -7,7 +7,9 @@ export interface RootState {
 	tickets: Array<Ticket>,
 	comments: Array<Comment>,
 	repos: Array<Repo>,
-	userProfile: any
+	userProfile: any,
+	statuses: any,
+	crucibleId: any
 }
 
 export const initialState: RootState = {
@@ -15,6 +17,8 @@ export const initialState: RootState = {
 	comments: [],
 	repos: [],
 	userProfile: {},
+	statuses: [],
+	crucibleId: []
 }
 
 /**
@@ -51,16 +55,23 @@ export function rootReducer(state, action){
  */
 function addTickets(state, allTickets){
 	const comments = allTickets.map(ticket => {
-		return {
-			comments:ticket.comments,
-			key: ticket.key
-		}
-		
+		return {comments:ticket.comments, key:ticket.key}
 	});
+
+	const statuses = allTickets.map(ticket => {
+		return {status:ticket.status, key:ticket.key}
+	});
+
+	const crucibleId = allTickets.map(ticket => {
+		return {crucibleId:ticket.crucible_id, key:ticket.key}
+	});
+
 	const tickets = allTickets.map(ticket => { 
-		delete ticket.comments; 
+		// delete ticket.comments; 
+		// delete ticket.statuses; 
+		// delete ticket.crucible_id; 
 		return ticket;
 	});
 
-	return { ...state, ...{comments, tickets} };
+	return { ...state, ...{comments, tickets, statuses, crucibleId} };
 }

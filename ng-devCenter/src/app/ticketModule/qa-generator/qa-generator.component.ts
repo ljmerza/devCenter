@@ -128,6 +128,8 @@ export class QaGeneratorComponent implements OnInit {
 
 		this.jira.generateQA(postData).subscribe(
 			response => {
+				console.log('response: ', response);
+				console.log('postData: ', postData);
 				this.showQaSubmitSuccessMessage(response);
 				this.checkForStateChange(postData, response.data);
 			},
@@ -190,8 +192,8 @@ export class QaGeneratorComponent implements OnInit {
 	showQaSubmitSuccessMessage(response){
 		let toastMessage = `<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>`;
 		
-		if(response.data.crucible_id){
-			toastMessage += `<br><a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.crucible_id}'>Crucible Link</a>`
+		if(response.data.cru_response.status){
+			toastMessage += `<br><a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.cru_response.data}'>Crucible Link</a>`
 		}
 		this.toastr.showToast(toastMessage, 'success', true);
 	}
@@ -199,26 +201,26 @@ export class QaGeneratorComponent implements OnInit {
 	/**
 	 * checks for any state changes such as ticket status, crucible ids added, and added comments.
 	 * @param {Object} postData the data used in the POST call to QA generator endpoint.
-	 * @param {Object} response_data the data in the response from the QA generator endpoint.
+	 * @param {Object} responseData the data in the response from the QA generator endpoint.
 	 */
-	checkForStateChange(postData, response_data):void {
+	checkForStateChange(postData, responseData):void {
 
-		if(response_data.comment_response.status) {
-			this.store.dispatch({type: Actions.addComment, payload:response_data.comment_response.data});
+		if(responseData.comment_response.status) {
+			this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});
 		}
 
 		// check for status changes okay
-		if(response_data.cr_response.status && response_data.pcr_response.status) {
-			this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: STATUSES.PCRNEED }});
+		if(responseData.cr_response.status && responseData.pcr_response.status) {
+			// this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: STATUSES.PCRNEED }});
 		} else if(postData.autoPCR){
 			// if we wanted PCR and we got here then there was a failure
-			const cr_message = response_data.cr_response.status ? '' : 'Code Review status change';
-			const pcr_message = response_data.pcr_response.status ? '' : 'PCR Needed component change';
+			const cr_message = responseData.cr_response.status ? '' : 'Code Review status change';
+			const pcr_message = responseData.pcr_response.status ? '' : 'PCR Needed component change';
 			this.toastr.showToast('error', 'The following transitions failed: ${cr_message} ${pcr_message}');
 		}
 
-		if(response_data.cru_response.status) {
-			this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: response_data.cru_response.data }});
+		if(responseData.cru_response.status) {
+			// this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: responseData.cru_response.data }});
 		}
 	}
 

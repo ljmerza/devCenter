@@ -17,12 +17,14 @@ const git = require('./routes/git');
 const jira = require('./routes/jira');
 const navbar = require('./routes/navbar');
 const comments = require('./routes/comments');
+const qaGenerator = require('./routes/qa-generator');
 
 app.use('/dev_center/jira/profile', profile);
 app.use('/dev_center/jira/comment', comments);
 app.use('/dev_center/git', git);
 app.use('/dev_center/jira', jira);
 app.use('/dev_center/navbar', navbar);
+app.use('/dev_center', qaGenerator);
 
 app.use(function(err, req, res, next) {
 	res.json(err);

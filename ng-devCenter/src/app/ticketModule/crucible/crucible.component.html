@@ -1,0 +1,13 @@
+<!-- cru id -->
+<td>
+	<div class='float-left' *ngIf='crucibleId'>
+		<a target="_blank" href="{{config.crucibleUrl}}/cru/{{crucibleId}}">
+			{{crucibleId}}
+		</a>
+	</div>
+	<div class='float-right' *ngIf='crucibleId'>
+		<i title='Open Crucible as Reviewer' class="material-icons success float-right" (click)="addReviewer()">
+			history
+		</i>
+	</div>
+</td>

@@ -1,30 +1,32 @@
 let express = require('express');
 let router = express.Router();
 
-router.get('/repo/:repoName', function(req, res, next) {
+router.post('/crucible/create', function(req, res, next) {
 	res.json({
 		status: true, 
 		data: {
-			crucible_id: "CR-UD-5464", 
 			comment_response: {
-				comment: "TEST", 
-				raw_comment: "TEST", 
-				id: "358850", 
-				key: "UD-8699", 
-				username: "lm240n", 
-				email: "lm240n@att.com", 
-				display_name: "Merza, Leo (lm240n)", 
-				comment_type: "info", 
-				created: "2018-02-14T20:30:55.402+0000", 
-				updated: "2018-02-14T20:30:55.402+0000", 
-				isEditing: false, "closeText": "Edit Comment", 
-				editId: "E358850", 
-				visibility: "Developers"
+				status: true,
+				data: {
+					comment: `<p style='color:red;'>${req.body.qa_steps}</p>`, 
+					raw_comment: req.body.qa_steps, 
+					id: "358850", 
+					key: req.body.key, 
+					username: "tu1234", 
+					email: "tu1234@tu1234.com", 
+					display_name: "User, Test (tu1234)", 
+					comment_type: "info", 
+					created: "2018-02-14T20:30:55.402+0000", 
+					updated: "2018-02-14T20:30:55.402+0000", 
+					isEditing: false, "closeText": "Edit Comment", 
+					editId: "E358850", 
+					visibility: "Developers"
+				}
 			},
-			log_response: "",
-			cr_response: "", 
-			pcr_response: "", 
-			cru_response: "CR-UD-5464"
+			log_response: { status: true, data: 'error log_response' },
+			cr_response: { status: true, data: 'error cr_response' }, 
+			pcr_response: { status: true, data: 'error pcr_response' }, 
+			cru_response: { status: true, data: "CR-TU-1234" }
 		}
 	})
 });

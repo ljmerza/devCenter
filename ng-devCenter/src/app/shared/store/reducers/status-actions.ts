@@ -28,7 +28,7 @@ export function updateCrucible(state, newCrucible) {
 
 	// get ticket and create new one with new crucible id
 	const ticket = state.tickets.find(ticket => ticket.key === newCrucible.key);
-	const newTicket = { ...ticket, ...{crucible_id: newCrucible.cruid} };
+	const newTicket = { ...ticket, ...{crucibleId: newCrucible.cruid} };
 
 	// replace new ticket object with old one
 	const newTickets = state.tickets.map(ticket => {

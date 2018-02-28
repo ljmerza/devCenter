@@ -19,10 +19,12 @@ import { StatusModalComponent } from './status-modal/status-modal.component';
 import { TicketStatusComponent } from './ticket-status/ticket-status.component';
 import { TicketComponent } from './ticket/ticket.component';
 import { TicketsComponent } from './tickets/tickets.component';
+import { CrucibleComponent } from './crucible/crucible.component';
 
 // pipes
 import { WorkTimePipe } from './work-time.pipe';
 import { UserDetailsComponent } from './user-details/user-details.component';
+import { DatesComponent } from './dates/dates.component';
 
 @NgModule({
 	imports: [
@@ -33,7 +35,7 @@ import { UserDetailsComponent } from './user-details/user-details.component';
 	declarations: [
 		SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent,
 		TicketLogComponent, TicketStatusComponent, StatusModalComponent,
-		TicketsComponent, TicketComponent, WorkTimePipe, UserDetailsComponent
+		TicketsComponent, TicketComponent, WorkTimePipe, UserDetailsComponent, CrucibleComponent, DatesComponent
 	],
 	exports: [TicketsComponent]
 })

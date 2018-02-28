@@ -1,4 +1,7 @@
-import { Component, Input, ViewChild, ComponentFactoryResolver, ViewEncapsulation, EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { 
+	Component, Input, ViewChild, ComponentFactoryResolver, ViewEncapsulation, OnInit, OnDestroy,
+	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy, ChangeDetectorRef 
+} from '@angular/core';
 
 import { TicketCommentsModalComponent } from './../../commentsModule/ticket-comments-modal/ticket-comments-modal.component';
 import { TicketLogComponent } from './../ticket-log/ticket-log.component';
@@ -7,6 +10,12 @@ import { TicketDetailsComponent } from './../ticket-details/ticket-details.compo
 import { TicketStatusComponent } from './../ticket-status/ticket-status.component';
 
 import { MiscService, UserService, ConfigService, JiraService, ToastrService } from '@services';
+
+import { Subject, Observable, Subscription } from 'rxjs';
+import { NgRedux } from '@angular-redux/store';
+
+import { Actions, RootState } from '@store';
+import { Comment, Ticket, Attachment } from '@models';
 
 @Component({
 	selector: '.appTicket',
@@ -20,7 +29,7 @@ import { MiscService, UserService, ConfigService, JiraService, ToastrService } f
 	encapsulation: ViewEncapsulation.None
 
 })
-export class TicketComponent {
+export class TicketComponent implements OnInit, OnDestroy {
 	ticketDropdown; // ticket dropdown reference
 
 	ticketDetails;
@@ -28,34 +37,27 @@ export class TicketComponent {
 	pingComponentRef;
 	commentComponentRef;
 	worklogComponentRef;
+	tickets$;
+	ticket;
 
 	constructor(
 		private toastr: ToastrService, public jira: JiraService, public config: ConfigService, 
-		public user: UserService, private factoryResolver: ComponentFactoryResolver, 
+		public user: UserService, private factoryResolver: ComponentFactoryResolver, public store:NgRedux<RootState>,
 		private viewContRef: ViewContainerRef, public misc: MiscService, private cd: ChangeDetectorRef
 	) { }
 
-	@Input() ticket;
-	@Input() repos;
+	ngOnInit(){
+		this.tickets$ = this.store.select('tickets')
+		.subscribe((allTickets:any) => this.ticket = allTickets.find(ticket => ticket.key === this.key));
+	}
+
+	ngOnDestroy(){
+		if(this.tickets$) this.tickets$.unsubscribe();
+	}
+
+	@Input() key;
 	@Output() rerender = new EventEmitter();
 	@ViewChild(TicketStatusComponent) ticketStatusRef: TicketStatusComponent;
-
-	/**
-	* 
-	*/
-	addReviewer(){
-
-  		// change 'status' (add user to crucible then open crucible)
-  		this.jira.changeStatus({key:this.ticket.key, statusType:'pcrAdd', crucible_id:this.ticket.crucible_id})
-		.subscribe(
-			() => {
-				// open crucible if successfully joined
-				let win = window.open(`${this.config.crucibleUrl}/cru/${this.ticket.crucible_id}`, '_blank');
-		  		win.focus();
-			},
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
-	}
 
 	/**
 	*/
