@@ -31,6 +31,11 @@ export class NavBarComponent implements OnInit, OnDestroy {
 			value: 'order',
 			name: 'Open Order',
 			placeholder: 'Open Order'
+		},
+		{
+			value: 'ticket',
+			name: 'Open Ticket',
+			placeholder: 'Open WFA Ticket'
 		}		
 	];
 
@@ -86,7 +91,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 	/**
 	 * Searches for a Jira ticket by key or MSRP. If ticket found opens in new tab.
-	 * @param {NgForm} formObj
+	 * @param {string} orderValue
 	 */
 	public searchTicket(orderValue):void {
 		if(!orderValue){
@@ -108,16 +113,18 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 
 	/**
-	 * Opens an order in dev Ember.
-	 * @param {NgForm} formObj
+	 * Opens a workitem in dev Ember.
+	 * @param {string} orderValue the workitem number
+	 * @param {string} workType the type of workitem
 	 */
-	public openOrder(orderValue):void {
-		if(!orderValue){
-			this.toastr.showToast('Order number required to open an order.', 'error');
+	public openWorkitem(workNumber, workType):void {
+		if(!workNumber){
+			this.toastr.showToast(`${workType} number required.`, 'error');
 			return;
 		}
 
-		window.open(`${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}/ethernet/order/${orderValue}`);
+
+		window.open(`${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}ethernet/${workType}/${workNumber}`);
 	}
 
 	/**
@@ -130,12 +137,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 		const inputType = this.validFormValues.find(values => this.placeHolderValue === values.placeholder);
 		switch(inputType.value){
-			case 'order':
-				this.openOrder(inputValue);
-			case 'jira':
-				this.searchTicket(inputValue);
-			default:
-				this.toastr.showToast('Invalid input type.', 'error');
+			case 'order': 
+			case 'ticket': 
+				return this.openWorkitem(inputValue, inputType.value);
+			case 'jira': 
+				return this.searchTicket(inputValue);
+			default: 
+				return this.toastr.showToast('Invalid input type.', 'error');
 		}
 	}
 
