@@ -17,11 +17,28 @@ declare var $ :any;
 	styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent implements OnInit, OnDestroy {
-	ticketValue:string; // value of MSRP/key search
+	inputValue:string; // value of MSRP/key search
+	buttonValue: string;
+	placeHolderValue: string;
+
+	validFormValues:Array<any> = [
+		{
+			value: 'jira', // used to select which method to call
+			name: 'Search', // search button text
+			placeholder: 'Search Jira Ticket' // input placeholder text
+		},
+		{
+			value: 'order',
+			name: 'Open Order',
+			placeholder: 'Open Order'
+		}		
+	];
+
 	isFriday:boolean; // boolean is Friday for log hours notification
 	userProfile;
 	userProfile$;
 
+	teamdbEmberLinks;
 	otherOrders;
 	orders;
 	wfaTickets;
@@ -41,6 +58,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	ngOnInit(){
 		this.setFridayChecker();
 		this.getNavbarItems();
+
+		// set default search values
+		this.buttonValue = this.validFormValues[0].name;
+		this.placeHolderValue = this.validFormValues[0].placeholder;
 
 		this.userProfile$ = this.store.select('userProfile').subscribe(profile => {
 			if(profile) this.userProfile = profile;
@@ -67,29 +88,65 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 * Searches for a Jira ticket by key or MSRP. If ticket found opens in new tab.
 	 * @param {NgForm} formObj
 	 */
-	public searchTicket(formObj: NgForm):void {
-
-		// get form values and reset form
-		const formData = formObj.value;
-		formObj.resetForm();
-
-		// make sure we have a value
-		if(!formData.ticketValue){
+	public searchTicket(orderValue):void {
+		if(!orderValue){
 			this.toastr.showToast('MSRP or Jira key required to lookup a ticket', 'error');
 			return;
 		}
 
 		// if NaN then is key and go to Jira else need key from MSRP
-		if( isNaN(parseInt(formData.ticketValue)) ){
-			window.open(`${this.config.jiraUrl}/browse/${formData.ticketValue}`);
-			
+		if( isNaN(parseInt(orderValue)) ){
+			window.open(`${this.config.jiraUrl}/browse/${orderValue}`);
 		} else {
-			this.jira.searchTicket(formData.ticketValue)
+			this.jira.searchTicket(orderValue)
 			.subscribe(
 				data => window.open(`${this.config.jiraUrl}/browse/${data.data}`),
 				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
 			);
 		}
+	}
+
+
+	/**
+	 * Opens an order in dev Ember.
+	 * @param {NgForm} formObj
+	 */
+	public openOrder(orderValue):void {
+		if(!orderValue){
+			this.toastr.showToast('Order number required to open an order.', 'error');
+			return;
+		}
+
+		window.open(`${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}/ethernet/order/${orderValue}`);
+	}
+
+	/**
+	 * Processes the navbar input form.
+	 * @param {NgForm} formObj
+	 */
+	public submitInput(formObj: NgForm):void {
+		const inputValue = formObj.value.inputValue;
+		formObj.resetForm();
+
+		const inputType = this.validFormValues.find(values => this.placeHolderValue === values.placeholder);
+		switch(inputType.value){
+			case 'order':
+				this.openOrder(inputValue);
+			case 'jira':
+				this.searchTicket(inputValue);
+			default:
+				this.toastr.showToast('Invalid input type.', 'error');
+		}
+	}
+
+	/**
+	 * Changes the form input type.
+	 * @param {string} inputType
+	 */
+	public changeInputType(inputType):void {
+		const newInputType = this.validFormValues.find(values => inputType === values.placeholder);
+		this.placeHolderValue = newInputType.placeholder;
+		this.buttonValue = newInputType.name;
 	}
 
 	/**
@@ -148,7 +205,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 	 	});
 	}
-	teamdbEmberLinks;
 
 	/**
 	 * adds username to any URLs that need it

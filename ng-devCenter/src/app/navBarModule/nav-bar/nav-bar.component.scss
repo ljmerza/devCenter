@@ -50,7 +50,7 @@ $success: #28a745;
 }
 
 .mr-30 {
-	margin-right: 30px;
+	margin-right: 15px;
 }
 
 .mr-75 {
@@ -86,7 +86,7 @@ nav {
 		border-radius: 0;
 	}
 
-	input {
+	input, select {
 		background-color: $darkblk;
 		border-radius: 0;
 		color: $white;
