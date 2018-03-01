@@ -21,14 +21,20 @@ import { STATUSES, Ticket, APIResponse } from '@models';
 })
 export class TicketStatusComponent implements OnInit {
 	ticketStates:Array<any> = [];
+
 	ticketDropdown;
 	qaComponentRef;
 	statusComponentRef;
+
 	status$;
+	crucibleId$;
+
 	statusType: string;
 	statusName: string;
 	modalRef: NgbModalRef;
+
 	ticketStatus;
+	crucibleId;
 
 	@Input() key;
 	@Input() msrp;
@@ -49,6 +55,11 @@ export class TicketStatusComponent implements OnInit {
 			this.validateTransitions();
 			this.cd.detectChanges();
 		});
+
+		this.crucibleId$ = this.store.select('crucibleIds')
+		.subscribe((allTickets:Array<any>) => {
+			this.crucibleId = allTickets.find(ticket => ticket.key === this.key).crucibleId;
+		});
 	}
 
 	/**
@@ -56,6 +67,7 @@ export class TicketStatusComponent implements OnInit {
 	 */
 	ngOnDestory(){
 		if(this.status$) this.status$.unsubscribe();
+		if(this.crucibleId$) this.crucibleId$.unsubscribe();
 	}
 
 	/**
@@ -240,7 +252,7 @@ export class TicketStatusComponent implements OnInit {
 	/**
 	*/
 	changeStatus(statusType:string): void {
-		this.jira.changeStatus({key:this.key, statusType})
+		this.jira.changeStatus({key:this.key, statusType, crucible_id: this.crucibleId})
 		.subscribe(
 			() => {
 				this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
