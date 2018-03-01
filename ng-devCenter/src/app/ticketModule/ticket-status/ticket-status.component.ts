@@ -10,7 +10,7 @@ import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 import { ToastrService, JiraService } from '@services';
 import { ModalComponent } from '@modal';
 import { RootState, Actions } from '@store';
-import { STATUSES, Ticket, APIResponse } from '@models';
+import { statuses, Ticket, APIResponse } from '@models';
 
 @Component({
 	selector: 'dc-ticket-status',
@@ -45,6 +45,28 @@ export class TicketStatusComponent implements OnInit {
 		private viewContRef: ViewContainerRef, private toastr: ToastrService, private jira: JiraService
 	) { }
 
+	allTransistions = [
+		{name: statuses.INDEV.frontend, id: statuses.INDEV.backend},
+		{name: statuses.PCRNEED.frontend, id: statuses.PCRNEED.backend},
+		{name: statuses.REMOVEPCR.frontend, id: statuses.REMOVEPCR.backend},
+		{name: statuses.PCRPASS.frontend, id: statuses.PCRPASS.backend},
+		{name: statuses.PCRCOMP.frontend, id: statuses.PCRCOMP.backend},
+		{name: statuses.REMOVEPCRC.frontend, id: statuses.REMOVEPCRC.backend},
+		{name: statuses.CRWORK.frontend, id: statuses.CRWORK.backend},
+		{name: statuses.CRFAIL.frontend, id: statuses.CRFAIL.backend},
+		{name: statuses.QAREADY.frontend, id: statuses.QAREADY.backend},
+		{name: statuses.INQA.frontend, id: statuses.INQA.backend},
+		{name: statuses.QAFAIL.frontend, id: statuses.QAFAIL.backend},
+		{name: statuses.QAPASS.frontend, id: statuses.QAPASS.backend},
+		{name: statuses.MERGECODE.frontend, id: statuses.MERGECODE.backend},
+		{name: statuses.MERGECONF.frontend, id: statuses.MERGECONF.backend},
+		{name: statuses.INUCT.frontend, id: statuses.INUCT.backend},
+		{name: statuses.UCTPASS.frontend, id: statuses.UCTPASS.backend},
+		{name: statuses.UCTFAIL.frontend, id: statuses.UCTFAIL.backend},
+		{name: statuses.UCTREADY.frontend, id: statuses.UCTREADY.backend},
+		{name: statuses.RELEASE.frontend, id: statuses.RELEASE.backend}
+	];
+
 	/**
 	 * Watch for changes in the ticket's status in redux.
 	 */
@@ -78,7 +100,7 @@ export class TicketStatusComponent implements OnInit {
 		// save select element reference and old status
 		this.ticketDropdown = ticketDropdown;
 
-		if(ticketDropdown.value == 'pcrNeeded'){
+		if(ticketDropdown.value == statuses.PCRNEED.backend){
 			this.openQAModal();
 		} else {
 			this.openStatusModal(ticketDropdown);
@@ -111,52 +133,52 @@ export class TicketStatusComponent implements OnInit {
 	/**
 	*/
 	validateTransitions() {
-		if(['In Sprint','On Hold'].includes(this.ticketStatus)){
-			this.ticketStates = this.allTransistions.filter(state => ['In Development'].includes(state.name));
-		} else if(this.ticketStatus === 'In Development'){
-			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
+		if([statuses.SPRINT.frontend,statuses.ONHOLD.frontend].includes(this.ticketStatus)){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.INDEV.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.INDEV.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend].includes(state.name));
 		
-		} else if(this.ticketStatus === 'PCR - Needed'){
-			this.ticketStates = this.allTransistions.filter(state => ['PCR - Pass','PCR - Completed'].includes(state.name));
-		} else if(this.ticketStatus === 'PCR - Pass'){
-			this.ticketStates = this.allTransistions.filter(state => ['PCR - Completed'].includes(state.name));
-		} else if(this.ticketStatus === 'PCR - Completed'){
-			this.ticketStates = this.allTransistions.filter(state => ['Code Review - Working'].includes(state.name));
+		} else if(this.ticketStatus === statuses.PCRNEED.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRPASS.frontend,statuses.PCRCOMP.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.PCRPASS.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRCOMP.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.PCRCOMP.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.CRWORK.frontend].includes(state.name));
 		
-		} else if(this.ticketStatus === 'Code Review - Working'){
-			this.ticketStates = this.allTransistions.filter(state => ['Ready for QA', 'Code Review - Fail'].includes(state.name));
-		} else if(this.ticketStatus === 'Code Review - Fail'){
-			this.ticketStatus = 'In Development';
-			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
-		} else if(this.ticketStatus === 'Ready for QA'){
-			this.ticketStates = this.allTransistions.filter(state => ['In QA'].includes(state.name));
+		} else if(this.ticketStatus === statuses.CRWORK.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.QAREADY.frontend, statuses.CRFAIL.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.CRFAIL.frontend){
+			this.ticketStatus = statuses.INDEV.frontend;
+			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.QAREADY.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.INQA.frontend].includes(state.name));
 		
-		} else if(this.ticketStatus === 'In QA'){
-			this.ticketStates = this.allTransistions.filter(state => ['QA Fail','QA Pass', 'Merge Conflict'].includes(state.name));
-		} else if(this.ticketStatus === 'QA Fail'){
-			this.ticketStatus = 'In Development';
-			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
-		} else if(this.ticketStatus === 'QA Pass'){
-			this.ticketStatus = 'Merge Code';
-			this.ticketStates = this.allTransistions.filter(state => ['Ready for UCT'].includes(state.name));
+		} else if(this.ticketStatus === statuses.INQA.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.QAFAIL.frontend,statuses.QAPASS.frontend,statuses.MERGECONF.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.QAFAIL.frontend){
+			this.ticketStatus = statuses.INDEV.frontend;
+			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.QAPASS.frontend){
+			this.ticketStatus = statuses.MERGECODE.frontend;
+			this.ticketStates = this.allTransistions.filter(state => [statuses.UCTREADY.frontend].includes(state.name));
 		
-		} else if(this.ticketStatus === 'Ready for UCT'){
-			this.ticketStates = this.allTransistions.filter(state => ['In UCT'].includes(state.name));
-		} else if(this.ticketStatus === 'In UCT'){
-			this.ticketStates = this.allTransistions.filter(state => ['UCT Fail','UCT Pass'].includes(state.name));
-		} else if(this.ticketStatus === 'UCT Pass'){
-			this.ticketStatus = 'Ready for Release';
+		} else if(this.ticketStatus === statuses.UCTREADY.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.INUCT.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.INUCT.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.UCTFAIL.frontend,statuses.UCTPASS.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.UCTPASS.frontend){
+			this.ticketStatus = statuses.RELEASE.frontend;
 			this.ticketStates = [];
-		} else if(this.ticketStatus === 'UCT Fail'){
-			this.ticketStatus = 'In Development';
-			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed'].includes(state.name));
+		} else if(this.ticketStatus === statuses.UCTFAIL.frontend){
+			this.ticketStatus = statuses.INDEV.frontend;
+			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend].includes(state.name));
 
-		} else if(this.ticketStatus === 'Merge Conflict'){
-			this.ticketStates = this.allTransistions.filter(state => ['PCR - Needed', 'PCR - Completed', 'Ready for QA'].includes(state.name));
-		} else if(this.ticketStatus === 'Merge Code'){
-			this.ticketStates = this.allTransistions.filter(state => ['Ready for UCT'].includes(state.name));
+		} else if(this.ticketStatus ===statuses.MERGECONF.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend, statuses.PCRCOMP.frontend, statuses.QAREADY.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.MERGECODE.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.UCTREADY.frontend].includes(state.name));
 		
-		} else if(['Ready for Release'].includes(this.ticketStatus)){
+		} else if([statuses.RELEASE.frontend].includes(this.ticketStatus)){
 			this.ticketStates = [];
 		} else {
 			this.ticketStates = this.allTransistions;
@@ -169,28 +191,6 @@ export class TicketStatusComponent implements OnInit {
 
 		this.cd.detectChanges();
 	}
-
-	allTransistions = [
-		{name: 'In Development', id: 'inDev'},
-		{name: 'PCR - Needed', id: 'pcrNeeded'},
-		{name: 'Remove PCR Needed', id: 'removePcrNeeded'},
-		{name: 'PCR - Pass', id: 'pcrPass'},
-		{name: 'PCR - Completed', id: 'pcrCompleted'},
-		{name: 'Remove PCR Completed', id: 'removePcrCompleted'},
-		{name: 'Code Review - Working', id: 'crWorking'},
-		{name: 'Code Review - Fail', id: 'crFail'},
-		{name: 'Ready for QA', id: 'qaReady'},
-		{name: 'In QA', id: 'inQa'},
-		{name: 'QA Fail', id: 'qaFail'},
-		{name: 'QA Pass', id: 'qaPass'},
-		{name: 'Merge Code', id: 'mergeCode'},
-		{name: 'Merge Conflict', id: 'mergeConflict'},
-		{name: 'In UCT', id: 'inUct'},
-		{name: 'UCT Pass', id: 'uctPass'},
-		{name: 'UCT Fail', id: 'uctFail'},
-		{name: 'Ready for UCT', id: 'uctReady'},
-		{name: 'Ready for Release', id: 'releaseReady'}
-	];
 
 	/**
 	*/
@@ -237,8 +237,8 @@ export class TicketStatusComponent implements OnInit {
 	closeStatusModal(submit:boolean=false): void{
 
 		if(submit && this.statusType === 'complete'){
-			this.changeStatus('pcrPass');
-			this.changeStatus('pcrComplete');
+			this.changeStatus(statuses.PCRPASS.backend);
+			this.changeStatus(statuses.PCRCOMP.backend);
 		} else if(submit){
 			this.changeStatus(this.statusType);
 		} else {

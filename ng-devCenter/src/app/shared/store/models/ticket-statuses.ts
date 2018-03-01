@@ -1,29 +1,24 @@
-export const STATUSES:any = {
-	ONHOLD: 'On Hold',
-	BACKLOG: 'Backlog',
-	SPRINT: 'In Sprint',
-	INDEV: 'In Development',
-	PCRNEED: 'PCR - Needed',
-	PCRPASS: 'PCR - Passed',
-	PCRCOMP: 'PCR - Completed',
-	CRWORK: 'Code Review - Working',
-	CRFAIL: 'Code Review - Failed',
-	QAREADY: 'QA Ready',
-	INQA: 'In QA',
-	QAFAIL: 'QA Fail',
-	QAPASS: 'QA Pass',
-	MERGECODE: 'Merge Code',
-	MERGECONF: 'Merge Conflict',
-	UCTREADY: 'Ready For UCT',
-	INUCT: 'In UCT',
-	UCTFAIL: 'UCT Fail',
-	UCTPASS: 'UCT Pass',
-	RELEASE: 'Ready For Release',
-}
-
-/**
- * maps frontend status names to backend status names for status presistence.
- */
-export const STATUSESBACKEND = {
-
+export const statuses:any = {
+	ONHOLD: {frontend: 'On Hold', backend: 'onHold'},
+	BACKLOG: {frontend: 'Backlog', backend: 'backlog'},
+	SPRINT: {frontend: 'In Sprint', backend: 'inSprint'},
+	INDEV: {frontend: 'In Development', backend: 'inDev'},
+	PCRNEED: {frontend: 'PCR - Needed', backend: 'pcrNeeded'},
+	PCRPASS: {frontend: 'PCR - Passed', backend: 'pcrPass'},
+	PCRCOMP: {frontend: 'PCR - Completed', backend: 'pcrCompleted'},
+	CRWORK: {frontend: 'Code Review - Working', backend: 'crWorking'},
+	CRFAIL: {frontend: 'Code Review - Failed', backend: 'crFail'},
+	QAREADY: {frontend: 'QA Ready', backend: 'qaReady'},
+	INQA: {frontend: 'In QA', backend: 'inQa'},
+	QAFAIL: {frontend: 'QA Fail', backend: 'qaFail'},
+	QAPASS: {frontend: 'QA Pass', backend: 'qaPass'},
+	MERGECODE: {frontend: 'Merge Code', backend: 'mergeCode'},
+	MERGECONF: {frontend: 'Merge Conflict', backend: 'mergeConflict'},
+	UCTREADY: {frontend: 'Ready For UCT', backend: 'uctReady'},
+	INUCT: {frontend: 'In UCT', backend: 'inUct'},
+	UCTFAIL: {frontend: 'UCT Fail', backend: 'uctFail'},
+	UCTPASS: {frontend: 'UCT Pass', backend: 'uctPass'},
+	RELEASE: {frontend: 'Ready For Release', backend: 'releaseReady'},
+	REMOVEPCR: {frontend: 'Remove PCR Needed', backend: 'removePcrNeeded'},
+	REMOVEPCRC: {frontend: 'Remove PCR Completed', backend: 'removePcrCompleted'}
 }

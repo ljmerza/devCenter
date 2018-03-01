@@ -7,7 +7,7 @@ import { select, NgRedux } from '@angular-redux/store';
 import { ModalComponent } from '@modal';
 import { JiraService, ToastrService, GitService, ConfigService, UserService } from '@services';
 import { RootState, Actions } from '@store';
-import { STATUSES, Repo, Ticket, APIResponse } from '@models';
+import { statuses, Repo, Ticket, APIResponse } from '@models';
 
 @Component({
 	selector: 'dc-qa-generator',
@@ -154,7 +154,7 @@ export class QaGeneratorComponent implements OnInit {
 	 * Sets ticket status back to in dev and shows cancel toast
 	 */
 	cancelStatusChange(){
-		this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: STATUSES.INDEV }});
+		this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: statuses.INDEV.frontend }});
 		this.toastr.showToast(`Ticket ${this.key} status cancelled.`, 'info');
 	}
 
@@ -223,9 +223,9 @@ export class QaGeneratorComponent implements OnInit {
 
 		// check for status changes okay - if status change came back success then set to pcr needed
 		// else if status change error and we did try to change status then show error
-		let status = STATUSES.INDEV;
+		let status = statuses.INDEV.frontend;
 		if(responseData.cr_response.status && responseData.pcr_response.status) {
-			status = STATUSES.PCRNEED;
+			status = statuses.PCRNEED.frontend;
 		} else if(postData.autoPCR){
 			// if we wanted PCR and we got here then there was a failure
 			const cr_message = responseData.cr_response.status ? '' : 'Code Review status change';
@@ -251,7 +251,7 @@ export class QaGeneratorComponent implements OnInit {
 		this.modalRef.result.then(
     		() => null,
     		() => {
-    			this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status:STATUSES.INDEV}});
+    			this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status:statuses.INDEV.frontend}});
     			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
     		}
     	);
