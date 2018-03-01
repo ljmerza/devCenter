@@ -43,7 +43,7 @@ export class JiraService {
 	 * @param {string} filterName the name of the filter to get tickets from.
 	 * @param {Boolean=false} isHardRefresh a hard refresh skips the cache and only gets from the API.
 	 */
-	getTickets(filterName:string, isHardRefresh:Boolean=false):void {
+	getTickets(filterName:string, isHardRefresh:Boolean=false): Observable<any> {
 		const {jql, title} = this._getFilterTitleAndJql(filterName);
 		this.title = title;
 
@@ -52,11 +52,7 @@ export class JiraService {
 		params = params.append('fields', this.config.fields);
 		params = params.append('isHardRefresh', isHardRefresh.toString());
 
-		this.dataService.get(`${this.dataService.apiUrl}/jira/tickets`, {params})
-		.subscribe( 
-			(response:APIResponse) => this.store.dispatch({type: Actions.newTickets, payload: response.data}),
-			this.dataService.processErrorResponse.bind(this)
-		);
+		return this.dataService.get(`${this.dataService.apiUrl}/jira/tickets`, {params});
 	}
 
 	/**

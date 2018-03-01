@@ -68,8 +68,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		this.buttonValue = this.validFormValues[0].name;
 		this.placeHolderValue = this.validFormValues[0].placeholder;
 
-		this.userProfile$ = this.store.select('userProfile').subscribe(profile => {
-			if(profile) this.userProfile = profile;
+		this.userProfile$ = this.store.select('userProfile').subscribe((profile:any) => {
+			this.userProfile = profile;
 		});
 	}
 

@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
-import { select, NgRedux } from '@angular-redux/store';
-import { Observable } from 'rxjs/Observable';
+import { NgRedux } from '@angular-redux/store';
 
 import { ProfileService, ToastrService, JiraPingsService, UserService } from '@services';
 import { RootState, Actions } from '@store';
@@ -15,7 +14,6 @@ templateUrl: './user-settings.component.html',
 export class UserSettingsComponent implements OnInit {
 	userSettingsForm: FormGroup;
 	@Input() isLogin:boolean = true;
-	@select('userProfile') getProfile$: Observable<any>;
 
 	constructor(
 		public user: UserService, private jira: JiraPingsService, private toastr: ToastrService, 
@@ -68,12 +66,17 @@ export class UserSettingsComponent implements OnInit {
 	/**
 	 * Gets a user's profile. Saved to Redux and user form is set.
 	 */
+	gotProfile = false;
 	getProfile(){
 		this.profile.getProfile().subscribe(
 			profile => {
 				if(!profile.data) return;
-				this.setUserPings(profile.data.pingSettings);
-				this.store.dispatch({type: Actions.userProfile, payload: profile.data });
+
+				if(!this.gotProfile) {
+					this.gotProfile = true;
+					this.setUserPings(profile.data.pingSettings);
+					this.store.dispatch({type: Actions.userProfile, payload: profile.data });
+				}
 			},
 			this.profile.processErrorResponse.bind(this.profile)
 		);

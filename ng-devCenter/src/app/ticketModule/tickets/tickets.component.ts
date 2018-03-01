@@ -97,7 +97,11 @@ export class TicketsComponent implements OnInit {
 	private getTickets(isHardRefresh:Boolean=false, showLoading:Boolean=false) {
 		if(showLoading) this.loadingTickets = true;
 		this.ngProgress.start();
-		this.jira.getTickets(this.ticketType, isHardRefresh);
+
+		this.jira.getTickets(this.ticketType, isHardRefresh)
+		.subscribe((response:APIResponse) => this.store.dispatch({type: Actions.newTickets, payload: response.data}),
+			this.jira.processErrorResponse.bind(this.jira)
+		);
 	}
 
 	/**
