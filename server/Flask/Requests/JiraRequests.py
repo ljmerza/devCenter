@@ -33,8 +33,9 @@ def set_status(data, jira_obj):
 		return jira_obj.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'qaPass':
 		jira_obj.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
-		jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-		return jira_obj.add_comment(key=data['key'], cred_hash=data['cred_hash'], comment='QA Pass')
+		response = jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
+		response['comment_response'] = jira_obj.add_comment(key=data['key'], cred_hash=data['cred_hash'], comment='QA Pass')
+		return response
 
 	elif data['status_type'] == 'mergeCode':
 		return jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
