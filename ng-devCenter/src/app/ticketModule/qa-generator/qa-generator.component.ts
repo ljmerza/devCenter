@@ -24,6 +24,8 @@ export class QaGeneratorComponent implements OnInit {
 	customModalCss = 'qaGen';
 	repos:Array<Repo>;
 	repos$;
+	defaultLogTime = {hour: 0, minute: 0};
+	defaultPcrNeeded = true;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	modalRef: NgbModalRef;
@@ -38,8 +40,8 @@ export class QaGeneratorComponent implements OnInit {
 		  // create form object
 		this.qaForm = this.formBuilder.group({
 			selections: this.formBuilder.group({
-				pcrNeeded: this.formBuilder.control(true),
-				logTime: this.formBuilder.control({hour: 0, minute: 0}),
+				pcrNeeded: this.formBuilder.control(this.defaultPcrNeeded),
+				logTime: this.formBuilder.control(this.defaultLogTime),
 			}),
 			qaSteps: this.formBuilder.control(''),
 			branches: this.formBuilder.array([])
@@ -128,10 +130,9 @@ export class QaGeneratorComponent implements OnInit {
 
 		this.jira.generateQA(postData).subscribe(
 			response => {
-				console.log('response: ', response);
-				console.log('postData: ', postData);
 				this.showQaSubmitSuccessMessage(response);
 				this.checkForStateChange(postData, response.data);
+				this._resetForm();
 			},
 			error => {
 				this.jira.processErrorResponse(error);
@@ -141,14 +142,26 @@ export class QaGeneratorComponent implements OnInit {
 	}
 
 	/**
-	*/
+	 * Resets forms fields to default values
+	 */
+	_resetForm(){
+		this.qaForm.get('selections').get('pcrNeeded').setValue(this.defaultPcrNeeded);
+		this.qaForm.get('selections').get('logTime').setValue(this.defaultLogTime);
+		this.qaForm.get('qaSteps').reset();
+	}
+
+	/**
+	 * Sets ticket status back to in dev and shows cancel toast
+	 */
 	cancelStatusChange(){
 		this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: STATUSES.INDEV }});
 		this.toastr.showToast(`Ticket ${this.key} status cancelled.`, 'info');
 	}
 
 	/**
-	*/
+	 * Creates toast message on what is being processed on ticket from form values entered.
+	 * @param {Object} postData
+	 */
 	showSubmitMessage(postData):void {
 		// create info message based on form selections
 		let message = [];
@@ -169,7 +182,7 @@ export class QaGeneratorComponent implements OnInit {
 		const selections = this.qaForm.controls.selections.controls;
 		const branches = this.qaForm.controls.branches.controls
 
-		let postData = {
+		return {
 			qa_steps: this.qaForm.controls.qaSteps.value,
 			log_time: selections.logTime.value.hour * 60 + selections.logTime.value.minute,
 			autoPCR: selections.pcrNeeded.value,
@@ -183,8 +196,6 @@ export class QaGeneratorComponent implements OnInit {
 				}
 			}),
 		};
-
-		return postData;
 	}
 
 	/**
@@ -204,14 +215,17 @@ export class QaGeneratorComponent implements OnInit {
 	 * @param {Object} responseData the data in the response from the QA generator endpoint.
 	 */
 	checkForStateChange(postData, responseData):void {
+		console.log('postData, responseData: ', postData, responseData);
 
 		if(responseData.comment_response.status) {
 			this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});
 		}
 
-		// check for status changes okay
+		// check for status changes okay - if status change came back success then set to pcr needed
+		// else if status change error and we did try to change status then show error
+		let status = STATUSES.INDEV;
 		if(responseData.cr_response.status && responseData.pcr_response.status) {
-			// this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: STATUSES.PCRNEED }});
+			status = STATUSES.PCRNEED;
 		} else if(postData.autoPCR){
 			// if we wanted PCR and we got here then there was a failure
 			const cr_message = responseData.cr_response.status ? '' : 'Code Review status change';
@@ -219,8 +233,11 @@ export class QaGeneratorComponent implements OnInit {
 			this.toastr.showToast('error', 'The following transitions failed: ${cr_message} ${pcr_message}');
 		}
 
+		this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status }});
+
+		// add crucible id if given
 		if(responseData.cru_response.status) {
-			// this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: responseData.cru_response.data }});
+			this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: responseData.cru_response.data }});
 		}
 	}
 
@@ -230,11 +247,27 @@ export class QaGeneratorComponent implements OnInit {
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
 
+		// set dismiss event to trigger status cancel
+		this.modalRef.result.then(
+    		() => null,
+    		() => {
+    			this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status:STATUSES.INDEV}});
+    			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
+    		}
+    	);
+
 		// if we already have branches then don't reload them
 		if( (this.qaForm.get('branches') as FormArray).length > 0 ) {
 			return;
 		}
 
+		this.getTicketBranches();
+	}
+
+	/**
+	 *
+	 */
+	getTicketBranches(){
 		this.loadingBranches = true;
 		this.cd.detectChanges();
 
@@ -256,11 +289,10 @@ export class QaGeneratorComponent implements OnInit {
 	/*
 	*/
 	processBranches(branches): void {
-
-		branches.forEach( (repo, index) => {
-
+		branches.forEach(repo => {
+			
 			// for each matching dev branch found get list of branches
-			const newBranch = repo.branches.map( devBranch => {
+			repo.branches.map( devBranch => {
 				let baseBranch;
 				if(repo.repo === 'external_modules') baseBranch = ['dev'];
 				else baseBranch = this.getBaseBranch(repo.all);
@@ -272,9 +304,8 @@ export class QaGeneratorComponent implements OnInit {
 					reviewedBranch: devBranch,
 					baseBranch: baseBranch.length == 1 ? baseBranch[0] : ''
 				};
-			})[0];
-
-			this.addBranch(newBranch);
+			})
+			.forEach(this.addBranch.bind(this));
 		});
 	}
 
@@ -290,7 +321,6 @@ export class QaGeneratorComponent implements OnInit {
 			.sort();
 
 		// get branch short branch name that has highest version found
-		return repos
-			.filter( branch => branch.length < 15 && branch.includes(selections[selections.length-1]));
+		return repos.filter( branch => branch.length < 15 && branch.includes(selections[selections.length-1]));
 	}
 }

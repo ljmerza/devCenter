@@ -62,8 +62,6 @@ export class TicketComponent implements OnInit, OnDestroy {
 	/**
 	*/
 	openAdditionalDataModal(){
-
-		// create modal if doesn't exist
 		if(!this.detailsComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketDetailsComponent);
 	    	this.detailsComponentRef = this.viewContRef.createComponent(factory);
@@ -90,7 +88,6 @@ export class TicketComponent implements OnInit, OnDestroy {
 	/**
 	*/
 	openPingModel() {
-		// create modal if doesn't exist
 		if(!this.pingComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(SetPingsComponent);
 	    	this.pingComponentRef = this.viewContRef.createComponent(factory);
@@ -99,38 +96,28 @@ export class TicketComponent implements OnInit, OnDestroy {
 	    	(<SetPingsComponent>this.pingComponentRef.instance).branch = this.ticket.branch;
 	    	(<SetPingsComponent>this.pingComponentRef.instance).commit = this.ticket.commit;
 		}
-		
-		// open modal
     	(<SetPingsComponent>this.pingComponentRef.instance).openPingModel();
 	}
 
 	/**
 	*/
 	openModal() {
-		// create modal if doesn't exist
 		if(!this.commentComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketCommentsModalComponent);
 	    	this.commentComponentRef = this.viewContRef.createComponent(factory);
 	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).key = this.ticket.key;
 		}
-		
-		// open modal on next event loop to allow inputs to settle
     	(<TicketCommentsModalComponent>this.commentComponentRef.instance).openModal();
 	}
 
 	/**
 	*/
 	openLogModal() {
-		// create modal if doesn't exist
 		if(!this.worklogComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketLogComponent);
 	    	this.worklogComponentRef = this.viewContRef.createComponent(factory);
-
-	    	// add input/outputs
 	    	(<TicketLogComponent>this.worklogComponentRef.instance).key = this.ticket.key;
 		}
-		
-		// open modal
     	(<TicketLogComponent>this.worklogComponentRef.instance).openLogModal();
 	}
 }

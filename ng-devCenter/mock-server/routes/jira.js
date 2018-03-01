@@ -498,6 +498,30 @@ router.get('/tickets', function(req, res, next) {
 	});
 });
 
-
+router.post('/status', function(req, res, next) {
+	res.json({
+		status: true,
+		comment_response: {
+			data: {
+				comment: `<p>${req.body.comment}</p>`, 
+				raw_comment: req.body.comment,
+				id: "898944",
+				key: req.body.key,
+				username: "tu1234",
+				email: "tu1234@test.com",
+				display_name: "User, Test (tu1234)",
+				comment_type: "info",
+				created: "2025-02-14T20:27:30.115+0000",
+				updated: "2025-02-14T20:27:30.115+0000",
+				isEditing: false, 
+				closeText: "Edit Comment",
+				editId: "E358843",
+				visibility: "Developers"
+			},
+			status: true
+		},
+		data: {}
+	});
+});
 
 module.exports = router;

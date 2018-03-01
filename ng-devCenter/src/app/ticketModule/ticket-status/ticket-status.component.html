@@ -5,3 +5,25 @@
 			{{state.name}}
 	</option>
 </select>
+
+
+<dev-center-modal (modalEvent)=closeStatusModal($event)>
+	<div class='modal-text'>
+		<h4 class="modal-title">Status change to '{{statusName}}'</h4>
+	</div>
+
+	<span class='modal-body'>
+		<p>Would you like change {{key}} to '{{statusName}}'?</p>
+	</span>
+
+	<span class='modal-footer'>
+		<button type="button" class="btn btn-outline-primary" 
+		(click)="closeStatusModal(true)">
+			Change to {{statusName}}
+		</button>
+		<button type="button" class="btn btn-outline-danger" 
+		(click)="closeStatusModal()">
+			Cancel
+		</button>
+	</span>
+</dev-center-modal>

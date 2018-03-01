@@ -25,10 +25,7 @@
 </td>
 
 <!-- state dropdown -->
-<td>
-	<dc-ticket-status [ticketStatus]=ticket.status [ticketKey]=ticket.key [ticketMsrp]=ticket.msrp [ticketCrucible]=ticket.crucible_id>
-	</dc-ticket-status>
-</td>
+<td><dc-ticket-status [key]=ticket.key [msrp]=ticket.msrp></dc-ticket-status></td>
 
 <!-- dates -->
 <td>{{ticket.dates.started | amDateFormat:'LL'}}</td>

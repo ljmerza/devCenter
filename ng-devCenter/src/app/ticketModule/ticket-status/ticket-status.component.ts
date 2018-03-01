@@ -1,94 +1,104 @@
 import { 
-	Component, Input, Output, ViewContainerRef, EventEmitter, ChangeDetectorRef,
-	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy, OnChanges
+	Component, Input, Output, ViewContainerRef, EventEmitter, ChangeDetectorRef, SimpleChanges,
+	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy, OnChanges, ViewChild
 } from '@angular/core';
 
+import { select, NgRedux } from '@angular-redux/store';
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
-import { StatusModalComponent } from './../status-modal/status-modal.component';
-import { ToastrService } from '@services';
+
+import { ToastrService, JiraService } from '@services';
+import { ModalComponent } from '@modal';
+import { RootState, Actions } from '@store';
+import { STATUSES, Ticket, APIResponse } from '@models';
 
 @Component({
 	selector: 'dc-ticket-status',
 	templateUrl: './ticket-status.component.html',
 	styleUrls: ['./ticket-status.component.scss'],
-	entryComponents: [StatusModalComponent, QaGeneratorComponent],
+	entryComponents: [QaGeneratorComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TicketStatusComponent implements OnInit, OnChanges {
-	ticketStates = [];
+export class TicketStatusComponent implements OnInit {
+	ticketStates:Array<any> = [];
 	ticketDropdown;
 	qaComponentRef;
 	statusComponentRef;
+	status$;
+	statusType: string;
+	statusName: string;
+	modalRef: NgbModalRef;
+	ticketStatus;
 
-	@Input() ticketStatus;
-	@Input() ticketKey;
-	@Input() ticketMsrp;
-	@Input() ticketCrucible;
-
-	ngOnInit() {
-		this.validateTransitions();
-	}
+	@Input() key;
+	@Input() msrp;
+	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(
-		private factoryResolver: ComponentFactoryResolver, private cd: ChangeDetectorRef,
-		private viewContRef: ViewContainerRef, private toastr: ToastrService
+		private factoryResolver: ComponentFactoryResolver, private cd: ChangeDetectorRef, private store:NgRedux<RootState>,
+		private viewContRef: ViewContainerRef, private toastr: ToastrService, private jira: JiraService
 	) { }
 
 	/**
-	*/
-	ngOnChanges(changes){
-		const status = changes.ticketStatus;
-		if(status && status.currentValue != status.previousValue){
-			this.cd.detectChanges();
+	 * Watch for changes in the ticket's status in redux.
+	 */
+	ngOnInit() {
+		this.status$ = this.store.select('statuses')
+		.subscribe((allTickets:Array<any>) => {
+			this.ticketStatus = allTickets.find(ticket => ticket.key === this.key).status;
 			this.validateTransitions();
-		}
+			this.cd.detectChanges();
+		});
 	}
 
-	/*
-	*/
+	/**
+	 * Unsubscribe from any subscriptions before component exit.
+	 */
+	ngOnDestory(){
+		if(this.status$) this.status$.unsubscribe();
+	}
+
+	/**
+	 *Checks for the type of ticket status change and triggers the QA generator or status modal.
+	 * @param {} ticketDropdown
+ 	 */
 	stateChange(ticketDropdown){
 		// save select element reference and old status
 		this.ticketDropdown = ticketDropdown;
 
-		// if pcr needed - create QA gen if needed then open QA gen
 		if(ticketDropdown.value == 'pcrNeeded'){
-
 			this.openQAModal();
 		} else {
 			this.openStatusModal(ticketDropdown);
 		}	
 	}
 
-	statusChange({showMessage=true, cancelled=true, statusName=''}):void {
+	/**
+	 * updates or cancels a ticket's status and validates it's transitions.
+	 * @param {boolean} cancelled
+	 * @param {string} statusName
+	 */
+	statusChange({cancelled=true, statusName=''}):void {
+		let ticketStateFilter;
 
 		// if we are canceling a status then reset dropdown
 		if(cancelled){
-			const ticketState = this.ticketStates.filter(state => state.name == this.ticketStatus);
-			this.ticketDropdown.value = ticketState[0].id;
-			
+			ticketStateFilter = state => state.name == this.ticketStatus
 		} else if(statusName) {
 			// if given the status then set status at that
-			const ticketState = this.allTransistions.filter(state => state.name == statusName);
-			this.ticketStatus = ticketState[0].name;
-
+			ticketStateFilter = state => state.name == statusName;
 		} else {
 			// else set ticket state with new dropdown value and reload valid transitions
-			const ticketState = this.allTransistions.filter(state => state.id == this.ticketDropdown.value);
-			this.ticketStatus = ticketState[0].name;
+			ticketStateFilter = state => state.id == this.ticketDropdown.value;
 		}
 
-		this.validateTransitions();
-
-		if(showMessage){
-			this.toastr.showToast(`Ticket status change cancelled for ${this.ticketKey}`, 'info');
-		}
+		const status = this.ticketStates.find(ticketStateFilter).name;
+		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.key, status} });
 	}
 
 	/**
 	*/
 	validateTransitions() {
-
-		// set valid transitions
 		if(['In Sprint','On Hold'].includes(this.ticketStatus)){
 			this.ticketStates = this.allTransistions.filter(state => ['In Development'].includes(state.name));
 		} else if(this.ticketStatus === 'In Development'){
@@ -136,13 +146,12 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 		
 		} else if(['Ready for Release'].includes(this.ticketStatus)){
 			this.ticketStates = [];
-		
 		} else {
 			this.ticketStates = this.allTransistions;
 		}
 
 		// if current status not in list of statues then add to beginning
-		if( !(this.ticketStates.filter(state => state.name == this.ticketStatus).length > 0)){
+		if( !(this.ticketStates.find(state => state.name == this.ticketStatus) )){
 			this.ticketStates.unshift({name: this.ticketStatus, id: ''});
 		}
 
@@ -173,28 +182,6 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 
 	/**
 	*/
-	openStatusModal(ticketDropdown){
-		// get ticket state info and open status modal
-		const ticketState = this.ticketStates.filter(state => state.id == ticketDropdown.value);
-
-		// create QA gen component if not created yet
-		if(!this.statusComponentRef) {
-			const factory = this.factoryResolver.resolveComponentFactory(StatusModalComponent);
-	    	this.statusComponentRef = this.viewContRef.createComponent(factory);
-
-	    	// add input/outputs
-	    	(<StatusModalComponent>this.statusComponentRef.instance).key = this.ticketKey;
-	    	(<StatusModalComponent>this.statusComponentRef.instance).crucible_id = this.ticketCrucible;
-	    	(<StatusModalComponent>this.statusComponentRef.instance)
-	    		.statusChange.subscribe($event => this.statusChange($event));
-		}
-		
-		// open modal
-    	(<StatusModalComponent>this.statusComponentRef.instance).openStatusModal(ticketState[0].id, ticketState[0].name);
-	}
-
-	/**
-	*/
 	openQAModal(){
 		// create QA gen component if not created yet
 		if(!this.qaComponentRef) {
@@ -202,13 +189,69 @@ export class TicketStatusComponent implements OnInit, OnChanges {
 	    	this.qaComponentRef = this.viewContRef.createComponent(factory);
 
 	    	// add input/outputs
-	    	(<QaGeneratorComponent>this.qaComponentRef.instance).key = this.ticketKey;
-	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.ticketMsrp;
+	    	(<QaGeneratorComponent>this.qaComponentRef.instance).key = this.key;
+	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.msrp;
 		}
 		
 		// open modal
     	(<QaGeneratorComponent>this.qaComponentRef.instance).openQAModal();
 
+	}
+
+	/**
+	*/
+	openStatusModal(ticketDropdown): void {
+		const ticketState = this.ticketStates.find(state => state.id == ticketDropdown.value);
+
+		// save transition data for modal then open model
+		this.statusType = ticketState.id
+		this.statusName = ticketState.name;
+		this.modalRef = this.modal.openModal();
+
+		// set dismiss event to trigger status cancel
+		this.modalRef.result.then(
+    		() => null,
+    		() => {
+    			this.statusChange({});
+    			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
+    		}
+    	)
+	}
+
+	/**
+	 * close status change modal and trigger a status change if confirmed
+	 * @param {boolean} submit do we submit a status change event?
+	 */
+	closeStatusModal(submit:boolean=false): void{
+
+		if(submit && this.statusType === 'complete'){
+			this.changeStatus('pcrPass');
+			this.changeStatus('pcrComplete');
+		} else if(submit){
+			this.changeStatus(this.statusType);
+		} else {
+			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
+			this.statusChange({});
+		}
+
+		this.modalRef.close();	
+	}
+
+	/**
+	*/
+	changeStatus(statusType:string): void {
+		this.jira.changeStatus({key:this.key, statusType})
+		.subscribe(
+			() => {
+				this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
+				this.statusChange({cancelled: false});
+			},
+			error => {
+				this.jira.processErrorResponse(error);
+				this.statusChange({});
+				this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
+			}
+		);
 	}
 
 }
