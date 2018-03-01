@@ -45,7 +45,6 @@ export class TicketStatusComponent implements OnInit {
 	ngOnInit() {
 		this.status$ = this.store.select('statuses')
 		.subscribe((allTickets:Array<any>) => {
-			console.log('this.key: ', this.key, allTickets);
 			this.ticketStatus = allTickets.find(ticket => ticket.key === this.key).status;
 			this.validateTransitions();
 			this.cd.detectChanges();
