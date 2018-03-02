@@ -1,28 +1,15 @@
-<!-- key -->
-<td>
-	<div class='float-left'>
-		<a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira'>{{ticket.key}}</a>
-	</div>
-	<div class="float-right">
-		<i (click)="openPingModel()" class="material-icons success" title='Branch Information'>record_voice_over</i>
-	</div>
-</td>
+<td><a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira'>{{ticket.key}}</a></td>
+<td>{{ticket.msrp}}</td>
 
-<!-- msrp -->
 <td>
-	<div class='float-left'>{{ticket.msrp}}</div>
-	<div class="float-right">
-		<i (click)="openLogModal()" class="material-icons success" title='Add comment/time log'>alarm_add</i>
-		<i (click)="openModal()" class="material-icons success"title='View comments'>storage</i>
-	</div>
+	<i (click)="openPingModel()" class="material-icons success" title='Branch Information'>record_voice_over</i>
+	<i (click)="openLogModal()" class="material-icons success" title='Add comment/time log'>alarm_add</i>
+	<i (click)="openModal()" class="material-icons success"title='View comments'>storage</i>
+	<i class="material-icons success" title='View Additional Data' (click)="openAdditionalDataModal()">live_help</i>
 </td>
 
 <!-- summary -->
-<td class='summary-format'>
-	<i class="material-icons success" title='View Additional Data' 
-	(click)="openAdditionalDataModal()">live_help</i>
-	{{ticket.summary}}
-</td>
+<td class='summary-format'>{{ticket.summary}}</td>
 
 <!-- state dropdown -->
 <td><dc-ticket-status [key]=ticket.key [msrp]=ticket.msrp></dc-ticket-status></td>
@@ -35,11 +22,6 @@
 <td>{{ticket.dates.updated | amDateFormat:'LL'}}</td>
 <td>{{ticket.dates.created | amDateFormat:'LL'}}</td>
 
-<!-- cru id -->
 <td><dc-crucible [key]=key></dc-crucible></td>
-
-<!-- user data -->
 <td><dc-user-details [msrp]=ticket.msrp [user]=ticket.user_details></dc-user-details></td>
-
-<!-- customer data -->
 <td><dc-user-details [msrp]=ticket.msrp [user]=ticket.customer_details></dc-user-details></td>

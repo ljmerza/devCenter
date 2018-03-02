@@ -1,6 +1,6 @@
 <div>
 	<img src="http://presence.q.att.com/presence/{{user?.username}}.gif">
-	<a [href]="misc.chatUrlSanitize(user?.username)" title="Open chat with {{user?.display_name}}">
+	<a [href]="misc.urlSanitize(user?.username)" title="Open chat with {{user?.display_name}}">
 		{{user?.username}}
 	</a>
 </div>

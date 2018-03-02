@@ -8,16 +8,20 @@ export class MiscService {
 
 	constructor(private sanitizer:DomSanitizer, private config:ConfigService) { }
 
-  	/*
-	*/
-	copyText(text){
-		text.select();
+  	/**
+  	 * adds text to clipboard
+  	 *@param {HtmlElement} inputElement input to grap text to copy from
+	 */
+	copyText(inputElement){
+		inputElement.select();
 		document.execCommand("copy");
 	}
 
-	/*
-	*/
-	public chatUrlSanitize(username:string): SafeUrl {
+	/**
+	 * creates an unsanitized chat URL
+	 * @param {string} username
+	 */
+	public urlSanitize(username:string): SafeUrl {
 		return this.sanitizer.bypassSecurityTrustUrl(`${this.config.chatUrl}/${username}`)
 	}
 }

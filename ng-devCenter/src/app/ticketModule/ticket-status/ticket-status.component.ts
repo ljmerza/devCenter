@@ -80,7 +80,11 @@ export class TicketStatusComponent implements OnInit {
 
 		this.crucibleId$ = this.store.select('crucibleIds')
 		.subscribe((allTickets:Array<any>) => {
-			this.crucibleId = allTickets.find(ticket => ticket.key === this.key).crucibleId;
+			const ticket = allTickets.find(ticket => ticket.key === this.key);
+			if(ticket){
+				this.crucibleId = ticket.crucibleId;
+				this.cd.detectChanges();
+			}
 		});
 	}
 

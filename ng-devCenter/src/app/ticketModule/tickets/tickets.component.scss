@@ -105,7 +105,8 @@ div.dt-button-collection{
 
 .summary-format {
 	word-break: break-all;
-	max-width: 300px;
+	min-width: 300px;
+	max-width: 500px;
 }
 
 table.dataTable {	

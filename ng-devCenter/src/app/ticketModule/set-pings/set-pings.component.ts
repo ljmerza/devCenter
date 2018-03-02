@@ -1,7 +1,7 @@
 import { Component, Input, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from './../../shared/modal/modal.component';
-import { ToastrService, JiraPingsService } from '@services';
+import { ToastrService, JiraPingsService, MiscService } from '@services';
 
 @Component({
 	selector: 'dc-set-pings',
@@ -19,7 +19,7 @@ export class SetPingsComponent {
 	modalInstance: NgbModalRef;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
-	constructor(private toastr: ToastrService, private jira: JiraPingsService, private cd: ChangeDetectorRef){}
+	constructor(private toastr: ToastrService, private jira: JiraPingsService, private cd: ChangeDetectorRef, private misc: MiscService){}
 
 	/**
 	 * opens the model for ths user to send a ping. 

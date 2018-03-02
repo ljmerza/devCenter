@@ -24,8 +24,12 @@ export class CrucibleComponent {
 	ngOnInit(){
 		this.crucibleId$ = this.store.select('crucibleIds')
 		.subscribe((allTickets:any) => {
-			this.crucibleId = allTickets.find(ticket => ticket.key === this.key).crucibleId;
-			this.cd.detectChanges();
+			const ticket = allTickets.find(ticket => ticket.key === this.key);
+			if(ticket){
+				this.crucibleId = ticket.crucibleId;
+				this.cd.detectChanges();
+			}
+			
 		});
 	}
 
@@ -37,13 +41,20 @@ export class CrucibleComponent {
 	}
 
 	/**
-	* Adds the currently logged in user as a reviewer to the Crucible review.
+	* Adds the currently logged in user as a reviewer to the Crucible review. 
+	* Always open crucible even if reviewer add fails.
+	* @return {boolean} returns false to stop bubbling
 	*/
-	addReviewer():void {
+	addReviewer():boolean {
   		this.jira.changeStatus({key:this.key, statusType:'pcrAdd', crucible_id:this.crucibleId})
-		.subscribe(
-			() => window.open(`${this.config.crucibleUrl}/cru/${this.crucibleId}`, '_blank').focus(),
-			this.jira.processErrorResponse.bind(this.jira)
-		);
+		.subscribe(this.openCrucible.bind(this), this.openCrucible.bind(this));
+		return false;
+	}
+
+	/**
+	 * Opens crucible review in new window.
+	 */
+	openCrucible(){
+		window.open(`${this.config.crucibleUrl}/cru/${this.crucibleId}`, '_blank').focus();
 	}
 }
