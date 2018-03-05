@@ -32,9 +32,9 @@ export class TicketsComponent implements OnInit {
 	dtOptions = {
 		order: [[4, 'desc']],
 		columnDefs: [
-			{targets: [8,9], visible: false},
-			{targets: 3, width: '10%'},
-			{targets: [4,5,8,9], type: 'date'}
+			{targets: [9,10], visible: false},
+			{targets: 4, width: '10%'},
+			{targets: [6,8,9,10], type: 'date'}
 		],
 		dom: `
 			<'row'<'col-sm-12'Bfl>>
