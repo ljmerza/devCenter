@@ -3,6 +3,7 @@ import { NgRedux } from '@angular-redux/store';
 
 import { Actions, RootState } from '@store';
 import { JiraService, ToastrService, ConfigService } from '@services';
+import { statuses } from '@models';
 
 @Component({
 	selector: 'dc-crucible',
@@ -46,7 +47,7 @@ export class CrucibleComponent {
 	* @return {boolean} returns false to stop bubbling
 	*/
 	addReviewer():boolean {
-  		this.jira.changeStatus({key:this.key, statusType:'pcrAdd', crucible_id:this.crucibleId})
+  		this.jira.changeStatus({key:this.key, statusType:statuses.PCRADD.backend, crucible_id:this.crucibleId})
 		.subscribe(this.openCrucible.bind(this), this.openCrucible.bind(this));
 		return false;
 	}

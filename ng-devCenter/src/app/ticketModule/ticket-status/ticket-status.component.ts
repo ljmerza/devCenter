@@ -1,6 +1,6 @@
 import { 
 	Component, Input, Output, ViewContainerRef, EventEmitter, ChangeDetectorRef, SimpleChanges,
-	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy, OnChanges, ViewChild
+	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy, OnChanges, ViewChild, OnDestroy
 } from '@angular/core';
 
 import { select, NgRedux } from '@angular-redux/store';
@@ -19,7 +19,7 @@ import { statuses, Ticket, APIResponse } from '@models';
 	entryComponents: [QaGeneratorComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TicketStatusComponent implements OnInit {
+export class TicketStatusComponent implements OnInit, OnDestroy {
 	ticketStates:Array<any> = [];
 
 	ticketDropdown;
@@ -73,9 +73,12 @@ export class TicketStatusComponent implements OnInit {
 	ngOnInit() {
 		this.status$ = this.store.select('statuses')
 		.subscribe((allTickets:Array<any>) => {
-			this.ticketStatus = allTickets.find(ticket => ticket.key === this.key).status;
-			this.validateTransitions();
-			this.cd.detectChanges();
+			const ticket = this.ticketStatus = allTickets.find(ticket => ticket.key === this.key);
+			if(ticket){
+				this.ticketStatus = ticket.status;
+				this.validateTransitions();
+			}
+			
 		});
 
 		this.crucibleId$ = this.store.select('crucibleIds')
@@ -91,7 +94,7 @@ export class TicketStatusComponent implements OnInit {
 	/**
 	 * Unsubscribe from any subscriptions before component exit.
 	 */
-	ngOnDestory(){
+	ngOnDestroy(){
 		if(this.status$) this.status$.unsubscribe();
 		if(this.crucibleId$) this.crucibleId$.unsubscribe();
 	}

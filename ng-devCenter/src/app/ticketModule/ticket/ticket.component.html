@@ -1,7 +1,7 @@
 <td><a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira'>{{ticket.key}}</a></td>
 <td>{{ticket.msrp}}</td>
 
-<td>
+<td class='actions-td'>
 	<i (click)="openPingModel()" class="material-icons success" title='Branch Information'>record_voice_over</i>
 	<i (click)="openLogModal()" class="material-icons success" title='Add comment/time log'>alarm_add</i>
 	<i (click)="openModal()" class="material-icons success"title='View comments'>storage</i>
@@ -9,7 +9,7 @@
 </td>
 
 <!-- summary -->
-<td class='summary-format'>{{ticket.summary}}</td>
+<td class='summary-td'>{{ticket.summary}}</td>
 
 <!-- state dropdown -->
 <td><dc-ticket-status [key]=ticket.key [msrp]=ticket.msrp></dc-ticket-status></td>

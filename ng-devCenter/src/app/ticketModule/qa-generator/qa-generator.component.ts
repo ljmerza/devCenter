@@ -1,4 +1,7 @@
-import { Component, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, ChangeDetectionStrategy, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { 
+	Component, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, 
+	ChangeDetectionStrategy, OnInit, EventEmitter, Output, Input, OnDestroy
+} from '@angular/core';
 import { NgForm, FormGroup, FormControl, Validators, FormBuilder, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
 import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable, Subscription } from 'rxjs';
@@ -16,7 +19,7 @@ import { statuses, Repo, Ticket, APIResponse } from '@models';
 	encapsulation: ViewEncapsulation.None,
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class QaGeneratorComponent implements OnInit {
+export class QaGeneratorComponent implements OnInit, OnDestroy {
 	loadingBranches:boolean = false; // are we loading branches?
 	qaForm;
 	hourStep = 1;
@@ -58,7 +61,7 @@ export class QaGeneratorComponent implements OnInit {
 	/**
 	 * Unsubscribe from any subscriptions before component exit.
 	 */
-	ngOnDestory(){
+	ngOnDestroy(){
 		if(this.repos$) this.repos$.unsubscribe();
 	}
 	
@@ -215,8 +218,6 @@ export class QaGeneratorComponent implements OnInit {
 	 * @param {Object} responseData the data in the response from the QA generator endpoint.
 	 */
 	checkForStateChange(postData, responseData):void {
-		console.log('postData, responseData: ', postData, responseData);
-
 		if(responseData.comment_response.status) {
 			this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});
 		}

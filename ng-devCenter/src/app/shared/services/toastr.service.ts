@@ -12,10 +12,14 @@ export class ToastrService {
 		toastLife: 5000
 	};
 
-
-	/*
-	*/
-	public showToast(message:string, message_type:string, sticky=false, toastLife=0): void {
+	/**
+	 * 
+	 * @param {string} message the message to show in the toast
+	 * @param {string} message_type error, success, or info (error default)
+	 * @param {boolean} sticky default false do we make toast sticky?
+	 * @param {number} toastLife default 5000 ms
+	 */
+	public showToast(message:string, message_type:string, sticky:boolean=false, toastLife:number=0): void {
 		let toastrOptions = {...this.toastrOptions};
 
 		// set custom life of the toast if geiven
