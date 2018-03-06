@@ -1,6 +1,6 @@
 import { Ticket, Comment, Repo } from '@models';
 
-import { addComment, deleteComment, editComment, updateStatus, updateCrucible } from './reducers';
+import { addComment, deleteComment, editComment, updateStatus, updateCrucible, updateWorklog } from './reducers';
 
 import { Actions } from './actions';
 
@@ -47,6 +47,9 @@ export function rootReducer(state, action){
 			return updateStatus(state, action.payload);
 		case Actions.updateCrucible:
 			return updateCrucible(state, action.payload);
+
+		case Actions.updateWorklog:
+			return updateWorklog(state, action.payload);
 
 		default:
 			return state;

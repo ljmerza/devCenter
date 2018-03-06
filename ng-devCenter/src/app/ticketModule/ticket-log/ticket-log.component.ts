@@ -80,7 +80,9 @@ export class TicketLogComponent	{
 
 		// check for work log response
 		if(responseData.log_response.status){
-			// this.store.dispatch({ type: Actions.workLog, payload: responseData.log_response });	
+			const payload = {key: this.key, loggedSeconds: responseData.log_response.data.timeSpentSeconds};
+			this.store.dispatch({ type: Actions.updateWorklog, payload });	
+
 		} else if(responseData.log_response.status === false && postData.log_time){
 			errorMessage += responseData.comment_response.data;
 		}
