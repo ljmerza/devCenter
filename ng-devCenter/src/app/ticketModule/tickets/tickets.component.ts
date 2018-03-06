@@ -27,7 +27,7 @@ export class TicketsComponent implements OnInit {
 
 	@select('tickets') getTickets$: Observable<Array<Ticket>>;
 	@select('repos') getRepos$: Observable<Array<Repo>>;
-	getReposSub$;
+	getTicketsSub$;
 
 	dtOptions = {
 		order: [[4, 'desc']],
@@ -73,6 +73,7 @@ export class TicketsComponent implements OnInit {
 			this.getTickets$.subscribe(this.processTickets.bind(this));
 
 			this.route.paramMap.subscribe(params => {
+				if(this.getTicketsSub$) this.getTicketsSub$.unsubscribe();
 				this.ticketType = params.get('filter') || 'mytickets';
 				this.getTickets(true, true);
 			});
@@ -98,7 +99,7 @@ export class TicketsComponent implements OnInit {
 		if(showLoading) this.loadingTickets = true;
 		this.ngProgress.start();
 
-		this.jira.getTickets(this.ticketType, isHardRefresh)
+		this.getTicketsSub$ = this.jira.getTickets(this.ticketType, isHardRefresh)
 		.subscribe((response:APIResponse) => this.store.dispatch({type: Actions.newTickets, payload: response.data}),
 			this.jira.processErrorResponse.bind(this.jira)
 		);

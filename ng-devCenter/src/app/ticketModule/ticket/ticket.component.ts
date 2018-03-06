@@ -57,7 +57,7 @@ export class TicketComponent implements OnInit, OnDestroy {
 		this.ticketdates$ = this.store.select('dates')
 		.subscribe((allTickets:any) => {
 			this.ticketDates = allTickets.find(ticket => ticket.key === this.key);
-			this.cd.detectChanges();
+			// this.cd.detectChanges();
 		});
 	}
 

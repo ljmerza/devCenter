@@ -77,7 +77,7 @@ function addTickets(state, allTickets){
 	});
 
 	const tickets = allTickets.map(ticket => { 
-		delete ticket.dates;
+		// delete ticket.dates;
 		delete ticket.comments; 
 		delete ticket.statuses; 
 		delete ticket.crucible_id; 

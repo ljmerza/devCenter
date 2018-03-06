@@ -1,5 +1,5 @@
-<td><a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira'>{{ticket.key}}</a></td>
-<td>{{ticket.msrp}}</td>
+<td><a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket?.key}}" title='Open in Jira'>{{ticket?.key}}</a></td>
+<td>{{ticket?.msrp}}</td>
 
 <td class='actions-td'>
 	<i (click)="openPingModel()" class="material-icons success" title='Branch Information'>record_voice_over</i>
@@ -9,19 +9,19 @@
 </td>
 
 <!-- summary -->
-<td class='summary-td'>{{ticket.summary}}</td>
+<td class='summary-td'>{{ticket?.summary}}</td>
 
 <!-- state dropdown -->
-<td><dc-ticket-status [key]=ticket.key [msrp]=ticket.msrp></dc-ticket-status></td>
+<td><dc-ticket-status [key]=ticket?.key [msrp]=ticket?.msrp></dc-ticket-status></td>
 
 <!-- dates -->
-<td class='dates-td'>{{ticketDates.dates.started | amDateFormat:'LL'}}</td>
-<td class='dates-td'>{{ticketDates.dates.duedate | amDateFormat:'LL'}}</td>
-<td class='dates-td'><dc-ticket-dates [datetime]=ticketDates.dates.estimate_seconds></dc-ticket-dates></td>
-<td class='dates-td'><dc-ticket-dates [datetime]=ticketDates.dates.logged_seconds></dc-ticket-dates></td>
-<td class='dates-td'>{{ticketDates.dates.updated | amDateFormat:'LL'}}</td>
-<td class='dates-td'>{{ticketDates.dates.created | amDateFormat:'LL'}}</td>
+<td class='dates-td'>{{ticketDates?.dates?.started | amDateFormat:'LL'}}</td>
+<td class='dates-td'>{{ticketDates?.dates?.duedate | amDateFormat:'LL'}}</td>
+<td class='dates-td'><dc-ticket-dates [datetime]=ticketDates?.dates?.estimate_seconds></dc-ticket-dates></td>
+<td class='dates-td'><dc-ticket-dates [datetime]=ticketDates?.dates?.logged_seconds></dc-ticket-dates></td>
+<td class='dates-td'>{{ticketDates?.dates?.updated | amDateFormat:'LL'}}</td>
+<td class='dates-td'>{{ticketDates?.dates?.created | amDateFormat:'LL'}}</td>
 
 <td><dc-crucible [key]=key></dc-crucible></td>
-<td><dc-user-details [msrp]=ticket.msrp [user]=ticket.user_details></dc-user-details></td>
-<td><dc-user-details [msrp]=ticket.msrp [user]=ticket.customer_details></dc-user-details></td>
+<td><dc-user-details [msrp]=ticket?.msrp [user]=ticket?.user_details></dc-user-details></td>
+<td><dc-user-details [msrp]=ticket?.msrp [user]=ticket?.customer_details></dc-user-details></td>
