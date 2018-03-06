@@ -128,7 +128,11 @@ export class NavBarComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		window.open(`${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}${workType}/ethernet/${workNumber}`);
+		const urlPath = this.addCacheParameter({
+			link: `/UD-ember/${this.user.emberLocal}${workType}/ethernet/${workNumber}`
+		}).link;
+
+		window.open(`${this.user.emberUrl}:${this.user.emberPort}${urlPath}`);
 	}
 
 	/**
