@@ -78,7 +78,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 			comment_response = {}
 
 			if data.get('log_time', False): 
-				log_response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
+				log_response = JiraRequests.add_work_log(data=data, jira_obj=jira_obj)
 			if data.get('remove_conflict', False):
 				data['status_type'] = 'removeMergeConflict'
 				conflict_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)

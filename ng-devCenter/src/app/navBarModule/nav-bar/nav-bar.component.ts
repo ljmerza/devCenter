@@ -23,19 +23,22 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 	validFormValues:Array<any> = [
 		{
-			value: 'jira', // used to select which method to call
+			value: 'Jira', // used to select which method to call
 			name: 'Search', // search button text
-			placeholder: 'Search Jira Ticket' // input placeholder text
+			placeholder: 'Search Jira Ticket', // input placeholder text
+			caller: 'searchTicket' // method name to be called when searching
 		},
 		{
-			value: 'order',
+			value: 'Order',
 			name: 'Open Order',
-			placeholder: 'Open Order'
+			placeholder: 'Open Order',
+			caller: 'openWorkitem'
 		},
 		{
-			value: 'ticket',
+			value: 'Ticket',
 			name: 'Open Ticket',
-			placeholder: 'Open WFA Ticket'
+			placeholder: 'Open WFA Ticket',
+			caller: 'openWorkitem'
 		}		
 	];
 
@@ -93,7 +96,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 * Searches for a Jira ticket by key or MSRP. If ticket found opens in new tab.
 	 * @param {string} orderValue
 	 */
-	public searchTicket(orderValue):void {
+	public searchTicket(orderValue, workType=''):void {
 		if(!orderValue){
 			this.toastr.showToast('MSRP or Jira key required to lookup a ticket', 'error');
 			return;
@@ -136,14 +139,12 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		formObj.resetForm();
 
 		const inputType = this.validFormValues.find(values => this.placeHolderValue === values.placeholder);
-		switch(inputType.value){
-			case 'order': 
-			case 'ticket': 
-				return this.openWorkitem(inputValue, inputType.value);
-			case 'jira': 
-				return this.searchTicket(inputValue);
-			default: 
-				return this.toastr.showToast('Invalid input type.', 'error');
+		const searchParameters = this.validFormValues.find(forms => forms.value === inputType.value);
+
+		if(searchParameters){
+			this[searchParameters.caller](inputValue, inputType.value);
+		} else {
+			return this.toastr.showToast('Invalid input type.', 'error');
 		}
 	}
 

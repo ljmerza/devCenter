@@ -164,7 +164,7 @@ def delete_comment(data, jira_obj):
 		comment_id=data['comment_id']
 	)
 
-def add_worklog(data, jira_obj):
+def add_work_log(data, jira_obj):
 	'''Adds a work log to a ticket
 
 	Args:

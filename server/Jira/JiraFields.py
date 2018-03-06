@@ -346,7 +346,9 @@ def get_dates(issue):
 	'''
 	return {
 		'estimate': issue.get('fields', {}).get('timetracking', {}).get('originalEstimate', ''),
+		'estimate_seconds': issue.get('fields', {}).get('timetracking', {}).get('originalEstimateSeconds', ''),
 		'logged': issue.get('fields', {}).get('timetracking', {}).get('timeSpent', ''),
+		'logged_seconds': issue.get('fields', {}).get('timetracking', {}).get('timeSpentSeconds', 0),
 		'duedate': issue.get('fields', {}).get('duedate', ''),
 		'created': issue.get('fields', {}).get('created', ''),
 		'updated': issue.get('fields', {}).get('updated', ''),

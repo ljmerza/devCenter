@@ -70,7 +70,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 
 		# add worklog if wanted
 		if data['log_time']:
-			log_response = JiraRequests.add_worklog(data=data, jira_obj=jira_obj)
+			log_response = JiraRequests.add_work_log(data=data, jira_obj=jira_obj)
 
 		# return responses from each call
 		response['data']['comment_response'] = comment_response

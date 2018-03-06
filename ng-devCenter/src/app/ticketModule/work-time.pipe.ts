@@ -4,41 +4,47 @@ import { Pipe, PipeTransform } from '@angular/core';
 	name: 'worktime'
 })
 export class WorkTimePipe implements PipeTransform {
+	aMinute:number = 60;
+	aHour:number = 60*60;
+	aDay:number = 8*60*60;
+	aWeek:number = 5*8*60*60;
+
 	transform(worktime): string {
-
 		if(!worktime || worktime == 0) return '';
+		let returnText = '';
 
-		let day:string = '';
+		const workWeeks = Math.floor(worktime / this.aWeek);
+		worktime = workWeeks >= 1 ? worktime - this.aWeek : worktime;
 
-		return worktime.split(' ').map( time => {
+		const workDays = Math.floor(worktime / this.aDay);
+		worktime = workDays >= 1 ? worktime - (this.aDay*workDays) : worktime;
 
-			switch( time.substr(-1) ){
+		const workHours = Math.floor(worktime / this.aHour);
+		worktime = workHours >= 1 ? worktime - (this.aHour*workHours) : worktime;
 
-				case 'w':
-					day = ' week';
-					break;
+		const workMinutes = Math.floor(worktime / this.aMinute);
+		worktime = workMinutes >= 1 ? worktime - (this.aMinute*workMinutes) : worktime;
 
-				case 'd':
-					day = ' day';
-					break;
+		if(workWeeks >= 1){
+			const plural = workWeeks === 1 ? '' : 's';
+			returnText = `${returnText} ${workWeeks} week${plural}`;
+		}
 
-				case 'h':
-					day = ' hour';
-					break;
+		if(workDays >= 1){
+			const plural = workDays === 1 ? '' : 's';
+			returnText = `${returnText} ${workDays} day${plural}`;
+		}
 
-				case 'm':
-					day = ' minute';
-					break;
+		if(workHours >= 1){
+			const plural = workHours === 1 ? '' : 's';
+			returnText = `${returnText} ${workHours} hour${plural}`;
+		}
 
-				case 's':
-					day = ' second';
-					break;
-			}
+		if(workMinutes >= 1){
+			const plural = workMinutes === 1 ? '' : 's';
+			returnText = `${returnText} ${workMinutes} minute${plural}`;
+		}
 
-			if(time[0] !== '1') day += 's';
-
-			return time.substring(0, time.length - 1) + day;	
-		}).join(' ')
+		return returnText;
 	}
-
 }

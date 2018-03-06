@@ -28,9 +28,9 @@ import { DatesComponent } from './dates/dates.component';
 		NgProgressModule, DataTablesModule
 	],
 	declarations: [
-		SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent,
-		TicketLogComponent, TicketStatusComponent,
-		TicketsComponent, TicketComponent, WorkTimePipe, UserDetailsComponent, CrucibleComponent, DatesComponent
+		SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent, CrucibleComponent,
+		TicketLogComponent, TicketStatusComponent, DatesComponent,
+		TicketsComponent, TicketComponent, WorkTimePipe, UserDetailsComponent
 	],
 	exports: [TicketsComponent]
 })

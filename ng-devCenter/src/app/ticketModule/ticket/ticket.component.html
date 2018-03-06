@@ -15,12 +15,12 @@
 <td><dc-ticket-status [key]=ticket.key [msrp]=ticket.msrp></dc-ticket-status></td>
 
 <!-- dates -->
-<td>{{ticket.dates.started | amDateFormat:'LL'}}</td>
-<td>{{ticket.dates.duedate | amDateFormat:'LL'}}</td>
-<td class='dc-ticket-dates' [datetime]=ticket.dates.estimate></td>
-<td class='dc-ticket-dates' [datetime]=ticket.dates.logged></td>
-<td>{{ticket.dates.updated | amDateFormat:'LL'}}</td>
-<td>{{ticket.dates.created | amDateFormat:'LL'}}</td>
+<td class='dates-td'>{{ticketDates.dates.started | amDateFormat:'LL'}}</td>
+<td class='dates-td'>{{ticketDates.dates.duedate | amDateFormat:'LL'}}</td>
+<td class='dates-td'><dc-ticket-dates [datetime]=ticketDates.dates.estimate_seconds></dc-ticket-dates></td>
+<td class='dates-td'><dc-ticket-dates [datetime]=ticketDates.dates.logged_seconds></dc-ticket-dates></td>
+<td class='dates-td'>{{ticketDates.dates.updated | amDateFormat:'LL'}}</td>
+<td class='dates-td'>{{ticketDates.dates.created | amDateFormat:'LL'}}</td>
 
 <td><dc-crucible [key]=key></dc-crucible></td>
 <td><dc-user-details [msrp]=ticket.msrp [user]=ticket.user_details></dc-user-details></td>

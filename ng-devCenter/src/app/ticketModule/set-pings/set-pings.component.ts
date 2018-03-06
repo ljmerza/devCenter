@@ -19,7 +19,7 @@ export class SetPingsComponent {
 	modalInstance: NgbModalRef;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
-	constructor(private toastr: ToastrService, private jira: JiraPingsService, private cd: ChangeDetectorRef, private misc: MiscService){}
+	constructor(private toastr: ToastrService, private jira: JiraPingsService, private cd: ChangeDetectorRef, public misc: MiscService){}
 
 	/**
 	 * opens the model for ths user to send a ping. 

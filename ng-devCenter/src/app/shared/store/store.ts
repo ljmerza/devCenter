@@ -9,7 +9,8 @@ export interface RootState {
 	repos: Array<Repo>,
 	userProfile: any,
 	statuses: any,
-	crucibleIds: any
+	crucibleIds: any,
+	dates: any
 }
 
 export const initialState: RootState = {
@@ -18,7 +19,8 @@ export const initialState: RootState = {
 	repos: [],
 	userProfile: {},
 	statuses: [],
-	crucibleIds: []
+	crucibleIds: [],
+	dates: []
 }
 
 /**
@@ -66,12 +68,17 @@ function addTickets(state, allTickets){
 		return {crucibleId:ticket.crucible_id, key:ticket.key}
 	});
 
+	const dates = allTickets.map(ticket => {
+		return {dates:ticket.dates, key:ticket.key}
+	});
+
 	const tickets = allTickets.map(ticket => { 
+		delete ticket.dates;
 		delete ticket.comments; 
 		delete ticket.statuses; 
 		delete ticket.crucible_id; 
 		return ticket;
 	});
 
-	return { ...state, ...{comments, tickets, statuses, crucibleIds} };
+	return { ...state, ...{comments, tickets, statuses, crucibleIds, dates} };
 }

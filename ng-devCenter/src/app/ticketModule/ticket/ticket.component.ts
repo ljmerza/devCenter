@@ -37,8 +37,12 @@ export class TicketComponent implements OnInit, OnDestroy {
 	pingComponentRef;
 	commentComponentRef;
 	worklogComponentRef;
+
 	tickets$;
+	ticketdates$;
+
 	ticket;
+	ticketDates;
 
 	constructor(
 		private toastr: ToastrService, public jira: JiraService, public config: ConfigService, 
@@ -49,10 +53,14 @@ export class TicketComponent implements OnInit, OnDestroy {
 	ngOnInit(){
 		this.tickets$ = this.store.select('tickets')
 		.subscribe((allTickets:any) => this.ticket = allTickets.find(ticket => ticket.key === this.key));
+
+		this.ticketdates$ = this.store.select('dates')
+		.subscribe((allTickets:any) => this.ticketDates = allTickets.find(ticket => ticket.key === this.key));
 	}
 
 	ngOnDestroy(){
 		if(this.tickets$) this.tickets$.unsubscribe();
+		if(this.ticketdates$) this.ticketdates$.unsubscribe();
 	}
 
 	@Input() key;

@@ -94,7 +94,7 @@ export class TicketsComponent implements OnInit {
 	 * stop loading animations and re-render the data-table. If error then Toast error message.
 	 * @param {Boolean} isHardRefresh if hard refresh skip localStorage retrieval and loading animations
 	 */
-	private getTickets(isHardRefresh:Boolean=false, showLoading:Boolean=false) {
+	public getTickets(isHardRefresh:Boolean=false, showLoading:Boolean=false) {
 		if(showLoading) this.loadingTickets = true;
 		this.ngProgress.start();
 
