@@ -38,7 +38,8 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
 })
 export class SharedModule {
 	constructor(private ngRedux:NgRedux<RootState>, private devTools: DevToolsExtension){
-		ngRedux.configureStore(rootReducer, initialState, [], [devTools.enhancer()]);
+		const enhancers = devTools && devTools.isEnabled() ? [devTools.enhancer()] : [];
+		ngRedux.configureStore(rootReducer, initialState, [], enhancers);
 	}
 
 	static forRoot(): ModuleWithProviders {
