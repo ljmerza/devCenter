@@ -10,7 +10,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "demo": "ng serve --environment=test"
+    "demo": "ng serve --environment=test",
+    "tslint-check": "tslint-config-prettier-check ./tslint.json"
   },
   "private": true,
   "dependencies": {
@@ -65,9 +66,11 @@
     "karma-jasmine": "^1.1.1",
     "karma-jasmine-html-reporter": "^0.2.2",
     "node-sass": "^4.7.2",
+    "prettier": "^1.11.1",
     "protractor": "~5.1.2",
     "ts-node": "~3.2.0",
     "tslint": "~5.7.0",
+    "tslint-config-prettier": "^1.9.0",
     "typescript": "~2.3.3"
   }
 }
