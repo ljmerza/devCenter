@@ -1,44 +1,51 @@
-.code {
-	margin: 20px 0 20px 0;
-	padding: 20px;
-}
-
-.comment-image {
-	margin: 30px 0px 30px 0px;
-	border: 1px solid black;
-}
-
-
-// change comment header
-.card-header {
-	padding-top: 0px;
-	padding-bottom: 0px;
-
-	a:hover {
-		text-decoration: none;
-	}
-}
-.comment-header {
-	padding: 10px;
-}
-
-
-// edit comment rules
-.edit-area {
-	width: 100%;
-}
-.edit-buttons {
-	margin-bottom: 10px;
-	float: right;
-}
-
-.tableCopy {
-	span {
-		cursor: pointer;
+.ticket-comments{
+	.code {
+		margin: 20px 0 20px 0;
+		padding: 20px;
 	}
 
-	input {
-		position: absolute;
-		right: 10000px;
+	.comment-image {
+		margin: 30px 0px 30px 0px;
+		border: 1px solid black;
+	}
+
+
+	// change comment header
+	.card-header {
+		padding-top: 0px;
+		padding-bottom: 0px;
+
+		a:hover {
+			text-decoration: none;
+		}
+	}
+	.comment-header {
+		padding: 10px;
+	}
+
+
+	// edit comment rules
+	.edit-area {
+		width: 100%;
+	}
+	.edit-buttons {
+		margin-bottom: 10px;
+		float: right;
+	}
+
+	.tableCopy {
+		span {
+			cursor: pointer;
+		}
+
+		input {
+			position: absolute;
+			right: 10000px;
+		}
+	}
+
+	font {
+		color: white !important;
 	}
 }
+
