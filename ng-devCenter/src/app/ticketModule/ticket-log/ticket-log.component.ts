@@ -6,7 +6,7 @@ import { NgRedux } from '@angular-redux/store';
 import { ModalComponent } from '@modal';
 import { JiraCommentsService, ToastrService } from '@services';
 import { RootState, Actions } from '@store';
-import { Ticket, Comment } from '@models';
+import { statuses, Ticket, Comment } from '@models';
 
 @Component({
 	selector: 'dc-ticket-log',
@@ -70,8 +70,6 @@ export class TicketLogComponent	{
 	checkWorklogEvents(responseData:any, postData:any){
 		let errorMessage = '';
 		responseData.key = this.key;
-		console.log('checkWorklogEvents::responseData: ', responseData);
-		console.log('checkWorklogEvents::postData: ', postData);
 
 		// check for comment response
 		if(responseData.comment_response.status){
@@ -90,10 +88,12 @@ export class TicketLogComponent	{
 		// check for status change responses
 		if(responseData.merge_response.status || responseData.conflict_response.status){
 			const merge = responseData.merge_response.status;
-			const statusChangeType = merge ? 'Ready For UCT' : 'Ready For QA';
-			// this.store.dispatch({ type: Actions.changeStatus, payload: {status: statusChangeType} });	
+			const status = merge ? statuses.UCTREADY.frontend : statuses.QAREADY.frontend;
+			this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status }});
+
 		} else if(responseData.merge_response.status === false && postData.remove_merge){
 			errorMessage += responseData.comment_response.data;
+
 		} else if(responseData.conflict_response.status === false && postData.remove_conflict){
 			errorMessage += responseData.comment_response.data;
 		}
@@ -115,9 +115,9 @@ export class TicketLogComponent	{
 
 		let newStatus;
 		if(postData.remove_merge){
-			newStatus = 'Ready for UCT';
+			newStatus = statuses.UCTREADY.frontend;
 		} else if(postData.remove_conflict){
-			newStatus = 'Ready for QA';
+			newStatus = statuses.QAREADY.frontend;
 		}
 	}
 
