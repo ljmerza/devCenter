@@ -32,13 +32,15 @@ export class NavBarComponent implements OnInit, OnDestroy {
 			value: 'Order',
 			name: 'Open Order',
 			placeholder: 'Open Order',
-			caller: 'openWorkitem'
+			caller: 'openWorkitem',
+			url: 'order' // url piece to use in ember
 		},
 		{
 			value: 'Ticket',
 			name: 'Open Ticket',
 			placeholder: 'Open WFA Ticket',
-			caller: 'openWorkitem'
+			caller: 'openWorkitem',
+			url: 'ticket'
 		}		
 	];
 
@@ -126,8 +128,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-
-		window.open(`${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}ethernet/${workType}/${workNumber}`);
+		window.open(`${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}${workType}/ethernet/${workNumber}`);
 	}
 
 	/**
@@ -142,7 +143,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		const searchParameters = this.validFormValues.find(forms => forms.value === inputType.value);
 
 		if(searchParameters){
-			this[searchParameters.caller](inputValue, inputType.value);
+			this[searchParameters.caller](inputValue, searchParameters.url);
 		} else {
 			return this.toastr.showToast('Invalid input type.', 'error');
 		}
