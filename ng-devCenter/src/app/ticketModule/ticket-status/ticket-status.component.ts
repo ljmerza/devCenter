@@ -138,7 +138,8 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	*/
+	 * Creates valid transitions array for status dropdown
+	 */
 	validateTransitions() {
 		if([statuses.SPRINT.frontend,statuses.ONHOLD.frontend].includes(this.ticketStatus)){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.INDEV.frontend].includes(state.name));
@@ -200,7 +201,8 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	*/
+	 * Opens the QA generator modal if transitioning to PCR needed.
+	 */
 	openQAModal(){
 		// create QA gen component if not created yet
 		if(!this.qaComponentRef) {
@@ -218,7 +220,9 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	*/
+	 * opens the confirm status change modal.
+	 * @param {HtmlElement} ticketDropdown the select element for the ticket status
+	 */
 	openStatusModal(ticketDropdown): void {
 		const ticketState = this.ticketStates.find(state => state.id == ticketDropdown.value);
 
@@ -257,20 +261,28 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	*/
+	 *
+	 */
 	changeStatus(statusType:string): void {
 		this.jira.changeStatus({key:this.key, statusType, crucible_id: this.crucibleId})
 		.subscribe(
-			() => {
-				this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
-				this.statusChange({cancelled: false});
-			},
+			statusResponse => this.verifyStatusChangeSuccess(statusResponse, statusType),
 			error => {
 				this.jira.processErrorResponse(error);
 				this.statusChange({});
 				this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
 			}
 		);
+	}
+
+	/**
+	 * verifies the ticket state changes were successful
+	 * @param {APIResponse} statusResponse the response object from the API call to change status
+	 * @param {string} statusType the status type string
+	 */
+	verifyStatusChangeSuccess(statusResponse, statusType:string){
+		this.statusChange({cancelled: false});
+		this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
 	}
 
 }

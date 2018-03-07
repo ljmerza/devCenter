@@ -32,19 +32,14 @@ def set_status(data, jira_obj):
 	elif data['status_type'] == 'qaFail':
 		return jira_obj.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'qaPass':
-		response = {'status': True}
-		response['qa_pass'] = jira_obj.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
-		response['merge_code'] = jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-		response['comment_response'] = jira_obj.add_comment(key=data['key'], cred_hash=data['cred_hash'], comment='QA Pass')
-		return response
+		jira_obj.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
+		return jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 
 	elif data['status_type'] == 'mergeCode':
 		return jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'mergeConflict':
 		return jira_obj.set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'removeMergeConflict':
-		return jira_obj.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'uctReady':
 		return jira_obj.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'removeMergeCode':
 		return jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
@@ -165,7 +160,7 @@ def delete_comment(data, jira_obj):
 		comment_id=data['comment_id']
 	)
 
-def add_work_log(data, jira_obj):
+def add_worklog(data, jira_obj):
 	'''Adds a work log to a ticket
 
 	Args:

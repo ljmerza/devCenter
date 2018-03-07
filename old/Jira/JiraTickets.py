@@ -115,7 +115,6 @@ class JiraTickets():
 		ticket['links'] = get_issue_links(issue)
 
 		ticket['description'] = get_description(issue)
-
 		return ticket
 
 	def get_jira_tickets(self, cred_hash, max_results=1000, start_at=0, fields='', jql='', filter_number=''):
@@ -133,8 +132,10 @@ class JiraTickets():
 			dict of status and data property with an array of formatted Jira ticket objects as well
 			as the totla number of ticket found in total_tickets
 		'''
+
 		if not fields or fields is None:
 			fields = self.jira_api.fields
+
 		# get jira tickets and check response
 		response = self.get_raw_jira_tickets(filter_number=filter_number, max_results=max_results, start_at=start_at, cred_hash=cred_hash, fields=fields, jql=jql)
 		if not response['status']:

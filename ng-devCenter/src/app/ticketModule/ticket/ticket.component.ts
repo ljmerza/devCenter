@@ -76,24 +76,11 @@ export class TicketComponent implements OnInit, OnDestroy {
 		if(!this.detailsComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketDetailsComponent);
 	    	this.detailsComponentRef = this.viewContRef.createComponent(factory);
-	    	(<TicketDetailsComponent>this.detailsComponentRef.instance).ticketDetails = this.ticketDetails;
+	    	(<TicketDetailsComponent>this.detailsComponentRef.instance).key = this.ticket.key;
 		}
 
 		// open modal
     	this.detailsComponentRef.instance.openModel();
-
-		// load new or refresh ticket details
-		this.jira.getATicketDetails(this.ticket.key)
-		.subscribe(
-			(issue:any) => {
-				if(issue && Array.isArray(issue.data)){
-					this.ticketDetails = issue.data[0];
-					(<TicketDetailsComponent>this.detailsComponentRef.instance).ticketDetails = issue.data[0];
-				}
-				
-			},
-			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-		);
 	}
 
 	/**

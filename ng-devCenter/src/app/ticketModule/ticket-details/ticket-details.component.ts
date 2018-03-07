@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild, ChangeDetectorRef, ElementRef, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ConfigService } from '@services'
+import { ConfigService, ToastrService, JiraService } from '@services'
 import { ModalComponent } from '@modal';
 
 @Component({
@@ -12,44 +12,62 @@ import { ModalComponent } from '@modal';
 })
 export class TicketDetailsComponent {
 	loading:boolean = true;
+	customModalCss = 'ticketDetails';
 
-	// @Input() ticketDetails;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	modalRef: NgbModalRef;
+	@Input() key;
 
 	links = [];
 	ticket;
-	customModalCss = 'ticketDetails';
+	
 
-	constructor(public config: ConfigService, private cd: ChangeDetectorRef) { }
+	constructor(private toastr: ToastrService, public jira: JiraService, public config: ConfigService, private cd: ChangeDetectorRef) { }
 
-	@Input()
-	set ticketDetails(ticket) {
-		this.ticket = ticket;
+	/**
+	 * adds ticket details including any dependency links
+	 * @param {Ticket} ticket
+	 */
+	processTicketDetails(ticket) {
+		this.loading = false;
+		this.ticket = ticket
 
-		if(ticket) {
-			this.loading = false;
-
-			// sort by inward issues first
-			this.links = ticket.links.sort( (a,b)=> {
-				return a.inwardIssue ? 1: 0;
-			});
-
-			// need to manually trigger change detection
-			this.cd.detectChanges();
-		}	
+		// sort by inward issues first
+		this.links = ticket.links.sort(a => a.inwardIssue ? 1: 0);
+		this.cd.detectChanges();
+		
 	}
 
 	/**
-	*/
+	 * if ticket details don't exist then get them. Always open modal.
+	 */
 	openModel(){
+		if(!this.ticket) this.getDetails();
+
+		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
 	}
 
 	/**
-	*/
+	 * close the ticket details modal.
+	 */
 	closeModel(){
 		this.modalRef.close();
+	}
+
+	/**
+	 * gets a ticket's details.
+	 */
+	getDetails(){
+		this.jira.getATicketDetails(this.key)
+		.subscribe(
+			tickets => {
+				if(tickets && tickets.data && tickets.data.length === 1) {
+					this.processTicketDetails(tickets.data[0]);
+				}
+			},
+			error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+		);
 	}
 
 }

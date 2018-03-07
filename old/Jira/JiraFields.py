@@ -2,7 +2,7 @@ import re
 
 qa_regex_begin = re.compile(r"h3\. ==== QA Steps ====")
 qa_regex_end = re.compile(r"h3\. ===============")
-qa_step_regex = re.compile("qa step", flags=re.IGNORECASE)
+
 
 def get_key(issue):
 	'''gets an issue's key
@@ -216,53 +216,33 @@ def get_comments(issue):
 	'''
 	comments = []
 	raw_comment = ''
-	key = issue.get('key')
-
 	# for each comment save it and see if QA steps
 	for index, comment in enumerate(issue.get('renderedFields', {}).get('comment', {}).get('comments', [])):
 
 		# try toget raw comment data
 		raw_comments = issue.get('fields', {}).get('comment', {}).get('comments', [])
 		if len(raw_comments) > index-1:
-			comment['raw_comment'] = raw_comments[index].get('body', '')
+			raw_comment = raw_comments[index].get('body', '')
 
-		
+		comment_type = 'info'
+		if 'QA Steps' in comment.get('body', ''):
+			comment_type = True
 
-		comments.append( format_comment(comment, key) )
+		comments.append({
+			'comment': comment.get('body', ''),
+			'raw_comment': raw_comment,
+			'id': comment.get('id', ''),
+			'key': issue.get('key', ''),
+			'username': comment.get('updateAuthor', {}).get('name', ''),
+			'email': comment.get('updateAuthor', {}).get('emailAddress', ''),
+			'display_name': comment.get('updateAuthor', {}).get('displayName', ''),
+			'comment_type': comment_type,
+			'created': comment.get('created', ''),
+			'updated': comment.get('updated', ''),
+			'visibility': 'Developers' if 'visibility' in comment else ''
+
+		})
 	return comments
-
-def format_comment(comment, key):
-	'''
-	'''
-	raw_comment = comment.get('raw_comment', '')
-	rendered_comment = comment.get('renderedBody', '')
-
-	if not raw_comment:
-		raw_comment = comment.get('body', '')
-	if not rendered_comment:
-		rendered_comment = comment.get('body', '')
-
-	comment_type = 'info'
-	if re.match(qa_step_regex, raw_comment):
-		comment['comment_type'] = 'qa_steps'
-
-	return {
-		'comment': rendered_comment,
-		'raw_comment': raw_comment,
-		'id': comment.get('id', ''),
-		'key': key,
-		'username': comment.get('updateAuthor', {}).get('name', ''),
-		'email': comment.get('updateAuthor', {}).get('emailAddress', ''),
-		'display_name': comment.get('updateAuthor', {}).get('displayName', ''),
-		'comment_type': comment_type,
-		'created': comment.get('created', ''),
-		'updated': comment.get('updated', ''),
-		'isEditing': False,
-		'closeText': 'Edit Comment',
-		'editId': 'E' + comment.get('id', ''),
-		'visibility': 'Developers' if 'visibility' in comment else ''
-
-	}
 
 def get_qa_steps(issue):
 	'''finds an issue's QA steps in the comments if they exist
@@ -346,9 +326,7 @@ def get_dates(issue):
 	'''
 	return {
 		'estimate': issue.get('fields', {}).get('timetracking', {}).get('originalEstimate', ''),
-		'estimate_seconds': issue.get('fields', {}).get('timetracking', {}).get('originalEstimateSeconds', ''),
 		'logged': issue.get('fields', {}).get('timetracking', {}).get('timeSpent', ''),
-		'logged_seconds': issue.get('fields', {}).get('timetracking', {}).get('timeSpentSeconds', 0),
 		'duedate': issue.get('fields', {}).get('duedate', ''),
 		'created': issue.get('fields', {}).get('created', ''),
 		'updated': issue.get('fields', {}).get('updated', ''),
