@@ -284,9 +284,8 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 		// check QA pass
 		if(statusType === statuses.QAPASS.backend){
-			this.qaPassVerify(statusResponse);
+			if( this.qaPassVerify(statusResponse) ) return;
 		}
-
 		
 		this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
 	}
@@ -295,7 +294,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * Verifies QA pass comment and status transitions.
 	 * @param {APIResponse} statusResponse the response object from the API call to change status
 	 */
-	 qaPassVerify(statusResponse){
+	 qaPassVerify(statusResponse):boolean{
 	 	let message = [];
 
 	 	// check for QA pass comment added
@@ -314,7 +313,9 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		}
 
 		// show errors if they exist
-		if(message.length >0) this.toastr.showToast(message.join(', '), 'error');
+		if(message.length > 0) this.toastr.showToast(message.join(', '), 'error');
+
+		return message.length === 0;
 	 }
 
 }

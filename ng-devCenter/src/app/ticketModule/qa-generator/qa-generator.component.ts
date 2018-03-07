@@ -114,8 +114,10 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		(this.qaForm.get('branches') as FormArray).removeAt(branchIndex);
 	}
 
-	/*
-	*/
+	/**
+	 * Submits QA generator form inputs to generate Crucible and transition Jira ticket to PCR Needed.
+	 * @param {boolean} isSaving
+	 */
 	submitQA(isSaving): void {
 
 		if(!isSaving){
@@ -202,7 +204,9 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	*/
+	 * Processes toast message for QA generator success.
+	 * @param {APIResponse} response
+	 */
 	showQaSubmitSuccessMessage(response){
 		let toastMessage = `<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>`;
 		
