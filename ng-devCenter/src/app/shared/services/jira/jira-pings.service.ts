@@ -21,12 +21,7 @@ export class JiraPingsService {
 	 */
 	setPing({key, pingType}): Observable<any> {
 		const postData = { key, ping_type:pingType, username: this.user.username };
-		const resp$ = this.dataService.post(`${this.dataService.apiUrl}/chat/send_ping`, postData)
-		resp$.subscribe(
- 			response => {},
-			this.dataService.processErrorResponse.bind(this.dataService)
-		);
-		return resp$;
+		return this.dataService.post(`${this.dataService.apiUrl}/chat/send_ping`, postData);
 	}
 
 	/**
@@ -36,12 +31,13 @@ export class JiraPingsService {
 	 */
 	setPingSettings(postData): Observable<any> {
 		postData.username = this.user.username;
-		const resp$ =  this.dataService.post(`${this.dataService.apiUrl}/chat/user_pings`, postData);
-		resp$.subscribe(
- 			response => {},
-			this.dataService.processErrorResponse.bind(this.dataService)
-		);
-		return resp$;
+		return this.dataService.post(`${this.dataService.apiUrl}/chat/user_pings`, postData);
+	}
+
+	/**
+	 */
+	processErrorResponse(message){
+		return this.dataService.processErrorResponse(message);
 	}
 
 }

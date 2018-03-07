@@ -30,17 +30,20 @@ export class SetPingsComponent {
 	}
 
 	/**
-	 * Clsoes the modal and if user wants a ping then send it to them.
+	 * Closes the modal and if user wants a ping then send it to them.
 	 * @param {string} pingType the type of ping to send (new or merge)
 	 */
 	closePingModal(pingType:string){
 		this.modalInstance.close();
+		if(!pingType) return; 
 
-		if(pingType){
-			this.jira.setPing({key: this.key, pingType}).subscribe(response => {
+		this.jira.setPing({key: this.key, pingType}).subscribe(
+			response => {
 				pingType = pingType.replace('_', ' ');
 				this.toastr.showToast(`${pingType} ping reset: ${response.data}`, 'success');
-			});
-		}
+			},
+			this.jira.processErrorResponse.bind(this.jira)
+		);
+		
 	}
 }

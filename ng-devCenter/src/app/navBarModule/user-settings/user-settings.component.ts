@@ -195,10 +195,13 @@ export class UserSettingsComponent implements OnInit {
  			]
  		}
 
- 		this.jira.setPingSettings(postData).subscribe(response => {
- 			this.toastr.showToast('Saved User Settings', 'success');
- 			this.reloadPage();
-		});
+ 		this.jira.setPingSettings(postData).subscribe(
+ 			response => {
+	 			this.toastr.showToast('Saved User Settings', 'success');
+	 			this.reloadPage();
+			},
+			this.jira.processErrorResponse.bind(this.jira)
+		);
  	}
 
 	/**
