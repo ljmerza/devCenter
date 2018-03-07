@@ -140,7 +140,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 * @param {NgForm} formObj
 	 */
 	public submitInput(formObj: NgForm):void {
-		const inputValue = formObj.value.inputValue;
+		const inputValue = (formObj.value.inputValue || '').trim();
 		formObj.resetForm();
 
 		const inputType = this.validFormValues.find(values => this.placeHolderValue === values.placeholder);
