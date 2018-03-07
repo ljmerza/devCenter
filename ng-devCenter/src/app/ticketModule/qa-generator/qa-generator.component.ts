@@ -231,7 +231,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			// if we wanted PCR and we got here then there was a failure
 			const cr_message = responseData.cr_response.status ? '' : 'Code Review status change';
 			const pcr_message = responseData.pcr_response.status ? '' : 'PCR Needed component change';
-			this.toastr.showToast('error', 'The following transitions failed: ${cr_message} ${pcr_message}');
+			this.toastr.showToast('The following transitions failed: ${cr_message} ${pcr_message}', 'error');
 		}
 
 		this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status }});

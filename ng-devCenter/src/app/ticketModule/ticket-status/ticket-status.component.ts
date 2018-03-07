@@ -246,8 +246,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * @param {boolean} submit do we submit a status change event?
 	 */
 	closeStatusModal(submit:boolean=false): void{
-
-		if(submit && this.statusType === 'complete'){
+		if(submit && this.statusType === statuses.PCRCOMP.backend){
 			this.changeStatus(statuses.PCRPASS.backend);
 			this.changeStatus(statuses.PCRCOMP.backend);
 		} else if(submit){
@@ -261,12 +260,13 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 *
+	 * Persists the status change to the backend
+	 * @param {string} statusType the status type string
 	 */
 	changeStatus(statusType:string): void {
 		this.jira.changeStatus({key:this.key, statusType, crucible_id: this.crucibleId})
 		.subscribe(
-			statusResponse => this.verifyStatusChangeSuccess(statusResponse, statusType),
+			statusResponse => this.verifyStatusChangeSuccess(statusResponse.data, statusType),
 			error => {
 				this.jira.processErrorResponse(error);
 				this.statusChange({});
@@ -276,13 +276,45 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * verifies the ticket state changes were successful
+	 * verifies the ticket state changes were successful.
 	 * @param {APIResponse} statusResponse the response object from the API call to change status
 	 * @param {string} statusType the status type string
 	 */
 	verifyStatusChangeSuccess(statusResponse, statusType:string){
-		this.statusChange({cancelled: false});
+
+		// check QA pass
+		if(statusType === statuses.QAPASS.backend){
+			this.qaPassVerify(statusResponse);
+		}
+
+		
 		this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
 	}
+
+	/**
+	 * Verifies QA pass comment and status transitions.
+	 * @param {APIResponse} statusResponse the response object from the API call to change status
+	 */
+	 qaPassVerify(statusResponse){
+	 	let message = [];
+
+	 	// check for QA pass comment added
+		if(statusResponse.comment_response.status){
+			this.store.dispatch({ type: Actions.addComment, payload: statusResponse.comment_response.data });
+		} else {
+			message.push(`Failed to add comment: ${statusResponse.comment_response.data}`);
+		}
+
+		// check for status transitions
+		if(statusResponse.qa_pass.status && statusResponse.merge_code.status){
+			this.statusChange({cancelled: false});
+		} else {
+			if(!statusResponse.qa_pass.status) message.push(`Failed to transition to QA Pass: ${statusResponse.qa_pass.data}`);
+			if(!statusResponse.merge_code.status) message.push(`Failed to transition to Merge Code: ${statusResponse.merge_code.data}`);
+		}
+
+		// show errors if they exist
+		if(message.length >0) this.toastr.showToast(message.join(', '), 'error');
+	 }
 
 }

@@ -32,10 +32,10 @@ def set_status(data, jira_obj):
 	elif data['status_type'] == 'qaFail':
 		return jira_obj.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'qaPass':
-		response = {'status': True}
-		response['qa_pass'] = jira_obj.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
-		response['merge_code'] = jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-		response['comment_response'] = jira_obj.add_comment(key=data['key'], cred_hash=data['cred_hash'], comment='QA Pass')
+		response = {'status': True, 'data': {}}
+		response['data']['qa_pass'] = jira_obj.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
+		response['data']['merge_code'] = jira_obj.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
+		response['data']['comment_response'] = jira_obj.add_comment(key=data['key'], cred_hash=data['cred_hash'], comment='QA Pass')
 		return response
 
 	elif data['status_type'] == 'mergeCode':

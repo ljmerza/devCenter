@@ -102,7 +102,7 @@ export class TicketLogComponent	{
 
 		// show any errors
 		if(errorMessage) {
-			this.toastr.showToast('error', errorMessage);
+			this.toastr.showToast(errorMessage, 'error');
 		} else {			
 			this.toastr.showToast(`Tasks updated: ${postData.tasks}`, 'success');
 			this._resetForm();
