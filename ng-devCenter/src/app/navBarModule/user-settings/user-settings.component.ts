@@ -169,7 +169,6 @@ export class UserSettingsComponent implements OnInit {
 	 * the current page if username/password changed, or default navigates to home page.
 	 */
  	reloadPage():void {
- 		this.resetForm();
  		const controls = this.userSettingsForm.controls;
 
  		if(this.user.redirectUrl){
