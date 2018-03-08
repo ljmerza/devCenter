@@ -15,7 +15,7 @@ export const statuses:any = {
 	QAPASS: {frontend: 'QA Pass', backend: 'qaPass'},
 	MERGECODE: {frontend: 'Merge Code', backend: 'mergeCode'},
 	MERGECONF: {frontend: 'Merge Conflict', backend: 'mergeConflict'},
-	UCTREADY: {frontend: 'Ready For UCT', backend: 'uctReady'},
+	UCTREADY: {frontend: 'Ready for UCT', backend: 'uctReady'},
 	INUCT: {frontend: 'In UCT', backend: 'inUct'},
 	UCTFAIL: {frontend: 'UCT Fail', backend: 'uctFail'},
 	UCTPASS: {frontend: 'UCT Pass', backend: 'uctPass'},
