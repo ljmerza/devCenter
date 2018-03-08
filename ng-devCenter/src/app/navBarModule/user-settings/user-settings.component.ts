@@ -74,7 +74,7 @@ export class UserSettingsComponent implements OnInit {
 
 				if(!this.gotProfile) {
 					this.gotProfile = true;
-					this.setUserPings(profile.data.pingSettings);
+					this.setUserPings(profile.data.ping_settings);
 					this.store.dispatch({type: Actions.userProfile, payload: profile.data });
 				}
 			},
@@ -90,14 +90,14 @@ export class UserSettingsComponent implements OnInit {
 		let pingControlGroup = this.pings;
 
 		// set form group ping settings from what we got back from the DB
-		pingControlGroup.get('allPing').setValue(new FormControl(pingSettings.all_ping));
-		pingControlGroup.get('newPing').setValue(new FormControl(pingSettings.new_ping));
-		pingControlGroup.get('conflictPing').setValue(new FormControl(pingSettings.conflict_ping));
-		pingControlGroup.get('crFailPing').setValue(new FormControl(pingSettings.cr_fail_ping));
-		pingControlGroup.get('mergePing').setValue(new FormControl(pingSettings.merge_ping));
-		pingControlGroup.get('neverPing').setValue(new FormControl(pingSettings.never_ping));
-		pingControlGroup.get('qaFailPing').setValue(new FormControl(pingSettings.qa_fail_ping));
-		pingControlGroup.get('uctFailPing').setValue(new FormControl(pingSettings.uct_fail_ping));
+		pingControlGroup.get('allPing').setValue(!!pingSettings.all_ping);
+		pingControlGroup.get('newPing').setValue(!!pingSettings.new_ping);
+		pingControlGroup.get('conflictPing').setValue(!!pingSettings.conflict_ping);
+		pingControlGroup.get('crFailPing').setValue(!!pingSettings.cr_fail_ping);
+		pingControlGroup.get('mergePing').setValue(!!pingSettings.merge_ping);
+		pingControlGroup.get('neverPing').setValue(!!pingSettings.never_ping);
+		pingControlGroup.get('qaFailPing').setValue(!!pingSettings.qa_fail_ping);
+		pingControlGroup.get('uctFailPing').setValue(!!pingSettings.uct_fail_ping);
 		pingControlGroup.markAsPristine();
 	}
 

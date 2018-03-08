@@ -75,7 +75,6 @@
 				<!-- checkboxes -->
 				<div class="form-group">
 					<div class="row">
-						<!-- col 1 -->
 						<div class="col-sm-6">
 							<!-- cache ember -->
 							<div class="form-check">
@@ -85,13 +84,12 @@
 								</label>
 							</div>
 						</div>
-						<!-- col 2 -->
 						<div class="col-sm-6">
-							<div formGroupName="pings" *ngIf='isLogin == false'>
+							<div formGroupName="pings">
 								<!-- ticket pings -->
 								<div class="form-check">
 									<label class="form-check-label" for='allPing'>
-										<input class="form-check-input" type="checkbox" name='allPing' formControlName="allPing">
+										<input class="form-check-input" type="checkbox" name='allPing' formControlName='allPing'>
 										Ping My Ticket Updates
 									</label>
 								</div>
