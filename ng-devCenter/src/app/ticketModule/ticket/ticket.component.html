@@ -1,5 +1,20 @@
-<td><a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket?.key}}" title='Open in Jira'>{{ticket?.key}}</a></td>
-<td>{{ticket?.msrp}}</td>
+<td>
+	<span class='keyCopy'>
+		<span class="material-icons success" title="Copy to clipboard">note</span>
+		<a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket?.key}}" title='Open in Jira'>
+			{{ticket?.key}}
+		</a>
+		<input value='{{ticket?.key}}'>
+	</span>
+</td>
+
+<td>
+	<span class='keyCopy'>
+		<span class="material-icons success" title="Copy to clipboard">note</span>
+		{{ticket?.msrp}}
+		<input value='{{ticket?.msrp}}'>
+	</span>
+</td>
 
 <td class='actions-td'>
 	<i (click)="openPingModel()" class="material-icons success" title='Branch Information'>record_voice_over</i>

@@ -64,6 +64,23 @@ export class TicketComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	/**
+	 * add code highlighting to each comment and add copy text
+	 * functionality to each table item
+	 */
+	ngAfterViewChecked():void {
+		const misc = this.misc;
+		
+		setTimeout(() => {
+			// for each table item add click event for copying text
+			$('.keyCopy').each(function(i, block) {
+				$(this).click(function(){
+					misc.copyText( $(this).children('input').get(0) );
+				});
+			});
+		});
+	}
+
 	ngOnDestroy(){
 		if(this.tickets$) this.tickets$.unsubscribe();
 		if(this.ticketdates$) this.ticketdates$.unsubscribe();
