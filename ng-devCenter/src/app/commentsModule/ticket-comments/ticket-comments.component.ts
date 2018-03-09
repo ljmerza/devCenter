@@ -82,8 +82,12 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 		this.comments$ = this.store.select('comments')
 		.subscribe((Allcomments:any) => {
 			const ticketComments = Allcomments.find(comments => comments.key === this.key);
-			this.comments = (ticketComments && ticketComments.comments) || [];
-			this.cd.detectChanges();
+			const comments = (ticketComments && ticketComments.comments) || [];
+
+			if(this.comments !== comments){
+				this.comments = comments;
+				this.cd.detectChanges();
+			}
 		});
 	}
 

@@ -74,7 +74,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		this.status$ = this.store.select('statuses')
 		.subscribe((allTickets:Array<any>) => {
 			const ticket = this.ticketStatus = allTickets.find(ticket => ticket.key === this.key);
-			if(ticket){
+			if(ticket && this.ticketStatus !== ticket.status){
 				this.ticketStatus = ticket.status;
 				this.validateTransitions();
 			}
@@ -84,7 +84,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		this.crucibleId$ = this.store.select('crucibleIds')
 		.subscribe((allTickets:Array<any>) => {
 			const ticket = allTickets.find(ticket => ticket.key === this.key);
-			if(ticket){
+			if(ticket && this.crucibleId !== ticket.crucibleId){
 				this.crucibleId = ticket.crucibleId;
 				this.cd.detectChanges();
 			}
@@ -134,6 +134,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		}
 
 		const status = this.ticketStates.find(ticketStateFilter).name;
+		console.log('status: ', status);
 		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.key, status} });
 	}
 
@@ -281,12 +282,12 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * @param {string} statusType the status type string
 	 */
 	verifyStatusChangeSuccess(statusResponse, statusType:string){
-
 		// check QA pass
 		if(statusType === statuses.QAPASS.backend){
 			if( this.qaPassVerify(statusResponse) ) return;
 		}
-		
+
+		this.statusChange({cancelled: false});
 		this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
 	}
 

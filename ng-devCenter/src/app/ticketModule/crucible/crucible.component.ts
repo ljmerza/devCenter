@@ -26,7 +26,7 @@ export class CrucibleComponent {
 		this.crucibleId$ = this.store.select('crucibleIds')
 		.subscribe((allTickets:any) => {
 			const ticket = allTickets.find(ticket => ticket.key === this.key);
-			if(ticket){
+			if(ticket && this.crucibleId !== ticket.crucibleId){
 				this.crucibleId = ticket.crucibleId;
 				this.cd.detectChanges();
 			}
