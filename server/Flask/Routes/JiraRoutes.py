@@ -128,16 +128,19 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 		if data['status_type'] == 'qaPass':
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 		
-		# only update Crucible if crucible_id given
-		if data.get('crucible_id'):
-			# elif pcrAdd then add user to review
-			if data['status_type'] == 'pcrAdd':
+		# if pcrAdd then add user to review
+		if data['status_type'] == 'pcrAdd':
+			if data['crucible_id']:
 				status_response = CrucibleRequests.add_reviewer(data=data, crucible_obj=crucible_obj)
+			else:
+				status_response['status'] = True
 
-			# elif pcr pass/complete -> add user, complete review, add comment to Crucible
-			if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
+		# if pcr pass/complete -> add user, complete review, add comment to Crucible
+		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
+			if data['crucible_id']:
 				status_response = CrucibleRequests.pass_review(data=data, crucible_obj=crucible_obj)
-
+			else:
+				status_response['status'] = True
 
 		return Response(status_response, mimetype='application/json')
 
