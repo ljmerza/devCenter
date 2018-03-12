@@ -134,7 +134,6 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		}
 
 		const status = this.ticketStates.find(ticketStateFilter).name;
-		console.log('status: ', status);
 		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.key, status} });
 	}
 
@@ -247,10 +246,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * @param {boolean} submit do we submit a status change event?
 	 */
 	closeStatusModal(submit:boolean=false): void{
-		if(submit && this.statusType === statuses.PCRCOMP.backend){
-			this.changeStatus(statuses.PCRPASS.backend);
-			this.changeStatus(statuses.PCRCOMP.backend);
-		} else if(submit){
+		if(submit){
 			this.changeStatus(this.statusType);
 		} else {
 			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
