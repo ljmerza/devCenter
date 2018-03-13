@@ -125,7 +125,7 @@ export class TicketsComponent implements OnInit {
 		if(this.dtElement && this.dtElement.dtInstance){
 			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
 				dtInstance.destroy();
-				this.dtTrigger.next();			
+				this.dtTrigger.next();
 			});
 		} else {
 			this.dtTrigger.next();
