@@ -133,7 +133,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			ticketStateFilter = state => state.id == this.ticketDropdown.value;
 		}
 
-		const status = this.ticketStates.find(ticketStateFilter).name;
+		const status = (this.ticketStates.find(ticketStateFilter) as any).name;
 		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.key, status} });
 	}
 

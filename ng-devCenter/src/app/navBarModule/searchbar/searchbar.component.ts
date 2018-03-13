@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { UserService, ToastrService, JiraService, ConfigService } from '@services';
 
 @Component({
 	selector: 'dc-searchbar',
 	templateUrl: './searchbar.component.html',
-	styleUrls: ['./searchbar.component.scss']
+	styleUrls: ['./searchbar.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchbarComponent implements OnInit {
 	validFormValues:Array<any> = [

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { ConfigService } from './config.service';
 import { ToastrService } from './toastr.service';
@@ -109,12 +110,15 @@ export class UserService {
 
 	/**
 	*/
-	public needRequiredCredentials() {
+	public needRequiredCredentials():boolean {
 		return !(this.username || this.password || this.port || this.emberUrl || this.teamUrl);
 	}
 
 	getNavbarItems(){
-		return this.dataService.get(`${this.dataService.apiUrl}/navbar`)
-		.catch( error => this.dataService.processErrorResponse(error) );
+		return this.dataService.get(`${this.dataService.apiUrl}/navbar`);
+	}
+
+	processErrorResponse(error):string{
+		return this.dataService.processErrorResponse(error);
 	}
 }

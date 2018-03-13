@@ -6,9 +6,10 @@ import { UserSettingsComponent } from './../user-settings/user-settings.componen
 import { JiraService, ToastrService, UserService } from '@services';
 
 @Component({
-  selector: 'dc-user-settings-modal',
-  templateUrl: './navbar-modal.component.html',
-  styleUrls: ['./navbar-modal.component.scss']
+	selector: 'dc-user-settings-modal',
+	templateUrl: './navbar-modal.component.html',
+	styleUrls: ['./navbar-modal.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarModalComponent {
 	modalInstance: NgbModalRef;

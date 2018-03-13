@@ -1,20 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NgRedux } from '@angular-redux/store';
 
 import { NavbarModalComponent } from '../navbar-modal/navbar-modal.component';
 import { LogoutComponent } from '../logout/logout.component';
+import { ModalComponent } from '@modal';
 
 import { Actions, RootState } from '@store';
 import { APIResponse } from '@models';
-import { UserService, ConfigService } from '@services';
-
-declare var $ :any;
+import { UserService, ConfigService, ToastrService } from '@services';
 
 @Component({
 	selector: 'dc-nav-bar',
 	templateUrl: './nav-bar.component.html',
-	styleUrls: ['./nav-bar.component.scss']
+	styleUrls: ['./nav-bar.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavBarComponent implements OnInit, OnDestroy {
 
@@ -31,7 +31,12 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	devLinks;
 	emberLinks;
 
-	constructor(public config:ConfigService, public user: UserService, private store:NgRedux<RootState>) {}
+	@ViewChild(ModalComponent) modal: ModalComponent;
+
+	constructor(
+		public config:ConfigService, public user: UserService, private cd: ChangeDetectorRef,
+		private store:NgRedux<RootState>, private toastr: ToastrService
+	) {}
 
 	/**
 	 * starts checker for Friday, gets navbar items, and watches for user profile in Redux.
@@ -42,23 +47,28 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 		this.userProfile$ = this.store.select('userProfile').subscribe((profile:any) => {
 			this.userProfile = profile;
+			this.cd.detectChanges();
 		});
 	}
 
 	/**
-	 * destorys any left overt subscriptions.
+	 * destroys any left overt subscriptions.
 	 */
 	ngOnDestroy(){
 		if(this.userProfile$) this.userProfile$.unscubscribe();
 	}
 
 	/**
-	 * checks if it's friday every hour to show log hours
+	 * checks if it's Friday every hour to show log hours
 	 */
 	setFridayChecker(){
 		const isFriday = () => (new Date()).getDay() == 5;
 		this.isFriday = isFriday();
-		setInterval(isFriday, 60*60*1);
+		setInterval(() => {
+			if( isFriday() ) {
+				this.cd.detectChanges();
+			}
+		}, 60*60*1);
 	}
 
 	/**
@@ -115,7 +125,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
  			.map(this.addCacheParameter.bind(this))
  			.map(this.addUserNameToUrl.bind(this));
 
-	 	});
+	 	},
+	 	error => this.toastr.showToast(this.user.processErrorResponse(error), 'error'));
 	}
 
 	/**
@@ -135,5 +146,14 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		const queryAddition = navbarItem.link.includes('?') ? '&' : '?';
 		navbarItem.link += `${queryAddition}cache=${this.user.cache}`;
 		return navbarItem;
+	}
+
+	aboutModel;
+	openAboutModal(){
+		this.aboutModel = this.modal.openModal();
+	}
+
+	closeAboutModal(){
+		this.aboutModel.close();
 	}
 }

@@ -215,22 +215,8 @@
 			</li>
 		</ul>
 
-		<dc-searchbar></dc-searchbar>	
-	
-		<!-- user dropdown -->
-		<ul class="navbar-nav position-relative mr-30">
-			<li ngbDropdown placement="bottom-right" class="d-inline-block" *ngIf='!user.needRequiredCredentials()'>
-				<a class="nav-link dropdown-toggle" id="userDropdown" ngbDropdownToggle>
-					<img src={{userProfile?.avatar}} alt="">
-					{{userProfile?.displayName}}
-				</a>
-				<div ngbDropdownMenu aria-labelledby="userDropdown">
-					<li><a class="dropdown-item" (click)='userSetting.openModal()'>User Settings</a></li>
-					<li><div class="dropdown-divider"></div></li>
-					<li><a class="dropdown-item"(click)='logout.openModal()'>Logout</a></li>
-				</div>
-			</li>
-		</ul>
+		<dc-searchbar></dc-searchbar>
+		<dc-navbar-user [userProfile]=userProfile></dc-navbar-user>
 	</div>
 </nav>
 
@@ -238,6 +224,5 @@
 
 
 
-<dc-user-settings-modal #userSetting></dc-user-settings-modal>
-<dc-logout #logout></dc-logout>
+
 
