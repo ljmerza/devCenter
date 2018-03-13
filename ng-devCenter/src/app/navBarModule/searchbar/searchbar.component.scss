@@ -1,0 +1,16 @@
+$darkblk: #292b2c;
+$white: #fff;
+
+form {
+	background-color: $darkblk;
+	color: #fff;
+	button {
+		border-radius: 0;
+	}
+
+	input, select {
+		background-color: $darkblk;
+		border-radius: 0;
+		color: $white;
+	}
+}

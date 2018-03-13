@@ -7,7 +7,7 @@ import { LogoutComponent } from '../logout/logout.component';
 
 import { Actions, RootState } from '@store';
 import { APIResponse } from '@models';
-import { UserService, ConfigService, ToastrService, JiraService } from '@services';
+import { UserService, ConfigService } from '@services';
 
 declare var $ :any;
 
@@ -17,32 +17,6 @@ declare var $ :any;
 	styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent implements OnInit, OnDestroy {
-	inputValue:string; // value of MSRP/key search
-	buttonValue: string;
-	placeHolderValue: string;
-
-	validFormValues:Array<any> = [
-		{
-			value: 'Jira', // used to select which method to call
-			name: 'Search', // search button text
-			placeholder: 'Search Jira Ticket', // input placeholder text
-			caller: 'searchTicket' // method name to be called when searching
-		},
-		{
-			value: 'Order',
-			name: 'Open Order',
-			placeholder: 'Open Order',
-			caller: 'openWorkitem',
-			url: 'order' // url piece to use in ember
-		},
-		{
-			value: 'Ticket',
-			name: 'Open Ticket',
-			placeholder: 'Open WFA Ticket',
-			caller: 'openWorkitem',
-			url: 'ticket'
-		}		
-	];
 
 	isFriday:boolean; // boolean is Friday for log hours notification
 	userProfile;
@@ -57,10 +31,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	devLinks;
 	emberLinks;
 
-	constructor(
-		private toastr: ToastrService, public jira:JiraService, public config:ConfigService, 
-		public user: UserService, private store:NgRedux<RootState>
-	) {}
+	constructor(public config:ConfigService, public user: UserService, private store:NgRedux<RootState>) {}
 
 	/**
 	 * starts checker for Friday, gets navbar items, and watches for user profile in Redux.
@@ -68,10 +39,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	ngOnInit(){
 		this.setFridayChecker();
 		this.getNavbarItems();
-
-		// set default search values
-		this.buttonValue = this.validFormValues[0].name;
-		this.placeHolderValue = this.validFormValues[0].placeholder;
 
 		this.userProfile$ = this.store.select('userProfile').subscribe((profile:any) => {
 			this.userProfile = profile;
@@ -92,75 +59,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		const isFriday = () => (new Date()).getDay() == 5;
 		this.isFriday = isFriday();
 		setInterval(isFriday, 60*60*1);
-	}
-
-	/**
-	 * Searches for a Jira ticket by key or MSRP. If ticket found opens in new tab.
-	 * @param {string} orderValue
-	 */
-	public searchTicket(orderValue, workType=''):void {
-		if(!orderValue){
-			this.toastr.showToast('MSRP or Jira key required to lookup a ticket', 'error');
-			return;
-		}
-
-		// if NaN then is key and go to Jira else need key from MSRP
-		if( isNaN(parseInt(orderValue)) ){
-			window.open(`${this.config.jiraUrl}/browse/${orderValue}`);
-		} else {
-			this.jira.searchTicket(orderValue)
-			.subscribe(
-				data => window.open(`${this.config.jiraUrl}/browse/${data.data}`),
-				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
-			);
-		}
-	}
-
-
-	/**
-	 * Opens a workitem in dev Ember.
-	 * @param {string} orderValue the workitem number
-	 * @param {string} workType the type of workitem
-	 */
-	public openWorkitem(workNumber, workType):void {
-		if(!workNumber){
-			this.toastr.showToast(`${workType} number required.`, 'error');
-			return;
-		}
-
-		const urlPath = this.addCacheParameter({
-			link: `/UD-ember/${this.user.emberLocal}${workType}/ethernet/${workNumber}`
-		}).link;
-
-		window.open(`${this.user.emberUrl}:${this.user.emberPort}${urlPath}`);
-	}
-
-	/**
-	 * Processes the navbar input form.
-	 * @param {NgForm} formObj
-	 */
-	public submitInput(formObj: NgForm):void {
-		const inputValue = (formObj.value.inputValue || '').trim();
-		formObj.resetForm();
-
-		const inputType = this.validFormValues.find(values => this.placeHolderValue === values.placeholder);
-		const searchParameters = this.validFormValues.find(forms => forms.value === inputType.value);
-
-		if(searchParameters){
-			this[searchParameters.caller](inputValue, searchParameters.url);
-		} else {
-			return this.toastr.showToast('Invalid input type.', 'error');
-		}
-	}
-
-	/**
-	 * Changes the form input type.
-	 * @param {string} inputType
-	 */
-	public changeInputType(inputType):void {
-		const newInputType = this.validFormValues.find(values => inputType === values.placeholder);
-		this.placeHolderValue = newInputType.placeholder;
-		this.buttonValue = newInputType.name;
 	}
 
 	/**

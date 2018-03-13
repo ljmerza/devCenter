@@ -215,15 +215,7 @@
 			</li>
 		</ul>
 
-		<!-- jira ticket search -->
-		<form class="form-inline mr-30" #searchForm="ngForm" (ngSubmit)="submitInput(searchForm)" *ngIf="!user.needRequiredCredentials()">
-			<select class="form-control mr-sm-2" name="searchSelection" (change)='changeInputType($event.target.value)'>
-				<option *ngFor='let selc of validFormValues' [ngValue]='selc.value'>{{selc.placeholder}}</option>
-			</select>
-			<input class="form-control mr-sm-2" type="text" placeholder={{placeHolderValue}}
-			aria-label="Search" name="inputValue" [(ngModel)]="inputValue">
-			<button class="btn btn-outline-success" type="submit">{{buttonValue}}</button>
-		</form>
+		<dc-searchbar></dc-searchbar>	
 	
 		<!-- user dropdown -->
 		<ul class="navbar-nav position-relative mr-30">
