@@ -16,6 +16,7 @@ import { NavbarModalComponent } from './navbar-modal/navbar-modal.component';
 // directives
 import { DropdownSubmenuDirective, DropdownSubmenuMenuDirective } from './dropdown-submenu.directive';
 import { SearchbarComponent } from './searchbar/searchbar.component';
+import { NavbarUserComponent } from './navbar-user/navbar-user.component';
 
 
 @NgModule({
@@ -26,8 +27,7 @@ import { SearchbarComponent } from './searchbar/searchbar.component';
 	declarations: [
 		NavBarComponent, LogoutComponent, UserSettingsComponent,
 		DropdownSubmenuDirective, DropdownSubmenuMenuDirective,
-		NavbarModalComponent,
-		SearchbarComponent
+		NavbarModalComponent, SearchbarComponent, NavbarUserComponent
 	],
 	exports: [NavBarComponent, UserSettingsComponent]
 })

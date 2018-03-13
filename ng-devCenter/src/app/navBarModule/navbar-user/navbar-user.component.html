@@ -1,0 +1,32 @@
+
+<ul class="navbar-nav position-relative">
+	<li ngbDropdown placement="bottom-right" class="d-inline-block" *ngIf='!user.needRequiredCredentials()'>
+		<a class="nav-link dropdown-toggle" id="userDropdown" ngbDropdownToggle>
+			<img src={{userProfile?.avatar}} alt="">
+			{{userProfile?.displayName}}
+		</a>
+		<div ngbDropdownMenu aria-labelledby="userDropdown">
+			<li><a class="dropdown-item" (click)='userSetting.openModal()'>User Settings</a></li>
+			<li><a class="dropdown-item" (click)='openAboutModal()'>About</a></li>
+			<li><div class="dropdown-divider"></div></li>
+			<li><a class="dropdown-item"(click)='logout.openModal()'>Logout</a></li>
+		</div>
+	</li>
+</ul>
+
+
+<dc-user-settings-modal #userSetting></dc-user-settings-modal>
+<dc-logout #logout></dc-logout>
+
+
+<dev-center-modal (modalEvent)="closeAboutModal()" [customModalCss]=customModalCss>
+	<div class='modal-text'>
+		<h4 class="modal-title">About</h4>
+	</div>
+	<span class='modal-body'>
+		TEST
+	</span>
+	<span class='modal-footer'>
+		<button type="submit" class="btn btn-outline-danger" (click)="closeAboutModal()">Close</button>
+	</span>
+</dev-center-modal>
