@@ -7,7 +7,7 @@ import { LogoutComponent } from '../logout/logout.component';
 
 import { Actions, RootState } from '@store';
 import { APIResponse } from '@models';
-import { UserService, ConfigService } from '@services';
+import { UserService, ConfigService, ToastrService } from '@services';
 
 declare var $ :any;
 
@@ -31,7 +31,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	devLinks;
 	emberLinks;
 
-	constructor(public config:ConfigService, public user: UserService, private store:NgRedux<RootState>) {}
+	constructor(public config:ConfigService, public user: UserService, private store:NgRedux<RootState>, private toastr: ToastrService) {}
 
 	/**
 	 * starts checker for Friday, gets navbar items, and watches for user profile in Redux.
@@ -115,7 +115,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
  			.map(this.addCacheParameter.bind(this))
  			.map(this.addUserNameToUrl.bind(this));
 
-	 	});
+	 	},
+	 	error => this.toastr.showToast(this.user.processErrorResponse(error), 'error'));
 	}
 
 	/**
