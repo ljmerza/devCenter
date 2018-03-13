@@ -9,7 +9,9 @@ import { UserService } from '@services';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarUserComponent {
-	@ViewChild(ModalComponent) modal: ModalComponent;
+	customModalCss:string = 'navbarAbout';
+
+	@ViewChild(ModalComponent) modal:ModalComponent;
 	@Input() userProfile;
 
 	constructor(public user: UserService) { }
