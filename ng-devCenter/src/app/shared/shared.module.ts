@@ -14,12 +14,11 @@ import { ModalComponent } from '@modal';
 import { ToastrComponent } from './toastr/toastr.component';
 
 // services
-import { JiraService, JiraCommentsService, JiraPingsService } from '@services';
+import { JiraService, JiraCommentsService, JiraPingsService, OrderService } from '@services';
 import { LocalStorageService } from './services/local-storage.service';
 import { DataService } from './services/data.service';
 import { ConfigService } from './services/config.service';
 import { UserService } from './services/user.service';
-import { OrderService } from './services/order.service';
 
 
 import { MiscService, ToastrService, WebSocketService, ProfileService, GitService } from './services';

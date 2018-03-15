@@ -54,8 +54,9 @@ export class TicketsComponent implements OnInit {
 	};
 
 	constructor(
-		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>, order:OrderService,
-		public jira:JiraService, public user:UserService, public toastr: ToastrService, private git:GitService
+		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>,
+		public jira:JiraService, public user:UserService, public toastr: ToastrService, private git:GitService, 
+		public order:OrderService
 	) {}
 	
 	/**
@@ -98,8 +99,6 @@ export class TicketsComponent implements OnInit {
 	public getTickets(isHardRefresh:Boolean=false, showLoading:Boolean=false) {
 		if(showLoading) this.loadingTickets = true;
 		this.ngProgress.start();
-
-		this.order.getOrders().subscribe(response => console.log(response))
 
 		this.getTicketsSub$ = this.jira.getTickets(this.ticketType, isHardRefresh)
 		.subscribe((response:APIResponse) => this.store.dispatch({type: Actions.newTickets, payload: response.data}),
