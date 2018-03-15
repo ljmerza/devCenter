@@ -7,7 +7,7 @@ import { Subject, Observable, Subscription } from 'rxjs';
 import 'rxjs/add/observable/interval';
 import { select, NgRedux } from '@angular-redux/store';
 
-import { UserService, JiraService, ToastrService, WebSocketService, GitService } from '@services';
+import { UserService, JiraService, ToastrService, WebSocketService, GitService, OrderService } from '@services';
 import { RootState, Actions } from '@store';
 import { Repo, Ticket, APIResponse } from '@models';
 
@@ -54,7 +54,7 @@ export class TicketsComponent implements OnInit {
 	};
 
 	constructor(
-		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>,
+		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>, order:OrderService,
 		public jira:JiraService, public user:UserService, public toastr: ToastrService, private git:GitService
 	) {}
 	
@@ -98,6 +98,8 @@ export class TicketsComponent implements OnInit {
 	public getTickets(isHardRefresh:Boolean=false, showLoading:Boolean=false) {
 		if(showLoading) this.loadingTickets = true;
 		this.ngProgress.start();
+
+		this.order.getOrders().subscribe(response => console.log(response))
 
 		this.getTicketsSub$ = this.jira.getTickets(this.ticketType, isHardRefresh)
 		.subscribe((response:APIResponse) => this.store.dispatch({type: Actions.newTickets, payload: response.data}),

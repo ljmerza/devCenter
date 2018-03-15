@@ -9,3 +9,4 @@ export * from './profile.service';
 export * from './toastr.service';
 export * from './web-socket.service';
 export * from './local-storage.service';
+export * from './order.service';

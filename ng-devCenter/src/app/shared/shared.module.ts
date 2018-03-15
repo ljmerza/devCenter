@@ -19,6 +19,7 @@ import { LocalStorageService } from './services/local-storage.service';
 import { DataService } from './services/data.service';
 import { ConfigService } from './services/config.service';
 import { UserService } from './services/user.service';
+import { OrderService } from './services/order.service';
 
 
 import { MiscService, ToastrService, WebSocketService, ProfileService, GitService } from './services';
@@ -48,7 +49,7 @@ export class SharedModule {
 			providers: [
 				UserService, LocalStorageService, ToastrService, ConfigService, 
 				WebSocketService, MiscService, JiraService, ProfileService, JiraPingsService,
-				DataService, GitService, JiraCommentsService,
+				DataService, GitService, JiraCommentsService, OrderService,
 				{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
 				{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
 			]
