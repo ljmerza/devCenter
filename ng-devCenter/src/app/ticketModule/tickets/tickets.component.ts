@@ -7,7 +7,7 @@ import { Subject, Observable, Subscription } from 'rxjs';
 import 'rxjs/add/observable/interval';
 import { select, NgRedux } from '@angular-redux/store';
 
-import { UserService, JiraService, ToastrService, WebSocketService, GitService, OrderService } from '@services';
+import { UserService, JiraService, ToastrService, WebSocketService, GitService } from '@services';
 import { RootState, Actions } from '@store';
 import { Repo, Ticket, APIResponse } from '@models';
 
@@ -55,8 +55,7 @@ export class TicketsComponent implements OnInit {
 
 	constructor(
 		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>,
-		public jira:JiraService, public user:UserService, public toastr: ToastrService, private git:GitService, 
-		public order:OrderService
+		public jira:JiraService, public user:UserService, public toastr: ToastrService, private git:GitService
 	) {}
 	
 	/**
@@ -79,8 +78,6 @@ export class TicketsComponent implements OnInit {
 				this.getTickets(true, true);
 			});
 		} 
-		
-		
 	}
 
 	/** 

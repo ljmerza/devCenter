@@ -82,4 +82,15 @@ class NavbarItems(Modal):
 	type = Column(VARCHAR(30))
 	link = Column(VARCHAR(100))
 	name = Column(VARCHAR(30))
+
+
+class OrderItems(Modal):
+	__tablename__ = 'TICKETTOOL_WORKLISTFIELDS_ODB'
+	id = Column(Integer, primary_key=True)
+	odbFieldName = Column(VARCHAR(125))
+	displayName = Column(VARCHAR(125))
+	mandatory = Column(SMALLINT)
+	columnWidth = Column(VARCHAR(7))
+	defaultFields = Column(VARCHAR(11))
+	dataType = Column(VARCHAR(20))
 	

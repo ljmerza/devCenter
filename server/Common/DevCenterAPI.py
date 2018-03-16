@@ -21,7 +21,7 @@ class DevCenterAPI():
 		'''
 		pass
 
-	def get(self, url, cred_hash=''):
+	def get(self, url, cred_hash='', cookies={}):
 		'''makes a GET request with the given URL and returns the processed JSON
 
 		Args:
@@ -34,7 +34,7 @@ class DevCenterAPI():
 		'''
 		session_obj = requests.session()
 		try:
-			filter_data = session_obj.get(url=url, headers={ 'Authorization': cred_hash }, verify=False)
+			filter_data = session_obj.get(url=url, headers={ 'Authorization': cred_hash }, verify=False, cookies=cookies)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)

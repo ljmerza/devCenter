@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TicketsComponent } from './ticketModule/tickets/tickets.component';
 import { UserSettingsComponent } from './navbarModule/user-settings/user-settings.component';
+import { OrdersComponent } from './orderModule/orders/orders.component';
 
 import { ProfileGuard } from './profile.guard'
 
@@ -19,6 +20,11 @@ const routes: Routes = [
 	{
 		path: 'login',
 		component: UserSettingsComponent
+	},
+	{
+		path: 'orders',
+		component: OrdersComponent,
+		canActivate: [ProfileGuard]
 	},
 	{
 		path: '', 

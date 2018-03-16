@@ -21,14 +21,14 @@ export class SearchbarComponent implements OnInit {
 			name: 'Open Order',
 			placeholder: 'Open Order',
 			caller: 'openWorkitem',
-			url: 'ethernet/order' // url piece to use in ember
+			url: 'order/ethernet' // url piece to use in ember
 		},
 		{
 			value: 'Ticket',
 			name: 'Open Ticket',
 			placeholder: 'Open WFA Ticket',
 			caller: 'openWorkitem',
-			url: 'ethernet/ticket'
+			url: 'ticket/ethernet'
 		},
 		{
 			value: 'RDS Package',

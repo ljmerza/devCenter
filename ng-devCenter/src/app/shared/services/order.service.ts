@@ -5,11 +5,12 @@ import { DataService } from './data.service';
 export class OrderService {
 
 	constructor(private dataService:DataService) { }
+
 	/**
 	 *
 	 */
 	getOrders(){
-		return this.dataService.get('');
+		return this.dataService.get(`${this.dataService.apiUrl}/api/orders`);
 	}
 
 	/**
@@ -18,5 +19,4 @@ export class OrderService {
 	processErrorResponse(message){
 		return this.dataService.processErrorResponse(message);
 	}
-
 }

@@ -2,47 +2,26 @@
 import os
 import datetime
 
-from SQLTickets import SQLTickets
-from SQLUsers import SQLUsers
-from SQLNavBar import SQLNavBar
-import SQLModels
-
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import inspect, create_engine
 
-class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar):
+class APISQL():
 
-	def __init__(self, devdb, sql_echo):
-		'''gets parameters from ENV and creates Session object
-
-		Args:
-			None
-
-		Returns:
-			MySQL object
+	def __init__(self):
 		'''
-		SQLTickets.__init__(self)
-		SQLUsers.__init__(self)
-		SQLNavBar.__init__(self)
-
-		self.project_managers = os.environ['PM'].split(',')
+		'''
 
 		drivername = 'mysql+pymysql'
 		username = os.environ['USER']
 		password = os.environ['SQL_PASSWORD']
 		host = os.environ['DEV_SERVER']
 		port = 3306
-
-		# default dev DB unless debug false
-		database = 'dev_center_dev'
-		if not devdb:
-			database = 'dev_center'
-
+		database = 'ud'
 		charset = 'utf8'
 
 		# create SQL engine and inspector
-		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}', echo=sql_echo)
+		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}')
 		self.inspector = inspect(engine)
 		# create DB session
 		self.Session = sessionmaker(bind=engine, autoflush=False)

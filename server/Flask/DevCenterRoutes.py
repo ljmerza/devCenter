@@ -14,8 +14,9 @@ import Routes.CrucibleRoutes
 import Routes.GitRoutes
 import Routes.ChatRoutes
 import Routes.UserRoutes
+import Routes.ApiRoutes
 
-def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_obj, chat_obj):
+def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_obj, chat_obj, order_object):
 	'''
 	'''
 
@@ -24,6 +25,7 @@ def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_o
 	Routes.GitRoutes.define_routes(app=app, app_name=app_name, crucible_obj=crucible_obj, g=g)
 	Routes.ChatRoutes.define_routes(app=app, app_name=app_name, chat_obj=chat_obj, jira_obj=jira_obj, crucible_obj=crucible_obj, sql_obj=sql_obj, g=g)
 	Routes.UserRoutes.define_routes(app=app, app_name=app_name, jira_obj=jira_obj, sql_obj=sql_obj, g=g)
+	Routes.ApiRoutes.define_routes(app=app, app_name=app_name, order_object=order_object)
 
 
 	@app.route(f"/{app_name}/socket_tickets", methods=['POST'])

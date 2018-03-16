@@ -8,6 +8,7 @@ sys.path.append('Crucible')
 sys.path.append('Jira')
 sys.path.append('Flask')
 sys.path.append('SQL')
+sys.path.append('APIs')
 
 from Flask import DevCenterServer
 
@@ -15,6 +16,7 @@ from Jira import Jira
 from Crucible import Crucible
 from DevCenterSQL import DevCenterSQL
 from Chat import Chat
+from Order import OrderAPI
 
 
 sql_echo = False
@@ -53,10 +55,11 @@ jira_obj = Jira()
 crucible_obj = Crucible()
 sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
 chat_obj = Chat(debug=devChat, no_pings=False)
+order_object = OrderAPI()
 
 # start flask server
 DevCenterServer.start_server(
 	devflk=devflk, host=host, port=port, app_name=app_name, 
 	jira_obj=jira_obj, crucible_obj=crucible_obj, 
-	sql_obj=sql_obj, chat_obj=chat_obj
+	sql_obj=sql_obj, chat_obj=chat_obj, order_object=order_object
 )

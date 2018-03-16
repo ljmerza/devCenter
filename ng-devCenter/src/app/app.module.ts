@@ -9,6 +9,7 @@ import { SharedModule } from './shared/shared.module';
 import { NavbarModule } from './navbarModule/navbar.module';
 import { CommentsModule } from './commentsModule/comments.module';
 import { TicketModule } from './ticketModule/ticket.module';
+import { OrderModule } from './orderModule/order.module';
 
 // components
 import { AppComponent } from './app.component';
@@ -19,7 +20,7 @@ import { environment } from '../environments/environment';
 @NgModule({
 	declarations: [AppComponent, FooterComponent],
 	imports: [
-		BrowserModule, routing, SharedModule.forRoot(),
+		BrowserModule, routing, SharedModule.forRoot(), OrderModule,
 		TicketModule, NavbarModule, CommentsModule, NgbModule.forRoot()
 	],
 	providers: [

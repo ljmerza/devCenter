@@ -1,0 +1,90 @@
+<ng-progress [showSpinner]="false" [color]="'blue'"></ng-progress>
+<!-- ticket loading -->
+<div class='loading' [hidden]="!loadingIndicator">
+	<div class='container'>
+		<div class='loader'>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--text'></div>
+		</div>
+	</div>
+</div>
+<div class="container-fluid table-spacing" [hidden]='loadingIndicator'>
+	<!-- header -->
+	<div class="row">
+		<div class="col-12">
+			<h1 class='text-center ticket-title'>
+				<span>Orders</span>
+				<i class="material-icons success" title='Refresh Orders' (click)="getOrders()">update</i>
+			</h1>
+		</div>
+	</div>
+	<!-- table -->
+	<div class="row">
+		<div class="col-12">
+			<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+				<thead>
+					<tr>
+						<th>Order Number</th>
+
+						<th>Jep 1</th>
+						<th>Jep 2</th>
+						<th>Jep 3</th>
+						<th>Event Type</th>
+
+						<th>ASEdb Site ID</th>
+						<th>WFA OSSOI P1 WC</th>
+
+						<th>PON</th>
+						<th>LATA Id</th>
+						<th>Multi Uni Indicator</th>
+
+						<th>USO</th>
+						<th>OCO</th>
+						<th>iCore</th>
+
+						<th>EVC PO</th>
+						<th>EVC TO</th>
+						<th>CNL TO</th>
+						<th>UNI PO</th>
+						<th>UNI TO</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr *ngFor='let order of orders'>
+						<td>
+							<a target="_blank" href="{{baseUrl}}/{{order.Core_OrdNum}}">{{order.Core_OrdNum}}</a>
+						</td>
+
+						<td>{{order.Refresh_jeop}}</td>
+						<td>{{order.Refresh_jeop2}}</td>
+						<td>{{order.Refresh_jeop3}}</td>
+						<td>{{order.Refresh_event_type}}</td>
+
+						<td>{{order.Core_ASEdb_SiteID}}</td>
+						<td>{{order.Refresh_P1_WFAWC}}</td>
+
+						<td>{{order.Refresh_PON}}</td>
+						<td>{{order.Refresh_lataid}}</td>
+						<td>{{order.Core_CANOPI_MULTI_UNI}}</td>
+
+						<td>{{order.ATX_USO}}</td>
+						<td>{{order.ATX_OCO}}</td>
+						<td>{{order.ATX_USO_iCORE_ID}}</td>
+
+						<td>{{order.CANOPI_EVC_PO}}</td>
+						<td>{{order.CANOPI_EVC_TO}}</td>
+						<td>{{order.Core_CANOPI_CNL_TO}}</td>
+						<td>{{order.Core_CANOPI_CNL_TO}}</td>
+						<td>{{order.CANOPI_UNI_TO}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
