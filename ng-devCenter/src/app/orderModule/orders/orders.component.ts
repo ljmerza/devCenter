@@ -64,11 +64,27 @@ export class OrdersComponent implements OnInit {
 	 */
 	formatTableData(response){
 
-		const orders = (response.data || []).filter((thing, index, self) =>
+		// filter duplicate orders
+		let orders = (response.data || []).filter((thing, index, self) =>
 			index === self.findIndex((t) => (
 				t.OrdNum === thing.OrdNum
 			))
 		)
+
+		// split up EVC data
+		orders = orders.map(order => {
+			if(order.OrdNum.trim() === '3025322361') console.log(order);
+
+			let evcData = (order.EVC_Status || '').split('</br>');
+
+			if(evcData.length > 3){
+				order.evcCircuit = evcData[0].substring(4);
+				order.evcAsr = evcData[2].substring(9);
+				order.evcType = evcData[3].substring(6);
+			}
+
+			return order;
+		})
 
 		this.orders = orders;
 		this.rerender();
