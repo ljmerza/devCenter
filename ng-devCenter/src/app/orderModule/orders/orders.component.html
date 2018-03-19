@@ -34,54 +34,54 @@
 						<th>Jep 1</th>
 						<th>Jep 2</th>
 						<th>Jep 3</th>
-						<th>Event Type</th>
 
 						<th>ASEdb Site ID</th>
 						<th>WFA OSSOI P1 WC</th>
 
 						<th>PON</th>
-						<th>LATA Id</th>
-						<th>Multi Uni Indicator</th>
+						<th>Multi Uni?</th>
+						<th>NTE CLLI</th>
+						<th>UNI Force</th>
 
 						<th>USO</th>
 						<th>OCO</th>
 						<th>iCore</th>
 
-						<th>EVC PO</th>
-						<th>EVC TO</th>
 						<th>CNL TO</th>
 						<th>UNI PO</th>
 						<th>UNI TO</th>
+						<th>EVC PO</th>
+						<th>EVC TO</th>
 					</tr>
 				</thead>
 
 				<tbody>
 					<tr *ngFor='let order of orders'>
 						<td>
-							<a target="_blank" href="{{baseUrl}}/{{order.Core_OrdNum}}">{{order.Core_OrdNum}}</a>
+							<a target="_blank" href="{{baseUrl}}/{{order.OrdNum}}">{{order.OrdNum}}</a>
 						</td>
 
-						<td>{{order.Refresh_jeop}}</td>
-						<td>{{order.Refresh_jeop2}}</td>
-						<td>{{order.Refresh_jeop3}}</td>
-						<td>{{order.Refresh_event_type}}</td>
+						<td>{{order.jeop}}</td>
+						<td>{{order.jeop2}}</td>
+						<td>{{order.jeop3}}</td>
 
-						<td>{{order.Core_ASEdb_SiteID}}</td>
-						<td>{{order.Refresh_P1_WFAWC}}</td>
+						<td>{{order.ASEdb_SiteID}}</td>
+						<td>{{order.P1_WFAWC}}</td>
 
-						<td>{{order.Refresh_PON}}</td>
-						<td>{{order.Refresh_lataid}}</td>
-						<td>{{order.Core_CANOPI_MULTI_UNI}}</td>
+						<td>{{order.PON}}</td>
+						<td>{{order.CANOPI_MULTI_UNI}}</td>
+						<td>{{order.NTECLLI}}</td>
+						<td>{{order.WRID}}</td>
 
 						<td>{{order.ATX_USO}}</td>
 						<td>{{order.ATX_OCO}}</td>
 						<td>{{order.ATX_USO_iCORE_ID}}</td>
 
+						<td>{{order.CANOPI_CNL_TO}}</td>
+						<td>{{order.CANOPI_UNI_PO}}</td>
+						<td>{{order.CANOPI_UNI_TO}}</td>
 						<td>{{order.CANOPI_EVC_PO}}</td>
 						<td>{{order.CANOPI_EVC_TO}}</td>
-						<td>{{order.Core_CANOPI_CNL_TO}}</td>
-						<td>{{order.Core_CANOPI_CNL_TO}}</td>
-						<td>{{order.CANOPI_UNI_TO}}</td>
 					</tr>
 				</tbody>
 			</table>

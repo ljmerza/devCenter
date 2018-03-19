@@ -63,46 +63,14 @@ export class OrdersComponent implements OnInit {
 	  @param {} response 
 	 */
 	formatTableData(response){
-		
 
-		let displayNames = response.display_names;
-		let extraOrders = response.extra_data.map(order => {
-			let formattedOrder = {};
-
-			for(let key in order){
-				let match = displayNames.find(dn => {
-					return dn.table_name && dn.table_name[1] === key;
-				});
-
-				if(match) {
-					const value = order[key] || '';
-					delete order[key];
-					formattedOrder[match.field_name] = value.toString().trim();
-				}
-			}
-
-			console.log('order: ', order);
-			formattedOrder = {...formattedOrder, ...order};
-
-			return formattedOrder;
-		});
-
-		extraOrders = extraOrders.filter(order => order.Core_OrdNum);
-		let originalOrders = response.data.filter(order => order.Core_OrdNum);
-
-		originalOrders = originalOrders.filter((thing, index, self) =>
+		const orders = (response.data || []).filter((thing, index, self) =>
 			index === self.findIndex((t) => (
-				t.Core_OrdNum === thing.Core_OrdNum
+				t.OrdNum === thing.OrdNum
 			))
 		)
 
-		extraOrders = extraOrders.filter((thing, index, self) =>
-			index === self.findIndex((t) => (
-				t.Core_OrdNum === thing.Core_OrdNum
-			))
-		)
-
-		this.orders = [...extraOrders, ...originalOrders];
+		this.orders = orders;
 		this.rerender();
 		this.loadingIndicator = false;
 	}
