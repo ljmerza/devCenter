@@ -73,7 +73,7 @@ export class OrdersComponent implements OnInit {
 
 		// split up EVC data
 		orders = orders.map(order => {
-			if(order.OrdNum.trim() === '3025322361') console.log(order);
+			if(order.ACTSFLAG.trim() != '0') console.log(order);
 
 			let evcData = (order.EVC_Status || '').split('</br>');
 
