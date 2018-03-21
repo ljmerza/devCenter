@@ -73,7 +73,6 @@ export class OrdersComponent implements OnInit {
 
 		// split up EVC data
 		orders = orders.map(order => {
-
 			order.OrdNum = order.OrdNum.trim();
 			order.trk = order.trk.trim();
 

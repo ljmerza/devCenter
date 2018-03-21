@@ -55,7 +55,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 * destroys any left overt subscriptions.
 	 */
 	ngOnDestroy(){
-		if(this.userProfile$) this.userProfile$.unscubscribe();
+		// if(this.userProfile$) this.userProfile$.unsubscribe();
 	}
 
 	/**

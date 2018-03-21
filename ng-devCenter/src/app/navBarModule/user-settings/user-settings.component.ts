@@ -71,7 +71,6 @@ export class UserSettingsComponent implements OnInit {
 		this.profile.getProfile().subscribe(
 			profile => {
 				if(!profile.data) return;
-
 				if(!this.gotProfile) {
 					this.gotProfile = true;
 					this.setUserPings(profile.data.ping_settings);
