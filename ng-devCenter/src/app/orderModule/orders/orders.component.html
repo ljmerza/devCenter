@@ -30,7 +30,6 @@
 				<thead>
 					<tr>
 						<th>Order Number</th>
-						<th>TRK</th>
 
 						<th>Jep 1</th>
 						<th>Jep 2</th>
@@ -42,10 +41,15 @@
 						<th>NTE CLLI</th>
 						<th>UNI Force</th>
 
+						<th>CNL Circuit</th>
+						<th>CNL CLO</th>
+						<th>UNI Circuit</th>
+						<th>UNI CLO</th>
+						<th>EVC Circuit</th>
+
 						<th>USO</th>
-						<th>USO SR</th>
-						<th>OCO</th>
 						<th>iCore</th>
+						<th>EXACT ASR</th>
 
 						<th>CNL TO</th>
 						<th>UNI PO</th>
@@ -53,32 +57,37 @@
 						<th>EVC PO</th>
 						<th>EVC TO</th>
 
-						<th>EVC Asr</th>
+						<th>EVC ASR</th>
 						<th>EVC Type</th>
 
 						<th>RO</th>
+
 					</tr>
 				</thead>
 
 				<tbody>
 					<tr *ngFor='let order of orders'>
 						<td><a target="_blank" href="{{baseUrl}}/{{order.OrdNum}}?cache={{user.cache}}">{{order.OrdNum}}</a></td>
-						<td><a target="_blank" href="{{baseUrl}}/{{order.trk}}?cache={{user.cache}}">{{order.trk}}</a></td>
 
 						<td>{{order.jeop}}</td>
 						<td>{{order.jeop2}}</td>
 
-						<td>{{order.ASEdb_SiteID}}</td>
+						<td><a target="_blank" href="{{aseBaseUrl}}/{{order.ASEdb_SiteID}}?cache={{user.cache}}">{{order.ASEdb_SiteID}}</a></td>
 						<td>{{order.P1_WFAWC}}</td>
 
 						<td>{{order.PON}}</td>
 						<td>{{order.NTECLLI}}</td>
 						<td>{{order.WRID}}</td>
 
+						<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_cnl}}&cache={{user.cache}}">{{order.CIRCUIT_ID}}</a></td>
+						<td><a target="_blank" href="{{baseUrl}}/{{order.CLO}}?cache={{user.cache}}">{{order.CLO}}</a></td>
+						<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_uni}}&cache={{user.cache}}">{{order.cktid}}</a></td>
+						<td><a target="_blank" href="{{baseUrl}}/{{order.trk}}?cache={{user.cache}}">{{order.trk}}</a></td>
+						<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_evc}}&cache={{user.cache}}">{{order.evcCircuit}}</a></td>
+
 						<td>{{order.ATX_USO}}</td>
-						<td>{{order.USO_SR_NO}}</td>
-						<td>{{order.ATX_OCO}}</td>
 						<td>{{order.ATX_USO_iCORE_ID}}</td>
+						<td>{{order.EXACT_ASR}}</td>
 
 						<td>{{order.CANOPI_CNL_TO}}</td>
 						<td>{{order.CANOPI_UNI_PO}}</td>
@@ -90,6 +99,7 @@
 						<td>{{order.evcType}}</td>
 						
 						<td>{{order.RO}}</td>
+
 						
 					</tr>
 				</tbody>

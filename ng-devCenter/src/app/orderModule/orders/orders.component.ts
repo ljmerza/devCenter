@@ -14,7 +14,11 @@ export class OrdersComponent implements OnInit {
 	orders:Array<any> = [];
 	displayNames = [];
 	loadingIndicator = true;
-	baseUrl = `${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}order/ethernet`
+
+	baseEmber = `${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}`;
+	baseUrl = `${this.baseEmber}order/ethernet`;
+	aseBaseUrl = `${this.baseEmber}order/asedb`;
+	circuitBaseUrl = `${this.baseEmber}asset/history?asset=`;
 
 
 	dtTrigger:Subject<any> = new Subject();
@@ -71,21 +75,38 @@ export class OrdersComponent implements OnInit {
 			))
 		)
 
-		// split up EVC data
+
 		orders = orders.map(order => {
+			// trim order numbers
 			order.OrdNum = order.OrdNum.trim();
 			order.trk = order.trk.trim();
 
-			let evcData = (order.EVC_Status || '').split('</br>');
+			if(order.ATX_Prod) console.log('order: ', order);
 
+			// parse EVC data
+			let evcData = (order.EVC_Status || '').split('</br>');
 			if(evcData.length > 3){
 				order.evcCircuit = evcData[0].substring(4);
 				order.evcAsr = evcData[2].substring(9);
 				order.evcType = evcData[3].substring(6);
 			}
 
+			// encode circuits for URLs
+			if(order.CIRCUIT_ID){
+				order.CIRCUIT_ID = order.CIRCUIT_ID.trim();
+				order.circuit_cnl = encodeURIComponent(order.CIRCUIT_ID);
+			}
+			if(order.cktid){
+				order.cktid = order.cktid.trim();
+				order.circuit_uni = encodeURIComponent(order.cktid);
+			}
+			if(order.evcCircuit){
+				order.evcCircuit = order.evcCircuit.trim();
+				order.circuit_evc = encodeURIComponent(order.evcCircuit);
+			}
+
 			return order;
-		})
+		});
 
 		this.orders = orders;
 		this.rerender();
