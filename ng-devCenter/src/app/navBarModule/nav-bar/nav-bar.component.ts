@@ -23,7 +23,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	userProfile$;
 
 	teamdbEmberLinks;
-	otherOrders;
 	orders;
 	wfaTickets;
 	prodLinks;
@@ -82,11 +81,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 	 		this.orders = response.data
 	 		.filter(link => link.type === 'order')
-	 		.map(this.addCacheParameter.bind(this))
-	 		.map(this.addUserNameToUrl.bind(this));
-
-	 		this.otherOrders = response.data
-	 		.filter(link => link.type === 'other_order')
 	 		.map(this.addCacheParameter.bind(this))
 	 		.map(this.addUserNameToUrl.bind(this));
 
