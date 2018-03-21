@@ -14,8 +14,8 @@ use Hash::Merge qw( merge );
 use M5::DB;
 use Data::Dumper;
 
-# keep all values when merging history results
-Hash::Merge::set_behavior('RETAINMENT_PRECEDENT');
+# Hash::Merge::set_behavior('RETAINMENT_PRECEDENT');
+Hash::Merge::set_behavior('LEFT_PRECEDENT');
 
 
 sub db_connect_odb_ro {
@@ -31,20 +31,22 @@ sub db_connect_odb_ro {
 
 my $dbh = db_connect_odb_ro();
 
-my $base_sql = 'SELECT TOP 1000 * FROM odb.dbo.';
-my $sqls ={
+my $sqls = {
+	# IOS_Orders => {order_field => 'mcn', db_field => 'mcn'},
+	# IMEPAS_T_EPAS_EXACT_ASC => {order_field => 'PON', db_field => 'PON'},
+
 	CANOPI_UNIPO_CNLTO => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
 	CANOPI_UNIPO_UNITO => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
 	NTE_2_MINCNL => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
+
 	ATX_Match => {order_field => 'ATX_USO', db_field => 'USO'},
-	IOS_Orders => {order_field => 'ATX_USO', db_field => 'USO'},
-
-	IMEPAS_T_EPAS_EXACT_ASC => {order_field => 'PON', db_field => 'PON'},
 	ASEdb_bettc_database_MATCH => {order_field => 'ASEdb_SiteID', db_field => 'Site_ID'},
-	FORCE_enocDSP => {order_field => 'cktid', db_field => 'CIRCUIT_ID'},
-	CANOPI_UNItoEVCMap => {order_field => 'UNI_CKTID_PARSE', db_field => 'UNI_CKTID_PARSE'},
+	FORCE_enocDSP => {order_field => 'CNL_TRK', db_field => 'CLO'},
+	AUTOLOADER_EVC => {order_field => 'cktid', db_field => 'UNI_CKTID', parse => 1},
 
-	AUTOLOADER_EVC => {order_field => 'cktid', db_field => 'EVC_CKTID'},
+	CANOPI_UNItoCNLMap => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
+	CANOPI_UNItoEVCMap => {order_field => 'CKTID_PARSE', db_field => 'UNI_CKTID_Parse'},
+
 };
 
 
@@ -58,25 +60,43 @@ SQL
 
 my $sth = $dbh->prepare($sql);
 $sth->execute();
-my $order_data =  $sth->fetchall_arrayref({});
+my $order_data = $sth->fetchall_arrayref({});
 
 
 foreach my $data_base (keys %{$sqls}){
 
 	my $query_object = $sqls->{$data_base};
-	my $sql_query = $base_sql . $data_base;
-
 	my $order_field = $query_object->{order_field};
-	my $db_field = $query_object->{db_field} || $query_object->{order_field};
+	my $db_field = $query_object->{db_field};
+	my $parse = $query_object->{parse} || 0;
 
-	$sth = $dbh->prepare($sql_query);
+	my @field_values = ();
+	foreach my $order (@{$order_data}){
+		if($order->{$order_field}){
+
+			my $value = $order->{$order_field} ;
+			if($parse){
+				$value =~ s/\s+//g;
+				$value =~ s/[^!-~\s]//g;
+			}
+
+			push @field_values, $value;
+		}
+	}
+
+	print "$data_base\n";
+	my $sql_query = "SELECT * FROM odb.dbo.$data_base WHERE $db_field IN (\'@{[ join('\',\'', @field_values) ]}\')";
+
+	my $sth = $dbh->prepare($sql_query);
 	$sth->execute();
 	my $db_data = $sth->fetchall_arrayref({});
+
 	$order_data = merge_orders(
 		order_data => $order_data, 
 		db_data => $db_data, 
 		order_field => $order_field, 
-		db_field => $db_field
+		db_field => $db_field,
+		parse => $parse
 	);
 }
 
@@ -96,13 +116,29 @@ sub merge_orders {
 	my $db_data = $args{db_data}; 
 	my $order_field = $args{order_field}; 
 	my $db_field = $args{db_field};
+	my $parse = $args{parse};
 
+	my $merged = 0;
 	foreach my $order (@{$order_data}){
 		foreach my $row (@{$db_data}){
-			if($order->{$order_field} and $row->{$db_field} and $order->{$order_field} eq $row->{$db_field}){
+
+			my $order_value = $order->{$order_field};
+			my $db_value = $row->{$db_field};
+
+			if($parse){
+				$order_value =~ s/\s+//g;
+				$db_value =~ s/[^!-~\s]//g;
+			}
+			
+			if($order_value and $db_value and $order_value eq $db_value){
+				$merged = 1;
 				$order = \%{ merge( $order, $row ) };
 			}
 		}
+	}
+
+	if($merged){
+		print "merged\n";
 	}
 
 	return $order_data;

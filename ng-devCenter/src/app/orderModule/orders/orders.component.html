@@ -30,6 +30,7 @@
 				<thead>
 					<tr>
 						<th>Order Number</th>
+						<th>TRK</th>
 
 						<th>Jep 1</th>
 						<th>Jep 2</th>
@@ -38,7 +39,6 @@
 						<th>WFA OSSOI P1 WC</th>
 
 						<th>PON</th>
-						<th>ASR</th>
 						<th>NTE CLLI</th>
 						<th>UNI Force</th>
 
@@ -62,9 +62,8 @@
 
 				<tbody>
 					<tr *ngFor='let order of orders'>
-						<td>
-							<a target="_blank" href="{{baseUrl}}/{{order.OrdNum}}">{{order.OrdNum}}</a>
-						</td>
+						<td><a target="_blank" href="{{baseUrl}}/{{order.OrdNum}}?cache={{user.cache}}">{{order.OrdNum}}</a></td>
+						<td><a target="_blank" href="{{baseUrl}}/{{order.trk}}?cache={{user.cache}}">{{order.trk}}</a></td>
 
 						<td>{{order.jeop}}</td>
 						<td>{{order.jeop2}}</td>
@@ -73,7 +72,6 @@
 						<td>{{order.P1_WFAWC}}</td>
 
 						<td>{{order.PON}}</td>
-						<td>{{order.ASR}}</td>
 						<td>{{order.NTECLLI}}</td>
 						<td>{{order.WRID}}</td>
 
@@ -92,6 +90,7 @@
 						<td>{{order.evcType}}</td>
 						
 						<td>{{order.RO}}</td>
+						
 					</tr>
 				</tbody>
 			</table>
