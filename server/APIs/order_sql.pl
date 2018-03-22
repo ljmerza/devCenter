@@ -32,8 +32,8 @@ sub db_connect_odb_ro {
 my $dbh = db_connect_odb_ro();
 
 my $sqls = {
-	# IOS_Orders => {order_field => 'mcn', db_field => 'mcn'},
-	# IMEPAS_T_EPAS_EXACT_ASC => {order_field => 'PON', db_field => 'PON'},
+	IOS_Orders => {order_field => 'mcn', db_field => 'mcn'},
+	IMEPAS_T_EPAS_EXACT_ASC => {order_field => 'PON', db_field => 'PON'},
 
 	CANOPI_UNIPO_CNLTO => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
 	CANOPI_UNIPO_UNITO => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
@@ -51,7 +51,7 @@ my $sqls = {
 
 
 my $sql = <<'SQL';
-SELECT TOP 1000 *
+SELECT TOP 700 *
 FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core 
 right join odb.dbo.DB2_Feeds_Refresh as Refresh 
 on Core.cktid = Refresh.cktid and Core.event_type = Refresh.event_type 
@@ -96,12 +96,13 @@ foreach my $data_base (keys %{$sqls}){
 		db_data => $db_data, 
 		order_field => $order_field, 
 		db_field => $db_field,
-		parse => $parse
+		parse => $parse,
+		data_base => $data_base
 	);
 }
 
 
-open my $fh, ">", "data_out.json";
+open my $fh, ">", "data_out_test.json";
 print $fh encode_json($order_data);
 close $fh;
 
@@ -117,8 +118,8 @@ sub merge_orders {
 	my $order_field = $args{order_field}; 
 	my $db_field = $args{db_field};
 	my $parse = $args{parse};
+	my $data_base = $args{data_base};
 
-	my $merged = 0;
 	foreach my $order (@{$order_data}){
 		foreach my $row (@{$db_data}){
 
@@ -129,16 +130,11 @@ sub merge_orders {
 				$order_value =~ s/\s+//g;
 				$db_value =~ s/[^!-~\s]//g;
 			}
-			
-			if($order_value and $db_value and $order_value eq $db_value){
-				$merged = 1;
-				$order = \%{ merge( $order, $row ) };
+
+			foreach my $field (keys %{$row}){
+				$order->{$data_base.'__'.$field} = $row->{$field};
 			}
 		}
-	}
-
-	if($merged){
-		print "merged\n";
 	}
 
 	return $order_data;

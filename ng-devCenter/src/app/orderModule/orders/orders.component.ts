@@ -73,15 +73,14 @@ export class OrdersComponent implements OnInit {
 			index === self.findIndex((t) => (
 				t.OrdNum === thing.OrdNum
 			))
-		)
+		);
 
+		console.log('example order: ', orders[0]);
 
 		orders = orders.map(order => {
 			// trim order numbers
 			order.OrdNum = order.OrdNum.trim();
 			order.trk = order.trk.trim();
-
-			if(order.ATX_Prod) console.log('order: ', order);
 
 			// parse EVC data
 			let evcData = (order.EVC_Status || '').split('</br>');
@@ -92,9 +91,9 @@ export class OrdersComponent implements OnInit {
 			}
 
 			// encode circuits for URLs
-			if(order.CIRCUIT_ID){
-				order.CIRCUIT_ID = order.CIRCUIT_ID.trim();
-				order.circuit_cnl = encodeURIComponent(order.CIRCUIT_ID);
+			if(order.FORCE_enocDSP__CIRCUIT_ID){
+				order.FORCE_enocDSP__CIRCUIT_ID = order.FORCE_enocDSP__CIRCUIT_ID.trim();
+				order.circuit_cnl = encodeURIComponent(order.FORCE_enocDSP__CIRCUIT_ID);
 			}
 			if(order.cktid){
 				order.cktid = order.cktid.trim();
