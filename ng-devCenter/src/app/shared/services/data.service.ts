@@ -9,7 +9,6 @@ import { environment } from '@environment';
 @Injectable()
 export class DataService extends HttpClient {
 	apiUrl:string = `${environment.apiUrl}:${environment.port}/dev_center`;
-	user;
 
 	constructor(public toastr:ToastrService, public httpHandler:HttpHandler, private ls:LocalStorageService) {
 		super(httpHandler);
@@ -39,9 +38,10 @@ export class DataService extends HttpClient {
 	*/
 	private _authorizationHeader(): string {
 		const username = this.ls.getItem('username');
-		const password = this.ls.getItem('password');
+		let password = this.ls.getItem('password');
 
 		try {
+			password = atob(password);
 			return "Basic " + btoa(`${username}:${password}`);
 		}catch(e){
 			return '';

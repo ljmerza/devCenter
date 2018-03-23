@@ -71,7 +71,7 @@ def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_o
 			return Response(json.dumps({'status': False, 'data': 'Invalid username and/or password'}), status=401, mimetype='application/json')
 		status=200
 		# if we have response data then overwrite data
-		if len(response.response):
+		if response and len(response.response):
 			data = json.dumps(response.response)
 
 			# check manual status

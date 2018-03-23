@@ -164,19 +164,15 @@ export class UserSettingsComponent implements OnInit {
 	}
 
 	/**
-	 * if saved URL exists redirects user to a saved URL (from a previous redirection), reloads
-	 * the current page if username/password changed, or default navigates to home page.
+	 * if saved URL exists redirects user to a saved URL (from a previous redirection) 
+	 * or default navigates to home page.
 	 */
  	reloadPage():void {
- 		const controls = this.userSettingsForm.controls;
-
  		if(this.user.redirectUrl){
  			const url = this.user.redirectUrl;
  			this.user.redirectUrl = '';
  			this.router.navigate([url]); 		
- 		} else if((controls.username.dirty || controls.password.dirty) && !this.isLogin){
-			location.reload();
-		}
+ 		}
 			
 		this.router.navigate(['/']);
  	}

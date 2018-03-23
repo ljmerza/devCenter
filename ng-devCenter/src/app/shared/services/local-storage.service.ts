@@ -7,20 +7,20 @@ export class LocalStorageService {
 
 	/**
 	*/
-	setItem(data, value) {
-		const jsonValue = JSON.stringify(value);
-		localStorage.setItem(`devCenter.${data}`, jsonValue);
+	setItem(key, value) {
+		try {
+			value = JSON.stringify(value)
+		} catch(e){
+			value = '';
+		}
+		localStorage.setItem(`devCenter.${key}`, value);
 	}
 
 	/**
 	*/
-	getItem(data) {
-		let value = localStorage.getItem(`devCenter.${data}`) || '';
-
+	getItem(key) {
+		let value = localStorage.getItem(`devCenter.${key}`) || '';
 		try {
-			if(data === 'password'){
-				value = atob(value);
-			}
 			return JSON.parse(value);
 		} catch(e){
 			return value || '';
@@ -29,8 +29,8 @@ export class LocalStorageService {
 
 	/**
 	*/
-	removeItem(data) {
-		localStorage.removeItem(`devCenter.${data}`);
+	removeItem(key) {
+		localStorage.removeItem(`devCenter.${key}`);
 	}
 
 }

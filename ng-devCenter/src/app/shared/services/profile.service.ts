@@ -16,6 +16,7 @@ export class ProfileService {
 	 */
 	getProfile(): Observable<any> {
 		let params = new HttpParams();
+		console.log('this.user.username: ', this.user.username);
    		params = params.append('isHardRefresh', `true`);
 		return this.dataService.get(`${this.dataService.apiUrl}/jira/profile/${this.user.username}`, {params})
 	}
