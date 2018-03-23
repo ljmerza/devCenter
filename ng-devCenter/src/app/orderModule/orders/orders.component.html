@@ -31,16 +31,16 @@
 					<tr>
 						<th>Order Number</th>
 
-						<th>Jep 1</th>
-						<th>Jep 2</th>
+						<th>UNI Jep 1</th>
+						<th>UNI Jep 2</th>
 
 						<th>ASEdb Site ID</th>
 						<th>WFA OSSOI P1 WC</th>
 
-						<th>PON</th>
-						<th>USO</th>
+						<th>ATX USO</th>
+						<th>PON (IOL)</th>
+						<th>ATX INSTAR</th>
 						<th>NTE CLLI</th>
-						<th>UNI Force</th>
 
 						<th>CNL Circuit</th>
 						<th>CNL CLO</th>
@@ -75,10 +75,10 @@
 						<td><a target="_blank" href="{{aseBaseUrl}}/{{order.ASEdb_SiteID}}?cache={{user.cache}}">{{order.ASEdb_SiteID}}</a></td>
 						<td>{{order.P1_WFAWC}}</td>
 
-						<td>{{order.PON}}</td>
 						<td>{{order.ATX_USO}}</td>
+						<td>{{order.PON}}</td>
+						<td>{{order.ATX_USO_SR_NO}}</td>
 						<td>{{order.NTE_2_MINCNL__NTECLLI}}</td>
-						<td>{{order.FORCE_enocDSP__WRID}}</td>
 
 						<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_cnl}}&cache={{user.cache}}">{{order.FORCE_enocDSP__CIRCUIT_ID}}</a></td>
 						<td><a target="_blank" href="{{baseUrl}}/{{order.FORCE_enocDSP__CLO}}?cache={{user.cache}}">{{order.FORCE_enocDSP__CLO}}</a></td>

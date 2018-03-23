@@ -96,10 +96,10 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 */
 	private syncAttachments():void {
 		this.attachments$ = this.store.select('tickets')
-		.map( (tickets:Array<Ticket>) =>{ 
+		.subscribe((tickets:Array<Ticket>) =>{ 
 			const ticket = tickets.find((ticket:Ticket) => ticket.key === this.key);
-			return ticket.attachments;
-		}).subscribe( (attachments:Array<Attachment>) => this.attachments = attachments);
+			this.attachments = ticket.attachments;
+		});
 	}
 
 	/**
