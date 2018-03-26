@@ -9,6 +9,7 @@ import { UserService, ToastrService, JiraService, ConfigService } from '@service
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchbarComponent implements OnInit {
+	inputValue: string;
 	validFormValues:Array<any> = [
 		{
 			value: 'Jira', // used to select which method to call
