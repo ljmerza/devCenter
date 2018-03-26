@@ -10,6 +10,7 @@ BEGIN {
 binmode STDOUT, ":utf8";
 use utf8;
 use JSON;
+use File::Path qw(make_path);
 use Hash::Merge qw( merge );
 use M5::DB;
 use Data::Dumper;
@@ -26,7 +27,6 @@ sub db_connect_odb_ro {
 		use_prod => 1
 	);
 }
-
 
 
 my $dbh = db_connect_odb_ro();
@@ -46,12 +46,11 @@ my $sqls = {
 
 	CANOPI_UNItoCNLMap => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
 	CANOPI_UNItoEVCMap => {order_field => 'CKTID_PARSE', db_field => 'UNI_CKTID_Parse'},
-
 };
 
 
 my $sql = <<'SQL';
-SELECT TOP 700 *
+SELECT TOP 1000 *
 FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core 
 right join odb.dbo.DB2_Feeds_Refresh as Refresh 
 on Core.cktid = Refresh.cktid and Core.event_type = Refresh.event_type 
@@ -61,7 +60,6 @@ SQL
 my $sth = $dbh->prepare($sql);
 $sth->execute();
 my $order_data = $sth->fetchall_arrayref({});
-
 
 foreach my $data_base (keys %{$sqls}){
 
@@ -84,7 +82,7 @@ foreach my $data_base (keys %{$sqls}){
 		}
 	}
 
-	print "$data_base\n";
+	print "$data_base ";
 	my $sql_query = "SELECT * FROM odb.dbo.$data_base WHERE $db_field IN (\'@{[ join('\',\'', @field_values) ]}\')";
 
 	my $sth = $dbh->prepare($sql_query);
@@ -102,7 +100,11 @@ foreach my $data_base (keys %{$sqls}){
 }
 
 
-open my $fh, ">", "data_out_test.json";
+# create JKSON dump
+my $dirname = 'data';
+make_path($dirname, {chmod => 0777});
+my $output = "$dirname/data_out.json";
+open my $fh, ">", $output or die "Cannot open file '$output': $!\n";
 print $fh encode_json($order_data);
 close $fh;
 
@@ -140,6 +142,6 @@ sub merge_orders {
 		}
 	}
 
-	print "$hasMerged\n";
+	print $hasMerged ? "merged\n" : "not merged\n";
 	return $order_data;
 }
