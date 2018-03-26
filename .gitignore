@@ -1,4 +1,4 @@
 *.pyc
 ng-devCenter/src/app/shared/services/config.service.ts
 ng-devCenter/mock-server/node_modules
-server/APIs/data_out.json
+server/APIs/data/

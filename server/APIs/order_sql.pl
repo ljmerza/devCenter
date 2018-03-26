@@ -120,6 +120,8 @@ sub merge_orders {
 	my $parse = $args{parse};
 	my $data_base = $args{data_base};
 
+	my $hasMerged = 0;
+
 	foreach my $order (@{$order_data}){
 		foreach my $row (@{$db_data}){
 
@@ -132,10 +134,12 @@ sub merge_orders {
 			}
 
 			foreach my $field (keys %{$row}){
+				$hasMerged = 1;
 				$order->{$data_base.'__'.$field} = $row->{$field};
 			}
 		}
 	}
 
+	print "$hasMerged\n";
 	return $order_data;
 }

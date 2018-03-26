@@ -19,7 +19,7 @@ class OrderAPI():
 			returns a dict with status/data property. 
 		'''
 		data = []
-		with open('./APIs/data_out_test.json', encoding="utf8") as data_file:    
+		with open('./APIs/data/data_out_test.json', encoding="utf8") as data_file:    
 			data = json.load(data_file)
 
 		return {
