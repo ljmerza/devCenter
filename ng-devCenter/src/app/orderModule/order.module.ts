@@ -4,9 +4,10 @@ import { DataTablesModule } from 'angular-datatables';
 import { NgProgressModule } from 'ngx-progressbar';
 
 import { OrdersComponent } from './orders/orders.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-	imports: [CommonModule, DataTablesModule, NgProgressModule],
+	imports: [CommonModule, DataTablesModule, NgProgressModule, SharedModule],
 	declarations: [OrdersComponent]
 })
 export class OrderModule { }

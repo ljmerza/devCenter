@@ -14,12 +14,12 @@ export class OrdersComponent implements OnInit {
 	orders:Array<any> = [];
 	displayNames = [];
 	loadingIndicator = true;
+	tableTitle = 'Orders';
 
 	baseEmber = `${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}`;
 	baseUrl = `${this.baseEmber}order/ethernet`;
 	aseBaseUrl = `${this.baseEmber}order/asedb`;
 	circuitBaseUrl = `${this.baseEmber}asset/history?asset=`;
-
 
 	dtTrigger:Subject<any> = new Subject();
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;

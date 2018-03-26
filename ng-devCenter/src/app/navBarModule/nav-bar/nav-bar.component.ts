@@ -43,18 +43,25 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	ngOnInit(){
 		this.setFridayChecker();
 		this.getNavbarItems();
-
-		this.userProfile$ = this.store.select('userProfile').subscribe((profile:any) => {
-			this.userProfile = profile;
-			this.cd.detectChanges();
-		});
+		this.getUserProfile();
 	}
 
 	/**
 	 * destroys any left overt subscriptions.
 	 */
 	ngOnDestroy(){
-		// if(this.userProfile$) this.userProfile$.unsubscribe();
+		if(this.userProfile$) this.userProfile$.unsubscribe();
+	}
+
+	/**
+	 * Gets a user's Jira profile
+	 */
+	getUserProfile(){
+		this.userProfile$ = this.store.select('userProfile')
+		.subscribe((profile:any) => {
+			this.userProfile = profile;
+			this.cd.detectChanges();
+		});
 	}
 
 	/**
@@ -67,7 +74,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 			if( isFriday() ) {
 				this.cd.detectChanges();
 			}
-		}, 60*60*1);
+		}, 60*60*1000);
 	}
 
 	/**

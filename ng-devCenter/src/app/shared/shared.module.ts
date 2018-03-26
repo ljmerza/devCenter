@@ -2,6 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { NgProgressModule } from 'ngx-progressbar';
 import { NgRedux, NgReduxModule, DevToolsExtension } from '@angular-redux/store';
 import { RootState, initialState, rootReducer } from './store/store';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
@@ -12,6 +13,7 @@ import { environment } from './../../environments/environment';
 // components
 import { ModalComponent } from '@modal';
 import { ToastrComponent } from './toastr/toastr.component';
+import { LoadingTableComponent } from './loading-table/loading-table.component';
 
 // services
 import { JiraService, JiraCommentsService, JiraPingsService, OrderService } from '@services';
@@ -27,14 +29,13 @@ import { MiscService, ToastrService, WebSocketService, ProfileService, GitServic
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 
-
 @NgModule({
 	imports: [
-		HttpClientModule, NgbModule, NgReduxModule,
+		HttpClientModule, NgbModule, NgReduxModule, NgProgressModule,
 		ToastModule.forRoot(), BrowserAnimationsModule
 	],
-	declarations: [ModalComponent, ToastrComponent],
-	exports: [ModalComponent, ToastrComponent]
+	declarations: [ModalComponent, ToastrComponent, LoadingTableComponent],
+	exports: [ModalComponent, ToastrComponent, LoadingTableComponent]
 })
 export class SharedModule {
 	constructor(private ngRedux:NgRedux<RootState>, private devTools: DevToolsExtension){

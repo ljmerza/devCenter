@@ -1,109 +1,80 @@
-<ng-progress [showSpinner]="false" [color]="'blue'"></ng-progress>
-<!-- ticket loading -->
-<div class='loading' [hidden]="!loadingIndicator">
-	<div class='container'>
-		<div class='loader'>
-			<div class='loader--dot'></div>
-			<div class='loader--dot'></div>
-			<div class='loader--dot'></div>
-			<div class='loader--dot'></div>
-			<div class='loader--dot'></div>
-			<div class='loader--dot'></div>
-			<div class='loader--text'></div>
-		</div>
-	</div>
-</div>
-<div class="container-fluid table-spacing" [hidden]='loadingIndicator'>
-	<!-- header -->
-	<div class="row">
-		<div class="col-12">
-			<h1 class='text-center ticket-title'>
-				<span>Orders</span>
-				<i class="material-icons success" title='Refresh Orders' (click)="getOrders()">update</i>
-			</h1>
-		</div>
-	</div>
-	<!-- table -->
-	<div class="row">
-		<div class="col-12">
-			<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
-				<thead>
-					<tr>
-						<th>Order Number</th>
+<dc-loading-table [loadingTable]=loadingIndicator [tableTitle]=tableTitle (refreshData)="getOrders()">
+	<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+		<thead>
+			<tr>
+				<th>Order Number</th>
 
-						<th>UNI Jep 1</th>
-						<th>UNI Jep 2</th>
+				<th>UNI Jep 1</th>
+				<th>UNI Jep 2</th>
 
-						<th>ASEdb Site ID</th>
-						<th>WFA OSSOI P1 WC</th>
+				<th>ASEdb Site ID</th>
+				<th>WFA OSSOI P1 WC</th>
 
-						<th>ATX USO</th>
-						<th>PON (IOL)</th>
-						<th>ATX INSTAR</th>
-						<th>NTE CLLI</th>
+				<th>ATX USO</th>
+				<th>PON (IOL)</th>
+				<th>ATX INSTAR</th>
+				<th>NTE CLLI</th>
 
-						<th>CNL Circuit</th>
-						<th>CNL CLO</th>
-						<th>UNI Circuit</th>
-						<th>UNI CLO</th>
-						<th>EVC Circuit</th>
+				<th>CNL Circuit</th>
+				<th>CNL CLO</th>
+				<th>UNI Circuit</th>
+				<th>UNI CLO</th>
+				<th>EVC Circuit</th>
 
-						<th>iCore</th>
-						<th>EXACT ASR</th>
+				<th>iCore</th>
+				<th>EXACT ASR</th>
 
-						<th>CNL TO</th>
-						<th>UNI PO</th>
-						<th>UNI TO</th>
-						<th>EVC PO</th>
-						<th>EVC TO</th>
+				<th>CNL TO</th>
+				<th>UNI PO</th>
+				<th>UNI TO</th>
+				<th>EVC PO</th>
+				<th>EVC TO</th>
 
-						<th>EVC ASR</th>
-						<th>EVC Type</th>
+				<th>EVC ASR</th>
+				<th>EVC Type</th>
 
-						<th>RO</th>
+				<th>RO</th>
 
-					</tr>
-				</thead>
+			</tr>
+		</thead>
 
-				<tbody>
-					<tr *ngFor='let order of orders'>
-						<td><a target="_blank" href="{{baseUrl}}/{{order.OrdNum}}?cache={{user.cache}}">{{order.OrdNum}}</a></td>
+		<tbody>
+			<tr *ngFor='let order of orders'>
+				<td><a target="_blank" href="{{baseUrl}}/{{order.OrdNum}}?cache={{user.cache}}">{{order.OrdNum}}</a></td>
 
-						<td>{{order.jeop}}</td>
-						<td>{{order.jeop2}}</td>
+				<td>{{order.jeop}}</td>
+				<td>{{order.jeop2}}</td>
 
-						<td><a target="_blank" href="{{aseBaseUrl}}/{{order.ASEdb_SiteID}}?cache={{user.cache}}">{{order.ASEdb_SiteID}}</a></td>
-						<td>{{order.P1_WFAWC}}</td>
+				<td><a target="_blank" href="{{aseBaseUrl}}/{{order.ASEdb_SiteID}}?cache={{user.cache}}">{{order.ASEdb_SiteID}}</a></td>
+				<td>{{order.P1_WFAWC}}</td>
 
-						<td>{{order.ATX_USO}}</td>
-						<td>{{order.PON}}</td>
-						<td>{{order.ATX_USO_SR_NO}}</td>
-						<td>{{order.NTE_2_MINCNL__NTECLLI}}</td>
+				<td>{{order.ATX_USO}}</td>
+				<td>{{order.PON}}</td>
+				<td>{{order.ATX_USO_SR_NO}}</td>
+				<td>{{order.NTE_2_MINCNL__NTECLLI}}</td>
 
-						<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_cnl}}&cache={{user.cache}}">{{order.FORCE_enocDSP__CIRCUIT_ID}}</a></td>
-						<td><a target="_blank" href="{{baseUrl}}/{{order.FORCE_enocDSP__CLO}}?cache={{user.cache}}">{{order.FORCE_enocDSP__CLO}}</a></td>
-						<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_uni}}&cache={{user.cache}}">{{order.cktid}}</a></td>
-						<td><a target="_blank" href="{{baseUrl}}/{{order.trk}}?cache={{user.cache}}">{{order.trk}}</a></td>
-						<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_evc}}&cache={{user.cache}}">{{order.evcCircuit}}</a></td>
+				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_cnl}}&cache={{user.cache}}">{{order.FORCE_enocDSP__CIRCUIT_ID}}</a></td>
+				<td><a target="_blank" href="{{baseUrl}}/{{order.FORCE_enocDSP__CLO}}?cache={{user.cache}}">{{order.FORCE_enocDSP__CLO}}</a></td>
+				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_uni}}&cache={{user.cache}}">{{order.cktid}}</a></td>
+				<td><a target="_blank" href="{{baseUrl}}/{{order.trk}}?cache={{user.cache}}">{{order.trk}}</a></td>
+				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_evc}}&cache={{user.cache}}">{{order.evcCircuit}}</a></td>
 
-						<td>{{order.ATX_USO_iCORE_ID}}</td>
-						<td>{{order.ASEdb_bettc_database_MATCH__EXACT_ASR}}</td>
+				<td>{{order.ATX_USO_iCORE_ID}}</td>
+				<td>{{order.ASEdb_bettc_database_MATCH__EXACT_ASR}}</td>
 
-						<td>{{order.CANOPI_CNL_TO}}</td>
-						<td>{{order.CANOPI_UNI_PO}}</td>
-						<td>{{order.CANOPI_UNI_TO}}</td>
-						<td>{{order.CANOPI_EVC_PO}}</td>
-						<td>{{order.CANOPI_EVC_TO}}</td>
+				<td>{{order.CANOPI_CNL_TO}}</td>
+				<td>{{order.CANOPI_UNI_PO}}</td>
+				<td>{{order.CANOPI_UNI_TO}}</td>
+				<td>{{order.CANOPI_EVC_PO}}</td>
+				<td>{{order.CANOPI_EVC_TO}}</td>
 
-						<td>{{order.evcAsr}}</td>
-						<td>{{order.evcType}}</td>
-						
-						<td>{{order.RO}}</td>
+				<td>{{order.evcAsr}}</td>
+				<td>{{order.evcType}}</td>
+				
+				<td>{{order.RO}}</td>
 
-						
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-</div>
+				
+			</tr>
+		</tbody>
+	</table>
+</dc-loading-table>

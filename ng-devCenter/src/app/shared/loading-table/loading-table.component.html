@@ -1,0 +1,36 @@
+<ng-progress [showSpinner]="false" [color]="'blue'"></ng-progress>
+
+<!-- ticket loading -->
+<div class='loading' [hidden]="!loadingTable">
+	<div class='container'>
+		<div class='loader'>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--dot'></div>
+			<div class='loader--text'></div>
+		</div>
+	</div>
+</div>
+
+<div class="container-fluid table-spacing" [hidden]='loadingTable'>
+
+	<!-- header -->
+	<div class="row">
+		<div class="col-12">
+			<h1 class='text-center ticket-title'>
+				<span>{{tableTitle}}</span>
+				<i class="material-icons success" title='Refresh {{tableTitle}}' (click)="refreshDataEvent()">update</i>
+			</h1>
+		</div>
+	</div>
+
+	<!-- table -->
+	<div class="row">
+		<div class="col-12">
+		<ng-content></ng-content>
+		</div>
+	</div>
+</div>

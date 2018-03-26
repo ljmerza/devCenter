@@ -13,6 +13,7 @@ templateUrl: './user-settings.component.html',
 })
 export class UserSettingsComponent implements OnInit {
 	userSettingsForm: FormGroup;
+	gotProfile = false;
 	@Input() isLogin:boolean = true;
 
 	constructor(
@@ -66,7 +67,6 @@ export class UserSettingsComponent implements OnInit {
 	/**
 	 * Gets a user's profile. Saved to Redux and user form is set.
 	 */
-	gotProfile = false;
 	getProfile(){
 		this.profile.getProfile().subscribe(
 			profile => {
@@ -152,6 +152,9 @@ export class UserSettingsComponent implements OnInit {
 		this.user.setUserData('emberUrl', userData.emberUrl.value);
 		this.user.setUserData('teamUrl', userData.teamUrl.value);
 		this.user.setUserData('cache', userData.cache.value);
+
+		// get new user profile
+		this.getProfile();
 
 		if(!this.pings.pristine){
 			this.savePingSettings();

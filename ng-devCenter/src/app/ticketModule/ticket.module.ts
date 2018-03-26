@@ -3,7 +3,6 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MomentModule } from 'angular2-moment';
-import { NgProgressModule } from 'ngx-progressbar';
 import { DataTablesModule } from 'angular-datatables';
 
 // custom modules
@@ -23,9 +22,8 @@ import { DatesComponent } from './dates/dates.component';
 
 @NgModule({
 	imports: [
-		CommonModule, SharedModule, NgbModule,
+		CommonModule, SharedModule, NgbModule, DataTablesModule,
 		RouterModule, FormsModule, ReactiveFormsModule, MomentModule,
-		NgProgressModule, DataTablesModule
 	],
 	declarations: [
 		SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent, CrucibleComponent,

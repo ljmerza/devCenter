@@ -208,7 +208,11 @@
 		</ul>
 
 		<dc-searchbar></dc-searchbar>
-		<dc-navbar-user [userProfile]=userProfile></dc-navbar-user>
+
+		<span *ngIf='userProfile'>
+			<dc-navbar-user [userProfile]=userProfile></dc-navbar-user>
+		</span>
+		
 	</div>
 </nav>
 

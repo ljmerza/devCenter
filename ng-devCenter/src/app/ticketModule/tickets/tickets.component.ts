@@ -29,6 +29,10 @@ export class TicketsComponent implements OnInit {
 	@select('repos') getRepos$: Observable<Array<Repo>>;
 	getTicketsSub$;
 
+	get tableTitle(){
+		return `${this.jira.title} Tickets`;
+	}
+
 	dtOptions = {
 		order: [[4, 'desc']],
 		columnDefs: [
@@ -64,20 +68,23 @@ export class TicketsComponent implements OnInit {
 	 * of tickets based on URL parameter if user has credentials
 	 */
 	ngOnInit():void {
-
 		if( !this.user.needRequiredCredentials() ){
+
+			// get all repos
 			this.git.getRepos().subscribe(
 				this.processRepos.bind(this),
 				this.git.processErrorResponse.bind(this.git)
 			);
+
+			// get tickets
 			this.getTickets$.subscribe(this.processTickets.bind(this));
 
 			this.route.paramMap.subscribe(params => {
 				if(this.getTicketsSub$) this.getTicketsSub$.unsubscribe();
 				this.ticketType = params.get('filter') || 'mytickets';
-				this.getTickets(true, true);
+				this.getTickets(true);
 			});
-		} 
+		}
 	}
 
 	/** 
@@ -93,12 +100,14 @@ export class TicketsComponent implements OnInit {
 	 * stop loading animations and re-render the data-table. If error then Toast error message.
 	 * @param {Boolean} isHardRefresh if hard refresh skip localStorage retrieval and loading animations
 	 */
-	public getTickets(isHardRefresh:Boolean=false, showLoading:Boolean=false) {
+	public getTickets(showLoading:Boolean=false) {
 		if(showLoading) this.loadingTickets = true;
 		this.ngProgress.start();
 
-		this.getTicketsSub$ = this.jira.getTickets(this.ticketType, isHardRefresh)
-		.subscribe((response:APIResponse) => this.store.dispatch({type: Actions.newTickets, payload: response.data}),
+		this.getTicketsSub$ = this.jira.getTickets(this.ticketType, true)
+		.subscribe((response:APIResponse) => {
+			this.store.dispatch({type: Actions.newTickets, payload: response.data})
+		},
 			this.jira.processErrorResponse.bind(this.jira)
 		);
 	}
