@@ -75,14 +75,16 @@ export class OrdersComponent implements OnInit {
 			))
 		);
 
+		console.log('orders: ', orders[0]);
+
 		orders = orders.map(order => {
 			// trim order numbers
 			order.OrdNum = order.OrdNum.trim();
 			order.trk = order.trk.trim();
 
 			// show example order for debugging
-			if(order.OrdNum === 'C13764131') console.log('order: ', order);
-			// if(order.PON) console.log('order field: ', order);
+			
+			// if(order.OrdNum === '') console.log('order: ', order);
 
 			// parse EVC data
 			let evcData = (order.EVC_Status || '').split('</br>');

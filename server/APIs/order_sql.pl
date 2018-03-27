@@ -19,6 +19,29 @@ use Data::Dumper;
 Hash::Merge::set_behavior('LEFT_PRECEDENT');
 
 
+my $dirname = 'data';
+my $output = "$dirname/data_outs.json";
+make_path($dirname, {chmod => 0777});
+
+my $number_of_orders = '1000';
+
+my $sqls = {
+	IOS_Orders => {order_field => 'mcn', db_field => 'mcn'},
+	IMEPAS_T_EPAS_EXACT_ASC => {order_field => 'PON', db_field => 'PON'},
+
+	CANOPI_UNIPO_CNLTO => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
+	CANOPI_UNIPO_UNITO => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
+	NTE_2_MINCNL => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
+
+	ATX_Match => {order_field => 'ATX_USO', db_field => 'USO'},
+	ASEdb_bettc_database_MATCH => {order_field => 'ASEdb_SiteID', db_field => 'Site_ID'},
+	FORCE_enocDSP => {order_field => 'OrdNum', db_field => 'ORD'},
+	AUTOLOADER_EVC => {order_field => 'trk', db_field => 'EVC_TRK'},
+
+	CANOPI_UNItoCNLMap => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
+	CANOPI_UNItoEVCMap => {order_field => 'CKTID_PARSE', db_field => 'UNI_CKTID_Parse'},
+};
+
 sub db_connect_odb_ro {
 	my ($class) = @_;
 	return M5::DB->connect(
@@ -31,31 +54,12 @@ sub db_connect_odb_ro {
 
 my $dbh = db_connect_odb_ro();
 
-my $sqls = {
-	IOS_Orders => {order_field => 'mcn', db_field => 'mcn'},
-	IMEPAS_T_EPAS_EXACT_ASC => {order_field => 'PON', db_field => 'PON'},
-
-	CANOPI_UNIPO_CNLTO => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
-	CANOPI_UNIPO_UNITO => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
-	NTE_2_MINCNL => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
-
-	ATX_Match => {order_field => 'ATX_USO', db_field => 'USO'},
-	ASEdb_bettc_database_MATCH => {order_field => 'ASEdb_SiteID', db_field => 'Site_ID'},
-	FORCE_enocDSP => {order_field => 'CNL_TRK', db_field => 'CLO'},
-	AUTOLOADER_EVC => {order_field => 'cktid', db_field => 'UNI_CKTID', parse => 1},
-
-	CANOPI_UNItoCNLMap => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
-	CANOPI_UNItoEVCMap => {order_field => 'CKTID_PARSE', db_field => 'UNI_CKTID_Parse'},
-};
-
-
-my $sql = <<'SQL';
-SELECT TOP 1000 *
+my $sql = ";
+SELECT TOP $number_of_orders *
 FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core 
 right join odb.dbo.DB2_Feeds_Refresh as Refresh 
 on Core.cktid = Refresh.cktid and Core.event_type = Refresh.event_type 
-AND Refresh.cmp_dt is NULL;
-SQL
+AND Refresh.cmp_dt is NULL";
 
 my $sth = $dbh->prepare($sql);
 $sth->execute();
@@ -100,10 +104,7 @@ foreach my $data_base (keys %{$sqls}){
 }
 
 
-# create JKSON dump
-my $dirname = 'data';
-make_path($dirname, {chmod => 0777});
-my $output = "$dirname/data_out.json";
+# create JSON dump
 open my $fh, ">", $output or die "Cannot open file '$output': $!\n";
 print $fh encode_json($order_data);
 close $fh;
@@ -137,7 +138,11 @@ sub merge_orders {
 
 			foreach my $field (keys %{$row}){
 				$hasMerged = 1;
-				$order->{$data_base.'__'.$field} = $row->{$field};
+
+				my $parsed_field = $field;
+				$parsed_field =~ s/\ /_/g;
+
+				$order->{$data_base.'__'.$parsed_field} = $row->{$field};
 			}
 		}
 	}
