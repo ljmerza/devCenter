@@ -27,6 +27,7 @@
     "@angular/router": "^5.2.8",
     "@ng-bootstrap/ng-bootstrap": "1.0.1",
     "@types/datatables.net-buttons": "^1.4.0",
+    "@types/jqueryui": "^1.12.2",
     "angular-datatables": "^5.0.0",
     "angular2-moment": "^1.8.0",
     "bootstrap": "4.0.0",

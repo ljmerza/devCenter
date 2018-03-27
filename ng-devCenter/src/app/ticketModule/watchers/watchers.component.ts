@@ -22,7 +22,6 @@ export class WatchersComponent implements OnInit {
 	 */
 	ngOnInit(){
 		this.isSelfWatcher = this.watchers.find(watcher => watcher.username === this.user.username); 
-		console.log('this.watchers: ', this.watchers, this.key, this.isSelfWatcher);
 		this.updateModifyString();
 	}
 
