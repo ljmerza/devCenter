@@ -21,6 +21,8 @@
 
 				<th>UNI Circuit</th>
 				<th>UNI CLO</th>
+				<th>UNI CAC</th>
+
 				<th>EVC Circuit</th>
 
 				<th>iCore</th>
@@ -54,18 +56,24 @@
 				<td>{{order.PON}}</td>
 				<td>{{order.ATX_USO_SR_NO}}</td>
 				<td>{{order.NTE_2_MINCNL__NTECLLI}}</td>
-
+				
+				<!-- CNL -->
 				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.CNL_CKTID_PARSE}}&cache={{user.cache}}">{{order.CNL_CKTID_PARSE}}</a></td>
 				<td><a target="_blank" href="{{baseUrl}}/{{order.ASEdb_bettc_database_MATCH__CNL_TRK}}?cache={{user.cache}}">{{order.ASEdb_bettc_database_MATCH__CNL_TRK}}</a></td>
 				<td>{{order.CNL_CAC}}</td>
 				
+				<!-- UNI -->
 				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_uni}}&cache={{user.cache}}">{{order.cktid}}</a></td>
 				<td><a target="_blank" href="{{baseUrl}}/{{order.trk}}?cache={{user.cache}}">{{order.trk}}</a></td>
+				<td>{{order.cac}}</td>
+				
+				<!-- EVC -->
 				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_evc}}&cache={{user.cache}}">{{order.evcCircuit}}</a></td>
 
 				<td>{{order.ATX_USO_iCORE_ID}}</td>
 				<td>{{order.ASEdb_bettc_database_MATCH__EXACT_ASR}}</td>
-
+				
+				<!-- PO/TO -->
 				<td>{{order.CANOPI_CNL_TO}}</td>
 				<td>{{order.CANOPI_UNI_PO}}</td>
 				<td>{{order.CANOPI_UNI_TO}}</td>
