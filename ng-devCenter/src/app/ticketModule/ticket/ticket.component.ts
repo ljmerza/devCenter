@@ -8,6 +8,7 @@ import { TicketLogComponent } from './../ticket-log/ticket-log.component';
 import { SetPingsComponent } from './../set-pings/set-pings.component';
 import { TicketDetailsComponent } from './../ticket-details/ticket-details.component';
 import { TicketStatusComponent } from './../ticket-status/ticket-status.component';
+import { WatchersComponent } from './../watchers/watchers.component';
 
 import { MiscService, UserService, ConfigService, JiraService, ToastrService } from '@services';
 
@@ -37,6 +38,8 @@ export class TicketComponent implements OnInit, OnDestroy, AfterViewInit {
 	pingComponentRef;
 	commentComponentRef;
 	worklogComponentRef;
+
+	@ViewChild(WatchersComponent) watchersComponentRef: WatchersComponent;
 
 	tickets$;
 	ticketdates$;

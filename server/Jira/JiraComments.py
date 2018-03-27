@@ -86,12 +86,4 @@ class JiraComments():
 			'issueKey': key
 		}
 		return self.jira_api.post_json(url=f'{self.jira_api.api_base}/render', json_data=json_data, cred_hash=cred_hash)
-
-	def format_return(self, response):
-		'''
-		'''
-		return {
-			'data': {'comment': response['data']},
-			'status': True
-		}
 		

@@ -8,11 +8,12 @@ from JiraComments import JiraComments
 from JiraStatus import JiraStatus
 from JiraMisc import JiraMisc
 from JiraTickets import JiraTickets
+from JiraWatchers import JiraWatchers
 
 from JiraAPI import JiraAPI
 
 
-class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments):
+class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments, JiraWatchers):
 	'''Jira class for creating a Jira parent class'''
 
 	def __init__(self):
@@ -31,3 +32,4 @@ class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments):
 		JiraMisc.__init__(self, self.jira_api)
 		JiraTickets.__init__(self, self.jira_api)
 		JiraComments.__init__(self, self.jira_api)
+		JiraWatchers.__init__(self, self.jira_api)

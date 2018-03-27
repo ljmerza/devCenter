@@ -281,3 +281,37 @@ def parse_comment(data, jira_obj):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# get parsed comment
 	return jira_obj.parse_comment(cred_hash=data['cred_hash'], comment=data['comment'], key=data['key'])
+
+
+def modify_watchers(data, jira_obj):
+	'''
+	'''
+	# check for required data
+	missing_params = FlaskUtils.check_parameters(params=data, required=['type_of_modify', 'key'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+	# get type of watcher action we are doing
+	type_of_modify = data.get('type_of_modify', '')
+
+	# check for required username
+	if type_of_modify in ['add','remove']:
+		missing_params = FlaskUtils.check_parameters(params=data, required=['username'])
+		if missing_params:
+			return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+	# complete action
+	if type_of_modify == 'add':
+		return jira_obj.add_watcher(username=data['username'], cred_hash=data['cred_hash'], key=data['key'])
+
+	elif type_of_modify == 'remove':
+		return jira_obj.remove_watcher(username=data['username'], cred_hash=data['cred_hash'], key=data['key'])
+
+	elif type_of_modify == 'get':
+		return jira_obj.get_watchers(cred_hash=data['cred_hash'], key=data['key'])
+
+	else:
+		return {
+			'status': False,
+			'data': f'Invalid type of watcher modify: {type_of_modify}'
+		}

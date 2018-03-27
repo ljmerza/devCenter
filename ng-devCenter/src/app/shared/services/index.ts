@@ -1,5 +1,6 @@
 export * from './jira/jira-comments.service';
 export * from './jira/jira-pings.service';
+export * from './jira/jira-watchers.service';
 export * from './git.service';
 export * from './jira.service';
 export * from './misc.service';

@@ -20,8 +20,13 @@
 	<i (click)="openPingModel()" class="material-icons success" title='Branch Information'>record_voice_over</i>
 	<i (click)="openLogModal()" class="material-icons success" title='Add comment/time log'>alarm_add</i>
 	<i (click)="openModal()" class="material-icons success"title='View comments'>storage</i>
-	<i class="material-icons success" title='View Additional Data' (click)="openAdditionalDataModal()">live_help</i>
+	<i (click)="openAdditionalDataModal()" class="material-icons success" title='View Additional Data'>live_help</i>
+
+	<!-- watchers -->
+	<dc-watchers [watchers]=ticket.watchers [key]=ticket.key></dc-watchers>
 </td>
+
+
 
 <!-- summary -->
 <td class='summary-td'>{{ticket?.summary}}</td>

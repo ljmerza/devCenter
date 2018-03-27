@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { NgRedux } from '@angular-redux/store';
 
 import { UserService } from './../user.service';
 import { DataService } from './../data.service';
 
-import { RootState, Actions } from '@store';
 import { APIResponse } from '@models';
 
 @Injectable()
 export class JiraPingsService {
 
-	constructor(public dataService:DataService, public user:UserService, public store:NgRedux<RootState>) {}
+	constructor(public dataService:DataService, public user:UserService) {}
 
   	/**
   	 * send a new or merge ticket ping to the logged in user.

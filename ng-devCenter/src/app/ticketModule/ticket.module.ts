@@ -19,6 +19,7 @@ import {
 import { WorkTimePipe } from './work-time.pipe';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { DatesComponent } from './dates/dates.component';
+import { WatchersComponent } from './watchers/watchers.component';
 
 @NgModule({
 	imports: [
@@ -28,7 +29,7 @@ import { DatesComponent } from './dates/dates.component';
 	declarations: [
 		SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent, CrucibleComponent,
 		TicketLogComponent, TicketStatusComponent, DatesComponent,
-		TicketsComponent, TicketComponent, WorkTimePipe, UserDetailsComponent
+		TicketsComponent, TicketComponent, WorkTimePipe, UserDetailsComponent, WatchersComponent
 	],
 	exports: [TicketsComponent]
 })

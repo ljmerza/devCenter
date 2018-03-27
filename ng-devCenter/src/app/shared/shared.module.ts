@@ -16,14 +16,14 @@ import { ToastrComponent } from './toastr/toastr.component';
 import { LoadingTableComponent } from './loading-table/loading-table.component';
 
 // services
-import { JiraService, JiraCommentsService, JiraPingsService, OrderService } from '@services';
+import { JiraService, JiraCommentsService, JiraPingsService, OrderService, JiraWatchersService } from '@services';
 import { LocalStorageService } from './services/local-storage.service';
 import { DataService } from './services/data.service';
 import { ConfigService } from './services/config.service';
 import { UserService } from './services/user.service';
 
 
-import { MiscService, ToastrService, WebSocketService, ProfileService, GitService } from './services';
+import { MiscService, ToastrService, WebSocketService, ProfileService, GitService} from './services';
 
 // interceptors
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
@@ -49,7 +49,7 @@ export class SharedModule {
 			providers: [
 				UserService, LocalStorageService, ToastrService, ConfigService, 
 				WebSocketService, MiscService, JiraService, ProfileService, JiraPingsService,
-				DataService, GitService, JiraCommentsService, OrderService,
+				DataService, GitService, JiraCommentsService, OrderService, JiraWatchersService,
 				{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
 				{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}
 			]
