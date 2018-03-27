@@ -84,7 +84,7 @@ export class OrdersComponent implements OnInit {
 
 			// show example order for debugging
 			
-			// if(order.OrdNum === '') console.log('order: ', order);
+			if(order.OrdNum === 'C5CKTB67') console.log('order: ', order);
 
 			// parse EVC data
 			let evcData = (order.EVC_Status || '').split('</br>');

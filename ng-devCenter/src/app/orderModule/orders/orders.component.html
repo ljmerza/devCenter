@@ -17,6 +17,8 @@
 
 				<th>CNL Circuit</th>
 				<th>CNL CLO</th>
+				<th>CNL CAC</th>
+
 				<th>UNI Circuit</th>
 				<th>UNI CLO</th>
 				<th>EVC Circuit</th>
@@ -53,8 +55,10 @@
 				<td>{{order.ATX_USO_SR_NO}}</td>
 				<td>{{order.NTE_2_MINCNL__NTECLLI}}</td>
 
-				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_cnl}}&cache={{user.cache}}">{{order.FORCE_enocDSP__CIRCUIT_ID}}</a></td>
-				<td><a target="_blank" href="{{baseUrl}}/{{order.FORCE_enocDSP__CLO}}?cache={{user.cache}}">{{order.FORCE_enocDSP__CLO}}</a></td>
+				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.CNL_CKTID_PARSE}}&cache={{user.cache}}">{{order.CNL_CKTID_PARSE}}</a></td>
+				<td><a target="_blank" href="{{baseUrl}}/{{order.ASEdb_bettc_database_MATCH__CNL_TRK}}?cache={{user.cache}}">{{order.ASEdb_bettc_database_MATCH__CNL_TRK}}</a></td>
+				<td>{{order.CNL_CAC}}</td>
+				
 				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_uni}}&cache={{user.cache}}">{{order.cktid}}</a></td>
 				<td><a target="_blank" href="{{baseUrl}}/{{order.trk}}?cache={{user.cache}}">{{order.trk}}</a></td>
 				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_evc}}&cache={{user.cache}}">{{order.evcCircuit}}</a></td>
