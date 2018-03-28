@@ -23,10 +23,13 @@ def set_status(data, jira_obj):
 		return jira_obj.remove_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
 
 	if data['status_type'] == 'cr':
-		return jira_obj.set_code_review(key=data['key'], cred_hash=data['cred_hash'])	
+		return jira_obj.set_code_review(key=data['key'], cred_hash=data['cred_hash'])
 
 	elif data['status_type'] == 'qaReady':
-		return jira_obj.set_ready_for_qa(key=data['key'], cred_hash=data['cred_hash'])
+		response = {'status': True, 'data': {}}
+		response['data']['qa_ready_response'] = jira_obj.set_ready_for_qa(key=data['key'], cred_hash=data['cred_hash'])
+		response['data']['comment_response'] = jira_obj.add_comment(key=data['key'], cred_hash=data['cred_hash'], comment='CR Pass')
+
 	elif data['status_type'] == 'inQa':
 		return jira_obj.set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'qaFail':
