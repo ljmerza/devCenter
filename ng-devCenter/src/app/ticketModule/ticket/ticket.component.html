@@ -1,19 +1,15 @@
 <td>
-	<span class='keyCopy'>
-		<span class="material-icons success" title="Copy to clipboard">note</span>
-		<a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket?.key}}" title='Open in Jira'>
-			{{ticket?.key}}
-		</a>
-		<input value='{{ticket?.key}}'>
-	</span>
+	<span class="material-icons success" title="Copy to clipboard" (click)='misc.copyText(keyInput)'>note</span>
+	<a target="_blank" href="{{config.jiraUrl}}/browse/{{ticket?.key}}" title='Open in Jira'>
+		{{ticket?.key}}
+	</a>
+	<input class='key-copy' value='{{ticket?.key}}' #keyInput>
 </td>
 
 <td>
-	<span class='keyCopy'>
-		<span class="material-icons success" title="Copy to clipboard">note</span>
-		{{ticket?.msrp}}
-		<input value='{{ticket?.msrp}}'>
-	</span>
+	<span class="material-icons success" title="Copy to clipboard" (click)='misc.copyText(msrpInput)'>note</span>
+	{{ticket?.msrp}}
+	<input class='key-copy' value='{{ticket?.msrp}}'#msrpInput>
 </td>
 
 <td class='actions-td'>

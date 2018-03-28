@@ -1,6 +1,6 @@
 import { 
 	Component, Input, ViewChild, ComponentFactoryResolver, ViewEncapsulation, OnInit, OnDestroy,
-	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit 
+	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy, ChangeDetectorRef 
 } from '@angular/core';
 
 import { TicketCommentsModalComponent } from './../../commentsModule/ticket-comments-modal/ticket-comments-modal.component';
@@ -30,7 +30,7 @@ import { Comment, Ticket, Attachment } from '@models';
 	encapsulation: ViewEncapsulation.None
 
 })
-export class TicketComponent implements OnInit, OnDestroy, AfterViewInit {
+export class TicketComponent implements OnInit, OnDestroy {
 	ticketDropdown; // ticket dropdown reference
 
 	ticketDetails;
@@ -64,23 +64,6 @@ export class TicketComponent implements OnInit, OnDestroy, AfterViewInit {
 				this.ticketDates = ticketDates;
 				this.cd.detectChanges();
 			}
-		});
-	}
-
-	/**
-	 * add code highlighting to each comment and add copy text
-	 * functionality to each table item
-	 */
-	ngAfterViewInit():void {
-		const misc = this.misc;
-		
-		setTimeout(() => {
-			// for each table item add click event for copying text
-			$('.keyCopy').each(function(i, block) {
-				$(this).unbind().click(function(){
-					misc.copyText( $(this).children('input').get(0) );
-				});
-			});
 		});
 	}
 
