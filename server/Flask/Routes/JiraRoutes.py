@@ -124,9 +124,6 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 		# change status on Jira if not pcr pass/add (they are 'fake' statuses)
 		if data['status_type'] != 'pcrPass' and data['status_type'] != 'pcrAdd':
 			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-
-		if data['status_type'] == 'qaPass':
-			status_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 		
 		# if pcrAdd then add user to review
 		if data['status_type'] == 'pcrAdd':

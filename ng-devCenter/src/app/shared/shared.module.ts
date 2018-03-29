@@ -29,13 +29,16 @@ import { MiscService, ToastrService, WebSocketService, ProfileService, GitServic
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 
+import { DraggableDirective } from './draggable.directive';
+
+
 @NgModule({
 	imports: [
 		HttpClientModule, NgbModule, NgReduxModule, NgProgressModule,
 		ToastModule.forRoot(), BrowserAnimationsModule
 	],
-	declarations: [ModalComponent, ToastrComponent, LoadingTableComponent],
-	exports: [ModalComponent, ToastrComponent, LoadingTableComponent]
+	declarations: [ModalComponent, ToastrComponent, LoadingTableComponent, DraggableDirective],
+	exports: [ModalComponent, ToastrComponent, LoadingTableComponent, DraggableDirective]
 })
 export class SharedModule {
 	constructor(private ngRedux:NgRedux<RootState>, private devTools: DevToolsExtension){

@@ -1,5 +1,5 @@
 import { Component, Output, Input, ViewEncapsulation, EventEmitter, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
 	selector: 'dev-center-modal',
