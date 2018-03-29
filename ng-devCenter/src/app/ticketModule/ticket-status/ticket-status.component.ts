@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 
 import { select, NgRedux } from '@angular-redux/store';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 
 import { ToastrService, JiraService } from '@services';
@@ -21,7 +20,6 @@ import { statuses, Ticket, APIResponse } from '@models';
 })
 export class TicketStatusComponent implements OnInit, OnDestroy {
 	ticketStates:Array<any> = [];
-
 	ticketDropdown;
 	qaComponentRef;
 	statusComponentRef;
@@ -31,7 +29,6 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 	statusType: string;
 	statusName: string;
-	modalRef: NgbModalRef;
 
 	ticketStatus;
 	crucibleId;
@@ -229,16 +226,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		// save transition data for modal then open model
 		this.statusType = ticketState.id
 		this.statusName = ticketState.name;
-		this.modalRef = this.modal.openModal();
-
-		// set dismiss event to trigger status cancel
-		this.modalRef.result.then(
-    		() => null,
-    		() => {
-    			this.statusChange({});
-    			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
-    		}
-    	)
+		this.modal.openModal();		
 	}
 
 	/**
@@ -253,7 +241,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			this.statusChange({});
 		}
 
-		this.modalRef.close();	
+		this.modal.closeModal();	
 	}
 
 	/**

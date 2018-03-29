@@ -14,7 +14,7 @@ templateUrl: './user-settings.component.html',
 export class UserSettingsComponent implements OnInit {
 	userSettingsForm: FormGroup;
 	gotProfile = false;
-	@Input() isLogin:boolean = true;
+	@Input() isLogin:boolean = false;
 
 	constructor(
 		public user: UserService, private jira: JiraPingsService, private toastr: ToastrService, 

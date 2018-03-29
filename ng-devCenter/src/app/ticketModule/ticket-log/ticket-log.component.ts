@@ -1,6 +1,6 @@
 import { Component, ViewChild, EventEmitter, ChangeDetectionStrategy, ElementRef, ViewEncapsulation, Output, Input, ChangeDetectorRef } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgRedux } from '@angular-redux/store';
 
 import { ModalComponent } from '@modal';
@@ -16,7 +16,6 @@ import { statuses, Ticket, Comment } from '@models';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TicketLogComponent	{
-	modalRef: NgbModalRef;
 
 	// form input values
 	uctNotReady:boolean = false;
@@ -26,8 +25,6 @@ export class TicketLogComponent	{
 	logTime = {hour: 0, minute: 0};
 	hourStep:number = 1;
 	minuteStep:number = 15;
-
-	customModalCss = 'timeLog';
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;
@@ -39,7 +36,7 @@ export class TicketLogComponent	{
 	 * @param {NgForm} formObj the reactive form object with all the inputs' values 
 	 */
 	submitLog(formObj?:NgForm) {
-		this.modalRef.close();
+		this.modal.closeModal();
 		if(!formObj) return;
 
 		const tasks = this.buildToastMessage(formObj);
@@ -151,8 +148,7 @@ export class TicketLogComponent	{
 	 * Opens the work log dialog.
 	 */
 	openLogModal():void {
-		this.cd.detectChanges();
-		this.modalRef = this.modal.openModal();
+		this.modal.openModal();
 	}
 
 	/**

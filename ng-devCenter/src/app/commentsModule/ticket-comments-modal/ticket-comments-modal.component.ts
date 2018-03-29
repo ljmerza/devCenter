@@ -1,12 +1,9 @@
 import { 
-	Component, ViewChild, ChangeDetectorRef,
-	ViewEncapsulation, Input, Output, ChangeDetectionStrategy
+	Component, ViewChild, ChangeDetectionStrategy,
+	ViewEncapsulation, Input,
 } from '@angular/core';
 
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '@modal';
-import { JiraService, ToastrService, MiscService, UserService } from '@services';
-import { DataService } from './../../shared/services/data.service';
 
 @Component({
 	selector: 'ticket-comments-modal',
@@ -16,24 +13,13 @@ import { DataService } from './../../shared/services/data.service';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TicketCommentsModalComponent {
-
-	modalRef: NgbModalRef;
-	customModalCss = 'ticketComments';
+	modalSize = 'xlg';
 	@Input() key;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
-	constructor(private cd: ChangeDetectorRef) {}
+	constructor() {}
 
-  	/**
-  	*/
-	openModal(): void {
-		this.cd.detectChanges();
-		this.modalRef = this.modal.openModal();
-	}
-
-	/**
-	*/
-	closeModal() {
-		this.modalRef.close();
+	openModal(){
+		this.modal.openModal();		
 	}
 }

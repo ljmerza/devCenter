@@ -1,16 +1,16 @@
-<dev-center-modal (modalEvent)="closeModal()" [customModalCss]=customModalCss>
+<dev-center-modal (modalEvent)="closeModal()" [modalSize]=modalSize>
 
-	<div class='modal-text'>
+	<div class='dc-modal-text'>
 		<h4 class="modal-title">User Settings</h4>
 	</div>
 
-	<span class='modal-body'>
+	<div class='dc-modal-body'>
 		<dc-user-settings isLogin=false></dc-user-settings>
-	</span>
+	</div>
 
-	<span class='modal-footer'>
+	<div class='dc-modal-footer'>
 		<button type="submit" class="btn btn-outline-primary" (click)="closeModal(true)">Save</button>
 		<button type="submit" class="btn btn-outline-danger" (click)="closeModal()">Cancel</button>
-	</span>
+	</div>
 	
 </dev-center-modal>

@@ -1,4 +1,7 @@
-import { Component, Output, Input, ViewEncapsulation, EventEmitter, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { 
+	Component, Output, Input, ViewEncapsulation, ChangeDetectorRef,
+	EventEmitter, ViewChild, ChangeDetectionStrategy, ElementRef, Renderer2 
+} from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -9,31 +12,35 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 	encapsulation: ViewEncapsulation.None
 })
 export class ModalComponent {
-	@Input() customModalCss;
+	@Input() modalSize:string;
+	@ViewChild("modal", {read: ElementRef}) tref: ElementRef;
 	@Output() modalEvent = new EventEmitter();
-	@ViewChild('modal') modal: NgbModal;
-	modalRef;
+	modelIsHidden = true;
 
-	constructor(private modalService: NgbModal) { }
+	modalLeft;
+	modalTop;
+
+	constructor(private cd: ChangeDetectorRef, private el: ElementRef, private render: Renderer2) { }
 
 	/**
 	*/
-	openModal(): NgbModalRef {
-		// create custom args
-		let options = {};
-		if(this.customModalCss){
-			options = {windowClass: this.customModalCss};
-		}		
-
-		// open modal and return modal ref
-		this.modalRef = this.modalService.open(this.modal, options);
-		return this.modalRef;
+	openModal() {
+		this.modelIsHidden = false;
+		this.cd.detectChanges();
 	}
 
 	/**
 	*/
-	closeModal(closeMessage){
-		this.modalRef.close();
-		this.modalEvent.emit(closeMessage);
+	closeModal(){
+		this.modelIsHidden = true;
+		this.cd.detectChanges();
+	}
+
+	dragEnd({x,y}){
+		const left = this.el.nativeElement.offsetLeft;
+		console.log(this.tref.nativeElement)
+		console.log(x,y,left, this.tref, `transform: translate(${x}px, ${y}px);`);
+		this.tref.nativeElement.setAttribute("style", `transform: translate(${x}px, ${y}px);`);
+		// this.tref.nativeElement.setAttribute("style", `top: ${y}px;`);
 	}
 }

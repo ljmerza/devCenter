@@ -1,5 +1,4 @@
 import { Component, Input, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from './../../shared/modal/modal.component';
 import { ToastrService, JiraPingsService, MiscService } from '@services';
 
@@ -15,8 +14,7 @@ export class SetPingsComponent {
 	@Input() branch;
 	@Input() sprint;
 
-	customModalCss ='setPings';
-	modalInstance: NgbModalRef;
+	modalSize ='lg';
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(private toastr: ToastrService, private jira: JiraPingsService, private cd: ChangeDetectorRef, public misc: MiscService){}
@@ -25,8 +23,7 @@ export class SetPingsComponent {
 	 * opens the model for ths user to send a ping. 
 	 */
 	openPingModel(){
-		this.cd.detectChanges();
-		this.modalInstance = this.modal.openModal();
+		this.modal.openModal();
 	}
 
 	/**
@@ -34,7 +31,7 @@ export class SetPingsComponent {
 	 * @param {string} pingType the type of ping to send (new or merge)
 	 */
 	closePingModal(pingType:string){
-		this.modalInstance.close();
+		this.modal.closeModal();
 		if(!pingType) return; 
 
 		this.jira.setPing({key: this.key, pingType}).subscribe(

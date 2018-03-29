@@ -3,7 +3,7 @@ import {
 	ChangeDetectionStrategy, OnInit, EventEmitter, Output, Input, OnDestroy
 } from '@angular/core';
 import { NgForm, FormGroup, FormControl, Validators, FormBuilder, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
-import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { select, NgRedux } from '@angular-redux/store';
 
@@ -24,14 +24,12 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	qaForm;
 	hourStep = 1;
 	minuteStep = 15;
-	customModalCss = 'qaGen';
 	repos:Array<Repo>;
 	repos$;
 	defaultLogTime = {hour: 0, minute: 0};
 	defaultPcrNeeded = true;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
-	modalRef: NgbModalRef;
 	@Input() msrp;
 	@Input() key;
 
@@ -121,27 +119,29 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	submitQA(isSaving): void {
 
 		if(!isSaving){
-			this.cancelStatusChange();
-			this.modalRef.close();
+			this.cancelStatusChange({});
+			this.modal.closeModal();
+			return;
+		} else if(this.qaForm.invalid) {
+			this.modal.closeModal();
 			return;
 		}
-
-		if(this.qaForm.invalid) return;
-		this.modalRef.close();
 		
 		const postData = this.generatePostBody();
-		if(!postData.autoPCR) this.cancelStatusChange();
+		if(!postData.autoPCR) this.cancelStatusChange({showToast:false});
 		this.showSubmitMessage(postData);
 
 		this.jira.generateQA(postData).subscribe(
 			response => {
+
+				this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status:statuses.INDEV.frontend}});
 				this.showQaSubmitSuccessMessage(response);
 				this.checkForStateChange(postData, response.data);
 				this._resetForm();
 			},
 			error => {
 				this.jira.processErrorResponse(error);
-				this.cancelStatusChange();
+				this.cancelStatusChange({});
 			}
 		);
 	}
@@ -158,9 +158,9 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	/**
 	 * Sets ticket status back to in dev and shows cancel toast
 	 */
-	cancelStatusChange(){
+	cancelStatusChange({showToast=true}:{showToast?:boolean}){
 		this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status: statuses.INDEV.frontend }});
-		this.toastr.showToast(`Ticket ${this.key} status cancelled.`, 'info');
+		if(showToast) this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
 	}
 
 	/**
@@ -246,27 +246,15 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/*
-	*/
+	/**
+	 *
+	 */
 	openQAModal():void {
-		this.cd.detectChanges();
-		this.modalRef = this.modal.openModal();
-
-		// set dismiss event to trigger status cancel
-		this.modalRef.result.then(
-    		() => null,
-    		() => {
-    			this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status:statuses.INDEV.frontend}});
-    			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
-    		}
-    	);
-
-		// if we already have branches then don't reload them
-		if( (this.qaForm.get('branches') as FormArray).length > 0 ) {
-			return;
+		if( (this.qaForm.get('branches') as FormArray).length == 0 ) {
+			this.getTicketBranches();
 		}
 
-		this.getTicketBranches();
+		this.modal.openModal();
 	}
 
 	/**

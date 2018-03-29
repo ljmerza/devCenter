@@ -1,8 +1,8 @@
-<div [ngClass]="{'container login': isLogin == true}">
-	<div [ngClass]="{'row': isLogin == true}">
-		<div class='col-sm-3' *ngIf='isLogin == true'></div>
-		<div [ngClass]="{'col-sm-6': isLogin == true}">
+<div>
+	<div>
+		<div>
 			<form [formGroup]="userSettingsForm">
+
 				<!-- username -->
 				<div class="form-group">
 					<label for="username">Username:</label>
@@ -98,8 +98,8 @@
 					</div>
 				</div>
 				<!-- end checkboxes -->
-				<span *ngIf='isLogin == true' class='buttons'>
-					<button type="button" class="btn btn-outline-primary align-right" (click)="submit(true)">Create Profile</button>
+				<span *ngIf='isLogin' class='buttons'>
+					<button *ngIf='userSettingsForm.valid' type="button" class="btn btn-outline-primary align-right" (click)="submit(true)">Create Profile</button>
 				</span>
 
 			</form>

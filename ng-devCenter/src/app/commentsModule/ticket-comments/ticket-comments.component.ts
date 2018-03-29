@@ -3,7 +3,6 @@ import {
 	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy, OnDestroy
 } from '@angular/core';
 
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { NgRedux } from '@angular-redux/store';
 
@@ -25,8 +24,6 @@ declare const $:any;
 })
 export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDestroy {
 	commentId:string;
-	modalRef:NgbModalRef;
-	customModalCss:string = 'ticketComment';
 	comments:Array<Comment>;
 	attachments:Array<Attachment>;
 
@@ -60,19 +57,19 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	ngAfterViewChecked():void {
 		const misc = this.misc;
 		
-		setTimeout(() => {
-			// highlight code needs to be triggered after modal opens
-			$('pre').each(function(i, block) {
-				hljs.highlightBlock(block);
-			});
+		// setTimeout(() => {
+		// 	// highlight code needs to be triggered after modal opens
+		// 	$('pre').each(function(i, block) {
+		// 		hljs.highlightBlock(block);
+		// 	});
 
-			// for each table item add click event for copying text
-			$('.tableCopy').each(function(i, block) {
-				$(this).click(function(){
-					misc.copyText( $(this).children('input').get(0) );
-				});
-			});
-		});
+		// 	// for each table item add click event for copying text
+		// 	$('.tableCopy').each(function(i, block) {
+		// 		$(this).click(function(){
+		// 			misc.copyText( $(this).children('input').get(0) );
+		// 		});
+		// 	});
+		// });
 	}
 	
 	/**
@@ -108,8 +105,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 */
 	private deleteComment(commentId:string):void {
 		this.commentId = commentId;
-		// open delete modal
-		this.modalRef = this.modal.openModal();
+		this.modal.openModal();
 	}
 
 	/**
@@ -117,8 +113,8 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 * array and send commentId to API to persist delete
 	 * @param {Boolean} deleteComment do we delete the comment?
 	 */
-	public closeDeleteModal(deleteComment?:boolean):void {
-		this.modalRef.close();
+	public closeModal(deleteComment?:boolean):void {
+		this.modal.closeModal();
 		if(!deleteComment) return;
 
 		this.jira.deleteComment(this.commentId, this.key)
@@ -135,20 +131,18 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 * Edits a comment's body
 	 * @param {Comment} comment the comment object to edit
 	 */
-	public editComment(comment:Comment):void {
+	public editComment(oldComment:Comment):void {
 
-		// toggle editing text
-		this.toggleEditing(comment);
+		this.toggleEditingButton(oldComment);
 
-		const newComment = $(`#${comment.editId}`).val();
+		const newComment = $(`#${oldComment.editId}`).val();
 
-		// make sure we have a change
-		if(newComment == comment.comment){
-			this.toastr.showToast(`No changes to comment ${comment.id} made.`, 'info');
+		if(newComment == oldComment.comment){
+			this.toastr.showToast(`No changes to comment ${oldComment.id} made.`, 'info');
 			return;
 		}
 
-		this.jira.editComment({key: this.key, comment_id: comment.id, comment: newComment})
+		this.jira.editComment({key: this.key, comment_id: oldComment.id, comment: newComment})
 		.subscribe(() => this.toastr.showToast('Comment Edited Successfully', 'success'));
 	}
 
@@ -157,7 +151,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 * based on editing or not
 	 * @param {Comment} comment the comment to change editing values on
 	 */
-	private toggleEditing(comment:Comment):void {
+	private toggleEditingButton(comment:Comment):void {
 		comment.isEditing = !comment.isEditing;
 		comment.closeText = comment.closeText == 'Cancel Editing' ? 'Edit Comment' : 'Cancel Editing';
 	}

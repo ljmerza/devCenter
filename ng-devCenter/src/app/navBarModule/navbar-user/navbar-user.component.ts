@@ -9,8 +9,6 @@ import { UserService } from '@services';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarUserComponent {
-	customModalCss:string = 'navbarAbout';
-
 	@ViewChild(ModalComponent) modal:ModalComponent;
 	@Input() userProfile;
 
@@ -19,11 +17,11 @@ export class NavbarUserComponent {
 
 	aboutModel;
 	openAboutModal(){
-		this.aboutModel = this.modal.openModal();
+		this.modal.openModal();
 	}
 
 	closeAboutModal(){
-		this.aboutModel.close();
+		this.modal.closeModal();
 	}
 
 }

@@ -12,10 +12,8 @@ import { ModalComponent } from '@modal';
 })
 export class TicketDetailsComponent {
 	loading:boolean = true;
-	customModalCss = 'ticketDetails';
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
-	modalRef: NgbModalRef;
 	@Input() key;
 
 	links = [];
@@ -45,14 +43,14 @@ export class TicketDetailsComponent {
 		if(!this.ticket) this.getDetails();
 
 		this.cd.detectChanges();
-		this.modalRef = this.modal.openModal();
+		this.modal.openModal();
 	}
 
 	/**
 	 * close the ticket details modal.
 	 */
 	closeModel(){
-		this.modalRef.close();
+		this.modal.closeModal();
 	}
 
 	/**

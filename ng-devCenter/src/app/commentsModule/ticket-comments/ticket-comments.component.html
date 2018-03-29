@@ -49,7 +49,7 @@
 </ngb-accordion>
 
 
-<dev-center-modal (modalEvent)="closeDeleteModal()" [customModalCss]=customModalCss>
+<dev-center-modal (modalEvent)="closeModal()" [modalSize]=modalSize>
 
 	<div class='modal-text'>
 		<h4 class="modal-title">Delete Comment?'</h4>
@@ -61,11 +61,11 @@
 
 	<span class='modal-footer'>
 		<button type="button" class="btn btn-outline-primary" 
-		(click)="closeDeleteModal(true)">
+		(click)="closeModal(true)">
 			Delete Comment
 		</button>
 		<button type="button" class="btn btn-outline-danger" 
-		(click)="closeDeleteModal()">
+		(click)="closeModal()">
 			Cancel
 		</button>
 	</span>

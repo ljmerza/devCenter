@@ -14,11 +14,11 @@
 	</li>
 </ul>
 
-<dc-user-settings-modal #userSetting></dc-user-settings-modal>
+<dc-navbar-modal #userSetting></dc-navbar-modal>
 <dc-logout #logout></dc-logout>
 
 
-<dev-center-modal (modalEvent)="closeAboutModal()" [customModalCss]=customModalCss>
+<dev-center-modal (modalEvent)="closeAboutModal()">
 	<div class='modal-text'>
 		<h4 class="modal-title">About</h4>
 	</div>

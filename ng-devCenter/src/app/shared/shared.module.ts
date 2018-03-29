@@ -24,7 +24,7 @@ import { UserService } from './services/user.service';
 
 
 import { MiscService, ToastrService, WebSocketService, ProfileService, GitService} from './services';
-
+import { DragAndDropModule } from 'angular-draggable-droppable';
 // interceptors
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
@@ -32,7 +32,7 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
 @NgModule({
 	imports: [
 		HttpClientModule, NgbModule, NgReduxModule, NgProgressModule,
-		ToastModule.forRoot(), BrowserAnimationsModule
+		ToastModule.forRoot(), BrowserAnimationsModule, DragAndDropModule.forRoot(),
 	],
 	declarations: [ModalComponent, ToastrComponent, LoadingTableComponent],
 	exports: [ModalComponent, ToastrComponent, LoadingTableComponent]

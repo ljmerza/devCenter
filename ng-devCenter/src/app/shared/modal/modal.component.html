@@ -1,16 +1,17 @@
-<ng-template #modal>
+<span [ngClass]="{'hidden': modelIsHidden}">
+	<div class='dc-modal' #modal [ngClass]="modalSize" mwlDraggable (dragEnd)="dragEnd($event)">
+		<div class="modal-header">
+			<h4><i class="material-icons icon">warning</i></h4>
+			<ng-content select=".dc-modal-text"></ng-content>
 
-	<div class="modal-header">
-		<h4><i class="material-icons icon">warning</i></h4>
-		<ng-content select=".modal-text"></ng-content>
-
-		<button type="button" class="close" aria-label="Close" (click)="closeModal()">
-			<span aria-hidden="true">
-				<i class="material-icons">clear</i>
-			</span>
-		</button>
+			<button type="button" class="close" aria-label="Close" (click)="closeModal()">
+				<span aria-hidden="true">
+					<i class="material-icons">clear</i>
+				</span>
+			</button>
+		</div>
+		
+		<ng-content select=".dc-modal-body"></ng-content>
+		<ng-content select=".dc-modal-footer"></ng-content>
 	</div>
-	
-	<ng-content select=".modal-body"></ng-content>
-	<ng-content select=".modal-footer"></ng-content>
-</ng-template>
+</span>

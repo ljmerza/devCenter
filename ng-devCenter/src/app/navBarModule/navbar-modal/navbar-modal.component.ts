@@ -6,14 +6,14 @@ import { UserSettingsComponent } from './../user-settings/user-settings.componen
 import { JiraService, ToastrService, UserService } from '@services';
 
 @Component({
-	selector: 'dc-user-settings-modal',
+	selector: 'dc-navbar-modal',
 	templateUrl: './navbar-modal.component.html',
 	styleUrls: ['./navbar-modal.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarModalComponent {
-	modalInstance: NgbModalRef;
-	customModalCss = 'userSettings';
+	modalInstance;
+	modalSize:string = 'md';
 
 	@ViewChild('userModal') private userModal;
 	@ViewChild(ModalComponent) modal: ModalComponent;
@@ -22,17 +22,18 @@ export class NavbarModalComponent {
 	constructor() {}	
 
 	/**
-	*/
+	 * 
+	 */
 	openModal(): void {
-		this.modalInstance = this.modal.openModal();
+		this.modal.openModal();
 	}
 
 	/**
-	*/
+	 * see if we need to save data then close modal
+	 */
 	closeModal(isSaving?): void {
-		// see if we need to save data then close modal
 		this.userSettings.submit(isSaving);
-		this.modalInstance.close();
+		this.modal.closeModal();
 	}
 }
 

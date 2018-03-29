@@ -1,100 +1,81 @@
 $header-bg: #0275d8;
 $darkbg: #292b2c;
 
-.qaGen {
-	.modal-dialog {
-		max-width: 1000px;
-		width: 70%;
-	}
+.hidden {
+	visibility: hidden;
 }
 
-.ticketComments,  {
-	.modal-dialog {
+.dc-modal {
+
+	position: absolute;
+	top: 100px;
+  	// left: 40%;
+  	// transform: translateX(-50%);
+  	background-color: $darkbg;
+  	border: 1px solid black;
+
+
+	&.xlg{
 		max-width: 1200px;
 		width: 70%;
+		left: calc(50% - 600px);
 	}
-}
-
-.ticketDetails, .setPings, .timeLog, .navbarAbout {
-	.modal-dialog {
-		max-width: 700px;
+  	&.lg {
+		max-width: 900px;
 		width: 70%;
+		left: calc(50% - 450px);
 	}
-}
-
-
-.modal-dialog {
-	margin: 5% auto;
-}
-
-.modal-content {
-	border-radius: 0;
-	background-color: #333;
-	color: white;
-
-	.card, textarea, .form-control, .form-control:focus {
-		border-radius: 0;
-		background-color: #333;
-		color: white;
+	&.md {
+		max-width: 500px;
+		width: 70%;
+		left: calc(50% - 250px);
 	}
 
-	tr:nth-of-type(odd) {
-		background-color: $darkbg !important;
-	}
-
-	tr:nth-of-type(even) {
-		background-color: #333 !important;
-	}
-
-	.card-header {
-		background-color: $darkbg;
-	}
-
-	.modal-footer, .modal-header {
-		border-top: 0;
-		border-bottom: 0;
-	}
-
-	button {
-		border-radius: 0 !important;
-	}
-}
-
-
-.modal-header {
-	background-color: $header-bg;
-	color: #FFF;
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
-	padding: 0px;
-	margin: 0px;
-
-	h4, button {
-		margin-top: 15px;
-		justify-content: space-between;
-	}
-
-	h4 {
-		padding-left: 15px;
-	}
-
-	.close {
-		margin: 0px;
+	.modal-header {
+		background-color: $header-bg;
 		color: #FFF;
-	}
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		border-bottom: 0px;
+		padding: 0px;
+		margin: 0px;
 
-	.icon {
-		cursor: default;
-	}
+		h4, button{
+			padding-left: 15px;
+			margin-top: 15px;
+			justify-content: space-between;
+		}
 
-	.material-icons {
-		color: #fff;
-		font-size: 35px;
+		.close {
+			margin: 0px;
+			color: #FFF;
+		}
 
-		&:hover {
+		.icon {
+			cursor: default;
+		}
+
+		.material-icons {
 			color: #fff;
+			font-size: 35px;
+
+			&:hover {
+				color: #fff;
+			}
 		}
 	}
+
+	.dc-modal-body {
+		padding: 20px;
+	}
+
+	.dc-modal-footer{
+		border-top: 0px;
+		padding: 20px;
+		button {
+			float:right;
+			margin-left: 20px;
+		}
+	}
+
 }
-
-
