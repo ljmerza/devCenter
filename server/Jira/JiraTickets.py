@@ -65,7 +65,7 @@ class JiraTickets():
 		if not fields:
 			fields = self.jira_api.fields
 		# get filter data
-		full_url = f'{url}&startAt={start_at}&maxResults={max_results}&fields={fields}&expand=names,renderedFields'
+		full_url = f'{url}&startAt={start_at}&maxResults={max_results}&fields={fields}&expand=names,renderedFields,changelog'
 		response = self.jira_api.get(url=full_url, cred_hash=cred_hash)
 		if not response['status']:
 			return response
@@ -115,6 +115,7 @@ class JiraTickets():
 		ticket['links'] = get_issue_links(issue)
 
 		ticket['description'] = get_description(issue)
+		ticket['history'] = get_history(issue)
 
 		return ticket
 

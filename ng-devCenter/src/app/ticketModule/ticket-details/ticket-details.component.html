@@ -81,6 +81,22 @@
 							</table>
 						</td>
 					</tr>
+					<tr><td colspan='2'>Status Changes:</td></tr>
+					<tr>
+						<td colspan='2'>
+							<table class="table links-table">
+								<tbody>
+									<tr *ngFor='let status of ticket?.history?.status'>
+										<td>{{status.author.displayName}}</td>
+										<td>
+											<span *ngIf='status.items[0].fromString'>from {{status.items[0].fromString}} </span>
+											<span *ngIf='status.items[0].toString'>to {{status.items[0].toString}}</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</ng-template>

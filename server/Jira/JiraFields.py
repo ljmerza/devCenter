@@ -450,3 +450,21 @@ def get_description(issue):
 	'''
 	'''
 	return issue['fields'].get('description','')
+
+def get_history(issue):
+	'''
+	'''
+	histories = issue.get('changelog', {}).get('histories', [])
+	
+	formatted_history = {
+		'status': []
+	}
+	for history in histories:
+		items = history.get('items')
+		status = items[0].get('field')
+		if len(items) and status in ['status', 'Component'] :
+				formatted_history['status'].append(history)
+
+	# sort by created date
+	formatted_history['status'] = sorted(formatted_history['status'], key=lambda k: k['created']) 
+	return formatted_history
