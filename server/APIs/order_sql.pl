@@ -25,22 +25,23 @@ make_path($dirname, {chmod => 0777});
 
 my $number_of_orders = '1000';
 
-my $sqls = {
-	IOS_Orders => {order_field => 'mcn', db_field => 'mcn'},
-	IMEPAS_T_EPAS_EXACT_ASC => {order_field => 'PON', db_field => 'PON'},
+my @sqls = (
+	 {table => 'CANOPI_UNIPO_UNITO', order_field => 'CKTID_PARSE', db_field => 'UNI_CKTID_PARSE'},
+	 {table => 'CANOPI_UNItoEVCMap', order_field => 'CKTID_PARSE', db_field => 'UNI_CKTID_Parse'},
+	 {table => 'CANOPI_UNIPO_CNLTO', order_field => 'CKTID_PARSE', db_field => 'UNI_CKTID_PARSE'},
+	 {table => 'CANOPI_UNItoCNLMap', order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
 
-	CANOPI_UNIPO_CNLTO => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
-	CANOPI_UNIPO_UNITO => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
-	NTE_2_MINCNL => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
+	 {table => 'NTE_2_MINCNL', order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
+	 
+	 {table => 'ATX_Match', order_field => 'ATX_USO', db_field => 'USO'},
+	 {table => 'ASEdb_bettc_database_MATCH', order_field => 'ASEdb_SiteID', db_field => 'Site_ID'},
+	 {table => 'IMEPAS_T_EPAS_EXACT_ASC', order_field => 'PON', db_field => 'PON'},
 
-	ATX_Match => {order_field => 'ATX_USO', db_field => 'USO'},
-	ASEdb_bettc_database_MATCH => {order_field => 'ASEdb_SiteID', db_field => 'Site_ID'},
-	FORCE_enocDSP => {order_field => 'OrdNum', db_field => 'ORD'},
-	AUTOLOADER_EVC => {order_field => 'trk', db_field => 'EVC_TRK'},
+	 {table => 'IOS_Orders', order_field => 'mcn', db_field => 'mcn'},
 
-	CANOPI_UNItoCNLMap => {order_field => 'CNL_CKTID_PARSE', db_field => 'CNL_CKTID_PARSE'},
-	CANOPI_UNItoEVCMap => {order_field => 'CKTID_PARSE', db_field => 'UNI_CKTID_Parse'},
-};
+	 {table => 'FORCE_enocDSP', order_field => 'OrdNum', db_field => 'ORD'},
+	 {table => 'AUTOLOADER_EVC', order_field => 'trk', db_field => 'UNI_TRK'},
+);
 
 sub db_connect_odb_ro {
 	my ($class) = @_;
@@ -65,29 +66,22 @@ my $sth = $dbh->prepare($sql);
 $sth->execute();
 my $order_data = $sth->fetchall_arrayref({});
 
-foreach my $data_base (keys %{$sqls}){
+foreach my $query_object (@sqls){
 
-	my $query_object = $sqls->{$data_base};
+	my $table = $query_object->{table};
 	my $order_field = $query_object->{order_field};
 	my $db_field = $query_object->{db_field};
-	my $parse = $query_object->{parse} || 0;
 
 	my @field_values = ();
 	foreach my $order (@{$order_data}){
 		if($order->{$order_field}){
-
 			my $value = $order->{$order_field} ;
-			if($parse){
-				$value =~ s/\s+//g;
-				$value =~ s/[^!-~\s]//g;
-			}
-
 			push @field_values, $value;
 		}
 	}
 
-	print "$data_base ";
-	my $sql_query = "SELECT * FROM odb.dbo.$data_base WHERE $db_field IN (\'@{[ join('\',\'', @field_values) ]}\')";
+	print "$table ";
+	my $sql_query = "SELECT * FROM odb.dbo.$table WHERE $db_field IN (\'@{[ join('\',\'', @field_values) ]}\')";
 
 	my $sth = $dbh->prepare($sql_query);
 	$sth->execute();
@@ -96,10 +90,7 @@ foreach my $data_base (keys %{$sqls}){
 	$order_data = merge_orders(
 		order_data => $order_data, 
 		db_data => $db_data, 
-		order_field => $order_field, 
-		db_field => $db_field,
-		parse => $parse,
-		data_base => $data_base
+		table => $table
 	);
 }
 
@@ -118,23 +109,12 @@ sub merge_orders {
 
 	my $order_data = $args{order_data}; 
 	my $db_data = $args{db_data}; 
-	my $order_field = $args{order_field}; 
-	my $db_field = $args{db_field};
-	my $parse = $args{parse};
-	my $data_base = $args{data_base};
+	my $table = $args{table};
 
 	my $hasMerged = 0;
 
 	foreach my $order (@{$order_data}){
 		foreach my $row (@{$db_data}){
-
-			my $order_value = $order->{$order_field};
-			my $db_value = $row->{$db_field};
-
-			if($parse){
-				$order_value =~ s/\s+//g;
-				$db_value =~ s/[^!-~\s]//g;
-			}
 
 			foreach my $field (keys %{$row}){
 				$hasMerged = 1;
@@ -142,7 +122,7 @@ sub merge_orders {
 				my $parsed_field = $field;
 				$parsed_field =~ s/\ /_/g;
 
-				$order->{$data_base.'__'.$parsed_field} = $row->{$field};
+				$order->{$table.'__'.$parsed_field} = $row->{$field};
 			}
 		}
 	}
