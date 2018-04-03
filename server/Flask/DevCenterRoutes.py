@@ -5,10 +5,6 @@ from flask_cors import cross_origin
 import requests
 import json
 
-import Requests.JiraRequests
-import Requests.CrucibleRequests
-import Requests.ChatRequests
-
 import Routes.JiraRoutes
 import Routes.CrucibleRoutes
 import Routes.GitRoutes

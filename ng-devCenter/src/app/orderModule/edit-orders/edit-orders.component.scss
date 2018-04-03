@@ -1,0 +1,11 @@
+.edit-items {
+	input {
+		width: 100%;
+		max-width: 300px;
+	}
+	
+	.hidden {
+		position: absolute;
+		left: -10000px;
+	}
+}

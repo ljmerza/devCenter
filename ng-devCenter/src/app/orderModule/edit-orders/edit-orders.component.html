@@ -1,0 +1,40 @@
+<dc-loading-table [loadingTable]=loadingIndicator [tableTitle]=tableTitle (refreshData)="getEditableOrders()">
+	<table class='table-striped edit-items' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>type</th>
+				<th>link</th>
+				<th>name</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr *ngFor='let item of navbarItems'>
+				<td>
+					<span>{{item.id}}</span>
+				</td>
+				<td>
+					<span [ngClass]="{'hidden': !item.isNotEditingType}">{{item.type}}</span>
+					<input type="text" [ngClass]="{'hidden':item.isNotEditingType}" value={{item.type}}>
+					<i class="material-icons" *ngIf='item.isNotEditingType' (click)="editItem(item, 'isNotEditingType')" title='Edit Changes'>label_outline</i>
+					<i class="material-icons" *ngIf='!item.isNotEditingType' (click)="saveItem(item, 'isNotEditingType')" title='Save Changes'>done</i>
+				</td>
+				<td>
+					<span [ngClass]="{'hidden': !item.isNotEditingLink}">{{item.link}}</span>
+					<input type="text" [ngClass]="{'hidden':item.isNotEditingLink}" value={{item.link}}>
+					<i class="material-icons" *ngIf='item.isNotEditingLink' (click)="editItem(item, 'isNotEditingLink')" title='Edit Changes'>label_outline</i>
+					<i class="material-icons" *ngIf='!item.isNotEditingLink' (click)="saveItem(item, 'isNotEditingLink')" title='Save Changes'>done</i>
+				</td>
+				<td>
+					<span [ngClass]="{'hidden': !item.isNotEditingName}">{{item.name}}</span>
+					<input type="text" [ngClass]="{'hidden':item.isNotEditingName}" value={{item.name}}>
+					<i class="material-icons" *ngIf='item.isNotEditingName' (click)="editItem(item, 'isNotEditingName')" title='Edit Changes'>label_outline</i>
+					<i class="material-icons" *ngIf='!item.isNotEditingName' (click)="saveItem(item, 'isNotEditingName')" title='Save Changes'>done</i>
+				</td>
+			</tr>
+		</tbody>
+
+	</table>
+</dc-loading-table>
