@@ -50,7 +50,7 @@ export class WatchersComponent implements OnInit {
 		this.watcher.addWatcher(this.key)
 		.subscribe(
 			response => {
-				this.toastr.showToast('Successfully added as a watcher', 'success');
+				this.toastr.showToast(`Successfully added as a watcher to ${this.key}`, 'success');
 				this.isSelfWatcher = true;
 				this.updateModifyString();
 			},
@@ -65,7 +65,7 @@ export class WatchersComponent implements OnInit {
 		this.watcher.removeWatcher(this.key)
 		.subscribe(
 			response => {
-				this.toastr.showToast('Successfully removed as a watcher', 'success');
+				this.toastr.showToast(`Successfully removed as a watcher from ${this.key}`, 'success');
 				this.isSelfWatcher = false;
 				this.updateModifyString();
 			},

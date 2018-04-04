@@ -10,42 +10,42 @@
 		<ng-template #detailsTable>
 			<table class="table table-striped">
 				<tbody>
-					<tr>
+					<tr *ngIf='ticket?.environment'>
 						<td>Environment</td>
 						<td>{{ticket?.environment}}</td>
 					</tr>
-					<tr>
+					<tr *ngIf='ticket?.issue_type'>
 						<td>Issue Type</td>
 						<td>{{ticket?.issue_type}}</td>
 					</tr>
-					<tr>
+					<tr *ngIf='ticket?.priority'>
 						<td>Priority</td>
 						<td>{{ticket?.priority}}</td>
 					</tr>
-					<tr>
+					<tr *ngIf='ticket?.severity'>
 						<td>Severity</td>
 						<td>{{ticket?.severity}}</td>
 					</tr>
-					<tr>
+					<tr *ngIf='ticket?.description'>
 						<td>Description</td>
 						<td>{{ticket?.description}}</td>
 					</tr>
-					<tr>
+					<tr *ngIf='ticket?.code_reviewer.username'>
 						<td>Code Reviewer</td>
 						<td>
 							{{ticket?.code_reviewer.username}}
 							{{ticket?.code_reviewer.displayName}}
 						</td>
 					</tr>
-					<tr>
+					<tr *ngIf='ticket?.label'>
 						<td>Label</td>
 						<td>{{ticket?.label}}</td>
 					</tr>
 
-					<tr><td colspan='2'>Links:</td></tr>
-					<tr>
+					<tr *ngIf='links.length'><td colspan='2'>Links:</td></tr>
+					<tr *ngIf='links.length'>
 						<td colspan='2'>
-							<table class="table links-table">
+							<table class="table">
 								<tbody>
 									<tr *ngFor='let link of links'>
 										<td>
@@ -84,13 +84,14 @@
 					<tr><td colspan='2'>Status Changes:</td></tr>
 					<tr>
 						<td colspan='2'>
-							<table class="table links-table">
+							<table class="table">
 								<tbody>
 									<tr *ngFor='let status of ticket?.history?.status'>
 										<td>{{status.author.displayName}}</td>
 										<td>
 											<span *ngIf='status.items[0].fromString'>from {{status.items[0].fromString}} </span>
 											<span *ngIf='status.items[0].toString'>to {{status.items[0].toString}}</span>
+											<span>on {{status.created | amDateFormat:'MMMM DD@h:mm:A'}}</span>
 										</td>
 									</tr>
 								</tbody>
