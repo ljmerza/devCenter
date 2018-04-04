@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject, Observable, Subscription } from 'rxjs';
 
-import { OrderService, UserService } from '@services';
+import { ItemsService, ToastrService } from '@services';
 
 @Component({
 	selector: 'dev-center-edit-orders',
@@ -10,9 +10,10 @@ import { OrderService, UserService } from '@services';
 	styleUrls: ['./edit-orders.component.scss']
 })
 export class EditOrdersComponent implements OnInit {
-	loadingIndicator = true;
-	tableTitle = 'Edit Orders';
-	navbarItems;
+	loadingIndicator:boolean = true;
+	tableTitle:string = 'Edit Orders';
+	navbarItems: Array<any>;
+	dropdownItems: Array<string> = [];
 
 	dtTrigger:Subject<any> = new Subject();
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
@@ -35,30 +36,43 @@ export class EditOrdersComponent implements OnInit {
         }
 	};
 
-	constructor(public user: UserService) { }
+	constructor(public items: ItemsService, private toastr: ToastrService) { }
 
 	ngOnInit() {
-		this.getEditableOrders();
+		this.getEditableItems();
 	}
 
 	/**
 	 *
 	 */
-	getEditableOrders(){
-		this.user.getNavbarItems().subscribe(
+	getEditableItems(){
+		this.items.getItems().subscribe(
 			this.formatTableData.bind(this),
-			this.user.processErrorResponse.bind(this.user)
+			this.items.processErrorResponse.bind(this.items)
 		);
 	}
 
 	/**
-	 *
+	 * gets all dropdown options and sets editing booleans on each item
+	 * @param {Array<Object>} array of items to show
 	 */
-	formatTableData(navbarItems){
-		this.navbarItems = navbarItems.data.map(item => {
-			item.isNotEditingLink = true;
+	formatTableData(items){
+
+		items.data.forEach(item => {
+			if(!this.dropdownItems.includes(item.type)) {
+				this.dropdownItems.push(item.type);
+			}
+		});
+
+		this.navbarItems = items.data.map(item => {
 			item.isNotEditingName = true;
+			item.isNotEditingLink = true;
 			item.isNotEditingType = true;
+
+			// save values for comparing when saving
+			item.nameOld = item.name;
+			item.linkOld = item.link;
+			item.typeOld = item.type;
 			return item;
 		});
 
@@ -67,18 +81,55 @@ export class EditOrdersComponent implements OnInit {
 	}
 
 	/**
-	 *
+	 * sets an item to is editing
+	 * @param {Object} item
+	 * @param {string} editingName
 	 */
-	editItem(item, editingType){
-		item[editingType] = !item[editingType];
+	editItem(item, editingName){
+		this.toggleEditing({item, editingName, isNotEditing:false});
 	}
 
 	/**
-	 *
+	 * toggles an editing boolean for an item
+	 * @param {Object} item
+	 * @param {string} editingName
 	 */
-	saveItem(item, editingType){
-		item[editingType] = !item[editingType];
-		console.log('item, editingType: ', item, editingType);
+	saveItem(item, editingName){
+		this.toggleEditing({item, editingName, isNotEditing:true});
+
+		const newValue = item[editingName];
+		const oldValue = item[`${editingName}Old`];
+
+		if(oldValue === newValue){
+			this.toastr.showToast(`No changes made.`, 'info');
+		} else {
+			this.items.setItem(item).subscribe(
+				response => {
+					this.toastr.showToast(response.data, 'success');
+				},				
+				error => {
+					// show error and reset value
+					this.items.processErrorResponse(error);
+					item[editingName] = oldValue;
+				}
+			);
+		}
+	}
+
+	/**
+	 * sets an editing boolean for an item
+	 * @param {Object} item
+	 * @param {string} editingName
+	 * @param {boolean} isNotEditing
+	 */
+	toggleEditing({item, editingName, isNotEditing}){
+		if(editingName === 'name'){
+			item.isNotEditingName = isNotEditing;
+		} else if(editingName === 'link'){
+			item.isNotEditingLink = isNotEditing;
+		} else if(editingName === 'type'){
+			item.isNotEditingType = isNotEditing;
+		}
 	}
 
 	/**

@@ -23,7 +23,7 @@ import { ConfigService } from './services/config.service';
 import { UserService } from './services/user.service';
 
 
-import { MiscService, ToastrService, WebSocketService, ProfileService, GitService} from './services';
+import { MiscService, ToastrService, WebSocketService, ProfileService, GitService, ItemsService} from './services';
 
 // interceptors
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
@@ -50,7 +50,7 @@ export class SharedModule {
 		return {
 			ngModule: SharedModule, 
 			providers: [
-				UserService, LocalStorageService, ToastrService, ConfigService, 
+				UserService, LocalStorageService, ToastrService, ConfigService, ItemsService,
 				WebSocketService, MiscService, JiraService, ProfileService, JiraPingsService,
 				DataService, GitService, JiraCommentsService, OrderService, JiraWatchersService,
 				{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},

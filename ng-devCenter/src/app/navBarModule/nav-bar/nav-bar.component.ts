@@ -8,7 +8,7 @@ import { ModalComponent } from '@modal';
 
 import { Actions, RootState } from '@store';
 import { APIResponse } from '@models';
-import { UserService, ConfigService, ToastrService } from '@services';
+import { UserService, ConfigService, ToastrService, ItemsService } from '@services';
 
 @Component({
 	selector: 'dc-nav-bar',
@@ -34,7 +34,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 	constructor(
 		public config:ConfigService, public user: UserService, private cd: ChangeDetectorRef,
-		private store:NgRedux<RootState>, private toastr: ToastrService
+		private store:NgRedux<RootState>, private toastr: ToastrService, private items: ItemsService
 	) {}
 
 	/**
@@ -81,7 +81,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 * Gets all of the navbar items to populate the navbar dropdowns.
 	 */
 	 getNavbarItems(){
-	 	this.user.getNavbarItems()
+	 	this.items.getItems()
 	 	.subscribe((response:any) => {
 
 	 		if(!response.data) return;
@@ -127,7 +127,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
  			.map(this.addUserNameToUrl.bind(this));
 
 	 	},
-	 	error => this.toastr.showToast(this.user.processErrorResponse(error), 'error'));
+	 	error => this.toastr.showToast(this.items.processErrorResponse(error), 'error'));
 	}
 
 	/**

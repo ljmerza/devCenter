@@ -12,26 +12,30 @@
 
 		<tbody>
 			<tr *ngFor='let item of navbarItems'>
+				<td>{{item.id}}</td>
+				
 				<td>
-					<span>{{item.id}}</span>
+					<span *ngIf='item.isNotEditingType'>{{item.type}}</span>
+					<select class='form-control' *ngIf='!item.isNotEditingType'>
+						<option *ngFor="let dropdownItem of dropdownItems" [ngValue]="item.type"
+						[attr.selected]="dropdownItem === item.type ? true : null">
+							{{dropdownItem}}
+						</option>
+					</select>
 				</td>
+
 				<td>
-					<span [ngClass]="{'hidden': !item.isNotEditingType}">{{item.type}}</span>
-					<input type="text" [ngClass]="{'hidden':item.isNotEditingType}" value={{item.type}}>
-					<i class="material-icons" *ngIf='item.isNotEditingType' (click)="editItem(item, 'isNotEditingType')" title='Edit Changes'>label_outline</i>
-					<i class="material-icons" *ngIf='!item.isNotEditingType' (click)="saveItem(item, 'isNotEditingType')" title='Save Changes'>done</i>
+					<span *ngIf='item.isNotEditingLink'>{{item.link}}</span>
+					<input type="text" [ngClass]="{'hidden':item.isNotEditingLink}" [(ngModel)]='item.link'>
+					<i class="material-icons" *ngIf='item.isNotEditingLink' (click)="editItem(item, 'link')" title='Edit Changes'>label_outline</i>
+					<i class="material-icons" *ngIf='!item.isNotEditingLink' (click)="saveItem(item, 'link')" title='Save Changes'>done</i>
 				</td>
+
 				<td>
-					<span [ngClass]="{'hidden': !item.isNotEditingLink}">{{item.link}}</span>
-					<input type="text" [ngClass]="{'hidden':item.isNotEditingLink}" value={{item.link}}>
-					<i class="material-icons" *ngIf='item.isNotEditingLink' (click)="editItem(item, 'isNotEditingLink')" title='Edit Changes'>label_outline</i>
-					<i class="material-icons" *ngIf='!item.isNotEditingLink' (click)="saveItem(item, 'isNotEditingLink')" title='Save Changes'>done</i>
-				</td>
-				<td>
-					<span [ngClass]="{'hidden': !item.isNotEditingName}">{{item.name}}</span>
-					<input type="text" [ngClass]="{'hidden':item.isNotEditingName}" value={{item.name}}>
-					<i class="material-icons" *ngIf='item.isNotEditingName' (click)="editItem(item, 'isNotEditingName')" title='Edit Changes'>label_outline</i>
-					<i class="material-icons" *ngIf='!item.isNotEditingName' (click)="saveItem(item, 'isNotEditingName')" title='Save Changes'>done</i>
+					<span *ngIf='item.isNotEditingName'>{{item.name}}</span>
+					<input type="text" [ngClass]="{'hidden':item.isNotEditingName}" [(ngModel)]='item.name'>
+					<i class="material-icons" *ngIf='item.isNotEditingName' (click)="editItem(item, 'name')" title='Edit Changes'>label_outline</i>
+					<i class="material-icons" *ngIf='!item.isNotEditingName' (click)="saveItem(item, 'name')" title='Save Changes'>done</i>
 				</td>
 			</tr>
 		</tbody>

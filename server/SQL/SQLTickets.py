@@ -66,7 +66,6 @@ class SQLTickets():
 		# add comments of ticket and commit
 		# self._update_comments(comments=comments, session=session)
 
-
 		session.commit()
 		
 

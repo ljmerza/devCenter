@@ -141,9 +141,6 @@ export class UserService {
 		return !(this.username && this.password && this.port && this.emberUrl && this.teamUrl);
 	}
 
-	getNavbarItems(){
-		return this.dataService.get(`${this.dataService.apiUrl}/navbar`);
-	}
 
 	processErrorResponse(error):string{
 		return this.dataService.processErrorResponse(error);

@@ -11,3 +11,4 @@ export * from './toastr.service';
 export * from './web-socket.service';
 export * from './local-storage.service';
 export * from './order.service';
+export * from './items.service';
