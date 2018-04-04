@@ -12,5 +12,5 @@ def define_routes(app, app_name, order_object):
 	@app.route(f'/{app_name}/api/orders')
 	@cross_origin()
 	def get_orders():
-		response = ApiRequests.get_orders()
+		response = ApiRequests.get_orders(order_object=order_object)
 		return Response(response, mimetype='application/json')
