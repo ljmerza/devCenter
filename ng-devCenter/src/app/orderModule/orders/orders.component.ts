@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { DataTableDirective } from 'angular-datatables';
-import { Subject, Observable, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 
-import { OrderService, UserService } from '@services';
+import { OrderService, UserService, MiscService } from '@services';
 
 @Component({
 	selector: 'dev-center-orders',
@@ -42,7 +42,7 @@ export class OrdersComponent implements OnInit {
         }
 	};
 
-	constructor(public order:OrderService, public user: UserService) { }
+	constructor(public order:OrderService, public user:UserService, public misc:MiscService) { }
 
 	/**
 	 * on component init get all orders
@@ -54,22 +54,24 @@ export class OrdersComponent implements OnInit {
 	/**
 	 * gets a list of orders.
 	 */
-	getOrders(){
-		this.order.getOrders().subscribe(
-			this.formatTableData.bind(this),
+	getOrders(hardRefresh=false){
+		this.order.getOrders(hardRefresh).subscribe(
+			response => {
+				if(!this.order.ordersCache || hardRefresh) this.order.ordersCache = response;
+				this.formatTableData(response.data);
+			},
 			this.order.processErrorResponse.bind(this.order)
 		);
 	}
 
-	
 	/**
 	 *
-	  @param {} response 
+	 * @param {Array<Object>} orders 
 	 */
-	formatTableData(response){
+	formatTableData(orders){
 
 		// filter duplicate orders
-		let orders = (response.data || []).filter((thing, index, self) =>
+		orders = (orders || []).filter((thing, index, self) =>
 			index === self.findIndex((t) => (
 				t.OrdNum === thing.OrdNum
 			))
@@ -81,10 +83,10 @@ export class OrdersComponent implements OnInit {
 			// trim order numbers
 			order.OrdNum = order.OrdNum.trim();
 			order.trk = order.trk.trim();
+			order.RO = order.RO.trim();
 
 			// show example order for debugging
-			
-			if(order.OrdNum === 'C5CKTB67') console.log('order: ', order);
+			// if(order.OrdNum === 'C5CKTB67') console.log('order: ', order);
 
 			// parse EVC data
 			let evcData = (order.EVC_Status || '').split('</br>');

@@ -1,4 +1,4 @@
-<dc-loading-table [loadingTable]=loadingIndicator [tableTitle]=tableTitle (refreshData)="getOrders()">
+<dc-loading-table [loadingTable]=loadingIndicator [tableTitle]=tableTitle (refreshData)="getOrders(true)">
 	<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
 		<thead>
 			<tr>
@@ -44,7 +44,11 @@
 
 		<tbody>
 			<tr *ngFor='let order of orders'>
-				<td><a target="_blank" href="{{baseUrl}}/{{order.OrdNum}}?cache={{user.cache}}">{{order.OrdNum}}</a></td>
+				<td>
+					<i class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderInput)">note</i>
+					<a target="_blank" href="{{baseUrl}}/{{order.OrdNum}}?cache={{user.cache}}">{{order.OrdNum}}</a>
+					<input class='hidden-clip' type="text" #orderInput value={{order.OrdNum}}>
+				</td>
 
 				<td>{{order.jeop}}</td>
 				<td>{{order.jeop2}}</td>
@@ -64,7 +68,11 @@
 				
 				<!-- UNI -->
 				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_uni}}&cache={{user.cache}}">{{order.cktid}}</a></td>
-				<td><a target="_blank" href="{{baseUrl}}/{{order.trk}}?cache={{user.cache}}">{{order.trk}}</a></td>
+				<td>
+					<i class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderTrk)">note</i>
+					<a target="_blank" href="{{baseUrl}}/{{order.trk}}?cache={{user.cache}}">{{order.trk}}</a>
+					<input class='hidden-clip' type="text" #orderTrk value={{order.trk}}>
+				</td>
 				<td>{{order.cac}}</td>
 				
 				<!-- EVC -->
@@ -83,7 +91,11 @@
 				<td>{{order.evcAsr}}</td>
 				<td>{{order.evcType}}</td>
 				
-				<td>{{order.RO}}</td>
+				<td>
+					<i class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderRO)">note</i>
+					<a target="_blank" href="{{baseUrl}}/{{order.RO}}?cache={{user.cache}}">{{order.RO}}</a>
+					<input class='hidden-clip' type="text" #orderRO value={{order.RO}}>
+				</td>
 
 				
 			</tr>
