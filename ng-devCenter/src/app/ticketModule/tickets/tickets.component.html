@@ -20,7 +20,7 @@
 		</thead>
 
 		<tbody>
-			<tr class="appTicket" *ngFor='let ticket of getTickets$ | async' [key]=ticket.key id='{{ticket.key}}'></tr>
+			<tr class="appTicket" *ngFor='let ticket of getTickets$ | async;trackBy:ticket?.key' [key]=ticket.key id='{{ticket.key}}'></tr>
 		</tbody>
 	</table>
 </dc-loading-table>

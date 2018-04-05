@@ -11,7 +11,7 @@
 		</thead>
 
 		<tbody>
-			<tr *ngFor='let item of navbarItems'>
+			<tr *ngFor='let item of navbarItems;trackBy:item?.id'>
 				<td>{{item.id}}</td>
 				
 				<td>

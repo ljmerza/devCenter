@@ -1,8 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-import { NgProgressModule } from 'ngx-progressbar';
 import { NgRedux, NgReduxModule, DevToolsExtension } from '@angular-redux/store';
 import { RootState, initialState, rootReducer } from './store/store';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
@@ -33,10 +30,7 @@ import { DraggableDirective } from './draggable.directive';
 
 
 @NgModule({
-	imports: [
-		HttpClientModule, NgbModule, NgReduxModule, NgProgressModule,
-		ToastModule.forRoot(), BrowserAnimationsModule
-	],
+	imports: [HttpClientModule, NgbModule, NgReduxModule, ToastModule.forRoot()],
 	declarations: [ModalComponent, ToastrComponent, LoadingTableComponent, DraggableDirective],
 	exports: [ModalComponent, ToastrComponent, LoadingTableComponent, DraggableDirective]
 })

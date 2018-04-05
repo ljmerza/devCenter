@@ -47,7 +47,7 @@
 						<td colspan='2'>
 							<table class="table">
 								<tbody>
-									<tr *ngFor='let link of links'>
+									<tr *ngFor='let link of links;trackBy:link?.id'>
 										<td>
 											<span *ngIf='link.inwardIssue'>Blocked By:</span>
 											<span *ngIf='link.outwardIssue'>Blocks:</span>
@@ -86,7 +86,7 @@
 						<td colspan='2'>
 							<table class="table">
 								<tbody>
-									<tr *ngFor='let status of ticket?.history?.status'>
+									<tr *ngFor='let status of ticket?.history?.status;trackBy:status?.id'>
 										<td>{{status.author.displayName}}</td>
 										<td>
 											<span *ngIf='status.items[0].fromString'>from {{status.items[0].fromString}} </span>

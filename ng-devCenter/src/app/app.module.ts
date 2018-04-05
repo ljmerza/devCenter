@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 import { HashLocationStrategy, Location, LocationStrategy } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgProgressModule } from 'ngx-progressbar';
+
 // custom modules
 import { routing, appRoutingProviders } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
@@ -20,8 +23,8 @@ import { environment } from '../environments/environment';
 @NgModule({
 	declarations: [AppComponent, FooterComponent],
 	imports: [
-		BrowserModule, routing, SharedModule.forRoot(), OrderModule,
-		TicketModule, NavbarModule, CommentsModule, NgbModule.forRoot()
+		BrowserModule, routing, SharedModule.forRoot(), OrderModule, BrowserAnimationsModule, 
+		TicketModule, NavbarModule, CommentsModule, NgbModule.forRoot(), NgProgressModule
 	],
 	providers: [
 		appRoutingProviders, Location, 
