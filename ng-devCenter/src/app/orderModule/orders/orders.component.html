@@ -69,9 +69,9 @@
 				<!-- UNI -->
 				<td><a target="_blank" href="{{circuitBaseUrl}}{{orderItem.circuit_uni}}&cache={{user.cache}}">{{orderItem.cktid}}</a></td>
 				<td>
-					<i *ngIf='order.trk' class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderTrk)">note</i>
+					<i *ngIf='orderItem.trk' class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderTrk)">note</i>
 					<a target="_blank" href="{{baseUrl}}/{{orderItem.trk}}?cache={{user.cache}}">{{orderItem.trk}}</a>
-					<input *ngIf='order.trk' class='hidden-clip' type="text" #orderTrk value={{orderItem.trk}}>
+					<input *ngIf='orderItem.trk' class='hidden-clip' type="text" #orderTrk value={{orderItem.trk}}>
 				</td>
 				<td>{{orderItem.cac}}</td>
 				
@@ -92,9 +92,9 @@
 				<td>{{orderItem.evcType}}</td>
 				
 				<td>
-					<i *ngIf='order.RO' class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderRO)">note</i>
+					<i *ngIf='orderItem.RO' class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderRO)">note</i>
 					<a target="_blank" href="{{baseUrl}}/{{orderItem.RO}}?cache={{user.cache}}">{{orderItem.RO}}</a>
-					<input *ngIf='order.RO' class='hidden-clip' type="text" #orderRO value={{orderItem.RO}}>
+					<input *ngIf='orderItem.RO' class='hidden-clip' type="text" #orderRO value={{orderItem.RO}}>
 				</td>
 
 				
