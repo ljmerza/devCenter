@@ -132,4 +132,8 @@ export class OrdersComponent implements OnInit {
 			this.dtTrigger.next();
 		}
 	}
+
+	trackByFn(index: number, order){
+		return order.OrdNum;
+	}
 }

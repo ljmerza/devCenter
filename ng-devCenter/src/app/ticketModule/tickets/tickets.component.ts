@@ -138,4 +138,8 @@ export class TicketsComponent implements OnInit {
 			this.dtTrigger.next();
 		}
 	}
+
+	trackByFn(index: number, ticket){
+		return ticket.key;
+	}
 }

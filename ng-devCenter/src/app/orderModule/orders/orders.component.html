@@ -43,58 +43,58 @@
 		</thead>
 
 		<tbody>
-			<tr *ngFor='let order of orders;trackBy:order?.OrdNum'>
+			<tr *ngFor='let orderItem of orders;trackBy:trackByFn'>
 				<td>
 					<i class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderInput)">note</i>
-					<a target="_blank" href="{{baseUrl}}/{{order.OrdNum}}?cache={{user.cache}}">{{order.OrdNum}}</a>
-					<input class='hidden-clip' type="text" #orderInput value={{order.OrdNum}}>
+					<a target="_blank" href="{{baseUrl}}/{{orderItem.OrdNum}}?cache={{user.cache}}">{{orderItem.OrdNum}}</a>
+					<input class='hidden-clip' type="text" #orderInput value={{orderItem.OrdNum}}>
 				</td>
 
-				<td>{{order.jeop}}</td>
-				<td>{{order.jeop2}}</td>
+				<td>{{orderItem.jeop}}</td>
+				<td>{{orderItem.jeop2}}</td>
 
-				<td><a target="_blank" href="{{aseBaseUrl}}/{{order.ASEdb_SiteID}}?cache={{user.cache}}">{{order.ASEdb_SiteID}}</a></td>
-				<td>{{order.P1_WFAWC}}</td>
+				<td><a target="_blank" href="{{aseBaseUrl}}/{{orderItem.ASEdb_SiteID}}?cache={{user.cache}}">{{orderItem.ASEdb_SiteID}}</a></td>
+				<td>{{orderItem.P1_WFAWC}}</td>
 
-				<td>{{order.ATX_USO}}</td>
-				<td>{{order.PON}}</td>
-				<td>{{order.ATX_USO_SR_NO}}</td>
-				<td>{{order.NTE_2_MINCNL__NTECLLI}}</td>
+				<td>{{orderItem.ATX_USO}}</td>
+				<td>{{orderItem.PON}}</td>
+				<td>{{orderItem.ATX_USO_SR_NO}}</td>
+				<td>{{orderItem.NTE_2_MINCNL__NTECLLI}}</td>
 				
 				<!-- CNL -->
-				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.CNL_CKTID_PARSE}}&cache={{user.cache}}">{{order.CNL_CKTID_PARSE}}</a></td>
-				<td><a target="_blank" href="{{baseUrl}}/{{order.ASEdb_bettc_database_MATCH__CNL_TRK}}?cache={{user.cache}}">{{order.ASEdb_bettc_database_MATCH__CNL_TRK}}</a></td>
-				<td>{{order.CNL_CAC}}</td>
+				<td><a target="_blank" href="{{circuitBaseUrl}}{{orderItem.CNL_CKTID_PARSE}}&cache={{user.cache}}">{{orderItem.CNL_CKTID_PARSE}}</a></td>
+				<td><a target="_blank" href="{{baseUrl}}/{{orderItem.ASEdb_bettc_database_MATCH__CNL_TRK}}?cache={{user.cache}}">{{orderItem.ASEdb_bettc_database_MATCH__CNL_TRK}}</a></td>
+				<td>{{orderItem.CNL_CAC}}</td>
 				
 				<!-- UNI -->
-				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_uni}}&cache={{user.cache}}">{{order.cktid}}</a></td>
+				<td><a target="_blank" href="{{circuitBaseUrl}}{{orderItem.circuit_uni}}&cache={{user.cache}}">{{orderItem.cktid}}</a></td>
 				<td>
 					<i *ngIf='order.trk' class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderTrk)">note</i>
-					<a target="_blank" href="{{baseUrl}}/{{order.trk}}?cache={{user.cache}}">{{order.trk}}</a>
-					<input *ngIf='order.trk' class='hidden-clip' type="text" #orderTrk value={{order.trk}}>
+					<a target="_blank" href="{{baseUrl}}/{{orderItem.trk}}?cache={{user.cache}}">{{orderItem.trk}}</a>
+					<input *ngIf='order.trk' class='hidden-clip' type="text" #orderTrk value={{orderItem.trk}}>
 				</td>
-				<td>{{order.cac}}</td>
+				<td>{{orderItem.cac}}</td>
 				
 				<!-- EVC -->
-				<td><a target="_blank" href="{{circuitBaseUrl}}{{order.circuit_evc}}&cache={{user.cache}}">{{order.evcCircuit}}</a></td>
+				<td><a target="_blank" href="{{circuitBaseUrl}}{{orderItem.circuit_evc}}&cache={{user.cache}}">{{orderItem.evcCircuit}}</a></td>
 
-				<td>{{order.ATX_USO_iCORE_ID}}</td>
-				<td>{{order.ASEdb_bettc_database_MATCH__EXACT_ASR}}</td>
+				<td>{{orderItem.ATX_USO_iCORE_ID}}</td>
+				<td>{{orderItem.ASEdb_bettc_database_MATCH__EXACT_ASR}}</td>
 				
 				<!-- PO/TO -->
-				<td>{{order.CANOPI_CNL_TO}}</td>
-				<td>{{order.CANOPI_UNI_PO}}</td>
-				<td>{{order.CANOPI_UNI_TO}}</td>
-				<td>{{order.CANOPI_EVC_PO}}</td>
-				<td>{{order.CANOPI_EVC_TO}}</td>
+				<td>{{orderItem.CANOPI_CNL_TO}}</td>
+				<td>{{orderItem.CANOPI_UNI_PO}}</td>
+				<td>{{orderItem.CANOPI_UNI_TO}}</td>
+				<td>{{orderItem.CANOPI_EVC_PO}}</td>
+				<td>{{orderItem.CANOPI_EVC_TO}}</td>
 
-				<td>{{order.evcAsr}}</td>
-				<td>{{order.evcType}}</td>
+				<td>{{orderItem.evcAsr}}</td>
+				<td>{{orderItem.evcType}}</td>
 				
 				<td>
 					<i *ngIf='order.RO' class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderRO)">note</i>
-					<a target="_blank" href="{{baseUrl}}/{{order.RO}}?cache={{user.cache}}">{{order.RO}}</a>
-					<input *ngIf='order.RO' class='hidden-clip' type="text" #orderRO value={{order.RO}}>
+					<a target="_blank" href="{{baseUrl}}/{{orderItem.RO}}?cache={{user.cache}}">{{orderItem.RO}}</a>
+					<input *ngIf='order.RO' class='hidden-clip' type="text" #orderRO value={{orderItem.RO}}>
 				</td>
 
 				

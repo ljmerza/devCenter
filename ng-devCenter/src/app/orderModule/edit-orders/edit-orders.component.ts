@@ -147,4 +147,8 @@ export class EditOrdersComponent implements OnInit {
 		}
 	}
 
+	trackByFn(index: number, item){
+		return item.id;
+	}
+
 }
