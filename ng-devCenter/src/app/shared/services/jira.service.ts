@@ -26,9 +26,10 @@ export class JiraService {
 		const allProjectNames = this.config.allProjectNames.filter(ticketData=>ticketData.link===filterName);
 		const teamTicketListNames = this.config.teamTicketListNames.filter(ticketData=>ticketData.link===filterName);
 		const otherTicketListNames = this.config.otherTicketListNames.filter(ticketData=>ticketData.link===filterName);
+		const podNames = this.config.podNames.filter(ticketData=>ticketData.link===filterName);
 
 		// see which array came back with data
-		const ticketListData = allProjectNames[0] || teamTicketListNames[0] || otherTicketListNames[0];
+		const ticketListData = allProjectNames[0] || teamTicketListNames[0] || otherTicketListNames[0] || podNames[0];
 
 		// set JQL and title if found match or default to my ticket
 		const jql = ticketListData ? this.config[ticketListData.link] : this.config.mytickets;

@@ -1,19 +1,16 @@
 <dc-loading-table [loadingTable]=loadingIndicator [tableTitle]=tableTitle (refreshData)="getEditableItems()">
 	<table class='table-striped edit-items' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
-
 		<thead>
 			<tr>
-				<th>id</th>
-				<th>type</th>
-				<th>link</th>
-				<th>name</th>
+				<th>Link Type</th>
+				<th>Ember Route / Order Number</th>
+				<th>Display Name</th>
+				<th>Delete?</th>
 			</tr>
 		</thead>
 
 		<tbody>
 			<tr *ngFor='let item of navbarItems;trackBy:trackByFn'>
-				<td>{{item.id}}</td>
-				
 				<td>
 					<span *ngIf='item.isNotEditingType'>{{item.type}}</span>
 					<select class='form-control' *ngIf='!item.isNotEditingType'>
@@ -37,8 +34,26 @@
 					<i class="material-icons" *ngIf='item.isNotEditingName' (click)="editItem(item, 'name')" title='Edit Changes'>label_outline</i>
 					<i class="material-icons" *ngIf='!item.isNotEditingName' (click)="saveItem(item, 'name')" title='Save Changes'>done</i>
 				</td>
+				<td><i class="material-icons delete-icon">delete</i></td>
 			</tr>
 		</tbody>
-
 	</table>
+
+	<button type="button" class="btn btn-outline-primary" (click)='openModal'>TEST</button>
 </dc-loading-table>
+
+
+
+<dev-center-modal (modalEvent)="closeModal()">
+	<div class='modal-text'>
+		<h4 class="modal-title">Add new Link</h4>
+	</div>
+
+	<span class='modal-body'>
+		TEST
+	</span>
+
+	<span class='modal-footer'>
+		<button type="button" class="btn btn-outline-danger" (click)="closeModal()">Close</button>
+	</span>
+</dev-center-modal>

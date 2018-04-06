@@ -25,6 +25,21 @@
 						<a class="dropdown-item" [routerLink]="['/editorders']">Edit Orders</a>
 					</li>
 					
+					<!-- pods -->
+					<li class="dropdown-submenu" dropdownSubmenu>
+						<a class="dropdown-item" data-toggle="dropdown">
+							Pod Tickets
+							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
+						</a>
+						<ul class="dropdown-menu" dropdownSubmenuMenu dropdownSubmenuMenu>
+							<li *ngFor='let project of config.podNames'>
+								<a class="dropdown-item" [routerLink]="['/jira', project.link]">
+									{{project.name}}
+								</a>
+							</li>
+						</ul>
+					</li>
+
 					<!-- projects -->
 					<li class="dropdown-submenu" dropdownSubmenu>
 						<a class="dropdown-item" data-toggle="dropdown">
@@ -78,8 +93,8 @@
 								<ul class="dropdown-menu" dropdownSubmenuMenu>
 									<li>
 										<a *ngFor='let navLink of orders' class="dropdown-item"  target="_blank" 
-										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}">
-											{{navLink.name}}
+										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/{{navLink.link}}">
+											<span>{{navLink.link}}} {{navLink.name}}</span>
 										</a>
 									</li>
 								</ul>

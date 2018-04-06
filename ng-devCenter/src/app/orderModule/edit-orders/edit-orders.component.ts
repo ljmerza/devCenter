@@ -1,22 +1,27 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject, Observable, Subscription } from 'rxjs';
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
+import { ModalComponent } from '@modal';
 import { ItemsService, ToastrService } from '@services';
 
 @Component({
 	selector: 'dev-center-edit-orders',
 	templateUrl: './edit-orders.component.html',
-	styleUrls: ['./edit-orders.component.scss']
+	styleUrls: ['./edit-orders.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditOrdersComponent implements OnInit {
 	loadingIndicator:boolean = true;
 	tableTitle:string = 'Edit Orders';
 	navbarItems: Array<any>;
 	dropdownItems: Array<string> = [];
+	modalRef:NgbModalRef;
 
 	dtTrigger:Subject<any> = new Subject();
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
+	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	dtOptions = {
 		dom: `
@@ -57,14 +62,9 @@ export class EditOrdersComponent implements OnInit {
 	 * @param {Array<Object>} array of items to show
 	 */
 	formatTableData(items){
-
-		items.data.forEach(item => {
-			if(!this.dropdownItems.includes(item.type)) {
-				this.dropdownItems.push(item.type);
-			}
-		});
-
-		this.navbarItems = items.data.map(item => {
+		this.navbarItems = items.data
+		.filter(item => !['dev_links','ember_links','teamdb_ember', 'prod_links', 'beta_links'].includes(item.type))
+		.map(item => {
 			item.isNotEditingName = true;
 			item.isNotEditingLink = true;
 			item.isNotEditingType = true;
@@ -74,6 +74,12 @@ export class EditOrdersComponent implements OnInit {
 			item.linkOld = item.link;
 			item.typeOld = item.type;
 			return item;
+		});
+
+		this.navbarItems.forEach(item => {
+			if(!this.dropdownItems.includes(item.type)) {
+				this.dropdownItems.push(item.type);
+			}
 		});
 
 		this.loadingIndicator = false;
@@ -101,7 +107,7 @@ export class EditOrdersComponent implements OnInit {
 		const oldValue = item[`${editingName}Old`];
 
 		if(oldValue === newValue){
-			this.toastr.showToast(`No changes made.`, 'info');
+			this.toastr.showToast(`No changes made to ${oldValue}.`, 'info');
 		} else {
 			this.items.setItem(item).subscribe(
 				response => {
@@ -149,6 +155,14 @@ export class EditOrdersComponent implements OnInit {
 
 	trackByFn(index: number, item){
 		return item.id;
+	}
+
+	closeModal(){
+		this.modalRef.close();
+	}
+
+	openModal(){
+		this.modalRef = this.modal.openModal();
 	}
 
 }

@@ -117,11 +117,9 @@ export class TicketsComponent implements OnInit {
 	 * @param {Array<Tickets>} tickets
 	 */
 	private processTickets(tickets) {
-		if(tickets && tickets.length > 0){
 			this.ngProgress.done();
 			this.loadingTickets = false;
 			this.rerender();
-		}
 	}
 
 	/**
