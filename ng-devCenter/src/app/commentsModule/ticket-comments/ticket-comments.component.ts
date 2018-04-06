@@ -98,7 +98,9 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 		this.attachments$ = this.store.select('tickets')
 		.subscribe((tickets:Array<Ticket>) =>{ 
 			const ticket = tickets.find((ticket:Ticket) => ticket.key === this.key);
-			this.attachments = ticket.attachments;
+			if(ticket){
+				this.attachments = ticket.attachments;
+			}
 		});
 	}
 
