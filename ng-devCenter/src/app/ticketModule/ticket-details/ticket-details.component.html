@@ -18,6 +18,10 @@
 						<td>Issue Type</td>
 						<td>{{ticket?.issue_type}}</td>
 					</tr>
+					<tr *ngIf='ticket?.sprint'>
+						<td>Sprint</td>
+						<td>{{ticket?.sprint}}</td>
+					</tr>
 					<tr *ngIf='ticket?.priority'>
 						<td>Priority</td>
 						<td>{{ticket?.priority}}</td>
