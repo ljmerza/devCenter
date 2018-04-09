@@ -246,8 +246,9 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/*
-	*/
+	/**
+	 * Opens the QA generator dialog and starts a search for related branches.
+	 */
 	openQAModal():void {
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
@@ -270,7 +271,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 *
+	 * gets all branches related to a Jira ticket.
 	 */
 	getTicketBranches(){
 		this.loadingBranches = true;
@@ -278,21 +279,23 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 
 		// get all branches associated with this msrp
 		this.git.getTicketBranches(this.msrp).subscribe(
-			response => {
-				this.loadingBranches = false;
+			response =>{
 				this.processBranches(response.data);
+				this.loadingBranches = false;
 				this.cd.detectChanges();
 			},
 			error => {
+				this.jira.processErrorResponse(error),
 				this.loadingBranches = false;
-				this.toastr.showToast(this.jira.processErrorResponse(error), 'error');
 				this.cd.detectChanges();
 			}
 		);
 	}
 
-	/*
-	*/
+	/**
+	 * adds all branches related to a Jira ticket into the form object
+	 * @param {Array<Object>} branches 
+	 */
 	processBranches(branches): void {
 		branches.forEach(repo => {
 			
@@ -315,14 +318,17 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	}
 
 
-	/*
-	*/
+	/**
+	 * gets the base branch that a branch branched off of.
+	 * @param {Array<Object>} repos list of all repos
+	 * @return {Array<Object>} the matching base branch
+	 */
 	getBaseBranch(repos): Array<any> {
 
 		// get all short branch names with numbers in them and sort
 		const selections = repos
-			.filter( branch => branch.length < 15)
-			.map( branch => branch.replace(/[^0-9.]/g,''))
+			.filter(branch => branch.length < 15)
+			.map(branch => branch.replace(/[^0-9.]/g,''))
 			.sort();
 
 		// get branch short branch name that has highest version found
