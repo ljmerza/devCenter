@@ -59,7 +59,7 @@ export class TicketsComponent implements OnInit {
 
 	constructor(
 		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>,
-		public jira:JiraService, public user:UserService, public toastr: ToastrService, private git:GitService
+		public jira:JiraService, public user:UserService, private git:GitService
 	) {}
 	
 	/**

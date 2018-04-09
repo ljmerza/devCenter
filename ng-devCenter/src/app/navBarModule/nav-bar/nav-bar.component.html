@@ -94,7 +94,7 @@
 									<li>
 										<a *ngFor='let navLink of orders' class="dropdown-item"  target="_blank" 
 										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/{{navLink.link}}">
-											<span>{{navLink.link}}} {{navLink.name}}</span>
+											<span>{{navLink.orderName}} {{navLink.name}}</span>
 										</a>
 									</li>
 								</ul>

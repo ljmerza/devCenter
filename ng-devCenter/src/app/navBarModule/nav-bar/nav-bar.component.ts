@@ -118,6 +118,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
  			this.emberLinks = response.data
  			.filter(link => link.type === 'ember_links')
+ 			.map(link => {
+ 				link.orderName = link.link;
+ 				return link;
+ 			})
  			.map(this.addCacheParameter.bind(this))
  			.map(this.addUserNameToUrl.bind(this));
 
