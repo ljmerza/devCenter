@@ -18,7 +18,7 @@ import { OrderModule } from './orderModule/order.module';
 import { AppComponent } from './app.component';
 import { FooterComponent } from './footer/footer.component';
 
-import { environment } from '../environments/environment';
+import { environment } from '@environment';
 
 @NgModule({
 	declarations: [AppComponent, FooterComponent],

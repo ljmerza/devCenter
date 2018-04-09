@@ -15,14 +15,14 @@ $darkbg: #292b2c;
 	}
 }
 
-.setPings, .timeLog, .navbarAbout {
+.setPings, .timeLog {
 	.modal-dialog {
 		max-width: 700px;
 		width: 70%;
 	}
 }
 
-.ticketDetails {
+.ticketDetails, .navbarAbout {
 	.modal-dialog {
 		max-width: 800px;
 		width: 70%;

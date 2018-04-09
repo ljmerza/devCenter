@@ -5,7 +5,7 @@ import { RootState, initialState, rootReducer } from './store/store';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { environment } from './../../environments/environment';
+import { environment } from '@environment';
 
 // components
 import { ModalComponent } from '@modal';
