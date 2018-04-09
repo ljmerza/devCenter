@@ -77,7 +77,9 @@ export class UserSettingsComponent implements OnInit {
 					this.store.dispatch({type: Actions.userProfile, payload: profile.data });
 				}
 			},
-			this.profile.processErrorResponse.bind(this.profile)
+			error => {
+				this.profile.processErrorResponse('Incorrect username and/or password.');
+			}
 		);
 	}
 
