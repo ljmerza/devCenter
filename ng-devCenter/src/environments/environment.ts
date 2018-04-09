@@ -5,4 +5,3 @@ export const environment = {
 	test: false
 };
 
-export const packageFile = require('../../package.json');

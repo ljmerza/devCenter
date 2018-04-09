@@ -1,7 +1,7 @@
 import { Component, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ModalComponent } from '@modal';
 import { UserService } from '@services';
-import { packageFile  } from '@environment';
+import { appVersion  } from './../../app.version';
 
 @Component({
 	selector: 'dc-navbar-user',
@@ -19,14 +19,14 @@ export class NavbarUserComponent {
 	@Input() userProfile;
 
 	constructor(public user: UserService) { 
-		this.packageFile = packageFile;
+		this.packageFile = appVersion;
 
 		this.frontendVersions = 
-		Object.keys(packageFile.dependencies)
+		Object.keys(appVersion.dependencies)
 		.map(key => {
 			return {
 				name: key.replace(/^@/, ''),
-				version: packageFile.dependencies[key].replace(/\^|~/, '')
+				version: appVersion.dependencies[key].replace(/\^|~/, '')
 			}
 		});
 	}
