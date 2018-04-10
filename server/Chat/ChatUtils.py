@@ -53,6 +53,8 @@ def get_branch_name(username, msrp, summary):
 	'''
 	branch = summary.translate(trantab)
 	branch = re.sub(r" +", '-', branch)
+	branch = re.sub(r"\"", '', branch)
+	branch = re.sub(r"\'", '', branch)
 	branch = re.sub(r"-+", '-', branch)
 	# if summary starts/ends with a dash then get rid of it
 	if branch.startswith('-'):
