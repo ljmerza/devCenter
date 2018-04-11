@@ -33,7 +33,7 @@ export class JiraService {
 
 		// set JQL and title if found match or default to my ticket
 		const jql = ticketListData ? this.config[ticketListData.link] : this.config.mytickets;
-		const title = ticketListData ? ticketListData.displayName : this.config.teamTicketListNames[0].name;
+		const title = ticketListData ? ticketListData.displayName : this.config.teamTicketListNames[0].displayName;
 
 		return {jql, title};
 	}

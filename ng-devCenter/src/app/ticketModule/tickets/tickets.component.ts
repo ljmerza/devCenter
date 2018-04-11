@@ -38,7 +38,7 @@ export class TicketsComponent implements OnInit {
 		columnDefs: [
 			{targets: [9,10], visible: false},
 			{targets: 4, width: '10%'},
-			{targets: [5,6], type: 'date'}
+			{targets: [5,6,9,10], type: 'date'}
 		],
 		dom: `
 			<'row'<'col-sm-12'Bfl>>
