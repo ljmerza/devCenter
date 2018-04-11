@@ -96,3 +96,15 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		# add reviewer and return response
 		cru_response = CrucibleRequests.add_reviewer(data=data, crucible_obj=crucible_obj)
 		return Response(cru_response, mimetype='application/json')
+
+	@app.route(f'/{app_name}/crucible/comments/<crucible_id>')
+	@cross_origin()
+	def get_comments(crucible_id):
+		'''
+		'''
+		data = {
+			"cred_hash": g.cred_hash,
+			"crucible_id": crucible_id,
+		}
+		cru_response = CrucibleRequests.get_comments(data=data, crucible_obj=crucible_obj)
+		return Response(cru_response, mimetype='application/json')

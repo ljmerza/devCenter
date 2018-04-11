@@ -106,3 +106,13 @@ def ticket_branches(data, crucible_obj):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# return data
 	return crucible_obj.ticket_branches(cred_hash=data['cred_hash'], msrp=data['msrp'])
+
+def get_comments(data, crucible_obj):
+	'''
+	'''
+	# check for required data
+	missing_params = FlaskUtils.check_parameters(params=data, required=['crucible_id', 'cred_hash'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+	# return data
+	return crucible_obj.get_comments(crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])

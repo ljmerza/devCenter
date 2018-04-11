@@ -82,7 +82,7 @@ class CruciblePCR():
 			"permId" : { },
 			"parentCommentId" : { }
 		}
-		return self.crucible_api.post_json(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/comments.json', json_data=json_data, cred_hash=cred_hash)
+		return self.crucible_api.post_json(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/comments.json?render=true', json_data=json_data, cred_hash=cred_hash)
 
 	def add_pcr_pass(self, crucible_id, cred_hash):
 		'''adds a comment of PCR pass to a Crucible review
@@ -106,7 +106,7 @@ class CruciblePCR():
 		Returns:
 			response dict with status property
 		'''
-		return self.crucible_api.get(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/comments.json', cred_hash=cred_hash)
+		return self.crucible_api.get(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/comments.json?render=true', cred_hash=cred_hash)
 
 	def get_pcr_pass(self, crucible_id, cred_hash):
 		'''gets all comment of a Crucible review and see how many are PCR pass
