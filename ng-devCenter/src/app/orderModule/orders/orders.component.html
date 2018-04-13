@@ -2,102 +2,227 @@
 	<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
 		<thead>
 			<tr>
-				<th>Order Number</th>
-
-				<th>UNI Jep 1</th>
-				<th>UNI Jep 2</th>
-
-				<th>ASEdb Site ID</th>
-				<th>WFA OSSOI P1 WC</th>
-
-				<th>EVC USO</th>
-				<th>PON (IOL)</th>
-				<th>ATX INSTAR</th>
-				<th>NTE CLLI</th>
-
-				<th>CNL Circuit</th>
-				<th>CNL CLO</th>
-				<th>CNL CAC</th>
-
-				<th>UNI Circuit</th>
 				<th>UNI CLO</th>
+				<th>UNI Circuit</th>
+				<th>UNI Region</th>
 				<th>UNI CAC</th>
-
-				<th>EVC Circuit</th>
-
-				<th>iCore</th>
-				<th>EXACT ASR</th>
-
-				<th>CNL TO</th>
+				<th>UNI OSSOI Order</th>
+				<th>UNI Open Events</th>
+				<th>UNI aseDB</th>
+				<th>UNI OMX/OCX?</th>
+				<th>UNI Edge Forces</th>
 				<th>UNI PO</th>
 				<th>UNI TO</th>
+				<th>UNI ACTS?</th>
+				<th>UNI EAN?</th>
+
+
+				<th>CNL CLO</th>
+				<th>CNL Circuit</th>
+				<th>CNL Region</th>
+				<th>CNL CAC</th>
+				<th>CNL OSSOI Order</th>
+				<th>CNL Open Events</th>
+				<th>CNL aseDB</th>
+				<th>CNL OMX/OCX?</th>
+				<th>CNL Edge Forces</th>
+				<th>CNL PO</th>
+				<th>CNL TO</th>
+
+				<th>EVC CLO</th>
+				<th>EVC Circuit</th>
+				<th>EVC Region</th>
+				<th>EVC CAC</th>
+				<th>EVC OSSOI Order</th>
+				<th>EVC Open Events</th>
+				<th>EVC aseDB</th>
+				<th>EVC OMX/OCX?</th>
+				<th>EVC Edge Forces</th>
 				<th>EVC PO</th>
 				<th>EVC TO</th>
 
-				<th>EVC ASR</th>
-				<th>EVC Type</th>
-
-				<th>RO</th>
+				<th>UNI ATX Site ID</th>
+				<th>UNI ATX PON</th>
+				<th>UNI ATX USO</th>
+				<th>UNI ATX iCore</th>
 
 			</tr>
 		</thead>
 
 		<tbody>
-			<tr *ngFor='let orderItem of orders;trackBy:trackByFn'>
-				<td>
-					<i class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderInput)">note</i>
-					<a target="_blank" href="{{baseUrl}}/{{orderItem.OrdNum}}?cache={{user.cache}}">{{orderItem.OrdNum}}</a>
-					<input class='hidden-clip' type="text" #orderInput value={{orderItem.OrdNum}}>
-				</td>
+			<tr *ngFor='let orderItem of orders'>
 
-				<td>{{orderItem.jeop}}</td>
-				<td>{{orderItem.jeop2}}</td>
-
-				<td><a target="_blank" href="{{aseBaseUrl}}/{{orderItem.ASEdb_SiteID}}?cache={{user.cache}}">{{orderItem.ASEdb_SiteID}}</a></td>
-				<td>{{orderItem.P1_WFAWC}}</td>
-
-				<td>{{orderItem.ATX_USO}}</td>
-				<td>{{orderItem.PON}}</td>
-				<td>{{orderItem.ATX_USO_SR_NO}}</td>
-				<td>{{orderItem.NTE_2_MINCNL__NTECLLI}}</td>
-				
-				<!-- CNL -->
-				<td><a target="_blank" href="{{circuitBaseUrl}}{{orderItem.CNL_CKTID_PARSE}}&cache={{user.cache}}">{{orderItem.CNL_CKTID_PARSE}}</a></td>
-				<td><a target="_blank" href="{{baseUrl}}/{{orderItem.ASEdb_bettc_database_MATCH__CNL_TRK}}?cache={{user.cache}}">{{orderItem.ASEdb_bettc_database_MATCH__CNL_TRK}}</a></td>
-				<td>{{orderItem.CNL_CAC}}</td>
-				
 				<!-- UNI -->
-				<td><a target="_blank" href="{{circuitBaseUrl}}{{orderItem.circuit_uni}}&cache={{user.cache}}">{{orderItem.cktid}}</a></td>
-				<td>
-					<i *ngIf='orderItem.trk' class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderTrk)">note</i>
-					<a target="_blank" href="{{baseUrl}}/{{orderItem.trk}}?cache={{user.cache}}">{{orderItem.trk}}</a>
-					<input *ngIf='orderItem.trk' class='hidden-clip' type="text" #orderTrk value={{orderItem.trk}}>
-				</td>
-				<td>{{orderItem.cac}}</td>
+				<td><span *ngIf='orderItem.UNI'>
+					<i class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderInput)">note</i>
+					<a target="_blank" href="{{baseUrl}}/{{orderItem.UNI[0].WfaClo}}?cache={{user.cache}}">{{orderItem.UNI[0].WfaClo}}</a>
+					<input class='hidden-clip' type="text" #orderInput value={{orderItem.OrdNum}}>
+				</span></td>
+					
+				<td><span *ngIf='orderItem.UNI'>
+					<a target="_blank" href="{{circuitBaseUrl}}/{{orderItem.UNI[0].BpoCktIdUrl}}&cache={{user.cache}}">{{orderItem.UNI[0].BpoCktId}}</a>
+				</span></td>
+
+				<td><span *ngIf='orderItem.UNI'>
+					<span>{{orderItem.UNI[0].WfaRegion}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.UNI'>
+					<span>{{orderItem.UNI[0].wfa_uni?.CAC}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.UNI'>
+					<span>{{orderItem.UNI[0].wfa_uni?.ORD}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.UNI'>
+					<span>{{orderItem.UNI[0].wfa_uni?.open_events?.length}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.UNI'>
+					<a target="_blank" href="{{aseBaseUrl}}/{{orderItem.UNI[0].AsedbSiteId}}?cache={{user.cache}}">{{orderItem.UNI[0].AsedbSiteId}}</a>
+				</span></td>
 				
+				<td><span *ngIf='orderItem.UNI'>
+					<span>{{orderItem.UNI[0].OmxOrderId}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.UNI'>
+					<span>{{orderItem.UNI[0].edge_uni?.length}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.UNI'>
+					<span>{{orderItem.UNI[0].CanopiPo}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.UNI'>
+					<span>{{orderItem.UNI[0].CanopiTo}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.UNI'>
+					<span>{{orderItem.UNI[0].is_acts}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.UNI'>
+					<span>{{orderItem.UNI[0].is_ean}}</span>
+				</span></td>
+
+
+
+				<!-- CNL -->
+				<td><span *ngIf='orderItem.CNL'>
+					<i class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderInput)">note</i>
+					<a target="_blank" href="{{baseUrl}}/{{orderItem.CNL[0].WfaClo}}?cache={{user.cache}}">{{orderItem.CNL[0].WfaClo}}</a>
+					<input class='hidden-clip' type="text" #orderInput value={{orderItem.OrdNum}}>
+				</span></td>
+					
+				<td><span *ngIf='orderItem.CNL'>
+					<a target="_blank" href="{{circuitBaseUrl}}/{{orderItem.CNL[0].BpoCktIdUrl}}&cache={{user.cache}}">{{orderItem.CNL[0].BpoCktId}}</a>
+				</span></td>
+
+				<td><span *ngIf='orderItem.CNL'>
+					<span>{{orderItem.CNL[0].WfaRegion}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.CNL'>
+					<span>{{orderItem.CNL[0].wfa_cnl?.CAC}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.CNL'>
+					<span>{{orderItem.CNL[0].wfa_cnl?.ORD}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.CNL'>
+					<span>{{orderItem.CNL[0].wfa_cnl?.open_events?.length}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.CNL'>
+					<a target="_blank" href="{{aseBaseUrl}}/{{orderItem.CNL[0].AsedbSiteId}}?cache={{user.cache}}">{{orderItem.CNL[0].AsedbSiteId}}</a>
+				</span></td>
+				
+				<td><span *ngIf='orderItem.CNL'>
+					<span>{{orderItem.CNL[0].OmxOrderId}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.CNL'>
+					<span>{{orderItem.CNL[0].edge_cnl?.length}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.CNL'>
+					<span>{{orderItem.CNL[0].CanopiPo}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.CNL'>
+					<span>{{orderItem.CNL[0].CanopiTo}}</span>
+				</span></td>
+
+
+
 				<!-- EVC -->
-				<td><a target="_blank" href="{{circuitBaseUrl}}{{orderItem.circuit_evc}}&cache={{user.cache}}">{{orderItem.evcCircuit}}</a></td>
+				<td><span *ngIf='orderItem.EVC'>
+					<i class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderInput)">note</i>
+					<a target="_blank" href="{{baseUrl}}/{{orderItem.EVC[0].WfaClo}}?cache={{user.cache}}">{{orderItem.EVC[0].WfaClo}}</a>
+					<input class='hidden-clip' type="text" #orderInput value={{orderItem.OrdNum}}>
+				</span></td>
+					
+				<td><span *ngIf='orderItem.EVC'>
+					<a target="_blank" href="{{circuitBaseUrl}}/{{orderItem.EVC[0].BpoCktIdUrl}}&cache={{user.cache}}">{{orderItem.EVC[0].BpoCktId}}</a>
+				</span></td>
 
-				<td>{{orderItem.ATX_USO_iCORE_ID}}</td>
-				<td>{{orderItem.ASEdb_bettc_database_MATCH__EXACT_ASR}}</td>
-				
-				<!-- PO/TO -->
-				<td>{{orderItem.CANOPI_CNL_TO}}</td>
-				<td>{{orderItem.CANOPI_UNI_PO}}</td>
-				<td>{{orderItem.CANOPI_UNI_TO}}</td>
-				<td>{{orderItem.CANOPI_EVC_PO}}</td>
-				<td>{{orderItem.CANOPI_EVC_TO}}</td>
+				<td><span *ngIf='orderItem.EVC'>
+					<span>{{orderItem.EVC[0].WfaRegion}}</span>
+				</span></td>
 
-				<td>{{orderItem.evcAsr}}</td>
-				<td>{{orderItem.evcType}}</td>
-				
-				<td>
-					<i *ngIf='orderItem.RO' class="material-icons success" title='Copy to clipboard' (click)="misc.copyText(orderRO)">note</i>
-					<a target="_blank" href="{{baseUrl}}/{{orderItem.RO}}?cache={{user.cache}}">{{orderItem.RO}}</a>
-					<input *ngIf='orderItem.RO' class='hidden-clip' type="text" #orderRO value={{orderItem.RO}}>
-				</td>
+				<td><span *ngIf='orderItem.EVC'>
+					<span>{{orderItem.EVC[0].wfa_evc?.CAC}}</span>
+				</span></td>
 
+				<td><span *ngIf='orderItem.EVC'>
+					<span>{{orderItem.EVC[0].wfa_evc?.ORD}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.EVC'>
+					<span>{{orderItem.EVC[0].wfa_evc?.open_events?.length}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.EVC'>
+					<a target="_blank" href="{{aseBaseUrl}}/{{orderItem.EVC[0].AsedbSiteId}}?cache={{user.cache}}">{{orderItem.EVC[0].AsedbSiteId}}</a>
+				</span></td>
 				
+				<td><span *ngIf='orderItem.EVC'>
+					<span>{{orderItem.EVC[0].OmxOrderId}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.EVC'>
+					<span>{{orderItem.EVC[0].edge_evc?.length}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.EVC'>
+					<span>{{orderItem.EVC[0].CanopiPo}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.EVC'>
+					<span>{{orderItem.EVC[0].CanopiTo}}</span>
+				</span></td>
+
+
+
+				<!-- ATX -->
+				<td><span *ngIf='orderItem.ATX'>
+					<span>{{orderItem.ATX[0].AsedbSiteId}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.ATX'>
+					<span>{{orderItem.ATX[0].atx?.AtxUniPon}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.ATX'>
+					<span>{{orderItem.ATX[0].atx?.AtxUniUso}}</span>
+				</span></td>
+
+				<td><span *ngIf='orderItem.ATX'>
+					<span>{{orderItem.ATX[0].atx?.AtxUniUsoIcoreId}}</span>
+				</span></td>
 			</tr>
 		</tbody>
 	</table>

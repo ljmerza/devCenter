@@ -31,6 +31,7 @@ export class OrdersComponent implements OnInit {
 			<'row'<'col-sm-12'ip>>
 		`,
 		pageLength: 15,
+		order: [[0, 'desc']],
 		lengthMenu: [5, 10, 15, 20, 100],
 		buttons: ['colvis', 'excel'],
 		stateSave: true,
@@ -69,53 +70,10 @@ export class OrdersComponent implements OnInit {
 	 * @param {Array<Object>} orders 
 	 */
 	formatTableData(orders){
-
-		// filter duplicate orders
-		orders = (orders || []).filter((thing, index, self) =>
-			index === self.findIndex((t) => (
-				t.OrdNum === thing.OrdNum
-			))
-		);
-
-		console.log('orders: ', orders[0]);
-
-		orders = orders.map(order => {
-			// trim order numbers
-			order.OrdNum = order.OrdNum.trim();
-			order.trk = order.trk.trim();
-			order.RO = order.RO.trim();
-
-			// show example order for debugging
-			// if(order.OrdNum === 'C5CKTB67') console.log('order: ', order);
-
-			// parse EVC data
-			let evcData = (order.EVC_Status || '').split('</br>');
-			if(evcData.length > 3){
-				order.evcCircuit = evcData[0].substring(4);
-				order.evcAsr = evcData[2].substring(9);
-				order.evcType = evcData[3].substring(6);
-			}
-
-			// encode circuits for URLs
-			if(order.FORCE_enocDSP__CIRCUIT_ID){
-				order.FORCE_enocDSP__CIRCUIT_ID = order.FORCE_enocDSP__CIRCUIT_ID.trim();
-				order.circuit_cnl = encodeURIComponent(order.FORCE_enocDSP__CIRCUIT_ID);
-			}
-			if(order.cktid){
-				order.cktid = order.cktid.trim();
-				order.circuit_uni = encodeURIComponent(order.cktid);
-			}
-			if(order.evcCircuit){
-				order.evcCircuit = order.evcCircuit.trim();
-				order.circuit_evc = encodeURIComponent(order.evcCircuit);
-			}
-
-			return order;
-		});
-
+		// console.log('orders: ', orders);
 		this.orders = orders;
-		this.rerender();
 		this.loadingIndicator = false;
+		this.rerender();
 	}
 
 	/**

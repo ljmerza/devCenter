@@ -57,13 +57,13 @@ foreach my $order (@{$order_data}){
 	if($order_number and not grep(/^$order_number$/, @recorded_orders) ){
 		push @recorded_orders, $order_number;
 		print("getting data for order number $order_number\n");
-		add_order_to_list($order_number, 'ORDER');
+		add_order_to_list($order_number, 'ORDER', $order);
 	}
 
 	if($trk and not grep(/^$trk$/, @recorded_orders) ){
 		push @recorded_orders, $trk;
 		print("getting data for trk $trk\n");
-		add_order_to_list($trk, 'CLO');
+		add_order_to_list($trk, 'CLO', $order);
 	}
 }
 
@@ -75,20 +75,22 @@ close $fh;
 
 
 sub add_order_to_list {
-	my ($fuzzy_order, $type) = @_;
+	my ($fuzzy_order, $type, $order) = @_;
 
 	my $ODB = M5::REST::WATSON::ODB->new();
 	my $response = $ODB->get_orders(fuzzy_order => $fuzzy_order, deep => 1);
 
 	if('HASH' eq ref $response and $response->{OdbRecordList}) {
-		push @deep_order_data, process_order($response->{OdbRecordList}, $type);
+		my $formatted_records = process_order($response->{OdbRecordList}, $type);
+		$formatted_records->{database_info} = $order;
+		push @deep_order_data, $formatted_records;
 	}
 }
 
 
 sub trim { 
 	my $s = shift; 
-	return '' if(not $s or $s eq 'null');
+	return '' if(not $s or $s =~ /null/i);
 	$s =~ s/^\s+|\s+$//g; 
 	return $s 
 };
@@ -107,6 +109,7 @@ sub process_order {
 			BpoCktId => trim($record->{BpoCktId}),
 			WfaRegion => trim($record->{WfaRegion}),
 			AsedbSiteId => trim($record->{AsedbSiteId}),
+			CAC => trim($record->{CAC}),
 			CanopiPo => trim($record->{CanopiPo}),
 			CanopiTo => trim($record->{CanopiTo}),
 			ExactPon => trim($record->{ExactPon}),
@@ -114,21 +117,20 @@ sub process_order {
 		};
 
 		if($component_type eq 'ATX'){
-			# $data = get_atx($record, $data);
+			$data = get_atx($record, $data);
 		} else {
-			# $data = get_asedb($record, $data);
-			# $data = get_canpoi($record, $data, $type);
-			# $data = get_edge_force($record, $data);
-			# $data = get_wfa_details($record, $data);
-			# $data = get_omx_ocx($record, $data);
-			$data = get_data($record, $data);
-			# $data = get_cth($record, $data);
-			# $data = get_watson($record, $data);
+			$data = get_asedb($record, $data);
+			$data = get_canpoi($record, $data, $type);
+			$data = get_edge_force($record, $data);
+			$data = get_wfa_details($record, $data);
+			$data = get_omx_ocx($record, $data);
+			$data = get_cth($record, $data);
+			$data = get_watson($record, $data);
 		}
 
 		if($component_type eq 'UNI'){
-			# $data = get_acts($record, $data);
-			# $data = is_ean($record, $data);
+			$data = get_acts($record, $data);
+			$data = is_ean($record, $data);
 		}
 		
 		unless(defined $formatted_records->{$component_type}){
@@ -264,17 +266,17 @@ sub get_wfa_details {
 		if(my $wfa = $record->{Details}->{$wfa_type}){
 
 			my $key = $wfa_keys->{$wfa_type};
-			$data->{wfa} = {};
-			$data->{wfa}->{$key} = {};
+			$data->{$key} = {};
 
-			$data->{wfa}->{$key}->{ALOC} = trim($wfa->{ALOC});
-			$data->{wfa}->{$key}->{ZLOC} = trim($wfa->{ZLOC});
-			$data->{wfa}->{$key}->{ORD} = trim($wfa->{ORD});
-			$data->{wfa}->{$key}->{ACT} = trim($wfa->{ACT});
-			$data->{wfa}->{$key}->{RO} = trim($wfa->{RO});
+			$data->{$key}->{ALOC} = trim($wfa->{ALOC});
+			$data->{$key}->{ZLOC} = trim($wfa->{ZLOC});
+			$data->{$key}->{ORD} = trim($wfa->{ORD});
+			$data->{$key}->{ACT} = trim($wfa->{ACT});
+			$data->{$key}->{RO} = trim($wfa->{RO});
 
 			if($wfa->{EVENT_LIST} and scalar @{$wfa->{EVENT_LIST}}){
-				$data->{wfa}->{$key}->{events} = ();
+				$data->{$key}->{events} = ();
+				$data->{$key}->{open_events} = ();
 
 				foreach my $event (@{$wfa->{EVENT_LIST}}){
 					my $event_item = {};
@@ -284,7 +286,12 @@ sub get_wfa_details {
 					$event_item->{JEP2} = trim($event->{JEP2});
 					$event_item->{JEP3} = trim($event->{JEP3});
 
-					push @{$data->{wfa}->{$key}->{events}}, $event_item;
+					# check for open events
+					if(not $event_item->{CMP} and ($event_item->{JEP1} or $event_item->{JEP2} or $event_item->{JEP3} )){
+						push @{$data->{$key}->{open_events}}, $event_item;
+					}
+
+					push @{$data->{$key}->{events}}, $event_item;
 				}
 			}
 		}
@@ -314,6 +321,7 @@ sub get_acts {
 		attuid => 'lm240n'
 	);
 
+	$data->{is_acts} = $data->{is_acts} ? 'Yes' : 'No';
 	return $data;
 }
 
@@ -329,117 +337,20 @@ sub is_ean {
 		$data->{is_ean} = 0;
 	}
 
+	$data->{is_ean} = $data->{is_ean} ? 'Yes' : 'No';
 	return $data;
 }
 
-
-sub get_data {
-	my ($record, $data) = @_;
-
-
-	my @data_to_get = (
-		{
-			item_key => 'omx_ocx',
-			item_properties => {
-				OcxCnlDetails => 'ocx_cnl',
-				OcxAdiDetails => 'ocx_adi',
-				OcxUniDetails => 'ocx_uni',
-				OcxEvcDetails => 'ocx_evc',
-				OmxCnlDetails => 'omx_cnl',
-				OmxAdiDetails => 'omx_adi',
-				OmxUniDetails => 'omx_uni',
-				OmxEvcDetails => 'omx_evc',
-			},
-			properties => ['contractId', 'OrderNumber', 'DeviceClli', 'CktId', 'edgeDeviceID', 'orderId']
-		},
-		{
-			item_key => 'edge_force',
-			item_properties => {
-				EdgeForceCnlDetails => 'edge_cnl',
-				EdgeForceAdiDetails => 'edge_adi',
-				EdgeForceUniDetails => 'edge_uni',
-				EdgeForceEvcDetails => 'edge_evc',
-			},
-			properties => ['WRID', 'CAC', 'ORD', 'FORCE_STAT', 'DSP_CLLI']
-		},
-		{
-			item_key => 'cth',
-			item_properties => {
-				CthFalloutListCnlDetails => 'cth_cnl',
-				CthFalloutListAdiDetails => 'cth_adi',
-				CthFalloutListUniDetails => 'cth_uni',
-				CthFalloutListEvcDetails => 'cth_evc'
-			}
-		},
-		{
-			item_key => 'watson',
-			item_properties => {
-				WatsonStatusCnlDetails => 'watson_cnl',
-				WatsonStatusAdiDetails => 'watson_adi',
-				WatsonStatusUniDetails => 'watson_uni',
-				WatsonStatusEvcDetails => 'watson_evc'
-			}
-		}
-	);
-
-	foreach my $data_getter (@data_to_get){
-		my $item_key = $data_getter->{item_key};
-		my $item_properties = $data_getter->{item_properties};
-		my $properties = $data_getter->{properties};
-
-		foreach my $prop_type (keys %{$item_properties}){
-
-			# if property exist on main object the get it
-			if(my $item = $record->{Details}->{$prop_type}){
-
-				my $key = $item_properties->{$prop_type};
-				$data->{$item_key} = {};
-
-				if('HASH' eq ref $item){
-					$data->{$item_key}->{$key} = {};
-
-					# if custom properties wanted get them else save all
-					if($properties){
-						foreach my $prop (@{$properties}){
-							$data->{$item_key}->{$key}->{$prop} = trim($item->{$prop});
-						}
-					} else {
-						$data->{$item_key}->{$key} = $item;
-					}
-
-				} else {
-					$data->{$item_key}->{$key} = ();
-
-					foreach my $inner_item (@{$item}){
-						# if custom properties wanted get them else save all
-						if($properties){
-							my $new_inner_item = {};
-							foreach my $prop (@{$properties}){
-								$new_inner_item->{$prop} = trim($inner_item->{$prop});
-							}
-							push @{$data->{$item_key}->{$key}}, $new_inner_item;
-
-						} else {
-							push @{$data->{$item_key}->{$key}}, $inner_item;
-						}
-					}	
-				}	
-			}
-		}
-	}
-
-	return $data;
-}
 
 sub get_omx_ocx {
 	my ($record, $data) = @_;
 
-	my $item_key = 'omx_ocx';
 	my $omx_ocx_keys = {
 		OcxCnlDetails => 'ocx_cnl',
 		OcxAdiDetails => 'ocx_adi',
 		OcxUniDetails => 'ocx_uni',
 		OcxEvcDetails => 'ocx_evc',
+
 		OmxCnlDetails => 'omx_cnl',
 		OmxAdiDetails => 'omx_adi',
 		OmxUniDetails => 'omx_uni',
@@ -447,17 +358,16 @@ sub get_omx_ocx {
 	};
 
 	foreach my $omx_ocx_type (keys %{$omx_ocx_keys}){
-
 		if(my $item = $record->{Details}->{$omx_ocx_type}){
 			my $key = $omx_ocx_keys->{$omx_ocx_type};
-			$data->{$item_key}->{$key} = {};
+			$data->{$key} = {};
 
-			$data->{$item_key}->{$key}->{contractId} = trim($item->{contractId});
-			$data->{$item_key}->{$key}->{OrderNumber} = trim($item->{OrderNumber});
-			$data->{$item_key}->{$key}->{DeviceClli} = trim($item->{DeviceClli});
-			$data->{$item_key}->{$key}->{CktId} = trim($item->{CktId});
-			$data->{$item_key}->{$key}->{edgeDeviceID} = trim($item->{edgeDeviceID});
-			$data->{$item_key}->{$key}->{orderId} = trim($item->{orderId});
+			$data->{$key}->{contractId} = trim($item->{contractId});
+			$data->{$key}->{OrderNumber} = trim($item->{OrderNumber});
+			$data->{$key}->{DeviceClli} = trim($item->{DeviceClli});
+			$data->{$key}->{CktId} = trim($item->{CktId});
+			$data->{$key}->{edgeDeviceID} = trim($item->{edgeDeviceID});
+			$data->{$key}->{orderId} = trim($item->{orderId});
 		}
 	}
 
@@ -491,7 +401,6 @@ sub get_cth {
 sub get_watson {
 	my ($record, $data) = @_;
 
-	my $item_key = 'watson';
 	my $data_keys = {
 		WatsonStatusCnlDetails => 'watson_cnl',
 		WatsonStatusAdiDetails => 'watson_adi',
@@ -502,8 +411,8 @@ sub get_watson {
 	foreach my $data_type (keys %{$data_keys}){
 		if(my $item = $record->{Details}->{$data_type}){
 			my $key = $data_keys->{$data_type};
-			$data->{$item_key} = {};
-			$data->{$item_key}->{$key} = $item;
+			$data->{watson} = {};
+			$data->{watson}->{$key} = $item;
 		}
 	}
 
@@ -526,8 +435,7 @@ sub get_edge_force {
 
 		if(my $edge_force = $record->{Details}->{$edge_type}){
 			my $key = $edge_keys->{$edge_type};
-			$data->{edge_force} = {};
-			$data->{edge_force}->{$key} = ();
+			$data->{$key} = ();
 
 			foreach my $edge_data (@{$edge_force}){
 				my $edge = {};
@@ -536,7 +444,7 @@ sub get_edge_force {
 				$edge->{ORD} = trim($edge_data->{ORD});
 				$edge->{FORCE_STAT} = trim($edge_data->{FORCE_STAT});
 				$edge->{DSP_CLLI} = trim($edge_data->{DSP_CLLI});
-				push @{$data->{edge_force}->{$key}}, $edge;
+				push @{$data->{$key}}, $edge;
 			}
 		}
 	}
