@@ -31,7 +31,8 @@ class JiraMisc():
 		Returns:
 			dict of status/data properties with the error message or Jira ticket key
 		'''
-		response = self.jira_api.get(url=f'{self.jira_api.api_base}/search?jql=MSRP_Number~{msrp}', cred_hash=cred_hash)
+		url = f'{self.jira_api.api_base}/search?jql=MSRP_Number~{msrp}&fields=key'
+		response = self.jira_api.get(url=url, cred_hash=cred_hash)
 		if not response['status']:
 			return response
 		if len(response['data']['issues']):

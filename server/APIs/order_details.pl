@@ -35,9 +35,11 @@ sub db_connect_odb_ro {
 }
 
 my $dbh = db_connect_odb_ro();
+my $number_of_orders = 300;
+my $processed = 0;
 
 my $sql = ";
-SELECT TOP 10 *
+SELECT TOP $number_of_orders *
 FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core 
 right join odb.dbo.DB2_Feeds_Refresh as Refresh 
 on Core.cktid = Refresh.cktid and Core.event_type = Refresh.event_type 
@@ -54,17 +56,14 @@ foreach my $order (@{$order_data}){
 	my $order_number = $order->{OrdNum};
 	my $trk = $order->{trk};
 
-	if($order_number and not grep(/^$order_number$/, @recorded_orders) ){
-		push @recorded_orders, $order_number;
-		print("getting data for order number $order_number\n");
-		add_order_to_list($order_number, 'ORDER', $order);
-	}
-
 	if($trk and not grep(/^$trk$/, @recorded_orders) ){
 		push @recorded_orders, $trk;
-		print("getting data for trk $trk\n");
+		print("getting data for order number $trk\n");
 		add_order_to_list($trk, 'CLO', $order);
 	}
+
+	$processed = $processed + 1;
+	print("processed $processed orders out of $number_of_orders\n");
 }
 
 
@@ -104,12 +103,15 @@ sub process_order {
 		my $component_type = $record->{BpoComponent};
 
 		# general Order data
+		my $BpoCktId = trim($record->{BpoCktId});
+		my $letter = substr($BpoCktId, 0, 1);
+
 		my $data = {
 			WfaClo => trim($record->{WfaClo}),
-			BpoCktId => trim($record->{BpoCktId}),
+			BpoCktId => $BpoCktId,
+			BpoCktIdURL => $letter eq '/' ? substr($BpoCktId, 1) : $BpoCktId,
 			WfaRegion => trim($record->{WfaRegion}),
 			AsedbSiteId => trim($record->{AsedbSiteId}),
-			CAC => trim($record->{CAC}),
 			CanopiPo => trim($record->{CanopiPo}),
 			CanopiTo => trim($record->{CanopiTo}),
 			ExactPon => trim($record->{ExactPon}),
@@ -271,6 +273,7 @@ sub get_wfa_details {
 			$data->{$key}->{ALOC} = trim($wfa->{ALOC});
 			$data->{$key}->{ZLOC} = trim($wfa->{ZLOC});
 			$data->{$key}->{ORD} = trim($wfa->{ORD});
+			$data->{$key}->{CAC} = trim($wfa->{CAC});
 			$data->{$key}->{ACT} = trim($wfa->{ACT});
 			$data->{$key}->{RO} = trim($wfa->{RO});
 

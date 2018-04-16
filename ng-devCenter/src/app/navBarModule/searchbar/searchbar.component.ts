@@ -72,7 +72,7 @@ export class SearchbarComponent implements OnInit {
 			this.jira.searchTicket(orderValue)
 			.subscribe(
 				data => window.open(`${this.config.jiraUrl}/browse/${data.data}`),
-				error => this.toastr.showToast(this.jira.processErrorResponse(error), 'error')
+				error => this.jira.processErrorResponse(error)
 			);
 		}
 	}
