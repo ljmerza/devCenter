@@ -144,8 +144,9 @@ router.get('/tickets', function(req, res, next) {
 					"phone_number": "null"
 				}, "dates": {
 					"estimate": "3d", 
-					"logged": "", 
-					"logged_seconds": "3600", 
+					"logged": "4d", 
+					"logged_seconds": 4*24*60*60,
+					"estimate_seconds": 3*24*60*60, 
 					"duedate": "2018-01-10", 
 					"created": "2017-12-27T20:36:38.000+0000", 
 					"updated": "2018-01-02T21:16:29.000+0000", 
@@ -268,7 +269,8 @@ router.get('/tickets', function(req, res, next) {
 				}, "dates": {
 					"estimate": "3d", 
 					"logged": "", 
-					"logged_seconds": "3600", 
+					"logged_seconds": 0,
+					"estimate_seconds": 3*24*60*60, 
 					"duedate": "2018-01-10", 
 					"created": "2017-12-27T20:36:38.000+0000", 
 					"updated": "2018-01-02T21:16:29.000+0000", 
@@ -391,7 +393,8 @@ router.get('/tickets', function(req, res, next) {
 				}, "dates": {
 					"estimate": "3d", 
 					"logged": "2d", 
-					"logged_seconds": "3600", 
+					"logged_seconds": 2*24*60*60, 
+					"estimate_seconds": 3*24*60*60,
 					"duedate": "2018-01-10", 
 					"created": "2017-12-27T20:36:38.000+0000", 
 					"updated": "2018-01-02T21:16:29.000+0000", 

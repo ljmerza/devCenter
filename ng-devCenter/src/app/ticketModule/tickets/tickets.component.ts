@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
 
-import { Subject, Observable, Subscription } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import 'rxjs/add/observable/interval';
 import { select, NgRedux } from '@angular-redux/store';
 
@@ -68,23 +68,18 @@ export class TicketsComponent implements OnInit {
 	 * of tickets based on URL parameter if user has credentials
 	 */
 	ngOnInit():void {
-		if( !this.user.needRequiredCredentials() ){
+		if(this.user.needRequiredCredentials()) return;
 
-			// get all repos
-			this.git.getRepos().subscribe(
-				this.processRepos.bind(this),
-				this.git.processErrorResponse.bind(this.git)
-			);
+		this.git.getRepos().subscribe(
+			this.processRepos.bind(this),
+			this.git.processErrorResponse.bind(this.git)
+		);
 
-			// get tickets
-			this.getTickets$.subscribe(this.processTickets.bind(this));
-
-			this.route.paramMap.subscribe(params => {
-				if(this.getTicketsSub$) this.getTicketsSub$.unsubscribe();
-				this.ticketType = params.get('filter') || 'mytickets';
-				this.getTickets(true);
-			});
-		}
+		this.getTickets$.subscribe(this.processTickets.bind(this));
+		this.route.paramMap.subscribe(params => {
+			if(this.getTicketsSub$) this.getTicketsSub$.unsubscribe();
+			this.getTickets(true);
+		});
 	}
 
 	/** 

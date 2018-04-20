@@ -4,6 +4,7 @@ import { TicketsComponent } from './ticketModule/tickets/tickets.component';
 import { UserSettingsComponent } from './navbarModule/user-settings/user-settings.component';
 import { OrdersComponent } from './orderModule/orders/orders.component';
 import { EditOrdersComponent } from './orderModule/edit-orders/edit-orders.component';
+import { DevStatsComponent } from './metricsModule/dev-stats/dev-stats.component';
 
 import { ProfileGuard } from './profile.guard'
 
@@ -30,6 +31,11 @@ const routes: Routes = [
 	{
 		path: 'editorders',
 		component: EditOrdersComponent,
+		canActivate: [ProfileGuard]
+	},
+	{
+		path: 'metrics',
+		component: DevStatsComponent,
 		canActivate: [ProfileGuard]
 	},
 	{

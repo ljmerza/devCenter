@@ -1,10 +1,10 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 // custom modules
-import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared.module';
 
 // components

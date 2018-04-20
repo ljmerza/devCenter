@@ -13,6 +13,7 @@ import { NavbarModule } from './navbarModule/navbar.module';
 import { CommentsModule } from './commentsModule/comments.module';
 import { TicketModule } from './ticketModule/ticket.module';
 import { OrderModule } from './orderModule/order.module';
+import { MetricsModule } from './metricsModule/metrics.module';
 
 // components
 import { AppComponent } from './app.component';
@@ -24,7 +25,8 @@ import { environment } from '@environment';
 	declarations: [AppComponent, FooterComponent],
 	imports: [
 		BrowserModule, routing, SharedModule.forRoot(), OrderModule, BrowserAnimationsModule, 
-		TicketModule, NavbarModule, CommentsModule, NgbModule.forRoot(), NgProgressModule
+		TicketModule, NavbarModule, CommentsModule, NgbModule.forRoot(), NgProgressModule,
+		MetricsModule
 	],
 	providers: [
 		appRoutingProviders, Location, 
