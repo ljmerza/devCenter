@@ -28,16 +28,16 @@
 <td class='summary-td'>{{ticket?.summary}}</td>
 
 <!-- state dropdown -->
-<td><dc-ticket-status [key]=ticket?.key [msrp]=ticket?.msrp></dc-ticket-status></td>
+<td><dc-ticket-status [ticket]=ticket></dc-ticket-status></td>
 
 <!-- dates -->
-<td class='dates-td'>{{ticketDates?.dates?.started | amDateFormat:'LL'}}</td>
-<td class='dates-td'>{{ticketDates?.dates?.duedate | amDateFormat:'LL'}}</td>
-<td class='dates-td'><dc-ticket-dates [datetime]=ticketDates?.dates?.estimate_seconds></dc-ticket-dates></td>
-<td class='dates-td'><dc-ticket-dates [datetime]=ticketDates?.dates?.logged_seconds></dc-ticket-dates></td>
-<td class='dates-td'>{{ticketDates?.dates?.updated | amDateFormat:'LL'}}</td>
-<td class='dates-td'>{{ticketDates?.dates?.created | amDateFormat:'LL'}}</td>
+<td class='dates-td'>{{ticket?.dates?.started | amDateFormat:'LL'}}</td>
+<td class='dates-td'>{{ticket?.dates?.duedate | amDateFormat:'LL'}}</td>
+<td class='dates-td'><dc-ticket-dates [datetime]=ticket?.dates?.estimate_seconds></dc-ticket-dates></td>
+<td class='dates-td'><dc-ticket-dates [datetime]=ticket?.dates?.logged_seconds></dc-ticket-dates></td>
+<td class='dates-td'>{{ticket?.dates?.updated | amDateFormat:'LL'}}</td>
+<td class='dates-td'>{{ticket?.dates?.created | amDateFormat:'LL'}}</td>
 
-<td><dc-crucible [key]=key></dc-crucible></td>
+<td><dc-crucible [key]=key [crucibleId]=ticket?.crucible_id></dc-crucible></td>
 <td><dc-user-details [msrp]=ticket?.msrp [user]=ticket?.user_details></dc-user-details></td>
 <td><dc-user-details [msrp]=ticket?.msrp [user]=ticket?.customer_details></dc-user-details></td>

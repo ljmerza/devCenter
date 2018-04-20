@@ -1,3 +1,6 @@
-<p>
-  dev-stats works!
-</p>
+<dc-loading-table [loadingTable]=loadingTickets [tableTitle]=tableTitle (refreshData)="getTickets()">
+	<ngx-datatable
+        [rows]="rows"
+        [columns]="userProfiles">
+	</ngx-datatable>
+</dc-loading-table>

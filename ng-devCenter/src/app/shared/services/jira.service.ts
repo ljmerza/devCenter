@@ -68,6 +68,20 @@ export class JiraService {
 	}
 
 	/**
+	 * get all tickets for a sprint
+	 */
+	getSprint(sprint:string, isHardRefresh:Boolean=false){
+		const sprintJql = this.config.sprintJql(sprint);
+		
+		let params = new HttpParams();
+		params = params.append('jql', sprintJql);
+		params = params.append('fields', this.config.fields);
+		params = params.append('isHardRefresh', isHardRefresh.toString());
+
+		return this.dataService.get(`${this.dataService.apiUrl}/jira/tickets`, {params});
+	}
+
+	/**
 	 * Searches for the key of a Jira ticket given its MSRP
 	 * @param {string} msrp the Jira ticket msrp
 	 * @return {Observable} 

@@ -1,19 +1,4 @@
-<!-- ticket loading -->
-<div class='loading' [hidden]="!loadingTable">
-	<div class='container'>
-		<div class='loader'>
-			<div class='loader--dot'></div>
-			<div class='loader--dot'></div>
-			<div class='loader--dot'></div>
-			<div class='loader--dot'></div>
-			<div class='loader--dot'></div>
-			<div class='loader--dot'></div>
-			<div class='loader--text'></div>
-		</div>
-	</div>
-</div>
-
-<div class="container-fluid table-spacing" [hidden]='loadingTable'>
+<div class="container-fluid table-spacing">
 	<!-- header -->
 	<div class="row">
 		<div class="col-12">
@@ -23,9 +8,24 @@
 			</h1>
 		</div>
 	</div>
+	
+	<!-- ticket loading -->
+	<div class='loading' [hidden]="!loadingTable">
+		<div class='container'>
+			<div class='loader'>
+				<div class='loader--dot'></div>
+				<div class='loader--dot'></div>
+				<div class='loader--dot'></div>
+				<div class='loader--dot'></div>
+				<div class='loader--dot'></div>
+				<div class='loader--dot'></div>
+				<div class='loader--text'></div>
+			</div>
+		</div>
+	</div>
 
 	<!-- table -->
-	<div class="row">
+	<div class="row" [hidden]='loadingTable'>
 		<div class="col-12">
 			<ng-content></ng-content>
 		</div>

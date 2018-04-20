@@ -1,7 +1,5 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { NgRedux } from '@angular-redux/store';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
-import { Actions, RootState } from '@store';
 import { JiraService, ToastrService, ConfigService } from '@services';
 import { statuses } from '@models';
 
@@ -13,33 +11,10 @@ import { statuses } from '@models';
 })
 export class CrucibleComponent {
 
-	constructor(public jira: JiraService, public config: ConfigService, public toastr: ToastrService, public store:NgRedux<RootState>, private cd: ChangeDetectorRef) { }
+	constructor(public jira: JiraService, public config: ConfigService, public toastr: ToastrService, private cd: ChangeDetectorRef) { }
 
 	@Input() key;
-	crucibleId$;
-	crucibleId;
-
-	/**
-	* Adds watcher for Crucible Id.
-	*/
-	ngOnInit(){
-		this.crucibleId$ = this.store.select('crucibleIds')
-		.subscribe((allTickets:any) => {
-			const ticket = allTickets.find(ticket => ticket.key === this.key);
-			if(ticket && this.crucibleId !== ticket.crucibleId){
-				this.crucibleId = ticket.crucibleId;
-				this.cd.detectChanges();
-			}
-			
-		});
-	}
-
-	/**
-	* removes watcher for Crucible Id.
-	*/
-	ngOnDestroy(){
-		if(this.crucibleId$) this.crucibleId$.unsubscribe();
-	}
+	@Input() crucibleId;
 
 	/**
 	* Adds the currently logged in user as a reviewer to the Crucible review. 
@@ -47,15 +22,12 @@ export class CrucibleComponent {
 	* @return {boolean} returns false to stop bubbling
 	*/
 	addReviewer():boolean {
-  		this.jira.changeStatus({key:this.key, statusType:statuses.PCRADD.backend, crucible_id:this.crucibleId})
-		.subscribe(this.openCrucible.bind(this), this.openCrucible.bind(this));
-		return false;
-	}
+  		this.jira.changeStatus({key:this.key, statusType:statuses.PCRADD.backend, crucibleId:this.crucibleId})
+		.subscribe(
+			() => window.open(`${this.config.crucibleUrl}/cru/${this.crucibleId}`, '_blank').focus(), 
+			this.jira.processErrorResponse.bind(this)
+		);
 
-	/**
-	 * Opens crucible review in new window.
-	 */
-	openCrucible(){
-		window.open(`${this.config.crucibleUrl}/cru/${this.crucibleId}`, '_blank').focus();
+		return false;
 	}
 }

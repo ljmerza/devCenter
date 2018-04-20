@@ -11,6 +11,8 @@ import { environment } from '@environment';
 import { ModalComponent } from '@modal';
 import { ToastrComponent } from './toastr/toastr.component';
 import { LoadingTableComponent } from './loading-table/loading-table.component';
+import { UserDetailsComponent } from './user-details/user-details.component';
+
 
 // services
 import { JiraService, JiraCommentsService, JiraPingsService, OrderService, JiraWatchersService } from '@services';
@@ -31,8 +33,8 @@ import { DraggableDirective } from './draggable.directive';
 
 @NgModule({
 	imports: [HttpClientModule, NgbModule, NgReduxModule, ToastModule.forRoot()],
-	declarations: [ModalComponent, ToastrComponent, LoadingTableComponent, DraggableDirective],
-	exports: [ModalComponent, ToastrComponent, LoadingTableComponent, DraggableDirective]
+	declarations: [ModalComponent, ToastrComponent, LoadingTableComponent, UserDetailsComponent, DraggableDirective],
+	exports: [ModalComponent, ToastrComponent, UserDetailsComponent, LoadingTableComponent, DraggableDirective]
 })
 export class SharedModule {
 	constructor(private ngRedux:NgRedux<RootState>, private devTools: DevToolsExtension){

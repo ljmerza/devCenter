@@ -17,7 +17,6 @@ import {
 
 // pipes
 import { WorkTimePipe } from './work-time.pipe';
-import { UserDetailsComponent } from './user-details/user-details.component';
 import { DatesComponent } from './dates/dates.component';
 import { WatchersComponent } from './watchers/watchers.component';
 
@@ -29,7 +28,7 @@ import { WatchersComponent } from './watchers/watchers.component';
 	declarations: [
 		SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent, CrucibleComponent,
 		TicketLogComponent, TicketStatusComponent, DatesComponent,
-		TicketsComponent, TicketComponent, WorkTimePipe, UserDetailsComponent, WatchersComponent
+		TicketsComponent, TicketComponent, WorkTimePipe, WatchersComponent
 	],
 	exports: [TicketsComponent]
 })

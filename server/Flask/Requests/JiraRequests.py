@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import os
 
 from Flask import FlaskUtils
 import ChatUtils
@@ -269,6 +270,9 @@ def get_profile(data, jira_obj, sql_obj):
 	sql_obj.logout(session=session)
 	if not sql_response['status']:
 		return {'status': False, 'data': f'Could not get user ping settings:'+ sql_response.get('data', '') }
+
+	# is admin?
+	jira_response['data']['is_admin'] = os.environ['USER'] == data['username']
 
 	# merge settings to one dict and return
 	jira_response['data']['ping_settings'] = sql_response['data']

@@ -6,22 +6,32 @@ import { Actions } from './actions';
 
 export interface RootState {
 	tickets: Array<Ticket>,
-	comments: Array<Comment>,
 	repos: Array<Repo>,
 	userProfile: any,
-	statuses: any,
-	crucibleIds: any,
-	dates: any
+	allopen: any,
+	mytickets: any,
+	pcr: any,
+	qa: any,
+	cr: any,
+	uctready: any,
+	myWatchedTicket: any,
+	beta: any,
+	orders: Array<any>
 }
 
 export const initialState: RootState = {
 	tickets: [],
-	comments: [],
 	repos: [],
 	userProfile: {},
-	statuses: [],
-	crucibleIds: [],
-	dates: []
+	allopen: [],
+	mytickets: [],
+	pcr: [],
+	qa: [],
+	cr: [],
+	uctready: [],
+	myWatchedTicket: [],
+	beta: [],
+	orders: []
 }
 
 /**
@@ -59,30 +69,6 @@ export function rootReducer(state, action){
 /**
  *
  */
-function addTickets(state, allTickets){
-	const comments = allTickets.map(ticket => {
-		return {comments:ticket.comments, key:ticket.key}
-	});
-
-	const statuses = allTickets.map(ticket => {
-		return {status:ticket.status, key:ticket.key}
-	});
-
-	const crucibleIds = allTickets.map(ticket => {
-		return {crucibleId:ticket.crucible_id, key:ticket.key}
-	});
-
-	const dates = allTickets.map(ticket => {
-		return {dates:ticket.dates, key:ticket.key}
-	});
-
-	const tickets = allTickets.map(ticket => { 
-		// delete ticket.dates;
-		delete ticket.comments; 
-		delete ticket.statuses; 
-		delete ticket.crucible_id; 
-		return ticket;
-	});
-
-	return { ...state, ...{comments, tickets, statuses, crucibleIds, dates} };
+function addTickets(state, tickets){
+	return { ...state, ...{[tickets.listType || 'other']: tickets} };
 }

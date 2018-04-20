@@ -2,6 +2,7 @@ import {
 	Component, Input, ViewChild, ComponentFactoryResolver, ViewEncapsulation, OnInit, OnDestroy,
 	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy, ChangeDetectorRef 
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { TicketCommentsModalComponent } from './../../commentsModule/ticket-comments-modal/ticket-comments-modal.component';
 import { TicketLogComponent } from './../ticket-log/ticket-log.component';
@@ -30,7 +31,7 @@ import { Comment, Ticket, Attachment } from '@models';
 	encapsulation: ViewEncapsulation.None
 
 })
-export class TicketComponent implements OnInit, OnDestroy {
+export class TicketComponent {
 	ticketDropdown; // ticket dropdown reference
 
 	ticketDetails;
@@ -39,42 +40,23 @@ export class TicketComponent implements OnInit, OnDestroy {
 	commentComponentRef;
 	worklogComponentRef;
 
-	@ViewChild(WatchersComponent) watchersComponentRef: WatchersComponent;
+	@Input() ticket;
+	@Output() rerender = new EventEmitter();
 
-	tickets$;
-	ticketdates$;
-
-	ticket;
 	ticketDates;
 
+	@ViewChild(TicketStatusComponent) ticketStatusRef: TicketStatusComponent;
+	@ViewChild(WatchersComponent) watchersComponentRef: WatchersComponent;
+
 	constructor(
-		private toastr: ToastrService, public jira: JiraService, public config: ConfigService, 
+		private toastr: ToastrService, public jira: JiraService, public config: ConfigService, public route:ActivatedRoute,
 		public user: UserService, private factoryResolver: ComponentFactoryResolver, public store:NgRedux<RootState>,
 		private viewContRef: ViewContainerRef, public misc: MiscService, private cd: ChangeDetectorRef
 	) { }
 
-	ngOnInit(){
-		this.tickets$ = this.store.select('tickets')
-		.subscribe((allTickets:any) => this.ticket = allTickets.find(ticket => ticket.key === this.key));
-
-		this.ticketdates$ = this.store.select('dates')
-		.subscribe((allTickets:any) => {
-			const ticketDates = allTickets.find(ticket => ticket.key === this.key);
-			if(this.ticketDates !== ticketDates){
-				this.ticketDates = ticketDates;
-				this.cd.detectChanges();
-			}
-		});
+	init(){
+		console.log('ticket: ', this.ticket);
 	}
-
-	ngOnDestroy(){
-		if(this.tickets$) this.tickets$.unsubscribe();
-		if(this.ticketdates$) this.ticketdates$.unsubscribe();
-	}
-
-	@Input() key;
-	@Output() rerender = new EventEmitter();
-	@ViewChild(TicketStatusComponent) ticketStatusRef: TicketStatusComponent;
 
 	/**
 	*/
