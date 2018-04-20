@@ -1,6 +1,80 @@
-<dc-loading-table [loadingTable]=loadingTickets [tableTitle]=tableTitle (refreshData)="getTickets()">
-	<ngx-datatable
-        [rows]="rows"
-        [columns]="userProfiles">
+<dc-loading-table [loadingTable]=loadingTickets [tableTitle]=tableTitle (refreshData)="getMetrics()">
+
+	<div>
+      <h3>Client-side Search and Filtering</h3>
+      <input type='text' style='padding:8px;margin:15px auto;width:30%;'
+        placeholder='Type to filter the name column...'
+        (keyup)='updateFilter($event)'
+      />
+
+	<ngx-datatable #table class="table" [rows]="userProfiles" [columnMode]="'standard'" [limit]="10">
+
+		<ngx-datatable-column prop='username' name="Username">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column prop="estimateUctTotal" name="Estimate UCT">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column prop="loggedUctTotal" name="Logged UCT">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column prop="percentLoggedUct" name="Percent Logged UCT">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column prop="estimateTotal" name="Estimate Total">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column prop="loggedTotal" name="Logged Total">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column prop="percentLogged" name="Percent Logged">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column prop="qaFails" name="QA Fails">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column prop="crFails" name="CR Fails">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column prop="uctFails" name="UCT Fails">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
+		<ngx-datatable-column prop="totalFails" name="Total Fails">
+			<ng-template let-value="value" ngx-datatable-cell-template>
+				{{value}}
+			</ng-template>
+		</ngx-datatable-column>
+
 	</ngx-datatable>
+	</div>
 </dc-loading-table>

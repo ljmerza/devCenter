@@ -2,9 +2,9 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgRedux } from '@angular-redux/store';
 import { NgProgress } from 'ngx-progressbar';
-import { DataTableDirective } from 'angular-datatables';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 
-import { Subject, Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { JiraService, ToastrService, UserService, ConfigService } from '@services';
 
 import { RootState, Actions } from '@store';
@@ -19,7 +19,6 @@ import { statuses } from '../../shared/store/models/ticket-statuses';
 })
 export class DevStatsComponent implements OnInit, OnDestroy {
 	loadingTickets:boolean = false;
-	loadingFromApi = false;
 
 	sprints: Array<string> = [];
 	selectedSprint:string = '';
@@ -29,13 +28,7 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	profile$;
 	userProfiles:Array<any> = [];
 	tickets$:Subscription;
-
-	dtTrigger:Subject<any> = new Subject();
-	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
-
-
-	rows = ['Attuid', 'Estimate UCT', 'Logged UCT', 'Percent Logged UCT', 'Estimate Total', 'Logged Total', 'Percent Logged', 'QA Fails', 'CR Fails', 'UCT Fails', 'Total Fails'];
-
+	@ViewChild(DatatableComponent) table: DatatableComponent;
 
 	constructor(
 		public ngProgress: NgProgress, private jira:JiraService, private store:NgRedux<RootState>, 
@@ -47,12 +40,13 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit() {
 		if(this.user.needRequiredCredentials()) return;
-		this.tickets$ = this.store.select(this.ticketListType).subscribe(this.processTickets.bind(this));
-		this.getMetrics();
 
 		this.sprints = Object.keys(this.config.sprintVersions).sort();
 		this.selectedSprint = this.sprints[this.sprints.length-1];
 		this.tableTitle = `${this.selectedSprint} Metrics`;
+
+		this.tickets$ = this.store.select(this.ticketListType).subscribe(this.processTickets.bind(this));
+		this.getMetrics();
 	}
 
 	/**
@@ -73,7 +67,6 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 
 		this.jira.getSprint(this.selectedSprint, true)
 		.subscribe((response:APIResponse) => {
-			this.loadingFromApi = true;
 			response.data.listType = this.ticketListType;
 			this.store.dispatch({type: Actions.newTickets, payload: response.data});
 		},
@@ -138,7 +131,7 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 			let userProfile = alluserProfiles[user];
 			userProfile.percentLogged = (userProfile.loggedTotal / (userProfile.estimateTotal || 1) * 100).toFixed(0);
 			userProfile.percentLoggedUct = (userProfile.loggedUctTotal / (userProfile.estimateUctTotal || 1) * 100).toFixed(0);
-			userProfile.failsTotal = userProfile.qaFails + userProfile.crFails + userProfile.uctFails;
+			userProfile.totalFails = userProfile.qaFails + userProfile.crFails + userProfile.uctFails;
 			return {username:user, ...userProfile};	
 		});
 
@@ -152,38 +145,10 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 				this.userProfiles = userProfiles.filter(user => user.username === profile.name);
 			}
 
-			this.rerender();
+			this.userProfilesFitler = this.userProfiles;
 		});
 	}
-
-	/**
-	 * if we are loading from the API load the data table immediately else 
-	 * we are loading from the store which is too fast for data tables so set
-	 * to the back of the event loop with setTimeout
-	 */
-	private rerender():void {
-		if(this.loadingFromApi){
-			this.loadingFromApi = false;
-			this._renderDataTable();
-		} else {
-			setTimeout(this._renderDataTable.bind(this));
-		}
-	}
-
-	/**
-	 * render the data-table. If instance of data-table already exists then
-	 * destroy it first then render it
-	 */
-	_renderDataTable(){
-		if(this.dtElement && this.dtElement.dtInstance){
-			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
-				dtInstance.destroy();
-				this.dtTrigger.next();
-			});
-		} else {
-			this.dtTrigger.next();
-		}
-	}
+	userProfilesFitler;
 
 	/**
 	 *
@@ -227,5 +192,26 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 		userProfiles[username].estimateUctTotal += (userStatTicket.status === UCTREADY ? userStatTicket.estimateSeconds : 0);
 
 		return userProfiles[username];
+	}
+
+	/**
+	 *
+	 */
+	updateFilter(event) {
+		const inputValue = event.target.value.toLowerCase();
+
+		this.userProfiles = this.userProfilesFitler.filter(user => {
+			for(let prop in user){
+				if(typeof(user[prop]) === 'string' && user[prop].includes(inputValue)){
+					return true;
+				} else if(typeof(user[prop]) === 'number' && user[prop] == inputValue){
+					return true;
+				}
+			}
+
+			return false;
+		});
+
+		this.table.offset = 0;
 	}
 }
