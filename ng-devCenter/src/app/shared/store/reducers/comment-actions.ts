@@ -5,19 +5,20 @@
  * @return {RootState} a new state
  */
 export function addComment(state, newComment) {
+	const ticketListType = newComment.ticketListType;
+	const oldTicket = state[ticketListType].find(ticket => newComment.key === ticket.key);
 
-	// get where the ticket comments are -> add new comment
-	const oldTicketComments = state.comments.find(ticketComments => newComment.key === ticketComments.key);
-	const newTicketComments = {key:newComment.key, comments:[...oldTicketComments.comments, newComment] };
+	const newTicketComments = [...oldTicket.comments, newComment];
 
-	// create new tickets comments array
-	const newAllComments = state.comments.map(allComments => {
-		if(allComments.key === newTicketComments.key) return newTicketComments;
-		else return allComments;
+	const newTickets = state[ticketListType].map(ticket => {
+		if(newComment.key === ticket.key) {
+			return {...oldTicket, ...{comments:newTicketComments}}
+		} else {
+			return ticket;
+		};
 	});
 
-	// create new state and return it
-	return { ...state, ...{comments: newAllComments} };
+	return { ...state, ...{[ticketListType]: newTickets} };
 }
 
 /**
@@ -27,17 +28,20 @@ export function addComment(state, newComment) {
  * @return {RootState} a new state
  */
 export function deleteComment(state, removedComment) {
+	const ticketListType = removedComment.ticketListType;
+	const oldTicket = state[ticketListType].find(ticket => removedComment.key === ticket.key);
 
-	// get ticket we are removing a comment from
-	const oldTicketComments = state.comments.find(ticketComments => removedComment.key === ticketComments.key);
+	const newTicketComments = oldTicket.comments.filter(comment => comment.id !== removedComment.id);
 
-	// create new ticket's comments object
-	const newTicketComments = {key: removedComment.key, comments: oldTicketComments.comments.filter(comment => comment.id !== removedComment.id)};
+	const newTickets = state[ticketListType].map(ticket => {
+		if(removedComment.key === ticket.key) {
+			return {...oldTicket, ...{comments:newTicketComments}}
+		} else {
+			return ticket;
+		};
+	});
 
-	// create new comment state
-	const newComments = state.comments.map(comments => (newTicketComments.key === comments.key) ? newTicketComments : comments);
-
-	return { ...state, ...{comments: newComments} };
+	return { ...state, ...{[ticketListType]: newTickets} };
 }
 
 
@@ -48,18 +52,21 @@ export function deleteComment(state, removedComment) {
  * @return {RootState} a new state
  */
 export function editComment(state, editedComment) {
+	const ticketListType = editedComment.ticketListType;
+	const oldTicket = state[ticketListType].find(ticket => editedComment.key === ticket.key);
 
-	// get ticket we are editing a comment from
-	const oldTicketComments = state.comments.find(ticketComments => editedComment.key === ticketComments.key);
-
-	// replace edited comment and create new ticket's comment
-	const newTicketComments = oldTicketComments.comments.map(comment => {
+	const newTicketComments = oldTicket.comments.map(comment => {
 		if(comment.id === editedComment.id) return editedComment;
 		else return comment;
 	});
 
-	// replace old ticket comments with new one
-	const newComments = state.comments.map(comments => (editedComment.key === comments.key) ? {key:editedComment.key, comments:newTicketComments} : comments);
+	const newTickets = state[ticketListType].map(ticket => {
+		if(editedComment.key === ticket.key) {
+			return {...oldTicket, ...{comments:newTicketComments}}
+		} else {
+			return ticket;
+		};
+	});
 
-	return { ...state, ...{comments: newComments} };
+	return { ...state, ...{[ticketListType]: newTickets} };
 }

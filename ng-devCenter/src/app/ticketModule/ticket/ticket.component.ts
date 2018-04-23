@@ -41,6 +41,7 @@ export class TicketComponent {
 	worklogComponentRef;
 
 	@Input() ticket;
+	@Input() ticketListType;
 	@Output() rerender = new EventEmitter();
 
 	ticketDates;
@@ -53,10 +54,6 @@ export class TicketComponent {
 		public user: UserService, private factoryResolver: ComponentFactoryResolver, public store:NgRedux<RootState>,
 		private viewContRef: ViewContainerRef, public misc: MiscService, private cd: ChangeDetectorRef
 	) { }
-
-	init(){
-		console.log('ticket: ', this.ticket);
-	}
 
 	/**
 	*/
@@ -92,6 +89,7 @@ export class TicketComponent {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketCommentsModalComponent);
 	    	this.commentComponentRef = this.viewContRef.createComponent(factory);
 	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).key = this.ticket.key;
+	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).ticketListType = this.ticketListType;
 		}
     	(<TicketCommentsModalComponent>this.commentComponentRef.instance).openModal();
 	}
@@ -103,6 +101,7 @@ export class TicketComponent {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketLogComponent);
 	    	this.worklogComponentRef = this.viewContRef.createComponent(factory);
 	    	(<TicketLogComponent>this.worklogComponentRef.instance).key = this.ticket.key;
+	    	(<TicketLogComponent>this.worklogComponentRef.instance).ticketListType = this.ticketListType;
 		}
     	(<TicketLogComponent>this.worklogComponentRef.instance).openLogModal();
 	}

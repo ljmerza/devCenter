@@ -31,6 +31,7 @@ export class TicketLogComponent	{
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;
+	@Input() ticketListType:string;
 
 	constructor(public jira:JiraCommentsService, public toastr: ToastrService, private cd: ChangeDetectorRef, private store:NgRedux<RootState>) {}
 
@@ -73,6 +74,7 @@ export class TicketLogComponent	{
 
 		// check for comment response
 		if(responseData.comment_response.status){
+			responseData.comment_response.data = this.ticketListType;
 			this.store.dispatch({ type: Actions.addComment, payload: responseData.comment_response.data });	
 		} else if( responseData.comment_response.status === false && (postData.comment || postData.uct_date) ){
 			errorMessage += responseData.comment_response.data;
@@ -80,7 +82,7 @@ export class TicketLogComponent	{
 
 		// check for work log response
 		if(responseData.log_response.status){
-			const payload = {key: this.key, loggedSeconds: responseData.log_response.data.timeSpentSeconds};
+			const payload = {key: this.key, loggedSeconds: responseData.log_response.data.timeSpentSeconds, ticketListType: this.ticketListType};
 			this.store.dispatch({ type: Actions.updateWorklog, payload });	
 
 		} else if(responseData.log_response.status === false && postData.log_time){
@@ -91,7 +93,7 @@ export class TicketLogComponent	{
 		if(responseData.merge_response.status || responseData.conflict_response.status){
 			const merge = responseData.merge_response.status;
 			const status = merge ? statuses.UCTREADY.frontend : statuses.QAREADY.frontend;
-			this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status }});
+			this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status, ticketListType: this.ticketListType }});
 
 		} else if(responseData.merge_response.status === false && postData.remove_merge){
 			errorMessage += responseData.comment_response.data;

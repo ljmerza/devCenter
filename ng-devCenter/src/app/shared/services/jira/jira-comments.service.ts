@@ -31,15 +31,8 @@ export class JiraCommentsService {
 	 * @return {Observable} the http observable
 	 */
 	editComment(postData):Observable<any>  {
-		const resp$ = this.dataService.put(`${this.dataService.apiUrl}/jira/comment`, postData)
-		resp$.subscribe(
-			(response:any) => {
-				response.data.key = postData.key;
-				this.store.dispatch({ type: Actions.editComment, payload:response.data });
-			},
-			this.dataService.processErrorResponse.bind(this.dataService)
-		);
-		return resp$;
+		return this.dataService.put(`${this.dataService.apiUrl}/jira/comment`, postData)
+		
 	}
 
 	/**

@@ -20,6 +20,7 @@ export class TicketCommentsModalComponent {
 	modalRef: NgbModalRef;
 	customModalCss = 'ticketComments';
 	@Input() key;
+	@Input() ticketListType;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(private cd: ChangeDetectorRef) {}

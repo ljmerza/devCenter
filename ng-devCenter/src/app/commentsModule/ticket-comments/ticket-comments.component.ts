@@ -32,8 +32,8 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;
+	@Input() ticketListType:string;
 	comments$:Subscription;
-	attachments$:Subscription;
 
 	constructor(private toastr: ToastrService, private user:UserService, private jira:JiraCommentsService, private misc: MiscService, private store:NgRedux<RootState>, private cd: ChangeDetectorRef) { }
 
@@ -41,8 +41,17 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 * On init of this component instance listen for ticket events from Redux.
 	 */
 	ngOnInit():void {
-		this.syncComments();
-		this.syncAttachments();
+		this.comments$ = this.store.select(this.ticketListType)
+		.subscribe((allTickets:any) => {
+			console.log('allTickets: ', allTickets, this.key);
+
+			const ticket = allTickets.find(ticket => ticket.key === this.key);
+			console.log('ticket: ', ticket);
+
+			this.comments = (ticket && ticket.comments) || [];
+			this.attachments = (ticket && ticket.attachments) || [];
+			this.cd.detectChanges();
+		});
 	}
 
 	/**
@@ -50,7 +59,6 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 */
 	ngOnDestroy():void {
 		if(this.comments$) this.comments$.unsubscribe();
-		if(this.attachments$) this.attachments$.unsubscribe();
 	}
 
 	/**
@@ -76,35 +84,6 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	}
 	
 	/**
-	 * listen for tickets event from Redux and extracts the comments for this ticket.
-	 */
-	private syncComments():void {
-		this.comments$ = this.store.select('comments')
-		.subscribe((Allcomments:any) => {
-			const ticketComments = Allcomments.find(comments => comments.key === this.key);
-			const comments = (ticketComments && ticketComments.comments) || [];
-
-			if(this.comments !== comments){
-				this.comments = comments;
-				this.cd.detectChanges();
-			}
-		});
-	}
-
-	/**
-	 * listen for tickets event from Redux and extracts the attachments for this ticket
-	 */
-	private syncAttachments():void {
-		this.attachments$ = this.store.select('tickets')
-		.subscribe((tickets:Array<Ticket>) =>{ 
-			const ticket = tickets.find((ticket:Ticket) => ticket.key === this.key);
-			if(ticket){
-				this.attachments = ticket.attachments;
-			}
-		});
-	}
-
-	/**
 	 * saves commentId and opens verify dialog for deletion of comment
 	 * @param {String} commentId the comment ID of the comment to delete
 	 */
@@ -127,7 +106,8 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 		.subscribe(
 			()=> {
 				this.toastr.showToast('Comment deleted successfully', 'success');
-				this.store.dispatch({type: Actions.deleteComment, payload: {key:this.key, id:this.commentId}});
+				const payload = {key:this.key, id:this.commentId, ticketListType: this.ticketListType};
+				this.store.dispatch({type: Actions.deleteComment, payload});
 			},
 			this.jira.processErrorResponse.bind(this.jira)
 		);
@@ -151,7 +131,15 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 		}
 
 		this.jira.editComment({key: this.key, comment_id: comment.id, comment: newComment})
-		.subscribe(() => this.toastr.showToast('Comment Edited Successfully', 'success'));
+		.subscribe(
+			response => {
+				response.data.key = this.key;
+				response.data.ticketListType = this.ticketListType;
+				this.store.dispatch({type: Actions.editComment, payload:response.data});
+				this.toastr.showToast('Comment Edited Successfully', 'success')
+			},
+			this.jira.processErrorResponse.bind(this.jira)
+		);
 	}
 
 	/**

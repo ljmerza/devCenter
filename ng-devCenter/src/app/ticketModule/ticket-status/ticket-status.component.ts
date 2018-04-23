@@ -35,6 +35,7 @@ export class TicketStatusComponent implements OnInit {
 	key;
 
 	@Input() ticket;
+	@Input() ticketListType;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(
@@ -106,7 +107,7 @@ export class TicketStatusComponent implements OnInit {
 		}
 
 		const status = (this.ticketStates.find(ticketStateFilter) as any).name;
-		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.ticket.key, status} });
+		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.ticket.key, status, ticketListType: this.ticketListType} });
 	}
 
 	/**
@@ -184,6 +185,7 @@ export class TicketStatusComponent implements OnInit {
 	    	// add input/outputs
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).key = this.ticket.key;
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.ticket.msrp;
+	    	(<QaGeneratorComponent>this.qaComponentRef.instance).ticketListType = this.ticketListType;
 		}
 		
 		// open modal

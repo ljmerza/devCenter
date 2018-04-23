@@ -1,7 +1,10 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { DataTableDirective } from 'angular-datatables';
+import { NgProgress } from 'ngx-progressbar';
 import { Subject } from 'rxjs';
 
+import { select, NgRedux } from '@angular-redux/store';
+import { RootState, Actions } from '@store';
 import { OrderService, UserService, MiscService } from '@services';
 
 @Component({
@@ -10,11 +13,13 @@ import { OrderService, UserService, MiscService } from '@services';
 	styleUrls: ['./orders.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class OrdersComponent implements OnInit {
+export class OrdersComponent implements OnInit, AfterViewInit {
 	orders:Array<any> = [];
 	displayNames = [];
 	loadingIndicator = true;
 	tableTitle = 'Orders';
+	getOrders$;
+	orders$;
 
 	baseEmber = `${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}`;
 	baseUrl = `${this.baseEmber}order/ethernet`;
@@ -43,55 +48,74 @@ export class OrdersComponent implements OnInit {
         }
 	};
 
-	constructor(public order:OrderService, public user:UserService, public misc:MiscService) { }
+	constructor(
+		public order:OrderService, public user:UserService, public misc:MiscService, 
+		private store:NgRedux<RootState>, public ngProgress: NgProgress) { }
 
 	/**
 	 * on component init get all orders
 	 */
 	ngOnInit() {
 		this.getOrders();
+
+		this.orders$ = this.store.select('orders')
+		.subscribe(orders => this.processOrders(orders));
+	}
+
+	ngAfterViewInit(): void {
+    	this.dtTrigger.next();
+	}
+
+	ngOnDestroy(): void {
+    	if(this.orders$) this.orders$.unsubscribe();
 	}
 
 	/**
 	 * gets a list of orders.
 	 */
 	getOrders(hardRefresh=false){
-		this.order.getOrders(hardRefresh).subscribe(
+		this.resetLoading();
+		this.ngProgress.start();
+
+		this.getOrders$ = this.order.getOrders(hardRefresh)
+		.subscribe(
 			response => {
-				if(!this.order.ordersCache || hardRefresh) this.order.ordersCache = response;
-				this.formatTableData(response.data);
+				this.store.dispatch({type: Actions.newOrders, payload: response.data});
 			},
 			this.order.processErrorResponse.bind(this.order)
 		);
 	}
 
 	/**
-	 *
+	 * set orders and reset data table
 	 * @param {Array<Object>} orders 
 	 */
-	formatTableData(orders){
-		// console.log('orders: ', orders);
+	processOrders(orders){
+		if(orders.length === 0) {
+			this.loadingIndicator = true;
+			return;
+		}
+
+		// save orders. if we have orders then cancel API call
 		this.orders = orders;
 		this.loadingIndicator = false;
-		this.rerender();
-	}
+		this.resetLoading();
 
-	/**
-	 * render the data-table. If instance of data-table already exists then
-	 * destroy it first then render it
-	 */
-	private rerender():void {
-		if(this.dtElement && this.dtElement.dtInstance){
-			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
-				dtInstance.destroy();
-				this.dtTrigger.next();
-			});
-		} else {
+		this.dtElement && this.dtElement.dtInstance && this.dtElement.dtInstance.then((dtInstance:DataTables.Api) => {
+			dtInstance.destroy();
 			this.dtTrigger.next();
-		}
+		});
 	}
 
 	trackByFn(index: number, order){
 		return order.OrdNum;
+	}
+
+	/**
+	 *
+	 */
+	private resetLoading(){
+		if(this.ngProgress) this.ngProgress.done();
+		if(this.getOrders$) this.getOrders$.unsubscribe();
 	}
 }

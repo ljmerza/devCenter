@@ -17,13 +17,13 @@ import { Repo, Ticket, APIResponse } from '@models';
 	styleUrls: ['./tickets.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class TicketsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class TicketsComponent implements OnInit, AfterViewInit {
 	loadingTickets:boolean = false;
 	loadingFromApi = false;
 	ticketListType:string; // type of tickets to get
 	repos: Array<Repo>;
 	tickets = [];
-	tickets$;
+	getTickets$;
 
 	dtTrigger:Subject<any> = new Subject();
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
@@ -76,20 +76,19 @@ export class TicketsComponent implements OnInit, OnDestroy, AfterViewInit {
 		);
 		
 		this.route.paramMap.subscribe((routeResponse:any) => {
-			this.tickets = [];
-			this.ticketListType = routeResponse.params.filter;
+			this.ticketListType = routeResponse.params.filter || 'mytickets';
 			this.getTickets();
 
-			this.tickets$ = this.store.select(this.ticketListType)
-			.subscribe(this.processTickets.bind(this));
+			let tickets$ = this.store.select(this.ticketListType)
+			.subscribe(tickets => {
+				if(tickets$) tickets$.unsubscribe();
+				this.processTickets(tickets);
+			});
 		});
 	}
 
-	/**
-	 *
-	 */
-	ngOnDestroy(){
-		if(this.tickets$) this.tickets$.unsubscribe();
+	ngAfterViewInit(): void {
+    	this.dtTrigger.next();
 	}
 
 	/**
@@ -98,21 +97,20 @@ export class TicketsComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @param {Boolean} isHardRefresh if hard refresh skip localStorage retrieval and loading animations
 	 */
 	public getTickets() {
+
+		if(this.getTickets$) this.getTickets$.unsubscribe();
+		if(this.ngProgress) this.ngProgress.done();
 		this.ngProgress.start();
 
-		this.jira.getTickets(this.ticketListType, true)
+		this.getTickets$ = this.jira.getTickets(this.ticketListType, true)
 		.subscribe((response:APIResponse) => {
 			this.loadingFromApi = true;
 			this.ngProgress.done();
-			response.data.listType = this.ticketListType;
-			this.store.dispatch({type: Actions.newTickets, payload: response.data})
+			response.data.ticketListType = this.ticketListType;
+			this.store.dispatch({type: Actions.newTickets, payload: response.data});
 		},
 			this.jira.processErrorResponse.bind(this.jira)
 		);
-	}
-
-	ngAfterViewInit(): void {
-    	this.dtTrigger.next();
 	}
 
 	/**
@@ -120,44 +118,18 @@ export class TicketsComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @param {Array<Tickets>} tickets
 	 */
 	private processTickets(tickets) {
-
-		if(!tickets.length) {
+		if(tickets.length === 0) {
 			this.loadingTickets = true;
 			return;
 		}
 
 		this.loadingTickets = false;
-		console.log('tickets: ', tickets);
-		this.tickets = tickets;
-		this.rerender();
-	}
-
-	/**
-	 * if we are loading from the API load the data table immediately else 
-	 * we are loading from the store which is too fast for data tables so set
-	 * to the back of the event loop with setTimeout
-	 */
-	private rerender():void {
-		if(this.loadingFromApi){
-			this.loadingFromApi = false;
-			this.renderDataTable();
-			// setTimeout(this.renderDataTable.bind(this), 1000);
-		} else {
-			// this.renderDataTable();
-			setTimeout(this.renderDataTable.bind(this));
+		if(JSON.parse(JSON.stringify(this.tickets)) !== JSON.parse(JSON.stringify(tickets))){
+			this.tickets = tickets;
+			this.dtElement.dtInstance.then((dtInstance:DataTables.Api) => {
+				dtInstance.destroy();
+				this.dtTrigger.next();
+			});
 		}
-	}
-
-	/**
-	 * render the data-table. If instance of data-table already exists then
-	 * destroy it first then render it
-	 */
-	renderDataTable(){
-		this.dtElement.dtInstance.then((dtInstance:DataTables.Api) => {
-			let t = dtInstance.destroy();
-			console.log('t: ', t);
-			let s = this.dtTrigger.next();
-			console.log('s: ', s);
-		});
 	}
 }

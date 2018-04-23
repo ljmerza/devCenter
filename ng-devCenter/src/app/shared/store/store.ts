@@ -1,6 +1,10 @@
 import { Ticket, Comment, Repo } from '@models';
 
-import { addComment, deleteComment, editComment, updateStatus, updateCrucible, updateWorklog } from './reducers';
+import { 
+	addComment, deleteComment, editComment, 
+	updateStatus, updateCrucible, updateWorklog, 
+	addOrders 
+} from './reducers';
 
 import { Actions } from './actions';
 
@@ -61,6 +65,9 @@ export function rootReducer(state, action){
 		case Actions.updateWorklog:
 			return updateWorklog(state, action.payload);
 
+		case Actions.newOrders:
+			return addOrders(state, action.payload);
+
 		default:
 			return state;
 	}	
@@ -70,5 +77,5 @@ export function rootReducer(state, action){
  *
  */
 function addTickets(state, tickets){
-	return { ...state, ...{[tickets.listType || 'other']: tickets} };
+	return { ...state, ...{[tickets.ticketListType || 'other']: tickets} };
 }

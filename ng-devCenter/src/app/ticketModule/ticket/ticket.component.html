@@ -28,7 +28,7 @@
 <td class='summary-td'>{{ticket?.summary}}</td>
 
 <!-- state dropdown -->
-<td><dc-ticket-status [ticket]=ticket></dc-ticket-status></td>
+<td><dc-ticket-status [ticket]=ticket [ticketListType]=ticketListType></dc-ticket-status></td>
 
 <!-- dates -->
 <td class='dates-td'>{{ticket?.dates?.started | amDateFormat:'LL'}}</td>
