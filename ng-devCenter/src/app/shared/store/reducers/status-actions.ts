@@ -49,11 +49,9 @@ export function updateWorklog(state, newWorklog) {
 
 	// get ticket and add new work log time to current work log time
 	const ticket = state[state.ticketType].find(ticket => ticket.key === newWorklog.key);
-	const newWorklogTime = newWorklog.loggedSeconds + ticket.dates.logged_seconds;
-
 	const newTicket = {
-		key: newWorklog.key, 
-		dates: { ...ticket.dates, ...{logged_seconds: newWorklogTime} }
+		...ticket, 
+		dates: { ...ticket.dates, ...{logged_seconds: ticket.dates.logged_seconds + newWorklog.loggedSeconds} }
 	};
 
 	// replace new ticket object with old one

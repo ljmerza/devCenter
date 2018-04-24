@@ -93,7 +93,7 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 	 * set orders and reset data table
 	 * @param {Array<Object>} orders 
 	 */
-	processOrders(orders){
+	async processOrders(orders){
 		if(orders.length === 0) {
 			this.loadingIndicator = true;
 			return;
@@ -104,10 +104,9 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 		this.loadingIndicator = false;
 		this.resetLoading();
 
-		this.dtElement && this.dtElement.dtInstance && this.dtElement.dtInstance.then((dtInstance:DataTables.Api) => {
-			dtInstance.destroy();
-			this.dtTrigger.next();
-		});
+		let dtInstance = await this.dtElement.dtInstance
+		dtInstance.destroy();
+		this.dtTrigger.next();
 	}
 
 	trackByFn(index: number, order){

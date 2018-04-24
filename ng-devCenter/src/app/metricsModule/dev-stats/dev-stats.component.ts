@@ -113,7 +113,7 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	/**
 	 * @param {Array<Tickets>} tickets
 	 */
-	private processTickets(tickets) {
+	private processTickets(tickets=[]) {
 		if(tickets.length === 0) {
 			this.loadingIndicator = true;
 			return;

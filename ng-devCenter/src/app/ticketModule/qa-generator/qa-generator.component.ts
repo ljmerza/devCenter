@@ -29,6 +29,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	repos$;
 	defaultLogTime = {hour: 0, minute: 0};
 	defaultPcrNeeded = true;
+	gitBranches$;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	modalRef: NgbModalRef;
@@ -130,11 +131,13 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		this.modalRef.close();
 		
 		const postData = this.generatePostBody();
-		if(!postData.autoPCR) this.cancelStatusChange();
 		this.showSubmitMessage(postData);
 
 		this.jira.generateQA(postData).subscribe(
 			response => {
+				// if still trying to get branches then cancel that
+				if(this.gitBranches$) this.gitBranches$.unsubscribe();
+
 				this.showQaSubmitSuccessMessage(response);
 				this.checkForStateChange(postData, response.data);
 				this._resetForm();
@@ -174,6 +177,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		if(postData.repos.length > 0) message.push('creating Crucible');
 		if(postData.qa_steps) message.push('adding comment to Jira');
 		if(postData.autoPCR) message.push('transitioning to PCR Needed');
+		if(postData.log_time) message.push('logging work');
 
 		// create info message and display
 		if(message.length > 1) message[message.length-1] = 'and ' + message[message.length-1];
@@ -223,6 +227,8 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 * @param {Object} responseData the data in the response from the QA generator endpoint.
 	 */
 	checkForStateChange(postData, responseData):void {
+		console.log('postData, responseData: ', {postData, responseData});
+
 		if(responseData.comment_response.status) {
 			this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});
 		}
@@ -239,7 +245,17 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			this.toastr.showToast('The following transitions failed: ${cr_message} ${pcr_message}', 'error');
 		}
 
-		this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status}});
+		// if status didn't change then cancel it else update new status
+		if(status === statuses.INDEV.frontend){
+			this.cancelStatusChange();
+		} else {
+			this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status}});
+		}
+
+		// add work log if given
+		if(responseData.log_response.status) {
+			this.store.dispatch({type: Actions.updateWorklog, payload: {key:this.key, loggedSeconds:responseData.log_response.data.timeSpentSeconds}});
+		}
 
 		// add crucible id if given
 		if(responseData.cru_response.status) {
@@ -279,7 +295,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		this.cd.detectChanges();
 
 		// get all branches associated with this msrp
-		this.git.getTicketBranches(this.msrp).subscribe(
+		this.gitBranches$ = this.git.getTicketBranches(this.msrp).subscribe(
 			response =>{
 				this.processBranches(response.data);
 				this.loadingBranches = false;

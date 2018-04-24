@@ -24,6 +24,8 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 	repos: Array<Repo>;
 	tickets = [];
 	getTickets$;
+	renderTimeoutId;
+	ticketsRedux$;
 
 	dtTrigger:Subject<any> = new Subject();
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
@@ -79,17 +81,27 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 			this.store.dispatch({type: Actions.ticketType, payload: this.ticketListType });
 			this.getTickets();
-
-			let tickets$ = this.store.select(this.ticketListType)
+				
+			if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
+			this.ticketsRedux$ = this.store.select(this.ticketListType)
 			.subscribe(tickets => {
-				if(tickets$) tickets$.unsubscribe();
-				this.processTickets(tickets);
+				this.processTickets(tickets || []);
 			});
 		});
 	}
 
+	/**
+	 * create data table on init of UI
+	 */
 	ngAfterViewInit(): void {
     	this.dtTrigger.next();
+	}
+
+	/**
+	 *	destroy redux subscribers
+	 */
+	ngOnDestroy(){
+		if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
 	}
 
 	/**
@@ -122,7 +134,6 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 		this.loadingIcon = false;
 		this.loadingTickets = false;
 		this.ngProgress.done();
-		this._renderTable();
 	}
 
 	/**
@@ -130,6 +141,8 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 	 * @param {Array<Tickets>} tickets
 	 */
 	private processTickets(tickets) {
+		console.log('tickets: ', tickets);
+
 		if(tickets.length === 0) {
 			this.loadingTickets = true;
 			return;
@@ -137,18 +150,24 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 
 		this.loadingTickets = false;
 		if(JSON.parse(JSON.stringify(this.tickets)) !== JSON.parse(JSON.stringify(tickets))){
-			this.tickets = tickets;
-			this._renderTable();
+			
+			
+			this._renderTable(tickets);
 		}
 	}
 
 	/**
-	 * renders the data table
+	 * renders the data table - use a debounce to make sure we don't try to render while we are rendering
+	 * need to set tickets when the table is going to rendered to make sure datatables syncs with angular
 	 */
-	_renderTable(){
-		this.dtElement.dtInstance.then((dtInstance:DataTables.Api) => {
+	async _renderTable(tickets){
+		if(this.renderTimeoutId) clearInterval(this.renderTimeoutId);
+
+		this.renderTimeoutId = setTimeout(async () => {
+			this.tickets = tickets;
+			let dtInstance = await this.dtElement.dtInstance;
 			dtInstance.destroy();
 			this.dtTrigger.next();
-		});
+		}, 200);
 	}
 }
