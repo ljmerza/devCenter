@@ -28,7 +28,7 @@
 <td class='summary-td'>{{ticket?.summary}}</td>
 
 <!-- state dropdown -->
-<td><dc-ticket-status [ticket]=ticket [ticketListType]=ticketListType></dc-ticket-status></td>
+<td><dc-ticket-status [key]=ticket.key [ticketListType]=ticketListType></dc-ticket-status></td>
 
 <!-- dates -->
 <td class='dates-td'>{{ticket?.dates?.started | amDateFormat:'LL'}}</td>
@@ -38,6 +38,6 @@
 <td class='dates-td'>{{ticket?.dates?.updated | amDateFormat:'LL'}}</td>
 <td class='dates-td'>{{ticket?.dates?.created | amDateFormat:'LL'}}</td>
 
-<td><dc-crucible [key]=key [crucibleId]=ticket?.crucible_id></dc-crucible></td>
+<td><dc-crucible [key]=ticket?.key [ticketListType]=ticketListType></dc-crucible></td>
 <td><dc-user-details [msrp]=ticket?.msrp [user]=ticket?.user_details></dc-user-details></td>
 <td><dc-user-details [msrp]=ticket?.msrp [user]=ticket?.customer_details></dc-user-details></td>

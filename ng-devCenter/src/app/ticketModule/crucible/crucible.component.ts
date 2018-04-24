@@ -1,5 +1,7 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, OnInit } from '@angular/core';
 
+import { select, NgRedux } from '@angular-redux/store';
+import { RootState } from '@store';
 import { JiraService, ToastrService, ConfigService } from '@services';
 import { statuses } from '@models';
 
@@ -9,12 +11,33 @@ import { statuses } from '@models';
 	styleUrls: ['./crucible.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CrucibleComponent {
+export class CrucibleComponent implements OnDestroy, OnInit {
 
-	constructor(public jira: JiraService, public config: ConfigService, public toastr: ToastrService, private cd: ChangeDetectorRef) { }
+	constructor(public jira: JiraService, public config: ConfigService, public toastr: ToastrService, private cd: ChangeDetectorRef, public store:NgRedux<RootState>) { }
 
 	@Input() key;
-	@Input() crucibleId;
+	@Input() ticketListType;
+	crucibleId$;
+	crucibleId;
+
+	/**
+	* Adds watcher for Crucible Id.
+	*/
+	ngOnInit(){
+		this.crucibleId$ = this.store.select(this.ticketListType)
+		.subscribe((allTickets:any=[]) => {
+			const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
+			this.crucibleId = ticket.crucible_id || '';
+			this.cd.detectChanges();
+		});
+	}
+
+	/**
+	 *
+	 */
+	ngOnDestroy(){
+		if(this.crucibleId$) this.crucibleId$.unsubscribe();
+	}
 
 	/**
 	* Adds the currently logged in user as a reviewer to the Crucible review. 

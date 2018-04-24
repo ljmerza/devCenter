@@ -2,9 +2,9 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgRedux } from '@angular-redux/store';
 import { NgProgress } from 'ngx-progressbar';
-import { DatatableComponent } from '@swimlane/ngx-datatable';
 
-import { Subscription } from 'rxjs';
+import { DataTableDirective } from 'angular-datatables';
+import { Subscription, Subject } from 'rxjs';
 import { JiraService, ToastrService, UserService, ConfigService } from '@services';
 
 import { RootState, Actions } from '@store';
@@ -18,17 +18,39 @@ import { statuses } from '../../shared/store/models/ticket-statuses';
 	styleUrls: ['./dev-stats.component.scss']
 })
 export class DevStatsComponent implements OnInit, OnDestroy {
-	loadingTickets:boolean = false;
+	loadingIndicator:boolean = false;
+	ticketType:string = 'devstats';
 
 	sprints: Array<string> = [];
 	selectedSprint:string = '';
 	tableTitle:string = '';
-	ticketListType:string = 'allopen';
 
+	getTickets$;
 	profile$;
+	userProfilesFilter;
 	userProfiles:Array<any> = [];
 	tickets$:Subscription;
-	@ViewChild(DatatableComponent) table: DatatableComponent;
+
+	dtOptions = {
+		dom: `
+			<'row'<'col-sm-12'Bfl>>
+			<'row'<'col-sm-12'tr>>
+			<'row'<'col-sm-12'ip>>
+		`,
+		pageLength: 15,
+		lengthMenu: [5, 10, 15, 20, 100],
+		buttons: ['colvis'],
+		stateSave: true,
+		pagingType: 'full',
+		language: {
+			search: "",
+        	searchPlaceholder: "Search User",
+        	zeroRecords: 'No matching users found'
+        }
+	};
+
+	dtTrigger:Subject<any> = new Subject();
+	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
 
 	constructor(
 		public ngProgress: NgProgress, private jira:JiraService, private store:NgRedux<RootState>, 
@@ -40,13 +62,18 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit() {
 		if(this.user.needRequiredCredentials()) return;
+		this.store.dispatch({type: Actions.ticketType, payload: this.ticketType });
 
 		this.sprints = Object.keys(this.config.sprintVersions).sort();
 		this.selectedSprint = this.sprints[this.sprints.length-1];
 		this.tableTitle = `${this.selectedSprint} Metrics`;
 
-		this.tickets$ = this.store.select(this.ticketListType).subscribe(this.processTickets.bind(this));
+		this.tickets$ = this.store.select(this.ticketType).subscribe(this.processTickets.bind(this));
 		this.getMetrics();
+	}
+
+	ngAfterViewInit(): void {
+    	this.dtTrigger.next();
 	}
 
 	/**
@@ -54,6 +81,7 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(){
 		if(this.tickets$) this.tickets$.unsubscribe();
+		if(this.getTickets$) this.getTickets$.unsubscribe();
 		if(this.profile$) this.profile$.unsubscribe();
 	}
 
@@ -63,24 +91,33 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	 * @param {Boolean} isHardRefresh if hard refresh skip localStorage retrieval and loading animations
 	 */
 	public getMetrics() {
+		this.resetLoading();
 		this.ngProgress.start();
 
-		this.jira.getSprint(this.selectedSprint, true)
+		this.getTickets$ = this.jira.getSprint(this.selectedSprint, true)
 		.subscribe((response:APIResponse) => {
-			response.data.listType = this.ticketListType;
 			this.store.dispatch({type: Actions.newTickets, payload: response.data});
 		},
 			this.jira.processErrorResponse.bind(this.jira)
 		);
+	}
+
+	/**
+	 * resets loading variables
+	 */
+	private resetLoading(){
+		if(this.ngProgress) this.ngProgress.done();
+		if(this.getTickets$) this.getTickets$.unsubscribe();
 	}
 	
 	/**
 	 * @param {Array<Tickets>} tickets
 	 */
 	private processTickets(tickets) {
-		this.loadingTickets = tickets.length === 0;
-		if(tickets.length === 0) return;
-		this.ngProgress.done();
+		if(tickets.length === 0) {
+			this.loadingIndicator = true;
+			return;
+		}
 
 		const INDEV = statuses.INDEV.frontend;
 		const CRWORK = statuses.CRWORK.frontend;
@@ -101,8 +138,9 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 			}
 
 			const username = ticket.user_details.username;
+			const displayName = ticket.user_details.display_name;
 			if(userProfiles[username]){
-				userProfiles[username] = this._addNewData({ticket, userStatTicket, userProfiles, username});
+				userProfiles[username] = this._addNewData({ticket, userStatTicket, userProfiles, username, displayName});
 			} else {
 				userProfiles[username] = this._newUser({ticket, userStatTicket});
 			}
@@ -139,19 +177,30 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 		this.profile$ = this.store.select('userProfile').subscribe((profile:any) => {
 			if(!profile.name) return;
 
+			console.log('profile: ', profile);
+
 			if(profile.is_admin){
 				this.userProfiles = userProfiles;
 			} else {
 				this.userProfiles = userProfiles.filter(user => user.username === profile.name);
 			}
 
-			this.userProfilesFitler = this.userProfiles;
+			this.userProfilesFilter = this.userProfiles;
+
+			this.dtElement && this.dtElement.dtInstance && this.dtElement.dtInstance.then((dtInstance:DataTables.Api) => {
+				dtInstance.destroy();
+				this.dtTrigger.next();
+			});
+
+			this.loadingIndicator = false;
+			this.resetLoading();
 		});
 	}
-	userProfilesFitler;
 
 	/**
-	 *
+	 * create a new user's profile
+	 * @param {Object} ticket
+	 * @param {Object} userStatTicket
 	 */
 	_newUser({ticket, userStatTicket}){
 
@@ -176,13 +225,14 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 *
+	 * adds new data to an existing user
 	 */
-	_addNewData({ticket, userStatTicket, userProfiles, username}){
+	_addNewData({ticket, userStatTicket, userProfiles, username, displayName}){
 		const UCTREADY = statuses.UCTREADY.frontend;
 		const INUCT = statuses.INUCT.frontend;
 		const RELEASE = statuses.RELEASE.frontend;
 
+		userProfiles[username].displayName = displayName;
 		userProfiles[username].tickets.push(userStatTicket);
 		userProfiles[username].loggedTotal += userStatTicket.loggedSeconds;
 		userProfiles[username].estimateTotal += userStatTicket.loggedSeconds ? userStatTicket.estimateSeconds: 0;
@@ -192,26 +242,5 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 		userProfiles[username].estimateUctTotal += (userStatTicket.status === UCTREADY ? userStatTicket.estimateSeconds : 0);
 
 		return userProfiles[username];
-	}
-
-	/**
-	 *
-	 */
-	updateFilter(event) {
-		const inputValue = event.target.value.toLowerCase();
-
-		this.userProfiles = this.userProfilesFitler.filter(user => {
-			for(let prop in user){
-				if(typeof(user[prop]) === 'string' && user[prop].includes(inputValue)){
-					return true;
-				} else if(typeof(user[prop]) === 'number' && user[prop] == inputValue){
-					return true;
-				}
-			}
-
-			return false;
-		});
-
-		this.table.offset = 0;
 	}
 }

@@ -4,20 +4,19 @@
  * @param {Object} newStatus action item
  */
 export function updateStatus(state, newStatus) {
-	const ticketListType = newStatus.ticketListType;
 
 	// get ticket and create new one with new status
-	const ticket = state[ticketListType].find(ticket => ticket.key === newStatus.key);
+	const ticket = state[state.ticketType].find(ticket => ticket.key === newStatus.key);
 	const newTicket = { ...ticket, ...{status: newStatus.status} };
 
 	// replace new ticket object with old one
-	const newTickets = state[ticketListType].map(ticket => {
+	const newTickets = state[state.ticketType].map(ticket => {
 		if(newTicket.key === ticket.key) return newTicket;
 		else return ticket;
 	});
 
 	// create new state and return it
-	return { ...state, ...{[ticketListType]: newTickets} };
+	return { ...state, ...{[state.ticketType]: newTickets} };
 }
 
 /**
@@ -26,20 +25,19 @@ export function updateStatus(state, newStatus) {
  * @param {Object} newCrucible action item
  */
 export function updateCrucible(state, newCrucible) {
-	const ticketListType = newCrucible.ticketListType;
 
 	// get ticket and create new one with new crucible id
-	const ticket = state[ticketListType].find(ticket => ticket.key === newCrucible.key);
-	const newTicket = { ...ticket, ...{crucibleId: newCrucible.cruid} };
+	const ticket = state[state.ticketType].find(ticket => ticket.key === newCrucible.key);
+	const newTicket = { ...ticket, ...{crucible_id: newCrucible.cruid} };
 
 	// replace new ticket object with old one
-	const newTickets = state[ticketListType].map(ticket => {
+	const newTickets = state[state.ticketType].map(ticket => {
 		if(newTicket.key === ticket.key) return newTicket;
 		else return ticket;
 	});
 
 	// create new state and return it
-	return { ...state, ...{[ticketListType]: newTickets} };
+	return { ...state, ...{[state.ticketType]: newTickets} };
 }
 
 /**
@@ -48,10 +46,9 @@ export function updateCrucible(state, newCrucible) {
  * @param {Object} newCrucible action item
  */
 export function updateWorklog(state, newWorklog) {
-	const ticketListType = newWorklog.ticketListType;
 
 	// get ticket and add new work log time to current work log time
-	const ticket = state[ticketListType].find(ticket => ticket.key === newWorklog.key);
+	const ticket = state[state.ticketType].find(ticket => ticket.key === newWorklog.key);
 	const newWorklogTime = newWorklog.loggedSeconds + ticket.dates.logged_seconds;
 
 	const newTicket = {
@@ -60,11 +57,11 @@ export function updateWorklog(state, newWorklog) {
 	};
 
 	// replace new ticket object with old one
-	const newTickets = state[ticketListType].map(ticket => {
+	const newTickets = state[state.ticketType].map(ticket => {
 		if(newTicket.key === ticket.key) return newTicket;
 		else return ticket;
 	});
 
 	// create new state and return it
-	return { ...state, ...{[ticketListType]: newTickets} };
+	return { ...state, ...{[state.ticketType]: newTickets} };
 }

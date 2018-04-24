@@ -43,11 +43,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	ngOnInit():void {
 		this.comments$ = this.store.select(this.ticketListType)
 		.subscribe((allTickets:any) => {
-			console.log('allTickets: ', allTickets, this.key);
-
-			const ticket = allTickets.find(ticket => ticket.key === this.key);
-			console.log('ticket: ', ticket);
-
+			const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 			this.comments = (ticket && ticket.comments) || [];
 			this.attachments = (ticket && ticket.attachments) || [];
 			this.cd.detectChanges();
@@ -106,7 +102,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 		.subscribe(
 			()=> {
 				this.toastr.showToast('Comment deleted successfully', 'success');
-				const payload = {key:this.key, id:this.commentId, ticketListType: this.ticketListType};
+				const payload = {key:this.key, id:this.commentId};
 				this.store.dispatch({type: Actions.deleteComment, payload});
 			},
 			this.jira.processErrorResponse.bind(this.jira)

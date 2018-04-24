@@ -20,7 +20,9 @@ export interface RootState {
 	uctready: any,
 	myWatchedTicket: any,
 	beta: any,
-	orders: Array<any>
+	orders: Array<any>,
+	ticketType: string,
+	devstats: Array<any>
 }
 
 export const initialState: RootState = {
@@ -35,13 +37,16 @@ export const initialState: RootState = {
 	uctready: [],
 	myWatchedTicket: [],
 	beta: [],
-	orders: []
+	orders: [],
+	ticketType: '',
+	devstats: []
 }
 
 /**
  *
  */
 export function rootReducer(state, action){
+
 	switch(action.type){
 		case Actions.newTickets:
 			return addTickets(state, action.payload);
@@ -68,6 +73,9 @@ export function rootReducer(state, action){
 		case Actions.newOrders:
 			return addOrders(state, action.payload);
 
+		case Actions.ticketType:
+			return { ...state, ...{ticketType:action.payload} };
+
 		default:
 			return state;
 	}	
@@ -77,5 +85,5 @@ export function rootReducer(state, action){
  *
  */
 function addTickets(state, tickets){
-	return { ...state, ...{[tickets.ticketListType || 'other']: tickets} };
+	return { ...state, ...{[state.ticketType || 'other']: tickets} };
 }

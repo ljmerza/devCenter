@@ -1,80 +1,37 @@
-<dc-loading-table [loadingTable]=loadingTickets [tableTitle]=tableTitle (refreshData)="getMetrics()">
+<dc-loading-table [loadingTable]=loadingIndicator [tableTitle]=tableTitle (refreshData)="getMetrics()">
+	<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+		<thead>
+			<tr>
+				<th>Display Name</th>
+				<th>Username</th>
+				<th>Estimate UCT</th>
+				<th>Logged UCT</th>
+				<th>Percent Logged UCT</th>
+				<th>Estimate Total</th>
+				<th>Logged Total</th>
+				<th>Percent Logged</th>
+				<th>QA Fails</th>
+				<th>CR Fails</th>
+				<th>UCT Fails</th>
+				<th>Total Fails</th>
+			</tr>
+		</thead>
 
-	<div>
-      <h3>Client-side Search and Filtering</h3>
-      <input type='text' style='padding:8px;margin:15px auto;width:30%;'
-        placeholder='Type to filter the name column...'
-        (keyup)='updateFilter($event)'
-      />
-
-	<ngx-datatable #table class="table" [rows]="userProfiles" [columnMode]="'standard'" [limit]="10">
-
-		<ngx-datatable-column prop='username' name="Username">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-		<ngx-datatable-column prop="estimateUctTotal" name="Estimate UCT">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-		<ngx-datatable-column prop="loggedUctTotal" name="Logged UCT">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-		<ngx-datatable-column prop="percentLoggedUct" name="Percent Logged UCT">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-		<ngx-datatable-column prop="estimateTotal" name="Estimate Total">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-		<ngx-datatable-column prop="loggedTotal" name="Logged Total">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-		<ngx-datatable-column prop="percentLogged" name="Percent Logged">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-		<ngx-datatable-column prop="qaFails" name="QA Fails">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-		<ngx-datatable-column prop="crFails" name="CR Fails">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-		<ngx-datatable-column prop="uctFails" name="UCT Fails">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-		<ngx-datatable-column prop="totalFails" name="Total Fails">
-			<ng-template let-value="value" ngx-datatable-cell-template>
-				{{value}}
-			</ng-template>
-		</ngx-datatable-column>
-
-	</ngx-datatable>
-	</div>
+		<tbody>
+			<tr *ngFor='let user of userProfilesFilter'>
+				<td><span>{{user.displayName}}</span></td>
+				<td><span>{{user.username}}</span></td>
+				<td><span>{{user.estimateUctTotal}}</span></td>
+				<td><span>{{user.loggedUctTotal}}</span></td>
+				<td><span>{{user.percentLoggedUct}}%</span></td>
+				<td><span>{{user.estimateTotal}}</span></td>
+				<td><span>{{user.loggedTotal}}</span></td>
+				<td><span>{{user.percentLogged}}%</span></td>
+				<td><span>{{user.qaFails}}</span></td>
+				<td><span>{{user.crFails}}</span></td>
+				<td><span>{{user.uctFails}}</span></td>
+				<td><span>{{user.totalFails}}</span></td>
+			</tr>
+		</tbody>
+	</table>
 </dc-loading-table>

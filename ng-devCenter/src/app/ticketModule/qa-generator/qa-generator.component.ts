@@ -34,7 +34,6 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	modalRef: NgbModalRef;
 	@Input() msrp;
 	@Input() key;
-	@Input() ticketListType;
 
 	constructor(
 		public jira:JiraService, private git: GitService, public toastr: ToastrService, 
@@ -160,7 +159,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 * Sets ticket status back to in dev and shows cancel toast
 	 */
 	cancelStatusChange(){
-		const payload = { key:this.key, status: statuses.INDEV.frontend, ticketListType: this.ticketListType };
+		const payload = {key:this.key, status: statuses.INDEV.frontend};
 		this.store.dispatch({type: Actions.updateStatus, payload});
 		this.toastr.showToast(`Ticket ${this.key} status cancelled.`, 'info');
 	}
@@ -225,7 +224,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 */
 	checkForStateChange(postData, responseData):void {
 		if(responseData.comment_response.status) {
-			this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data, ticketListType: this.ticketListType});
+			this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});
 		}
 
 		// check for status changes okay - if status change came back success then set to pcr needed
@@ -240,11 +239,11 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			this.toastr.showToast('The following transitions failed: ${cr_message} ${pcr_message}', 'error');
 		}
 
-		this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status, ticketListType: this.ticketListType }});
+		this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status}});
 
 		// add crucible id if given
 		if(responseData.cru_response.status) {
-			this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: responseData.cru_response.data, ticketListType: this.ticketListType }});
+			this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: responseData.cru_response.data}});
 		}
 	}
 
@@ -259,7 +258,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		this.modalRef.result.then(
     		() => null,
     		() => {
-    			this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status:statuses.INDEV.frontend, ticketListType: this.ticketListType}});
+    			this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status:statuses.INDEV.frontend}});
     			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
     		}
     	);

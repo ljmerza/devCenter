@@ -9,4 +9,5 @@ export const Actions = {
 	userProfile: 'USER_PROFILE',
 	updateWorklog: 'UPDATE_WORKLOG',
 	newOrders: 'NEW_ORDERS',
+	ticketType: 'TICKET_TYPE',
 };

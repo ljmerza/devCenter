@@ -17,6 +17,8 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 	orders:Array<any> = [];
 	displayNames = [];
 	loadingIndicator = true;
+	ticketType:string = 'orders';
+	
 	tableTitle = 'Orders';
 	getOrders$;
 	orders$;
@@ -56,9 +58,10 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 	 * on component init get all orders
 	 */
 	ngOnInit() {
+		this.store.dispatch({type: Actions.ticketType, payload: this.ticketType });
 		this.getOrders();
 
-		this.orders$ = this.store.select('orders')
+		this.orders$ = this.store.select(this.ticketType)
 		.subscribe(orders => this.processOrders(orders));
 	}
 

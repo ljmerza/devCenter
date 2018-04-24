@@ -77,6 +77,7 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 		
 		this.route.paramMap.subscribe((routeResponse:any) => {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
+			this.store.dispatch({type: Actions.ticketType, payload: this.ticketListType });
 			this.getTickets();
 
 			let tickets$ = this.store.select(this.ticketListType)
@@ -106,7 +107,6 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 		.subscribe((response:APIResponse) => {
 			this.loadingFromApi = true;
 			this.ngProgress.done();
-			response.data.ticketListType = this.ticketListType;
 			this.store.dispatch({type: Actions.newTickets, payload: response.data});
 		},
 			this.jira.processErrorResponse.bind(this.jira)

@@ -42,7 +42,7 @@ export class TicketDetailsComponent {
 	 * if ticket details don't exist then get them. Always open modal.
 	 */
 	openModel(){
-		if(!this.ticket) this.getDetails();
+		this.getDetails();
 
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();

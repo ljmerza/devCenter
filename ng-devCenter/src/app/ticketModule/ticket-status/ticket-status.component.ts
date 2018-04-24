@@ -1,6 +1,6 @@
 import { 
 	Component, Input, Output, ViewContainerRef, EventEmitter, ChangeDetectorRef, SimpleChanges,
-	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy, OnChanges, ViewChild
+	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy, OnChanges, ViewChild, OnDestroy
 } from '@angular/core';
 
 import { select, NgRedux } from '@angular-redux/store';
@@ -19,7 +19,7 @@ import { statuses, Ticket, APIResponse } from '@models';
 	entryComponents: [QaGeneratorComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TicketStatusComponent implements OnInit {
+export class TicketStatusComponent implements OnInit, OnDestroy {
 	ticketStates:Array<any> = [];
 
 	ticketDropdown;
@@ -32,9 +32,10 @@ export class TicketStatusComponent implements OnInit {
 
 	ticketStatus;
 	crucibleId;
-	key;
+	msrp;
+	status$
 
-	@Input() ticket;
+	@Input() key;
 	@Input() ticketListType;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
@@ -69,7 +70,21 @@ export class TicketStatusComponent implements OnInit {
 	 * 
 	 */
 	ngOnInit() {
-		this.validateTransitions();
+		this.status$ = this.store.select(this.ticketListType)
+		.subscribe((allTickets:Array<Ticket>) => {
+			const ticket:any = allTickets.find(ticket => ticket.key === this.key) || {};
+			this.ticketStatus = ticket.status;
+			this.msrp = ticket.msrp;
+			this.crucibleId = ticket.crucible_id;
+			this.validateTransitions();
+		});
+	}
+
+	/**
+	 *
+	 */
+	ngOnDestroy(){
+		if(this.status$) this.status$.unsubscribe();
 	}
 
 	/**
@@ -97,7 +112,7 @@ export class TicketStatusComponent implements OnInit {
 
 		// if we are canceling a status then reset dropdown
 		if(cancelled){
-			ticketStateFilter = state => state.name == this.ticket.status
+			ticketStateFilter = state => state.name == this.ticketStatus
 		} else if(statusName) {
 			// if given the status then set status at that
 			ticketStateFilter = state => state.name == statusName;
@@ -107,67 +122,67 @@ export class TicketStatusComponent implements OnInit {
 		}
 
 		const status = (this.ticketStates.find(ticketStateFilter) as any).name;
-		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.ticket.key, status, ticketListType: this.ticketListType} });
+		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.key, status} });
 	}
 
 	/**
 	 * Creates valid transitions array for status dropdown
 	 */
 	validateTransitions() {
-		if([statuses.SPRINT.frontend,statuses.ONHOLD.frontend].includes(this.ticket.status)){
+		if([statuses.SPRINT.frontend,statuses.ONHOLD.frontend].includes(this.ticketStatus)){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.INDEV.frontend].includes(state.name));
-		} else if(this.ticket.status === statuses.INDEV.frontend){
+		} else if(this.ticketStatus === statuses.INDEV.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.SPRINT.frontend,statuses.PCRNEED.frontend].includes(state.name));
 		
-		} else if(this.ticket.status === statuses.PCRNEED.frontend){
+		} else if(this.ticketStatus === statuses.PCRNEED.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.INDEV.frontend,statuses.PCRPASS.frontend,statuses.PCRCOMP.frontend].includes(state.name));
-		} else if(this.ticket.status === statuses.PCRPASS.frontend){
+		} else if(this.ticketStatus === statuses.PCRPASS.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRCOMP.frontend].includes(state.name));
-		} else if(this.ticket.status === statuses.PCRCOMP.frontend){
+		} else if(this.ticketStatus === statuses.PCRCOMP.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.CRWORK.frontend].includes(state.name));
 		
-		} else if(this.ticket.status === statuses.CRWORK.frontend){
+		} else if(this.ticketStatus === statuses.CRWORK.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRCOMP.frontend,statuses.QAREADY.frontend, statuses.CRFAIL.frontend].includes(state.name));
-		} else if(this.ticket.status === statuses.CRFAIL.frontend){
-			this.ticket.status = statuses.INDEV.frontend;
+		} else if(this.ticketStatus === statuses.CRFAIL.frontend){
+			this.ticketStatus = statuses.INDEV.frontend;
 			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend].includes(state.name));
-		} else if(this.ticket.status === statuses.QAREADY.frontend){
+		} else if(this.ticketStatus === statuses.QAREADY.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.INQA.frontend].includes(state.name));
 		
-		} else if(this.ticket.status === statuses.INQA.frontend){
+		} else if(this.ticketStatus === statuses.INQA.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.QAREADY.frontend,statuses.QAFAIL.frontend,statuses.QAPASS.frontend,statuses.MERGECONF.frontend].includes(state.name));
-		} else if(this.ticket.status === statuses.QAFAIL.frontend){
-			this.ticket.status = statuses.INDEV.frontend;
+		} else if(this.ticketStatus === statuses.QAFAIL.frontend){
+			this.ticketStatus = statuses.INDEV.frontend;
 			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend].includes(state.name));
-		} else if(this.ticket.status === statuses.QAPASS.frontend){
-			this.ticket.status = statuses.MERGECODE.frontend;
+		} else if(this.ticketStatus === statuses.QAPASS.frontend){
+			this.ticketStatus = statuses.MERGECODE.frontend;
 			this.ticketStates = this.allTransistions.filter(state => [statuses.UCTREADY.frontend].includes(state.name));
 		
-		} else if(this.ticket.status === statuses.UCTREADY.frontend){
+		} else if(this.ticketStatus === statuses.UCTREADY.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.INUCT.frontend].includes(state.name));
-		} else if(this.ticket.status === statuses.INUCT.frontend){
+		} else if(this.ticketStatus === statuses.INUCT.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.UCTREADY.frontend,statuses.UCTFAIL.frontend,statuses.UCTPASS.frontend].includes(state.name));
-		} else if(this.ticket.status === statuses.UCTPASS.frontend){
-			this.ticket.status = statuses.RELEASE.frontend;
+		} else if(this.ticketStatus === statuses.UCTPASS.frontend){
+			this.ticketStatus = statuses.RELEASE.frontend;
 			this.ticketStates = [];
-		} else if(this.ticket.status === statuses.UCTFAIL.frontend){
-			this.ticket.status = statuses.INDEV.frontend;
+		} else if(this.ticketStatus === statuses.UCTFAIL.frontend){
+			this.ticketStatus = statuses.INDEV.frontend;
 			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend].includes(state.name));
 
-		} else if(this.ticket.status ===statuses.MERGECONF.frontend){
+		} else if(this.ticketStatus ===statuses.MERGECONF.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend, statuses.PCRCOMP.frontend, statuses.QAREADY.frontend].includes(state.name));
-		} else if(this.ticket.status === statuses.MERGECODE.frontend){
+		} else if(this.ticketStatus === statuses.MERGECODE.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.UCTREADY.frontend].includes(state.name));
 		
-		} else if([statuses.RELEASE.frontend].includes(this.ticket.status)){
+		} else if([statuses.RELEASE.frontend].includes(this.ticketStatus)){
 			this.ticketStates = [];
 		} else {
 			this.ticketStates = this.allTransistions;
 		}
 
 		// if current status not in list of statues then add to beginning
-		if( !(this.ticketStates.find(state => state.name == this.ticket.status) )){
-			this.ticketStates.unshift({name: this.ticket.status, id: ''});
+		if( !(this.ticketStates.find(state => state.name == this.ticketStatus) )){
+			this.ticketStates.unshift({name: this.ticketStatus, id: ''});
 		}
 
 		this.cd.detectChanges();
@@ -183,9 +198,8 @@ export class TicketStatusComponent implements OnInit {
 	    	this.qaComponentRef = this.viewContRef.createComponent(factory);
 
 	    	// add input/outputs
-	    	(<QaGeneratorComponent>this.qaComponentRef.instance).key = this.ticket.key;
-	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.ticket.msrp;
-	    	(<QaGeneratorComponent>this.qaComponentRef.instance).ticketListType = this.ticketListType;
+	    	(<QaGeneratorComponent>this.qaComponentRef.instance).key = this.key;
+	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.msrp;
 		}
 		
 		// open modal
@@ -210,7 +224,7 @@ export class TicketStatusComponent implements OnInit {
     		() => null,
     		() => {
     			this.statusChange({});
-    			this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
+    			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
     		}
     	)
 	}
@@ -223,7 +237,7 @@ export class TicketStatusComponent implements OnInit {
 		if(submit){
 			this.changeStatus(this.statusType);
 		} else {
-			this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
+			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
 			this.statusChange({});
 		}
 
@@ -235,13 +249,13 @@ export class TicketStatusComponent implements OnInit {
 	 * @param {string} statusType the status type string
 	 */
 	changeStatus(statusType:string): void {
-		this.jira.changeStatus({key:this.ticket.key, statusType, crucible_id: this.ticket.crucible_id})
+		this.jira.changeStatus({key:this.key, statusType, crucible_id: this.crucibleId})
 		.subscribe(
 			statusResponse => this.verifyStatusChangeSuccess(statusResponse.data, statusType),
 			error => {
 				this.jira.processErrorResponse(error);
 				this.statusChange({});
-				this.toastr.showToast(`Ticket status change cancelled for ${this.ticket.key}`, 'info');
+				this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
 			}
 		);
 	}
@@ -258,7 +272,7 @@ export class TicketStatusComponent implements OnInit {
 		}
 
 		this.statusChange({cancelled: false});
-		this.toastr.showToast(`Status successfully changed for ${this.ticket.key}`, 'success');
+		this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
 	}
 
 	/**
