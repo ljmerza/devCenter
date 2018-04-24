@@ -1,7 +1,5 @@
 $lightBlk: #333;
 $darkBlk: #292b2c;
-$link: #0275d8;
-$linkHover: #0056b3;
 $white: #fff;
 
 $success: #28a745;
@@ -20,6 +18,10 @@ $successHover: rgba(40, 167, 69, 0.5);
 	padding-bottom: 10px;
 	margin-bottom: 20px;
 	border-bottom: 1px solid #D3D3D3;
+}
+
+a, .material-icons {
+	cursor: pointer;
 }
 
 
@@ -122,25 +124,6 @@ $successHover: rgba(40, 167, 69, 0.5);
 	75% {
 		content: "Loading...";
 	}
-}
-
-
-a, .material-icons {
-	color: $link;
-	cursor: pointer;
-
-	&.success {
-		transition: color 0.5s;
-		color: $success;
-		&:hover {
-			color: $successHover;
-		}
-	}
-
-	&:hover {
-		color: $linkHover;
-		text-decoration: none;
-	} 
 }
 
 // dt buttons

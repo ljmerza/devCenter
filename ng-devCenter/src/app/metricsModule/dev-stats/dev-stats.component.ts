@@ -177,8 +177,6 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 		this.profile$ = this.store.select('userProfile').subscribe((profile:any) => {
 			if(!profile.name) return;
 
-			console.log('profile: ', profile);
-
 			if(profile.is_admin){
 				this.userProfiles = userProfiles;
 			} else {

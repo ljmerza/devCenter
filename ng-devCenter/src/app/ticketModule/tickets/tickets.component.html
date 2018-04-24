@@ -1,4 +1,4 @@
-<dc-loading-table [loadingTable]=loadingTickets [tableTitle]=tableTitle (refreshData)="getTickets()">
+<dc-loading-table [loadingTable]=loadingTickets [loadingIcon]=loadingIcon [tableTitle]=tableTitle (refreshData)="getTickets()" (stopRefresh)="stopGetTickets()">
 	<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
 		<thead>
 			<tr>

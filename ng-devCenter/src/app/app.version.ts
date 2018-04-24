@@ -1,18 +1,18 @@
-// This file was generated on Mon, Apr 09, 2018  3:24:57 PM
+// This file was generated on Tue, Apr 24, 2018 12:43:14 PM
 export const appVersion = {
   "name": "devCenter",
-  "version": "5.5.0",
+  "version": "6.0.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "version.sh; ng serve --aot",
-    "build": "version.sh; ng build --base-href=./ --prod --aot --build-optimizer",
-    "beta": "version.sh; ng build --base-href=./ --environment=beta --aot --build-optimizer",
-    "test": "version.sh; ng test",
-    "lint": "version.sh; ng lint",
-    "e2e": "version.sh; ng e2e",
-    "demo": "version.sh; ng serve --environment=test",
-    "tslint-check": "version.sh; tslint-config-prettier-check ./tslint.json",
+    "start": "ng serve --aot",
+    "build": "ng build --base-href=./ --prod --aot --build-optimizer",
+    "beta": "ng build --base-href=./ --environment=beta --aot --build-optimizer",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "demo": "ng serve --environment=test",
+    "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "version": "version.sh"
   },
   "private": true,

@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';  
+import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgRedux, NgReduxModule, DevToolsExtension } from '@angular-redux/store';
@@ -32,7 +34,7 @@ import { DraggableDirective } from './draggable.directive';
 
 
 @NgModule({
-	imports: [HttpClientModule, NgbModule, NgReduxModule, ToastModule.forRoot()],
+	imports: [HttpClientModule, NgbModule, NgReduxModule, ToastModule.forRoot(), CommonModule, BrowserModule],
 	declarations: [ModalComponent, ToastrComponent, LoadingTableComponent, UserDetailsComponent, DraggableDirective],
 	exports: [ModalComponent, ToastrComponent, UserDetailsComponent, LoadingTableComponent, DraggableDirective]
 })

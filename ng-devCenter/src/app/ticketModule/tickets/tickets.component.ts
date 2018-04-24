@@ -19,7 +19,7 @@ import { Repo, Ticket, APIResponse } from '@models';
 })
 export class TicketsComponent implements OnInit, AfterViewInit {
 	loadingTickets:boolean = false;
-	loadingFromApi = false;
+	loadingIcon: boolean = false;
 	ticketListType:string; // type of tickets to get
 	repos: Array<Repo>;
 	tickets = [];
@@ -102,15 +102,27 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 		if(this.getTickets$) this.getTickets$.unsubscribe();
 		if(this.ngProgress) this.ngProgress.done();
 		this.ngProgress.start();
+		this.loadingIcon = true;
 
 		this.getTickets$ = this.jira.getTickets(this.ticketListType, true)
 		.subscribe((response:APIResponse) => {
-			this.loadingFromApi = true;
 			this.ngProgress.done();
+			this.loadingIcon = false;
 			this.store.dispatch({type: Actions.newTickets, payload: response.data});
 		},
 			this.jira.processErrorResponse.bind(this.jira)
 		);
+	}
+
+	/**
+	 * stops the loading of tickets
+	 */
+	stopGetTickets(){
+		if(this.getTickets$) this.getTickets$.unsubscribe();
+		this.loadingIcon = false;
+		this.loadingTickets = false;
+		this.ngProgress.done();
+		this._renderTable();
 	}
 
 	/**
@@ -126,10 +138,17 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 		this.loadingTickets = false;
 		if(JSON.parse(JSON.stringify(this.tickets)) !== JSON.parse(JSON.stringify(tickets))){
 			this.tickets = tickets;
-			this.dtElement.dtInstance.then((dtInstance:DataTables.Api) => {
-				dtInstance.destroy();
-				this.dtTrigger.next();
-			});
+			this._renderTable();
 		}
+	}
+
+	/**
+	 * renders the data table
+	 */
+	_renderTable(){
+		this.dtElement.dtInstance.then((dtInstance:DataTables.Api) => {
+			dtInstance.destroy();
+			this.dtTrigger.next();
+		});
 	}
 }

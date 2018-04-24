@@ -4,7 +4,12 @@
 		<div class="col-12">
 			<h1 class='text-center ticket-title'>
 				<span>{{tableTitle}}</span>
-				<i class="material-icons success" title='Refresh {{tableTitle}}' (click)="refreshDataEvent()">update</i>
+				<span *ngIf="!loadingIcon">
+					<i class="material-icons text-success" title='Refresh {{tableTitle}}' (click)="refreshDataEvent()">update</i>
+				</span>
+				<span *ngIf="loadingIcon">
+					<i class="material-icons text-danger" title='Stop Refresh of {{tableTitle}}' (click)="stopRefreshDataEvent()">highlight_off</i>
+				</span>
 			</h1>
 		</div>
 	</div>

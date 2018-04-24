@@ -8,7 +8,9 @@ import { Component, Output, Input, EventEmitter, ViewEncapsulation } from '@angu
 })
 export class LoadingTableComponent {
 	@Output() refreshData = new EventEmitter();
+	@Output() stopRefresh = new EventEmitter();
 	@Input() loadingTable;
+	@Input() loadingIcon;
 	@Input() tableTitle;
 
 	constructor() { }
@@ -18,5 +20,12 @@ export class LoadingTableComponent {
 	 */
 	refreshDataEvent(){
 		this.refreshData.emit();
+	}
+
+	/**
+	 * send stop refresh notification
+	 */
+	stopRefreshDataEvent(){
+		this.stopRefresh.emit();
 	}
 }
