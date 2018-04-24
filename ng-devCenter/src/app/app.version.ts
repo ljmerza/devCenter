@@ -1,4 +1,4 @@
-// This file was generated on Tue, Apr 24, 2018 12:43:14 PM
+// This file was generated on Tue, Apr 24, 2018 12:57:47 PM
 export const appVersion = {
   "name": "devCenter",
   "version": "6.0.0",
@@ -32,7 +32,7 @@ export const appVersion = {
     "@types/jqueryui": "^1.12.2",
     "angular-datatables": "^5.0.0",
     "angular2-moment": "^1.8.0",
-    "bootstrap": "4.0.0",
+    "bootstrap": "4.1.0",
     "core-js": "^2.4.1",
     "datatables.net": "^1.10.16",
     "datatables.net-buttons": "^1.5.1",
@@ -43,13 +43,13 @@ export const appVersion = {
     "moment": "^2.20.1",
     "ng2-toastr": "^4.1.2",
     "ngx-progressbar": "^2.1.1",
-    "redux": "^3.7.2",
+    "redux": "^4.0.0",
     "rxjs": "^5.5.6",
     "socket.io-client": "^2.0.4",
     "zone.js": "^0.8.20"
   },
   "devDependencies": {
-    "@angular/cli": "1.7.3",
+    "@angular/cli": "1.7.4",
     "@angular/compiler-cli": "^5.2.8",
     "@angular/language-service": "^5.2.8",
     "@types/datatables.net": "^1.10.8",
@@ -57,7 +57,7 @@ export const appVersion = {
     "@types/jasminewd2": "~2.0.2",
     "@types/jquery": "^3.3.0",
     "@types/node": "^9.4.7",
-    "codelyzer": "~4.2.1",
+    "codelyzer": "~4.3.0",
     "jasmine-core": "~3.1.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~2.0.0",
@@ -69,7 +69,7 @@ export const appVersion = {
     "node-sass": "^4.7.2",
     "prettier": "^1.11.1",
     "protractor": "~5.3.0",
-    "ts-node": "~5.0.1",
+    "ts-node": "~6.0.0",
     "tslint": "~5.9.1",
     "tslint-config-prettier": "^1.9.0",
     "typescript": "~2.8.1"
