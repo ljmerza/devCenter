@@ -517,6 +517,11 @@ sub get_po_to_data {
 	my $canopi = M5::REST::WATSON::Canopi->new();
 	my $canopi_labels = {CNL => 'CNL', UNI => 'UNI', EVC => 'EVC', XLATA => 'XLATA_EVC'};
 	my $canopi_label = $canopi_labels->{$circuit_type};
+
+	unless($canopi_label){
+		print "invalid label for circuit type $circuit_type\n";
+		return {po => {}, to => {}};
+	}
 	    
 	if($circuit_id){
 		$circuit_id =~ s/^\s+|\s+\Z//g; #trim the circuit data
