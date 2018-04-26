@@ -56,7 +56,7 @@
 				<td><span *ngIf='orderItem.UNI'>
 					<i class="material-icons text-success" title='Copy to clipboard' (click)="misc.copyText(orderInput)">note</i>
 					<a target="_blank" href="{{baseUrl}}/{{orderItem.UNI[0].WfaClo}}?cache={{user.cache}}">{{orderItem.UNI[0].WfaClo}}</a>
-					<input class='hidden-clip' type="text" #orderInput value={{orderItem.OrdNum}}>
+					<input class='hidden-clip' type="text" #orderInput value={{orderItem.UNI[0].WfaClo}}>
 				</span></td>
 					
 				<td><span *ngIf='orderItem.UNI'>
@@ -113,7 +113,7 @@
 				<td><span *ngIf='orderItem.CNL'>
 					<i class="material-icons text-success" title='Copy to clipboard' (click)="misc.copyText(orderInput)">note</i>
 					<a target="_blank" href="{{baseUrl}}/{{orderItem.CNL[0].WfaClo}}?cache={{user.cache}}">{{orderItem.CNL[0].WfaClo}}</a>
-					<input class='hidden-clip' type="text" #orderInput value={{orderItem.OrdNum}}>
+					<input class='hidden-clip' type="text" #orderInput value={{orderItem.CNL[0].WfaClo}}>
 				</span></td>
 					
 				<td><span *ngIf='orderItem.CNL'>
@@ -162,7 +162,7 @@
 				<td><span *ngIf='orderItem.EVC'>
 					<i class="material-icons text-success" title='Copy to clipboard' (click)="misc.copyText(orderInput)">note</i>
 					<a target="_blank" href="{{baseUrl}}/{{orderItem.EVC[0].WfaClo}}?cache={{user.cache}}">{{orderItem.EVC[0].WfaClo}}</a>
-					<input class='hidden-clip' type="text" #orderInput value={{orderItem.OrdNum}}>
+					<input class='hidden-clip' type="text" #orderInput value={{orderItem.EVC[0].WfaClo}}>
 				</span></td>
 					
 				<td><span *ngIf='orderItem.EVC'>

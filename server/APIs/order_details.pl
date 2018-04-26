@@ -18,11 +18,12 @@ use M5::DB;
 use OMX;
 use M5::REST::WATSON::ODB;
 use M5::REST::WATSON::ACTS;
+use M5::REST::WATSON::Canopi;
 
 
 
 my $dirname = 'data';
-my $output = "$dirname/deep_order_data.json";
+my $output = "$dirname/deep_order_data2.json";
 make_path($dirname, {chmod => 0777});
 
 sub db_connect_odb_ro {
@@ -35,7 +36,7 @@ sub db_connect_odb_ro {
 }
 
 my $dbh = db_connect_odb_ro();
-my $number_of_orders = 300;
+my $number_of_orders = 5;
 my $processed = 0;
 
 my $sql = ";
@@ -120,6 +121,7 @@ sub process_order {
 
 		if($component_type eq 'ATX'){
 			$data = get_atx($record, $data);
+
 		} else {
 			$data = get_asedb($record, $data);
 			$data = get_canpoi($record, $data, $type);
@@ -128,6 +130,9 @@ sub process_order {
 			$data = get_omx_ocx($record, $data);
 			$data = get_cth($record, $data);
 			$data = get_watson($record, $data);
+
+			my $circuit_type = $component_type;
+			$data->{canopi_data} = get_po_to_data(circuit_id => $data->{BpoCktId}, clo => $data->{WfaClo}, circuit_type => $circuit_type);
 		}
 
 		if($component_type eq 'UNI'){
@@ -453,4 +458,146 @@ sub get_edge_force {
 	}
 
 	return $data;
+}
+
+
+sub get_po_to_data {
+	my (%args) = @_;
+
+	unless($args{circuit_type} && ($args{circuit_id} || $args{clo})){
+		return 0;
+	}
+
+	my $circuit_type = uc($args{circuit_type});
+	my $clo = uc $args{clo} ;
+	my $circuit_id = uc $args{circuit_id} ;
+
+	my $canopi = M5::REST::WATSON::Canopi->new();
+	my $canopi_labels = {CNL => 'CNL', UNI => 'UNI', EVC => 'EVC', XLATA => 'XLATA_EVC'};
+	my $canopi_label = $canopi_labels->{$circuit_type};
+	    
+	if($circuit_id){
+		$circuit_id =~ s/^\s+|\s+\Z//g; #trim the circuit data
+		$circuit_id =~ s/\/+|\s+\//_/g;
+	}
+
+	return {
+		po => _get_po_data(circuit_type => $circuit_type, circuit_id => $circuit_id, canopi_label => $canopi_label, canopi => $canopi),
+		to => _get_to_data(circuit_type => $circuit_type, circuit_id => $circuit_id, canopi_label => $canopi_label, canopi => $canopi)
+	};
+}
+
+sub _get_po_data {
+	my (%args) = @_;
+
+	my $circuit_type = $args{circuit_type};
+	my $canopi_label = $args{canopi_label};
+	my $circuit_id = $args{circuit_id};
+	my $canopi = $args{canopi};
+	my $return_data = {};
+
+	my $po_summary_types = {UNI => 'unicktid', EVC => 'evccktid', XLATA_EVC => 'evccktid'};
+	my $canopi_types = {UNI => 'unifiber', EVCP2P => 'evcp2p', EVCMPT => 'evcmpt', XLATA_EVCP2P => 'evcp2p', XLATA_EVCMPT => 'evcmpt'}; 
+
+	# get PO data
+	if(defined $po_summary_types->{$canopi_label} and $circuit_id) {
+		my $summary = $canopi->get_project_order_summary(
+			circuit_id => $circuit_id,
+			circuit_type => $po_summary_types->{$canopi_label}
+		);
+
+		# get PO details and action items
+		if('HASH' eq ref $summary and 'ARRAY' eq ref $summary->{OrderList}) {
+			$return_data->{po_summary} = $summary;
+			$return_data->{canopi_details} = ();
+
+			foreach(@{ $summary->{OrderList} }) {
+				my $po_number = $_->{parentProjectOrderId};
+	
+				# EVC PO doesn't have parentProjectOrderId
+				$po_number = $_->{orderId} if $canopi_label eq 'EVC' or $canopi_label eq 'UNI';
+				if($po_number and defined $canopi_types->{$circuit_type}) {
+
+					my $canopi_details = $canopi->get_project_order_details(
+						circuit_type => $canopi_types->{$circuit_type},
+						po_number => $po_number
+					);
+
+					# get action items
+					if(defined $canopi_details) {
+						my $canopi_actions = $canopi->get_action_items(
+							po_or_to => 'po',
+							order_number => $po_number
+						);
+						$return_data->{canopi_actions} = $canopi_actions;
+
+						# get IPAG
+						if($canopi_label eq 'UNI' and $canopi_details->{ipagRouterClli}){
+							$canopi_details->{ipag_details} = $canopi->get_ipag_details(clli => $canopi_details->{ipagRouterClli});
+						}
+					}
+
+					# save all canopi data gotten back
+					push @{$return_data->{canopi_details}}, $canopi_details;
+				}
+			}
+		}
+	}
+
+	return $return_data;
+}
+
+sub _get_to_data {
+	my (%args) = @_;
+
+	my $circuit_type = $args{circuit_type};
+	my $canopi_label = $args{canopi_label};
+	my $circuit_id = $args{circuit_id};
+	my $canopi = $args{canopi};
+	my $return_data = {};
+
+	my $canopi_types = {CNL => 'cnl', UNI => 'unifiber', EVCP2P => 'evcp2p', EVCMPT => 'evcmpt', XLATA_EVCP2P => 'evcp2p', XLATA_EVCMPT => 'evcmpt'};
+	my $to_summary_types = {CNL => 'cnlcktid', UNI => 'unicktid', EVC => 'evccktid', XLATA_EVC=> 'evccktid'};
+
+	# if we don't have circuit id , we can't search technical summary
+	if(defined $to_summary_types->{$canopi_label} and $circuit_id) {
+		my $summary = $canopi->get_technical_order_summary(
+			circuit_id => $circuit_id,
+			circuit_type => $to_summary_types->{$canopi_label}
+		);
+
+		if('HASH' eq ref $summary and 'ARRAY' eq ref $summary->{OrderList}) {
+			$return_data->{to_summary} = $summary;
+			$return_data->{canopi_details} = ();
+
+			foreach (@{ $summary->{OrderList} }) {
+				my $to_number = $_->{orderId};
+
+				if($to_number and defined $canopi_types->{$circuit_type}) {
+					my $canopi_details = $canopi->get_technical_order_details(
+						circuit_type => $canopi_types->{$circuit_type},
+						to_number => $to_number
+					);
+
+					if(defined $canopi_details) {
+						my $canopi_actions = $canopi->get_action_items(
+							po_or_to => 'to',
+							order_number => $to_number
+						);
+						$return_data->{canopi_actions} = $canopi_actions;
+
+						# Get IPAG details for UNI or CNL circuits and if canopi has a clli
+						if(grep {$canopi_label eq $_} qw! CNL UNI ! and $canopi_details->{ipagRouterClli}){
+							$canopi_details->{ipag_details} = $canopi->get_ipag_details(clli => $canopi_details->{ipagRouterClli});
+						}
+					}
+
+					# save all canopi data gotten back
+					push @{$return_data->{canopi_details}}, $canopi_details;
+				}
+			}
+		}
+	}
+
+	return $return_data;
 }
