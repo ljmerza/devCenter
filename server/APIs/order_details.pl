@@ -44,7 +44,7 @@ sub trim {
 };
 
 my $dbh = db_connect_odb_ro();
-my $number_of_orders = 10000;
+my $number_of_orders = 5000;
 my $processing = 0;
 my $processed = 0;
 my @deep_order_data = ();
