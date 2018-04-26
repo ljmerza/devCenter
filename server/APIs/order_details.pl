@@ -13,6 +13,7 @@ use utf8;
 use JSON;
 use File::Path qw(make_path);
 use Data::Dumper;
+use Parallel::ForkManager;
 
 use M5::DB;
 use OMX;
@@ -35,36 +36,87 @@ sub db_connect_odb_ro {
 	);
 }
 
+sub trim { 
+	my $s = shift; 
+	return '' if(not $s or $s =~ /null/i);
+	$s =~ s/^\s+|\s+$//g; 
+	return $s 
+};
+
 my $dbh = db_connect_odb_ro();
-my $number_of_orders = 5;
+my $number_of_orders = 10000;
+my $processing = 0;
 my $processed = 0;
-
-my $sql = ";
-SELECT TOP $number_of_orders *
-FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core 
-right join odb.dbo.DB2_Feeds_Refresh as Refresh 
-on Core.cktid = Refresh.cktid and Core.event_type = Refresh.event_type 
-AND Refresh.cmp_dt is NULL";
-
-my $sth = $dbh->prepare($sql);
-$sth->execute();
-my $order_data = $sth->fetchall_arrayref({});
-
 my @deep_order_data = ();
 my @recorded_orders = ();
 
-foreach my $order (@{$order_data}){
-	my $order_number = $order->{OrdNum};
-	my $trk = $order->{trk};
 
-	if($trk and not grep(/^$trk$/, @recorded_orders) ){
+my $sql = ";
+SELECT DISTINCT Core.REGION FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core 
+right join odb.dbo.DB2_Feeds_Refresh as Refresh on Core.cktid = Refresh.cktid";
+
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+my $regions = $sth->fetchall_arrayref({});
+
+my $orders_per_region = int($number_of_orders / scalar @{$regions});
+print "$orders_per_region orders per region\n";
+
+foreach my $region (@{$regions}){
+	$region = trim($region->{REGION});
+	next unless $region;
+
+	my $sql = "SELECT TOP $orders_per_region * FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core right join odb.dbo.DB2_Feeds_Refresh as Refresh on Core.cktid = Refresh.cktid and Core.event_type = Refresh.event_type AND Refresh.cmp_dt is NULL AND Core.REGION = '$region'";
+
+	my $sth = $dbh->prepare($sql);
+	$sth->execute();
+	my $order_data = $sth->fetchall_arrayref({});
+	dump_data($order_data);
+}
+
+
+
+sub dump_data {
+	my $order_data = shift;
+	my $max_forks = 10;
+	my $pfm = Parallel::ForkManager->new($max_forks,'/opt/PFM');
+
+
+	$pfm->run_on_finish(sub {
+		my ($pid, $exit_code, $ident, $exit_signal, $core_dump, $hash) = @_;
+		push @deep_order_data, $hash->{order};
+		$processed = $processed + 1;
+		print("processed order $processed for $processing out of $number_of_orders\n");
+	});
+
+	foreach my $order (@{$order_data}){
+		my $trk = $order->{trk};
+		$processing = $processing + 1;
+
+		next if(not $trk or grep(/^$trk$/, @recorded_orders));
 		push @recorded_orders, $trk;
+
+		$pfm->start and next;
+		my $order_number = $order->{OrdNum};
+		my $formatted_records = {};
+
 		print("getting data for order number $trk\n");
-		add_order_to_list($trk, 'CLO', $order);
+
+		my $ODB = M5::REST::WATSON::ODB->new();
+		my $response = $ODB->get_orders(fuzzy_order => $trk, deep => 1);
+
+
+		if('HASH' eq ref $response and $response->{OdbRecordList}) {
+			$formatted_records = process_order($response->{OdbRecordList}, 'CLO');
+			$formatted_records->{database_info} = $order;
+		}
+
+
+		$pfm->finish(0, {order => $formatted_records});
 	}
 
-	$processed = $processed + 1;
-	print("processed $processed orders out of $number_of_orders\n");
+
+	$pfm->wait_all_children;
 }
 
 
@@ -74,26 +126,16 @@ print $fh encode_json(\@deep_order_data);
 close $fh;
 
 
+
+
+
+
+
+
 sub add_order_to_list {
-	my ($fuzzy_order, $type, $order) = @_;
-
-	my $ODB = M5::REST::WATSON::ODB->new();
-	my $response = $ODB->get_orders(fuzzy_order => $fuzzy_order, deep => 1);
-
-	if('HASH' eq ref $response and $response->{OdbRecordList}) {
-		my $formatted_records = process_order($response->{OdbRecordList}, $type);
-		$formatted_records->{database_info} = $order;
-		push @deep_order_data, $formatted_records;
-	}
+	
 }
 
-
-sub trim { 
-	my $s = shift; 
-	return '' if(not $s or $s =~ /null/i);
-	$s =~ s/^\s+|\s+$//g; 
-	return $s 
-};
 
 sub process_order {
 	my ($odb_records, $type) = @_;
