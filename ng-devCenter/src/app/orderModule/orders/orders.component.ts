@@ -100,17 +100,62 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 		}
 
 		// save orders. if we have orders then cancel API call
-		this.orders = orders;
+		this.orders = this._format_orders(orders);
 		this.loadingIndicator = false;
 		this.resetLoading();
 
 		let dtInstance = await this.dtElement.dtInstance
-		dtInstance.destroy();
-		this.dtTrigger.next();
+		if(dtInstance) {
+			dtInstance.destroy();
+			this.dtTrigger.next();
+		}
 	}
 
+	/**
+	 * adds data to each order before showing in the UI
+	 * @param {Object} order the order itself
+	 * @return {Object} the modified order object
+	 */
+	_format_orders(orders){
+		const new_orders = orders.map(order => {
+			order = this._add_po_to(order, 'UNI');
+			order = this._add_po_to(order, 'CNL');
+			order = this._add_po_to(order, 'EVC');
+			return order;
+		});
+
+		return new_orders;
+	}
+
+	/**
+	 * gets all PO/TO data for easy display
+	 * @param {Object} order the order itself
+	 * @param {string} component the component type to search for TO/PO data
+	 * @return {Object} the modified order object
+	 */
+	_add_po_to(order, component){
+		const component_pos = order[component] && 
+			order[component][0].canopi_data && 
+			order[component][0].canopi_data.po && 
+			order[component][0].canopi_data.po.po_summary &&
+			order[component][0].canopi_data.po.po_summary.OrderList;
+		order[`${component}_pos`] =  (component_pos || []).map(po => `${po.orderType} ${po.orderId}`);
+
+		const component_tos = order[component] && 
+			order[component][0].canopi_data && 
+			order[component][0].canopi_data.to && 
+			order[component][0].canopi_data.to.to_summary &&
+			order[component][0].canopi_data.to.to_summary.OrderList;
+		order[`${component}_tos`] = (component_tos || []).map(to => `${to.orderType} ${to.orderId}`);
+
+		return order;
+	}
+
+	/**
+	 *
+	 */
 	trackByFn(index: number, order){
-		return order.OrdNum;
+		return (order.CNL || order.UNI || order.EVC || order.ATX || order.ADE || [{}])[0].WfaClo;
 	}
 
 	/**

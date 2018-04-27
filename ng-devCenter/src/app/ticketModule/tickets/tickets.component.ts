@@ -141,8 +141,6 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 	 * @param {Array<Tickets>} tickets
 	 */
 	private processTickets(tickets) {
-		console.log('tickets: ', tickets);
-
 		if(tickets.length === 0) {
 			this.loadingTickets = true;
 			return;
@@ -166,7 +164,7 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 		this.renderTimeoutId = setTimeout(async () => {
 			this.tickets = tickets;
 			let dtInstance = await this.dtElement.dtInstance;
-			dtInstance.destroy();
+			if(dtInstance) dtInstance.destroy();
 			this.dtTrigger.next();
 		}, 200);
 	}

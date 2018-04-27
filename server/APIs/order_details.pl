@@ -21,7 +21,9 @@ use M5::REST::WATSON::ODB;
 use M5::REST::WATSON::ACTS;
 use M5::REST::WATSON::Canopi;
 
-
+##############################
+my $number_of_orders = 500;
+##############################
 
 my $dirname = 'data';
 my $output = "$dirname/deep_order_data2.json";
@@ -44,7 +46,6 @@ sub trim {
 };
 
 my $dbh = db_connect_odb_ro();
-my $number_of_orders = 5000;
 my $processing = 0;
 my $processed = 0;
 my @deep_order_data = ();
@@ -52,7 +53,7 @@ my @recorded_orders = ();
 
 
 my $sql = ";
-SELECT DISTINCT Core.REGION FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core 
+SELECT DISTINCT SRC FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core 
 right join odb.dbo.DB2_Feeds_Refresh as Refresh on Core.cktid = Refresh.cktid";
 
 my $sth = $dbh->prepare($sql);
@@ -63,10 +64,13 @@ my $orders_per_region = int($number_of_orders / scalar @{$regions});
 print "$orders_per_region orders per region\n";
 
 foreach my $region (@{$regions}){
-	$region = trim($region->{REGION});
+	$region = trim($region->{SRC});
 	next unless $region;
 
-	my $sql = "SELECT TOP $orders_per_region * FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core right join odb.dbo.DB2_Feeds_Refresh as Refresh on Core.cktid = Refresh.cktid and Core.event_type = Refresh.event_type AND Refresh.cmp_dt is NULL AND Core.REGION = '$region'";
+	my $sql = ";
+SELECT TOP $orders_per_region * FROM ODB.dbo.CORE_ENOC1CENTER_DB2 as Core right 
+join odb.dbo.DB2_Feeds_Refresh as Refresh on Core.cktid = Refresh.cktid 
+and Core.event_type = Refresh.event_type AND Refresh.cmp_dt is NULL AND SRC = '$region'";
 
 	my $sth = $dbh->prepare($sql);
 	$sth->execute();
@@ -78,7 +82,7 @@ foreach my $region (@{$regions}){
 
 sub dump_data {
 	my $order_data = shift;
-	my $max_forks = 10;
+	my $max_forks = 20;
 	my $pfm = Parallel::ForkManager->new($max_forks,'/opt/PFM');
 
 
@@ -86,7 +90,7 @@ sub dump_data {
 		my ($pid, $exit_code, $ident, $exit_signal, $core_dump, $hash) = @_;
 		push @deep_order_data, $hash->{order};
 		$processed = $processed + 1;
-		print("processed order $processed for $processing out of $number_of_orders\n");
+		print("processed order $processed. Currently at $processing out of $number_of_orders orders total\n");
 	});
 
 	foreach my $order (@{$order_data}){
@@ -99,8 +103,6 @@ sub dump_data {
 		$pfm->start and next;
 		my $order_number = $order->{OrdNum};
 		my $formatted_records = {};
-
-		print("getting data for order number $trk\n");
 
 		my $ODB = M5::REST::WATSON::ODB->new();
 		my $response = $ODB->get_orders(fuzzy_order => $trk, deep => 1);
