@@ -65,9 +65,7 @@ export class EditOrdersComponent implements OnInit {
 		this.navbarItems = items.data
 		.filter(item => !['dev_links','ember_links','teamdb_ember', 'prod_links', 'beta_links'].includes(item.type))
 		.map(item => {
-			item.isNotEditingName = true;
-			item.isNotEditingLink = true;
-			item.isNotEditingType = true;
+			item.isNotEditing = true;
 
 			// save values for comparing when saving
 			item.nameOld = item.name;
@@ -92,7 +90,7 @@ export class EditOrdersComponent implements OnInit {
 	 * @param {string} editingName
 	 */
 	editItem(item, editingName){
-		this.toggleEditing({item, editingName, isNotEditing:false});
+		item.isNotEditing = false;
 	}
 
 	/**
@@ -101,41 +99,24 @@ export class EditOrdersComponent implements OnInit {
 	 * @param {string} editingName
 	 */
 	saveItem(item, editingName){
-		this.toggleEditing({item, editingName, isNotEditing:true});
+		item.isNotEditing = true;
 
-		const newValue = item[editingName];
-		const oldValue = item[`${editingName}Old`];
-
-		if(oldValue === newValue){
-			this.toastr.showToast(`No changes made to ${oldValue}.`, 'info');
-		} else {
-			this.items.setItem(item).subscribe(
-				response => {
-					this.toastr.showToast(response.data, 'success');
-				},				
-				error => {
-					// show error and reset value
-					this.items.processErrorResponse(error);
-					item[editingName] = oldValue;
-				}
-			);
+		// if no changes then dont save
+		if(item.nameOld === item.name || item.linkOld === item.link || item.typeOld === item.type){
+			this.toastr.showToast(`No changes made to ${item.name}.`, 'info');
+			return;
 		}
-	}
 
-	/**
-	 * sets an editing boolean for an item
-	 * @param {Object} item
-	 * @param {string} editingName
-	 * @param {boolean} isNotEditing
-	 */
-	toggleEditing({item, editingName, isNotEditing}){
-		if(editingName === 'name'){
-			item.isNotEditingName = isNotEditing;
-		} else if(editingName === 'link'){
-			item.isNotEditingLink = isNotEditing;
-		} else if(editingName === 'type'){
-			item.isNotEditingType = isNotEditing;
-		}
+		this.items.setItem(item).subscribe(
+			response => this.toastr.showToast(response.data, 'success'),				
+			error => {
+				// show error and reset values
+				this.items.processErrorResponse(error);
+				item.name = item.nameOld;
+				item.link = item.linkOld;
+				item.type = item.typeOld;
+			}
+		);
 	}
 
 	/**
@@ -153,14 +134,23 @@ export class EditOrdersComponent implements OnInit {
 		}
 	}
 
+	/**
+	 *
+	 */
 	trackByFn(index: number, item){
 		return item.id;
 	}
 
+	/**
+	 *
+	 */
 	closeModal(){
 		this.modalRef.close();
 	}
 
+	/**
+	 *
+	 */
 	openModal(){
 		this.modalRef = this.modal.openModal();
 	}

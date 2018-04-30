@@ -8,7 +8,7 @@
 		<form class="form-group" #logForm="ngForm">
 			<h4>Comment:</h4>
 			<div class="form-group">
-				 <textarea class="form-control" name="comment" id="comment" rows=15 [(ngModel)]="comment"></textarea>
+				 <textarea class="form-control" name="comment" id="comment" rows=10 [(ngModel)]="comment"></textarea>
 			</div>
 
 			<div class="form-group">
@@ -48,6 +48,8 @@
 				</div>
 			</div>
 		</form>
+
+		<dc-branch-info [sprint]=sprint [branch]=branch [commit]=commit></dc-branch-info>
 	</span>
 
 	<span class='modal-footer'>

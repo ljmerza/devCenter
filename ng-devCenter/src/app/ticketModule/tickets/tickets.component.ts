@@ -36,7 +36,7 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 	}
 
 	dtOptions = {
-		order: [[4, 'desc']],
+		order: [[5, 'desc']],
 		columnDefs: [
 			{targets: [9,10], visible: false},
 			{targets: 4, width: '10%'},
@@ -138,7 +138,7 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 
 	/**
 	 * If a list of tickets exist then process the end of ticket retrieval
-	 * @param {Array<Tickets>} tickets
+	 * @param {Array<Ticket>} tickets
 	 */
 	private processTickets(tickets) {
 		if(tickets.length === 0) {
@@ -147,20 +147,24 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 		}
 
 		this.loadingTickets = false;
-		if(JSON.parse(JSON.stringify(this.tickets)) !== JSON.parse(JSON.stringify(tickets))){
-			
-			
-			this._renderTable(tickets);
+
+		// if the list is the same then we end here (don't refresh list)
+		if(JSON.parse(JSON.stringify(this.tickets)) === JSON.parse(JSON.stringify(tickets))){
+			return;
 		}
+
+		this.renderDatatable(tickets);
 	}
 
 	/**
-	 * renders the data table - use a debounce to make sure we don't try to render while we are rendering
-	 * need to set tickets when the table is going to rendered to make sure datatables syncs with angular
+	 * render the data table with a debounce
+	 * @param {Array<Ticket>} list of ticket to update
 	 */
-	async _renderTable(tickets){
+	private async renderDatatable(tickets){
+		// queue up a data table refresh
 		if(this.renderTimeoutId) clearInterval(this.renderTimeoutId);
 
+		// refresh data table if not other requests come in soon
 		this.renderTimeoutId = setTimeout(async () => {
 			this.tickets = tickets;
 			let dtInstance = await this.dtElement.dtInstance;

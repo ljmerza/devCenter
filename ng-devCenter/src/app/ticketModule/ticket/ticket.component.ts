@@ -101,6 +101,9 @@ export class TicketComponent {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketLogComponent);
 	    	this.worklogComponentRef = this.viewContRef.createComponent(factory);
 	    	(<TicketLogComponent>this.worklogComponentRef.instance).key = this.ticket.key;
+	    	(<TicketLogComponent>this.worklogComponentRef.instance).branch = this.ticket.branch;
+	    	(<TicketLogComponent>this.worklogComponentRef.instance).sprint = this.ticket.sprint;
+	    	(<TicketLogComponent>this.worklogComponentRef.instance).commit = this.ticket.commit;
 		}
     	(<TicketLogComponent>this.worklogComponentRef.instance).openLogModal();
 	}

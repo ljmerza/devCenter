@@ -4,7 +4,7 @@ import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgRedux } from '@angular-redux/store';
 
 import { ModalComponent } from '@modal';
-import { JiraCommentsService, ToastrService } from '@services';
+import { JiraCommentsService, ToastrService, MiscService } from '@services';
 import { RootState, Actions } from '@store';
 import { statuses, Ticket, Comment } from '@models';
 
@@ -31,8 +31,14 @@ export class TicketLogComponent	{
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;
+	@Input() sprint: string;
+	@Input() branch: string;
+	@Input() commit: string;
 
-	constructor(public jira:JiraCommentsService, public toastr: ToastrService, private cd: ChangeDetectorRef, private store:NgRedux<RootState>) {}
+	constructor(
+		public jira:JiraCommentsService, public toastr: ToastrService, private cd: ChangeDetectorRef, 
+		private store:NgRedux<RootState>, public misc: MiscService
+		) {}
 
 	/**
 	 * Submits a work log form to add/remove components, log time, and add a comment.

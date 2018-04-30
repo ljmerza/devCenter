@@ -1,0 +1,28 @@
+<table class="table">
+	<tbody>
+		<tr>
+			<td>Sprint</td>
+			<td>
+				<i class="material-icons text-success" title='Copy to clipboard' (click)="misc.copyText(sprintInput)">note</i>
+				{{sprint}} 
+				<input class='hidden-clip' type="text" #sprintInput value={{sprint}}>
+			</td>
+		</tr>
+		<tr>
+			<td>Branch</td>
+			<td>
+				<i class="material-icons text-success" title='Copy to clipboard' (click)="misc.copyText(branchInput)">note</i>
+				{{branch}} 
+				<input class='hidden-clip' type="text" #branchInput value={{branch}}>
+			</td>
+		</tr>
+		<tr>
+			<td>Commit</td>
+			<td>
+				<i class="material-icons text-success" title='Copy to clipboard' (click)="misc.copyText(commitInput)">note</i>
+				{{commit}} 
+				<input class='hidden-clip' type="text" #commitInput value={{commit}}>
+			</td>
+		</tr>
+	</tbody>
+</table>
