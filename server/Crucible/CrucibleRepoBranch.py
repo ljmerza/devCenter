@@ -74,13 +74,15 @@ class CrucibleRepoBranch():
 			a dict of status/data properties
 		'''
 		branch_names = []
+
 		# get data from API
 		response = self.crucible_api.get(url=f'{self.crucible_api.crucible_api_changelog}/{repo_name}?q=&command=branches&limit=50', cred_hash=cred_hash)
-
 		if not response['status']:
 			return response
-		for item in response['data']['items']:
-			branch_names.append(item['id'])
+		
+		for item in response.get('data', {}).get('items', []):
+			branch_names.append(item.get('id', ''))
+
 		return {'status': True, 'data': branch_names}
 
 
