@@ -1,6 +1,6 @@
 import { 
-	Component, ViewChild, AfterViewChecked, ChangeDetectorRef,
-	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy, OnDestroy
+	Component, ViewChild, ChangeDetectorRef, OnDestroy,
+	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
@@ -24,7 +24,7 @@ declare const $:any;
 	encapsulation: ViewEncapsulation.None,
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class TicketCommentsComponent implements OnInit, OnDestroy {
 	commentId:string;
 	modalRef:NgbModalRef;
 	customModalCss:string = 'ticketComment';
@@ -53,8 +53,11 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 			.subscribe((allTickets:any) => {
 				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.comments = (ticket && ticket.comments) || [];
+				console.log('this.comments: ', this.comments);
 				this.attachments = (ticket && ticket.attachments) || [];
+
 				this.cd.detectChanges();
+				this.setCommentActions();
 			});
 
 		});
@@ -71,7 +74,7 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 	 * add code highlighting to each comment and add copy text
 	 * functionality to each table item
 	 */
-	ngAfterViewChecked():void {
+	setCommentActions():void {
 		const misc = this.misc;
 		
 		setTimeout(() => {

@@ -4,7 +4,7 @@
  * @param {Comment} newComment
  * @return {RootState} a new state
  */
-export function addComment(state, newComment) {\
+export function addComment(state, newComment) {
 	const ticketType = `${state.ticketType}_comments`;
 
 	const oldTicket = state[ticketType].find(ticket => newComment.key === ticket.key);

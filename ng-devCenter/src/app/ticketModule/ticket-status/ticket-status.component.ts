@@ -35,7 +35,9 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	ticketStatus;
 	crucibleId;
 	msrp;
+
 	status$
+	crucibleId$;
 
 	@Input() key;
 	@ViewChild(ModalComponent) modal: ModalComponent;
@@ -68,19 +70,27 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	];
 
 	/**
-	 * 
+	 * watch for changes to comments in store
 	 */
 	ngOnInit() {
 		this.route.paramMap.subscribe((routeResponse:any) => {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 
+			// get ticket status
 			this.status$ = this.store.select(`${this.ticketListType}_statuses`)
-			.subscribe((allTickets:Array<Ticket>) => {
+			.subscribe((allTickets:Array<Ticket>=[]) => {
 				const ticket:any = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.ticketStatus = ticket.status;
 				this.msrp = ticket.msrp;
 				this.crucibleId = ticket.crucible_id;
 				this.validateTransitions();
+			});
+
+			// get ticket crucible
+			this.crucibleId$ = this.store.select(`${this.ticketListType}_crucible`)
+			.subscribe((allTickets:any=[]) => {
+				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
+				this.crucibleId = ticket.crucible_id || '';
 			});
 		});
 	}
@@ -90,6 +100,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(){
 		if(this.status$) this.status$.unsubscribe();
+		if(this.crucibleId$) this.crucibleId$.unsubscribe();
 	}
 
 	/**
@@ -190,7 +201,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			this.ticketStates.unshift({name: this.ticketStatus, id: ''});
 		}
 
-		this.cd.detectChanges();
+		this.cd.markForCheck();
 	}
 
 	/**

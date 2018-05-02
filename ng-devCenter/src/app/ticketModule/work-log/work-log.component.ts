@@ -113,9 +113,22 @@ export class WorkLogComponent	{
 		if(errorMessage) {
 			this.toastr.showToast(errorMessage, 'error');
 		} else {
-			formObj.resetForm();
+			this.resetForm();
 			this.toastr.showToast(`Tasks updated: ${postData.tasks}`, 'success');
 		}
+	}
+
+	/**
+	 * resets form manually 
+	 */
+	resetForm(){
+		this.uctNotReady = false;
+		this.mergedCode = false;
+		this.conflictCode = false;
+		this.comment = '';
+		this.logTime = {hour: 0, minute: 0};
+		this.hourStep = 1;
+		this.minuteStep = 15;
 	}
 
 	/**

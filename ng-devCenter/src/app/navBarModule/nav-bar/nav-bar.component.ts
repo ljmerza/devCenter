@@ -60,7 +60,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		this.userProfile$ = this.store.select('userProfile')
 		.subscribe((profile:any) => {
 			this.userProfile = profile;
-			this.cd.detectChanges();
+			this.cd.markForCheck();
 		});
 	}
 
@@ -72,7 +72,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		this.isFriday = isFriday();
 		setInterval(() => {
 			if( isFriday() ) {
-				this.cd.detectChanges();
+				this.cd.markForCheck();
 			}
 		}, 60*60*1000);
 	}

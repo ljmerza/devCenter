@@ -35,7 +35,7 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 			.subscribe((allTickets:any=[]) => {
 				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.crucibleId = ticket.crucible_id || '';
-				this.cd.detectChanges();
+				this.cd.markForCheck();
 			});
 
 		});
