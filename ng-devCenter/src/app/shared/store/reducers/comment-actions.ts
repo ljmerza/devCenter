@@ -4,12 +4,14 @@
  * @param {Comment} newComment
  * @return {RootState} a new state
  */
-export function addComment(state, newComment) {
-	const oldTicket = state[state.ticketType].find(ticket => newComment.key === ticket.key);
+export function addComment(state, newComment) {\
+	const ticketType = `${state.ticketType}_comments`;
+
+	const oldTicket = state[ticketType].find(ticket => newComment.key === ticket.key);
 
 	const newTicketComments = [...oldTicket.comments, newComment];
 
-	const newTickets = state[state.ticketType].map(ticket => {
+	const newTickets = state[ticketType].map(ticket => {
 		if(newComment.key === ticket.key) {
 			return {...oldTicket, ...{comments:newTicketComments}}
 		} else {
@@ -17,7 +19,7 @@ export function addComment(state, newComment) {
 		};
 	});
 
-	return { ...state, ...{[state.ticketType]: newTickets} };
+	return { ...state, ...{[ticketType]: newTickets} };
 }
 
 /**
@@ -27,11 +29,12 @@ export function addComment(state, newComment) {
  * @return {RootState} a new state
  */
 export function deleteComment(state, removedComment) {
-	const oldTicket = state[state.ticketType].find(ticket => removedComment.key === ticket.key);
+	const ticketType = `${state.ticketType}_comments`;
+	const oldTicket = state[ticketType].find(ticket => removedComment.key === ticket.key);
 
 	const newTicketComments = oldTicket.comments.filter(comment => comment.id !== removedComment.id);
 
-	const newTickets = state[state.ticketType].map(ticket => {
+	const newTickets = state[ticketType].map(ticket => {
 		if(removedComment.key === ticket.key) {
 			return {...oldTicket, ...{comments:newTicketComments}}
 		} else {
@@ -39,7 +42,7 @@ export function deleteComment(state, removedComment) {
 		};
 	});
 
-	return { ...state, ...{[state.ticketType]: newTickets} };
+	return { ...state, ...{[ticketType]: newTickets} };
 }
 
 
@@ -50,14 +53,15 @@ export function deleteComment(state, removedComment) {
  * @return {RootState} a new state
  */
 export function editComment(state, editedComment) {
-	const oldTicket = state[state.ticketType].find(ticket => editedComment.key === ticket.key);
+	const ticketType = `${state.ticketType}_comments`;
+	const oldTicket = state[ticketType].find(ticket => editedComment.key === ticket.key);
 
 	const newTicketComments = oldTicket.comments.map(comment => {
 		if(comment.id === editedComment.id) return editedComment;
 		else return comment;
 	});
 
-	const newTickets = state[state.ticketType].map(ticket => {
+	const newTickets = state[ticketType].map(ticket => {
 		if(editedComment.key === ticket.key) {
 			return {...oldTicket, ...{comments:newTicketComments}}
 		} else {
@@ -65,5 +69,5 @@ export function editComment(state, editedComment) {
 		};
 	});
 
-	return { ...state, ...{[state.ticketType]: newTickets} };
+	return { ...state, ...{[ticketType]: newTickets} };
 }

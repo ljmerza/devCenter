@@ -11,7 +11,7 @@ import { SharedModule } from '../shared/shared.module';
 
 // components
 import { 
-	SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent, TicketLogComponent, 
+	SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent, WorkLogComponent, 
 	TicketStatusComponent, TicketComponent, TicketsComponent, CrucibleComponent 
 } from './';
 
@@ -28,7 +28,7 @@ import { BranchInfoComponent } from './branch-info/branch-info.component';
 	],
 	declarations: [
 		SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent, CrucibleComponent,
-		TicketLogComponent, TicketStatusComponent, DatesComponent,
+		WorkLogComponent, TicketStatusComponent, DatesComponent,
 		TicketsComponent, TicketComponent, WorkTimePipe, WatchersComponent, BranchInfoComponent
 	],
 	exports: [TicketsComponent]

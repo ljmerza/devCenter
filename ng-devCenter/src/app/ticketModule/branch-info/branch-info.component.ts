@@ -1,4 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { MiscService } from '@services';
 
 @Component({
 	selector: 'dc-branch-info',
@@ -8,7 +9,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 })
 export class BranchInfoComponent {
 
-	constructor() { }
+	constructor(public misc: MiscService) { }
 
 	@Input() sprint:string = '';
 	@Input() branch:string = '';

@@ -1,5 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, OnInit } from '@angular/core';
 
+import { ActivatedRoute } from '@angular/router';
 import { select, NgRedux } from '@angular-redux/store';
 import { RootState } from '@store';
 import { JiraService, ToastrService, ConfigService } from '@services';
@@ -13,22 +14,30 @@ import { statuses } from '@models';
 })
 export class CrucibleComponent implements OnDestroy, OnInit {
 
-	constructor(public jira: JiraService, public config: ConfigService, public toastr: ToastrService, private cd: ChangeDetectorRef, public store:NgRedux<RootState>) { }
+	constructor(
+		public jira: JiraService, public config: ConfigService, public toastr: ToastrService, 
+		private cd: ChangeDetectorRef, public store:NgRedux<RootState>, public route:ActivatedRoute
+	) { }
 
 	@Input() key;
-	@Input() ticketListType;
-	crucibleId$;
+	ticketListType;
 	crucibleId;
+	crucibleId$;
 
 	/**
-	* Adds watcher for Crucible Id.
+	* Get crucible Id from store.
 	*/
 	ngOnInit(){
-		this.crucibleId$ = this.store.select(this.ticketListType)
-		.subscribe((allTickets:any=[]) => {
-			const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
-			this.crucibleId = ticket.crucible_id || '';
-			this.cd.detectChanges();
+		this.route.paramMap.subscribe((routeResponse:any) => {
+			this.ticketListType = routeResponse.params.filter || 'mytickets';
+
+			this.crucibleId$ = this.store.select(`${this.ticketListType}_crucible`)
+			.subscribe((allTickets:any=[]) => {
+				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
+				this.crucibleId = ticket.crucible_id || '';
+				this.cd.detectChanges();
+			});
+
 		});
 	}
 
@@ -45,10 +54,16 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 	* @return {boolean} returns false to stop bubbling
 	*/
 	addReviewer():boolean {
-  		this.jira.changeStatus({key:this.key, statusType:statuses.PCRADD.backend, crucibleId:this.crucibleId})
+  		this.jira.changeStatus({key:this.key, statusType:statuses.PCRADD.backend, crucible_id:this.crucibleId})
 		.subscribe(
-			() => window.open(`${this.config.crucibleUrl}/cru/${this.crucibleId}`, '_blank').focus(), 
-			this.jira.processErrorResponse.bind(this)
+			() => {
+				this.toastr.showToast(`Added as a reviwer to ${this.crucibleId}`, 'info')
+				window.open(`${this.config.crucibleUrl}/cru/${this.crucibleId}`, '_blank').focus();
+			}, 
+			error => {
+				this.jira.processErrorResponse(error);
+				window.open(`${this.config.crucibleUrl}/cru/${this.crucibleId}`, '_blank').focus();
+			}
 		);
 
 		return false;

@@ -20,7 +20,7 @@
 		</thead>
 
 		<tbody>
-			<tr *ngFor='let ticket of tickets' [ticket]=ticket [ticketListType]=ticketListType id='{{ticket.key}}' class="appTicket"></tr>
+			<tr *ngFor='let ticket of tickets' [ticket]=ticket id='{{ticket.key}}' class="appTicket"></tr>
 		</tbody>
 	</table>
 </dc-loading-table>

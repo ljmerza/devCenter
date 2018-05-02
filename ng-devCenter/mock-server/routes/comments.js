@@ -26,7 +26,7 @@ router.post('/', function(req, res, next) {
 				status: true
 			},
 			log_response: {
-				status: !!(req.body.log_time || req.body.uct_date)
+				status: !!req.body.log_time
 			},
 			conflict_response: {
 				status: req.body.remove_conflict

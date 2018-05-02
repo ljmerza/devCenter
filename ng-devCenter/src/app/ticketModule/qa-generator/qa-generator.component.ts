@@ -100,12 +100,12 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 * @param {string} repoName the name of the repository
 	 * @param {FormControl} branch
 	 */
-	 getBranches(repoName, branch) {
-			this.git.getBranches(repoName).subscribe( 
-				branches => branch.setControl('allBranches', this.formBuilder.array(branches.data.length > 0 ? branches.data:[])),
-				error => this.toastr.showToast(this.git.processErrorResponse(error), 'error')
-			);
-		}
+	getBranches(repoName, branch) {
+		this.git.getBranches(repoName).subscribe( 
+			branches => branch.setControl('allBranches', this.formBuilder.array(branches.data.length > 0 ? branches.data:[])),
+			error => this.toastr.showToast(this.git.processErrorResponse(error), 'error')
+		);
+	}
 
 	/**
 	 * removes a branch from the branch form array.

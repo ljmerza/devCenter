@@ -2,6 +2,7 @@ import {
 	Component, ViewChild, AfterViewChecked, ChangeDetectorRef,
 	ViewEncapsulation, Input, Output, OnInit, ChangeDetectionStrategy, OnDestroy
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable, Subscription } from 'rxjs';
@@ -32,21 +33,30 @@ export class TicketCommentsComponent implements OnInit, AfterViewChecked, OnDest
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;
-	@Input() ticketListType:string;
+	ticketListType;
 	comments$:Subscription;
 
-	constructor(private toastr: ToastrService, private user:UserService, private jira:JiraCommentsService, private misc: MiscService, private store:NgRedux<RootState>, private cd: ChangeDetectorRef) { }
+	constructor(
+		private toastr: ToastrService, private user:UserService, private jira:JiraCommentsService, 
+		private misc: MiscService, private store:NgRedux<RootState>, private cd: ChangeDetectorRef,
+		public route:ActivatedRoute
+	) { }
 
 	/**
-	 * On init of this component instance listen for ticket events from Redux.
+ * On init of this component instance listen for ticket events from Redux.
 	 */
 	ngOnInit():void {
-		this.comments$ = this.store.select(this.ticketListType)
-		.subscribe((allTickets:any) => {
-			const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
-			this.comments = (ticket && ticket.comments) || [];
-			this.attachments = (ticket && ticket.attachments) || [];
-			this.cd.detectChanges();
+		this.route.paramMap.subscribe((routeResponse:any) => {
+			this.ticketListType = routeResponse.params.filter || 'mytickets';
+
+			this.comments$ = this.store.select(`${this.ticketListType}_comments`)
+			.subscribe((allTickets:any) => {
+				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
+				this.comments = (ticket && ticket.comments) || [];
+				this.attachments = (ticket && ticket.attachments) || [];
+				this.cd.detectChanges();
+			});
+
 		});
 	}
 

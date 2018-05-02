@@ -85,7 +85,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 			if data.get('remove_merge', False):
 				data['status_type'] = 'removeMergeCode'
 				merge_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-			if data.get('comment', False) or data.get('uct_date', False):
+			if data.get('comment', False):
 				comment_response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
 			response['data']['log_response'] = log_response
 			response['data']['conflict_response'] = conflict_response
@@ -134,10 +134,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 
 		# if pcr pass/complete -> add user, complete review, add comment to Crucible
 		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
-			if data['crucible_id']:
-				status_response = CrucibleRequests.pass_review(data=data, crucible_obj=crucible_obj)
-			else:
-				status_response['status'] = True
+			status_response = CrucibleRequests.pass_review(data=data, crucible_obj=crucible_obj)
 
 		return Response(status_response, mimetype='application/json')
 

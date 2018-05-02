@@ -9,13 +9,13 @@ import { RootState, Actions } from '@store';
 import { statuses, Ticket, Comment } from '@models';
 
 @Component({
-	selector: 'dc-ticket-log',
-	templateUrl: './ticket-log.component.html',
-	styleUrls: ['./ticket-log.component.scss'],
+	selector: 'dc-work-log',
+	templateUrl: './work-log.component.html',
+	styleUrls: ['./work-log.component.scss'],
 	encapsulation: ViewEncapsulation.None,
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TicketLogComponent	{
+export class WorkLogComponent	{
 	modalRef: NgbModalRef;
 
 	// form input values
@@ -51,19 +51,22 @@ export class TicketLogComponent	{
 		const tasks = this.buildToastMessage(formObj);
 		this.toastr.showToast(`Running the following tasks: ${tasks}`, 'info');
 
+		// add UCT not ready to comment if selected
+		formObj.value.comment = formObj.value.comment || '';
+		if(formObj.value.uctNotReady) formObj.value.comment += `\n\n{color:red}UUCT not ready as of ${new Date}{color}`;
+
 		// create POST body
 		let postData = {
 			comment: formObj.value.comment || '',
 			remove_merge: formObj.value.mergedCode || false,
 			remove_conflict: formObj.value.conflictCode || false,
-			uct_date: formObj.value.uctNotReady ? ((new Date).getTime())/1000 : 0,
 			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
 			key: this.key,
 			tasks: tasks
 		};
 
 		this.jira.workLog(postData).subscribe(
-			(response:any) => this.checkWorklogEvents(response.data, postData),
+			(response:any) => this.checkWorklogEvents(response.data, postData, formObj),
 			this.jira.processErrorResponse.bind(this.jira)
 		);
 	}
@@ -73,14 +76,14 @@ export class TicketLogComponent	{
 	 * @param {ApiResponse} responseData
 	 * @param {Object} postData
 	 */
-	checkWorklogEvents(responseData:any, postData:any){
+	checkWorklogEvents(responseData:any, postData:any, formObj?:NgForm){
 		let errorMessage = '';
 		responseData.key = this.key;
 
 		// check for comment response
 		if(responseData.comment_response.status){
 			this.store.dispatch({ type: Actions.addComment, payload: responseData.comment_response.data });	
-		} else if( responseData.comment_response.status === false && (postData.comment || postData.uct_date) ){
+		} else if( responseData.comment_response.status === false && postData.comment){
 			errorMessage += responseData.comment_response.data;
 		}
 
@@ -109,9 +112,9 @@ export class TicketLogComponent	{
 		// show any errors
 		if(errorMessage) {
 			this.toastr.showToast(errorMessage, 'error');
-		} else {			
+		} else {
+			formObj.resetForm();
 			this.toastr.showToast(`Tasks updated: ${postData.tasks}`, 'success');
-			this._resetForm();
 		}
 	}
 
@@ -159,16 +162,5 @@ export class TicketLogComponent	{
 	openLogModal():void {
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
-	}
-
-	/**
-	 * Manually resets the form values.
-	 */
-	_resetForm(){
-		this.uctNotReady = false;
-		this.mergedCode = false;
-		this.conflictCode = false;
-		this.comment = '';
-		this.logTime = {hour: 0, minute: 0};
 	}
 }

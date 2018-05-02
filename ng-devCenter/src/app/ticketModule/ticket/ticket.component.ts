@@ -5,7 +5,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 import { TicketCommentsModalComponent } from './../../commentsModule/ticket-comments-modal/ticket-comments-modal.component';
-import { TicketLogComponent } from './../ticket-log/ticket-log.component';
+import { WorkLogComponent } from './../work-log/work-log.component';
 import { SetPingsComponent } from './../set-pings/set-pings.component';
 import { TicketDetailsComponent } from './../ticket-details/ticket-details.component';
 import { TicketStatusComponent } from './../ticket-status/ticket-status.component';
@@ -25,7 +25,7 @@ import { Comment, Ticket, Attachment } from '@models';
 	styleUrls: ['./ticket.component.scss'],
 	entryComponents: [
 		SetPingsComponent, TicketDetailsComponent,
-		TicketCommentsModalComponent, TicketLogComponent
+		TicketCommentsModalComponent, WorkLogComponent
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	encapsulation: ViewEncapsulation.None
@@ -41,7 +41,6 @@ export class TicketComponent {
 	worklogComponentRef;
 
 	@Input() ticket;
-	@Input() ticketListType;
 	@Output() rerender = new EventEmitter();
 
 	ticketDates;
@@ -89,7 +88,6 @@ export class TicketComponent {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketCommentsModalComponent);
 	    	this.commentComponentRef = this.viewContRef.createComponent(factory);
 	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).key = this.ticket.key;
-	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).ticketListType = this.ticketListType;
 		}
     	(<TicketCommentsModalComponent>this.commentComponentRef.instance).openModal();
 	}
@@ -98,13 +96,13 @@ export class TicketComponent {
 	*/
 	openLogModal() {
 		if(!this.worklogComponentRef) {
-			const factory = this.factoryResolver.resolveComponentFactory(TicketLogComponent);
+			const factory = this.factoryResolver.resolveComponentFactory(WorkLogComponent);
 	    	this.worklogComponentRef = this.viewContRef.createComponent(factory);
-	    	(<TicketLogComponent>this.worklogComponentRef.instance).key = this.ticket.key;
-	    	(<TicketLogComponent>this.worklogComponentRef.instance).branch = this.ticket.branch;
-	    	(<TicketLogComponent>this.worklogComponentRef.instance).sprint = this.ticket.sprint;
-	    	(<TicketLogComponent>this.worklogComponentRef.instance).commit = this.ticket.commit;
+	    	(<WorkLogComponent>this.worklogComponentRef.instance).key = this.ticket.key;
+	    	(<WorkLogComponent>this.worklogComponentRef.instance).branch = this.ticket.branch;
+	    	(<WorkLogComponent>this.worklogComponentRef.instance).sprint = this.ticket.sprint;
+	    	(<WorkLogComponent>this.worklogComponentRef.instance).commit = this.ticket.commit;
 		}
-    	(<TicketLogComponent>this.worklogComponentRef.instance).openLogModal();
+    	(<WorkLogComponent>this.worklogComponentRef.instance).openLogModal();
 	}
 }

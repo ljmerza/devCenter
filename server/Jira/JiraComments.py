@@ -20,7 +20,7 @@ class JiraComments():
 		'''
 		self.jira_api = jira_api
 
-	def add_comment(self, key, cred_hash, comment='', private_comment=True, uct_date=''):
+	def add_comment(self, key, cred_hash, comment='', private_comment=True):
 		'''adds a comment to a jira issue. By default the comment is
 		set to developer view only
 
@@ -29,17 +29,10 @@ class JiraComments():
 			comment (str) the comment to post to the jira issue
 			cred_hash (str) Authorization header value
 			private_comment (boolean) is the comment developer only or public? (default true)
-			uct_date (str) if uct ready string added then user date from client timezone
 
 		Returns:
 			dict: status boolean and/or data hash
 		'''
-
-		# add uct not ready if wanted 
-		if uct_date:
-			uct_date = datetime.datetime.fromtimestamp(uct_date)
-			uct_comment = uct_date.strftime('{color:red}UCT not ready as of %B %d, %Y %I:%M %p {color}')
-			comment = f"{comment}\n{uct_comment}"
 
 		json_data = self._set_json(comment=comment, private_comment=private_comment)
 		response = self.jira_api.post_json(url=f'{self.jira_api.api_base}/issue/{key}/comment?expand=renderedBody', json_data=json_data, cred_hash=cred_hash)

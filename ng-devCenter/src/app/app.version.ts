@@ -1,7 +1,7 @@
-// This file was generated on Thu, Apr 26, 2018  3:35:52 PM
+// This file was generated on Tue, May 01, 2018  3:32:52 PM
 export const appVersion = {
   "name": "devCenter",
-  "version": "6.0.2",
+  "version": "6.1.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -13,7 +13,7 @@ export const appVersion = {
     "e2e": "ng e2e",
     "demo": "ng serve --environment=test",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
-    "version": "version.sh"
+    "deploy": "version.sh"
   },
   "private": true,
   "dependencies": {

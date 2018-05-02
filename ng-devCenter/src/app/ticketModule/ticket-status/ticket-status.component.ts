@@ -2,6 +2,7 @@ import {
 	Component, Input, Output, ViewContainerRef, EventEmitter, ChangeDetectorRef, SimpleChanges,
 	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy, OnChanges, ViewChild, OnDestroy
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { select, NgRedux } from '@angular-redux/store';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -21,6 +22,7 @@ import { statuses, Ticket, APIResponse } from '@models';
 })
 export class TicketStatusComponent implements OnInit, OnDestroy {
 	ticketStates:Array<any> = [];
+	ticketListType;
 
 	ticketDropdown;
 	qaComponentRef;
@@ -36,12 +38,11 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	status$
 
 	@Input() key;
-	@Input() ticketListType;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(
 		private factoryResolver: ComponentFactoryResolver, private cd: ChangeDetectorRef, private store:NgRedux<RootState>,
-		private viewContRef: ViewContainerRef, private toastr: ToastrService, private jira: JiraService
+		private viewContRef: ViewContainerRef, private toastr: ToastrService, private jira: JiraService, public route:ActivatedRoute
 	) { }
 
 	allTransistions = [
@@ -70,13 +71,17 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * 
 	 */
 	ngOnInit() {
-		this.status$ = this.store.select(this.ticketListType)
-		.subscribe((allTickets:Array<Ticket>) => {
-			const ticket:any = allTickets.find(ticket => ticket.key === this.key) || {};
-			this.ticketStatus = ticket.status;
-			this.msrp = ticket.msrp;
-			this.crucibleId = ticket.crucible_id;
-			this.validateTransitions();
+		this.route.paramMap.subscribe((routeResponse:any) => {
+			this.ticketListType = routeResponse.params.filter || 'mytickets';
+
+			this.status$ = this.store.select(`${this.ticketListType}_statuses`)
+			.subscribe((allTickets:Array<Ticket>) => {
+				const ticket:any = allTickets.find(ticket => ticket.key === this.key) || {};
+				this.ticketStatus = ticket.status;
+				this.msrp = ticket.msrp;
+				this.crucibleId = ticket.crucible_id;
+				this.validateTransitions();
+			});
 		});
 	}
 
@@ -104,7 +109,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 	/**
 	 * updates or cancels a ticket's status and validates it's transitions.
-	 * @param {boolean} cancelled
+	 * @param {boolean} canceled
 	 * @param {string} statusName
 	 */
 	statusChange({cancelled=true, statusName=''}):void {

@@ -46,6 +46,8 @@ export const initialState: RootState = {
  *
  */
 export function rootReducer(state, action){
+	// add type of list so we can filter out actions in app based on list type
+	if(action.payload && typeof action.payload !== 'string') action.payload.listType = action.type;
 
 	switch(action.type){
 		case Actions.newTickets:
@@ -85,5 +87,40 @@ export function rootReducer(state, action){
  *
  */
 function addTickets(state, tickets){
-	return { ...state, ...{[state.ticketType || 'other']: tickets} };
+	let comments = [];
+	let crucibles = [];
+	let statuses = [];
+	let dates = [];
+
+	tickets.forEach(ticket => {
+		comments.push({
+			comments: ticket.comments,
+			key: ticket.key
+		});
+
+		crucibles.push({
+			crucible_id: ticket.crucible_id,
+			key: ticket.key
+		});
+
+		statuses.push({
+			status: ticket.status,
+			key: ticket.key
+		});
+	});
+
+
+
+	const ticketType = state.ticketType || 'other'
+
+	const newState = {
+		[ticketType]: tickets,
+		[`${ticketType}_comments`]: comments,
+		[`${ticketType}_crucible`]: crucibles,
+		[`${ticketType}_statuses`]: statuses,
+		[`${ticketType}_dates`]: dates
+	};
+
+
+	return { ...state, ...newState };
 }
