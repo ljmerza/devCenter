@@ -82,7 +82,6 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 				const ticket:any = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.ticketStatus = ticket.status;
 				this.msrp = ticket.msrp;
-				this.crucibleId = ticket.crucible_id;
 				this.validateTransitions();
 			});
 

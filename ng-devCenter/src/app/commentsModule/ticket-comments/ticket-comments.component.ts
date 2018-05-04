@@ -53,7 +53,6 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 			.subscribe((allTickets:any) => {
 				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.comments = (ticket && ticket.comments) || [];
-				console.log('this.comments: ', this.comments);
 				this.attachments = (ticket && ticket.attachments) || [];
 
 				this.cd.detectChanges();

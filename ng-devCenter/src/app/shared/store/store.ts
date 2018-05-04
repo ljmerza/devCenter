@@ -95,17 +95,20 @@ function addTickets(state, tickets){
 	tickets.forEach(ticket => {
 		comments.push({
 			comments: ticket.comments,
-			key: ticket.key
+			key: ticket.key,
+			msrp: ticket.msrp
 		});
 
 		crucibles.push({
 			crucible_id: ticket.crucible_id,
-			key: ticket.key
+			key: ticket.key,
+			msrp: ticket.msrp
 		});
 
 		statuses.push({
 			status: ticket.status,
-			key: ticket.key
+			key: ticket.key,
+			msrp: ticket.msrp
 		});
 	});
 

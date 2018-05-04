@@ -227,7 +227,6 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 * @param {Object} responseData the data in the response from the QA generator endpoint.
 	 */
 	checkForStateChange(postData, responseData):void {
-		console.log('postData, responseData: ', {postData, responseData});
 
 		if(responseData.comment_response.status) {
 			this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});

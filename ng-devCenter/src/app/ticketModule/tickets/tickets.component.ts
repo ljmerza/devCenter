@@ -47,7 +47,7 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12'ip>>
 		`,
-		pageLength: 5,
+		pageLength: 10,
 		lengthMenu: [5, 10, 15, 20, 100],
 		buttons: ['colvis', 'excel'],
 		stateSave: true,
