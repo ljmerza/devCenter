@@ -50,7 +50,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 
 			this.comments$ = this.store.select(`${this.ticketListType}_comments`)
-			.subscribe((allTickets:any) => {
+			.subscribe((allTickets:any=[]) => {
 				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.comments = (ticket && ticket.comments) || [];
 				this.attachments = (ticket && ticket.attachments) || [];
