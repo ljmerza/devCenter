@@ -25,7 +25,6 @@ router.get('/repos', function(req, res, next) {
 			{"name": "test6"}, 
 			{"name": "test7"}, 
 			{"name": "test8"}, 
-			{"name": "test9"} 
 		]
 	});
 });
