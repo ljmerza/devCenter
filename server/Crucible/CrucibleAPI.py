@@ -75,16 +75,19 @@ class CrucibleAPI(DevCenterAPI):
 		if 'status' not in response:
 			return { "status": False, "data": 'There was no status given' }
 		# if status False
-		elif not response['status']:
+		elif not response.get('status'):
 			# if not data then unknown error
 			if 'data' not in response:
 				return { "status": False, "data":  'Unknown error' }
 			# if message in data then return error message
-			elif 'message' in response['data']:
-				return { "status": False, "data":  response['data']['message'] }
+			elif 'message' in response.get('data', {}) and response.get('data', {}):
+				if isinstance(response.get('data'), str):
+					return { "status": False, "data":  response['data']}
+				else:
+					return { "status": False, "data":  response['data']['message'] }
 			# else just return data as error
 			else:
-				return { "status": False, "data":  response['data'] }
+				return { "status": False, "data":  response.get('data') }
 		# else return response
 		else:
 			return response

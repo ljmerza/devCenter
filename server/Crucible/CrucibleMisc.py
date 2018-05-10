@@ -31,15 +31,17 @@ class CrucibleMisc():
 		'''
 		# create JSON data to send to API
 
-		json_data = {"reviewData": {
-			"allowReviewersToJoin":"true",
-			"author":{"userName":data['username']},
-			"creator":{"userName":data['username']},
-			"moderator":{"userName":data['username']},
-			"description":'',
-			"name": data['title'],
-			"projectKey":"CR-UD"
-		}}
+		json_data = {
+			"reviewData": {
+				"allowReviewersToJoin": "true",
+				"author": {"userName":data['username']},
+				"creator": {"userName":data['username']},
+				"moderator": {"userName":data['username']},
+				"description": '',
+				"name": data['title'],
+				"projectKey": "CR-UD"
+			}
+		}
 		
 		# create a crucible review
 		response = self.crucible_api.post_json(url=f'{self.crucible_api.crucible_api_review}.json', json_data=json_data, cred_hash=cred_hash)
@@ -68,10 +70,17 @@ class CrucibleMisc():
 			if not response['status']:
 				return {'status': False, 'data': f'Could not add repo {repo}: '+response['data']}
 
-		# publish review
-		response = self.crucible_api.manual_post_json(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/transition?action=action:approveReview&ignoreWarnings=true.json')
+		# must now add a user to be able to publish a review
+		url = f'{self.crucible_api.crucible_api_review}/{crucible_id}/reviewers'
+		response = self.crucible_api.post(url=url, data='sk213d', cred_hash=cred_hash)
 		if not response['status']:
-			return {'status': False, 'data': f'Could not publish review: '+response['data']}
+			return {'status': False, 'data': f'Could not add review users for {crucible_id}'}
+
+		# publish review
+		url = f'{self.crucible_api.crucible_api_review}/{crucible_id}/transition?action=action:approveReview&ignoreWarnings=true.json'
+		response = self.crucible_api.post_json(json_data={}, url=url, cred_hash=cred_hash)
+		if not response['status']:
+			return {'status': False, 'data': f'Could not publish review for {crucible_id}: '+response['data']}
 		
 		# return crucible id and status ok
 		return {'status': True, 'data': crucible_id}
