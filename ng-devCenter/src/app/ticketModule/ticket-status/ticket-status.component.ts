@@ -11,7 +11,7 @@ import { QaGeneratorComponent } from './../qa-generator/qa-generator.component';
 import { ToastrService, JiraService } from '@services';
 import { ModalComponent } from '@modal';
 import { RootState, Actions } from '@store';
-import { statuses, Ticket, APIResponse } from '@models';
+import { statuses, Ticket, APIResponse, allTransistions} from '@models';
 
 @Component({
 	selector: 'dc-ticket-status',
@@ -38,6 +38,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 	status$
 	crucibleId$;
+	allTransistions;
 
 	@Input() key;
 	@ViewChild(ModalComponent) modal: ModalComponent;
@@ -45,29 +46,9 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	constructor(
 		private factoryResolver: ComponentFactoryResolver, private cd: ChangeDetectorRef, private store:NgRedux<RootState>,
 		private viewContRef: ViewContainerRef, private toastr: ToastrService, private jira: JiraService, public route:ActivatedRoute
-	) { }
-
-	allTransistions = [
-		{name: statuses.INDEV.frontend, id: statuses.INDEV.backend},
-		{name: statuses.PCRNEED.frontend, id: statuses.PCRNEED.backend},
-		{name: statuses.REMOVEPCR.frontend, id: statuses.REMOVEPCR.backend},
-		{name: statuses.PCRPASS.frontend, id: statuses.PCRPASS.backend},
-		{name: statuses.PCRCOMP.frontend, id: statuses.PCRCOMP.backend},
-		{name: statuses.REMOVEPCRC.frontend, id: statuses.REMOVEPCRC.backend},
-		{name: statuses.CRWORK.frontend, id: statuses.CRWORK.backend},
-		{name: statuses.CRFAIL.frontend, id: statuses.CRFAIL.backend},
-		{name: statuses.QAREADY.frontend, id: statuses.QAREADY.backend},
-		{name: statuses.INQA.frontend, id: statuses.INQA.backend},
-		{name: statuses.QAFAIL.frontend, id: statuses.QAFAIL.backend},
-		{name: statuses.QAPASS.frontend, id: statuses.QAPASS.backend},
-		{name: statuses.MERGECODE.frontend, id: statuses.MERGECODE.backend},
-		{name: statuses.MERGECONF.frontend, id: statuses.MERGECONF.backend},
-		{name: statuses.INUCT.frontend, id: statuses.INUCT.backend},
-		{name: statuses.UCTPASS.frontend, id: statuses.UCTPASS.backend},
-		{name: statuses.UCTFAIL.frontend, id: statuses.UCTFAIL.backend},
-		{name: statuses.UCTREADY.frontend, id: statuses.UCTREADY.backend},
-		{name: statuses.RELEASE.frontend, id: statuses.RELEASE.backend}
-	];
+	) {
+		this.allTransistions = allTransistions;
+	}
 
 	/**
 	 * watch for changes to comments in store
@@ -112,6 +93,9 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 		if(ticketDropdown.value == statuses.PCRNEED.backend){
 			this.openQAModal();
+
+		} else if(ticketDropdown.value == statuses.QAGEN.backend) {
+			this.openQAModal(true);
 		} else {
 			this.openStatusModal(ticketDropdown);
 		}	
@@ -200,13 +184,16 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			this.ticketStates.unshift({name: this.ticketStatus, id: ''});
 		}
 
+		// always allow to generate crucible
+		this.ticketStates.push(this.allTransistions.find(state => state.name === statuses.QAGEN.frontend));
+
 		this.cd.markForCheck();
 	}
 
 	/**
 	 * Opens the QA generator modal if transitioning to PCR needed.
 	 */
-	openQAModal(){
+	openQAModal(crucibleOnly=false){
 		// create QA gen component if not created yet
 		if(!this.qaComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(QaGeneratorComponent);
@@ -215,6 +202,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	    	// add input/outputs
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).key = this.key;
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.msrp;
+	    	(<QaGeneratorComponent>this.qaComponentRef.instance).crucibleOnly = crucibleOnly;
 		}
 		
 		// open modal

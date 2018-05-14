@@ -2,6 +2,8 @@ import {
 	Component, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, 
 	ChangeDetectionStrategy, OnInit, EventEmitter, Output, Input, OnDestroy
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
 import { NgForm, FormGroup, FormControl, Validators, FormBuilder, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
 import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable, Subscription } from 'rxjs';
@@ -35,11 +37,16 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	modalRef: NgbModalRef;
 	@Input() msrp;
 	@Input() key;
+	@Input() crucibleOnly;
+
+	ticketListType;
+	statuses$;
+	ticketStatus;
 
 	constructor(
 		public jira:JiraService, private git: GitService, public toastr: ToastrService, 
 		private cd: ChangeDetectorRef, public config: ConfigService, public formBuilder: FormBuilder, 
-		public user: UserService, private store:NgRedux<RootState>
+		public user: UserService, private store:NgRedux<RootState>, public route:ActivatedRoute
 	) {
 		  // create form object
 		this.qaForm = this.formBuilder.group({
@@ -57,6 +64,17 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(){
 		this.repos$ = this.store.select('repos').subscribe((repos:Array<Repo>) => this.repos = repos);
+
+		this.route.paramMap.subscribe((routeResponse:any) => {
+			this.ticketListType = routeResponse.params.filter || 'mytickets';
+
+			this.statuses$ = this.store.select(`${this.ticketListType}_statuses`)
+			.subscribe((allTickets:any=[]) => {
+				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
+				this.ticketStatus = (ticket && ticket.status) || '';
+			});
+
+		});
 	}
 
 	/**
@@ -64,6 +82,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(){
 		if(this.repos$) this.repos$.unsubscribe();
+		if(this.statuses$) this.statuses$.unsubscribe();
 	}
 	
 	/**
@@ -121,6 +140,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 */
 	submitQA(isSaving): void {
 
+		// cancel and close if not saving form
 		if(!isSaving){
 			this.cancelStatusChange();
 			this.modalRef.close();
@@ -129,6 +149,12 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 
 		if(this.qaForm.invalid) return;
 		this.modalRef.close();
+
+		// if not changing state then revert that now
+		const isPcr = this.qaForm.controls.selections.controls.pcrNeeded.value;
+		if(!isPcr){
+			this.cancelStatusChange();
+		}
 		
 		const postData = this.generatePostBody();
 		this.showSubmitMessage(postData);
@@ -162,7 +188,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 * Sets ticket status back to in dev and shows cancel toast
 	 */
 	cancelStatusChange(){
-		const payload = {key:this.key, status: statuses.INDEV.frontend};
+		const payload = {key:this.key, status: this.ticketStatus};
 		this.store.dispatch({type: Actions.updateStatus, payload});
 		this.toastr.showToast(`Ticket ${this.key} status cancelled.`, 'info');
 	}
@@ -266,6 +292,9 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 * Opens the QA generator dialog and starts a search for related branches.
 	 */
 	openQAModal():void {
+
+		// if only want crucible then set PCR needed to false
+		if(this.crucibleOnly) this.qaForm.get('selections').get('pcrNeeded').setValue(false);
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
 

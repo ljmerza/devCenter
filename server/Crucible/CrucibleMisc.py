@@ -14,6 +14,7 @@ class CrucibleMisc():
 			
 		'''
 		self.crucible_api = crucible_api
+		self.temp_user = 'sk213d'
 
 
 	def create_crucible(self, data, cred_hash):
@@ -71,8 +72,7 @@ class CrucibleMisc():
 				return {'status': False, 'data': f'Could not add repo {repo}: '+response['data']}
 
 		# must now add a user to be able to publish a review
-		url = f'{self.crucible_api.crucible_api_review}/{crucible_id}/reviewers'
-		response = self.crucible_api.post(url=url, data='sk213d', cred_hash=cred_hash)
+		response = self.add_reviewer(crucible_id=crucible_id, cred_hash=cred_hash, user=self.temp_user)
 		if not response['status']:
 			return {'status': False, 'data': f'Could not add review users for {crucible_id}'}
 
@@ -81,6 +81,11 @@ class CrucibleMisc():
 		response = self.crucible_api.post_json(json_data={}, url=url, cred_hash=cred_hash)
 		if not response['status']:
 			return {'status': False, 'data': f'Could not publish review for {crucible_id}: '+response['data']}
+
+		# remove user now that we've published
+		response = self.delete_reviewer(crucible_id=crucible_id, cred_hash=cred_hash, user=self.temp_user)
+		if not response['status']:
+			return {'status': False, 'data': f'Could not remove review users for {crucible_id}'}
 		
 		# return crucible id and status ok
 		return {'status': True, 'data': crucible_id}
@@ -96,4 +101,3 @@ class CrucibleMisc():
 			dict with status/data properties.
 		'''
 		return self.crucible_api.post(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/transition?action=action:closeReview&ignoreWarnings=true.json', cred_hash=cred_hash)
-

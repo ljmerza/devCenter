@@ -48,19 +48,18 @@ class CruciblePCR():
 		pcr_estimate = self.get_pcr_estimate(story_point=story_point)
 		return f'(PCR-{pcr_estimate}) [{key}] Ticket #{msrp} {summary}'
 
-	def add_reviewer(self, username, crucible_id, cred_hash):
-		'''adds a user to a Crucible review
-
-		Args:
-			username (str) the username of the user to process
-			crucible_id (str) the Crucible ID to user
-			cred_hash (str) the user's basic auth hash
-			
-		Returns:
-			response dict with status property
+	def add_reviewer(self, crucible_id, cred_hash, user):
+		'''Adds a reviewer to a crucible
 		'''
-		return self.crucible_api.post(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/reviewers.json', data=username, cred_hash=cred_hash)
+		url = f'{self.crucible_api.crucible_api_review}/{crucible_id}/reviewers'
+		return self.crucible_api.post(url=url, data=user, cred_hash=cred_hash)
 
+	def delete_reviewer(self, crucible_id, cred_hash, user):
+		'''Removes a reviewer from a crucible
+		'''
+		url = f'{self.crucible_api.crucible_api_review}/{crucible_id}/reviewers/{user}'
+		return self.crucible_api.delete(url=url, cred_hash=cred_hash)
+		
 	def add_comment(self, comment, crucible_id, cred_hash):
 		'''adds a comment to a Crucible review
 

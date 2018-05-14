@@ -38,6 +38,18 @@ class CrucibleAPI(DevCenterAPI):
 		response = super(CrucibleAPI, self).post(url=url, data=data, cred_hash=cred_hash)
 		return self._process_response(response)
 
+	def delete(self, url, cred_hash, data=''):
+		'''sends a DELETE request
+		Args:
+			url (str) the URL to make a POST request
+			cred_hash (str) Authorization header value
+
+		Returns:
+			returns a dict with status/data property. 
+		'''
+		response = super(CrucibleAPI, self).delete(url=url, cred_hash=cred_hash)
+		return self._process_response(response)
+
 	def get(self, url, cred_hash):
 		'''sends a GET request
 		Args:

@@ -1,7 +1,10 @@
 <dev-center-modal (modalEvent)="submitQA(false)" [customModalCss]=customModalCss>
 
 	<div class='modal-text'>
-		<h4 class="modal-title">QA Generator</h4>
+		<h4 class="modal-title">
+			<span *ngIf='crucibleOnly; else qaGenTitle'>Crucible Generator</span>
+			<ng-template #qaGenTitle>QA Generator</ng-template>
+		</h4>
 	</div>
 
 	<span class='modal-body'>
@@ -78,32 +81,34 @@
 					<span>Add Repo</span>
 				</div>
 			</ng-template>
+			
+			<span *ngIf='!crucibleOnly'>
+				<!-- QA steps -->
+				<h4>QA Steps:</h4>
+				<div class="form-group">
+					 <textarea class="form-control" name="qaSteps" id="qaSteps" rows=15 formControlName="qaSteps"></textarea>
+				</div>
 
-			<!-- QA steps -->
-			<h4>QA Steps:</h4>
-			<div class="form-group">
-				 <textarea class="form-control" name="qaSteps" id="qaSteps" rows=15 formControlName="qaSteps"></textarea>
-			</div>
-
-			<!-- checkboxes -->
-			<div class="form-group" formGroupName='selections'>
-				<div class="row">
-					<div class="col">
-						<div class="form-check">
-							<label class="form-check-label">
-								<input class="form-check-input" type="checkbox" name='pcrNeeded' formControlName="pcrNeeded">
-								Set to PCR needed
-							</label>
+				<!-- checkboxes -->
+				<div class="form-group" formGroupName='selections'>
+					<div class="row">
+						<div class="col">
+							<div class="form-check">
+								<label class="form-check-label">
+									<input class="form-check-input" type="checkbox" name='pcrNeeded' formControlName="pcrNeeded">
+									Set to PCR needed
+								</label>
+							</div>
+						</div>
+						<div class="col">
+							<span class="float-right">
+								<label for="">Log Time:</label>
+								<ngb-timepicker class='float-right button-border' name="logTime" formControlName="logTime" [hourStep]="hourStep" [minuteStep]="minuteStep"></ngb-timepicker>
+							</span>
 						</div>
 					</div>
-					<div class="col">
-						<span class="float-right">
-							<label for="">Log Time:</label>
-							<ngb-timepicker class='float-right button-border' name="logTime" formControlName="logTime" [hourStep]="hourStep" [minuteStep]="minuteStep"></ngb-timepicker>
-						</span>
-					</div>
 				</div>
-			</div>
+			</span>
 		</form>
 	</span>
 

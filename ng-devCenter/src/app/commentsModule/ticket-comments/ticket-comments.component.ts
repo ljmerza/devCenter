@@ -43,7 +43,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 	) { }
 
 	/**
- * On init of this component instance listen for ticket events from Redux.
+ 	 * On init of this component instance listen for ticket events from Redux.
 	 */
 	ngOnInit():void {
 		this.route.paramMap.subscribe((routeResponse:any) => {
