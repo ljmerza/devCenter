@@ -23,7 +23,7 @@ export const statuses:any = {
 	REMOVEPCR: {frontend: 'Remove PCR Needed', backend: 'removePcrNeeded'},
 	REMOVEPCRC: {frontend: 'Remove PCR Completed', backend: 'removePcrCompleted'},
 	QAGEN: {frontend: 'Generate Crucible', backend: 'generateCrucible'}
-}
+};
 
 export const allTransistions:Array<Object> = [
 		{name: statuses.INDEV.frontend, id: statuses.INDEV.backend},
@@ -44,6 +44,6 @@ export const allTransistions:Array<Object> = [
 		{name: statuses.UCTPASS.frontend, id: statuses.UCTPASS.backend},
 		{name: statuses.UCTFAIL.frontend, id: statuses.UCTFAIL.backend},
 		{name: statuses.UCTREADY.frontend, id: statuses.UCTREADY.backend},
-		{name: statuses.RELEASE.frontend, id: statuses.RELEASE.backend}
+		{name: statuses.RELEASE.frontend, id: statuses.RELEASE.backend},
 		{name: statuses.QAGEN.frontend, id: statuses.QAGEN.backend}
 	];
