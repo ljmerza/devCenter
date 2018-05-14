@@ -10,7 +10,7 @@ def add_reviewer(data, crucible_obj):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# add self as reviewer
-	return crucible_obj.add_reviewer(username=data['username'], crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
+	return crucible_obj.add_reviewer(user=data['username'], crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
 
 
 def complete_review(data, crucible_obj):
