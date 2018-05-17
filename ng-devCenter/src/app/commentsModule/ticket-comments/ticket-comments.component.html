@@ -19,7 +19,6 @@
 		
 		<!-- body -->
 		<ng-template ngbPanelContent>
-			<dc-user-details [msrp]=ticket?.msrp [user]=comment></dc-user-details>
 
 			<!-- editing buttons only if belongs to current user -->
 			<span class='edit-buttons' *ngIf='comment.username == user.username'>
@@ -45,6 +44,8 @@
 			<textarea [id]=comment.editId [hidden]="!comment.isEditing" 
 				class='edit-area' cols="100" rows=25 value={{comment.raw_comment}}>
 			</textarea>
+
+			<dc-user-details [msrp]=ticket?.msrp [user]=comment></dc-user-details>
 		</ng-template>
 	</ngb-panel>
 </ngb-accordion>
