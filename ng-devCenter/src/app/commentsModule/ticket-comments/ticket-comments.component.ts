@@ -33,6 +33,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;
+	msrp;
 	ticketListType;
 	comments$:Subscription;
 
@@ -53,6 +54,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 			.subscribe((allTickets:any=[]) => {
 				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.comments = (ticket && ticket.comments) || [];
+				this.msrp = (ticket && ticket.msrp) || '';
 				this.attachments = (ticket && ticket.attachments) || [];
 
 				this.cd.detectChanges();

@@ -106,22 +106,25 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * @param {boolean} canceled
 	 * @param {string} statusName
 	 */
-	statusChange({cancelled=true, statusName=''}):void {
+	statusChange({canceled=true, statusName=''}):void {
 		let ticketStateFilter;
 
-		// if we are canceling a status then reset dropdown
-		if(cancelled){
-			ticketStateFilter = state => state.name == this.ticketStatus
+		// change state to canceled, custom state, or previous dropdown state
+		if(canceled){
+			ticketStateFilter = state => state.name == this.ticketStatus;
 		} else if(statusName) {
-			// if given the status then set status at that
 			ticketStateFilter = state => state.name == statusName;
 		} else {
-			// else set ticket state with new dropdown value and reload valid transitions
 			ticketStateFilter = state => state.id == this.ticketDropdown.value;
 		}
 
+		// update store
 		const status = (this.ticketStates.find(ticketStateFilter) as any).name;
 		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.key, status} });
+
+		if(canceled){
+			this.showCancelStatus();
+		}
 	}
 
 	/**
@@ -194,15 +197,16 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * Opens the QA generator modal if transitioning to PCR needed.
 	 */
 	openQAModal(crucibleOnly=false){
+
 		// create QA gen component if not created yet
 		if(!this.qaComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(QaGeneratorComponent);
 	    	this.qaComponentRef = this.viewContRef.createComponent(factory);
 
-	    	// add input/outputs
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).key = this.key;
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.msrp;
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).crucibleOnly = crucibleOnly;
+	    	(<QaGeneratorComponent>this.qaComponentRef.instance).statusChange.subscribe(this.statusChange.bind(this));
 		}
 		
 		// open modal
@@ -227,9 +231,16 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
     		() => null,
     		() => {
     			this.statusChange({});
-    			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
+    			this.showCancelStatus();
     		}
     	)
+	}
+
+	/**
+	 * show ticket status canceled message
+	 */
+	showCancelStatus(){
+		this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
 	}
 
 	/**
@@ -240,7 +251,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		if(submit){
 			this.changeStatus(this.statusType);
 		} else {
-			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
+			this.showCancelStatus();
 			this.statusChange({});
 		}
 
@@ -258,7 +269,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			error => {
 				this.jira.processErrorResponse(error);
 				this.statusChange({});
-				this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
+				this.showCancelStatus();
 			}
 		);
 	}
@@ -274,7 +285,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			if( this.qaPassVerify(statusResponse) ) return;
 		}
 
-		this.statusChange({cancelled: false});
+		this.statusChange({canceled: false});
 		this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
 	}
 
@@ -294,7 +305,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 		// check for status transitions
 		if(statusResponse.qa_pass.status && statusResponse.merge_code.status){
-			this.statusChange({cancelled: false});
+			this.statusChange({canceled: false});
 		} else {
 			if(!statusResponse.qa_pass.status) message.push(`Failed to transition to QA Pass: ${statusResponse.qa_pass.data}`);
 			if(!statusResponse.merge_code.status) message.push(`Failed to transition to Merge Code: ${statusResponse.merge_code.data}`);

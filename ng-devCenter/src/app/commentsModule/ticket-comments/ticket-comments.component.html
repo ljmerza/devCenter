@@ -19,6 +19,7 @@
 		
 		<!-- body -->
 		<ng-template ngbPanelContent>
+			<dc-user-details [msrp]=ticket?.msrp [user]=comment></dc-user-details>
 
 			<!-- editing buttons only if belongs to current user -->
 			<span class='edit-buttons' *ngIf='comment.username == user.username'>

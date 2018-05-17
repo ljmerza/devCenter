@@ -38,6 +38,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	@Input() msrp;
 	@Input() key;
 	@Input() crucibleOnly;
+	@Output() statusChange = new EventEmitter();
 
 	ticketListType;
 	statuses$;
@@ -142,7 +143,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 
 		// cancel and close if not saving form
 		if(!isSaving){
-			this.cancelStatusChange();
+			this.statusChange.emit({canceled: true});
 			this.modalRef.close();
 			return;
 		}
@@ -153,7 +154,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		// if not changing state then revert that now
 		const isPcr = this.qaForm.controls.selections.controls.pcrNeeded.value;
 		if(!isPcr){
-			this.cancelStatusChange();
+			this.statusChange.emit({canceled: true});
 		}
 		
 		const postData = this.generatePostBody();
@@ -165,12 +166,12 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 				if(this.gitBranches$) this.gitBranches$.unsubscribe();
 
 				this.showQaSubmitSuccessMessage(response);
-				this.checkForStateChange(postData, response.data);
+				this.checkForStateChange(postData, response.data, isPcr);
 				this._resetForm();
 			},
 			error => {
 				this.jira.processErrorResponse(error);
-				this.cancelStatusChange();
+				this.statusChange.emit({canceled: true, num:6});
 			}
 		);
 	}
@@ -182,15 +183,6 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		this.qaForm.get('selections').get('pcrNeeded').setValue(this.defaultPcrNeeded);
 		this.qaForm.get('selections').get('logTime').setValue(this.defaultLogTime);
 		this.qaForm.get('qaSteps').reset();
-	}
-
-	/**
-	 * Sets ticket status back to in dev and shows cancel toast
-	 */
-	cancelStatusChange(){
-		const payload = {key:this.key, status: this.ticketStatus};
-		this.store.dispatch({type: Actions.updateStatus, payload});
-		this.toastr.showToast(`Ticket ${this.key} status cancelled.`, 'info');
 	}
 
 	/**
@@ -251,8 +243,9 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 * checks for any state changes such as ticket status, crucible ids added, and added comments.
 	 * @param {Object} postData the data used in the POST call to QA generator endpoint.
 	 * @param {Object} responseData the data in the response from the QA generator endpoint.
+	 * @param {boolean} isPcr if true then don't show cancel message.
 	 */
-	checkForStateChange(postData, responseData):void {
+	checkForStateChange(postData, responseData, isPcr):void {
 
 		if(responseData.comment_response.status) {
 			this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});
@@ -270,11 +263,9 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			this.toastr.showToast('The following transitions failed: ${cr_message} ${pcr_message}', 'error');
 		}
 
-		// if status didn't change then cancel it else update new status
-		if(status === statuses.INDEV.frontend){
-			this.cancelStatusChange();
-		} else {
-			this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status}});
+		// if status changed -> update new status
+		if(status !== statuses.INDEV.frontend){
+			this.statusChange.emit({statusName: status});
 		}
 
 		// add work log if given

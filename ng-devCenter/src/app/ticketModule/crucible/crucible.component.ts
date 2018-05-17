@@ -58,14 +58,27 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 		.subscribe(
 			() => {
 				this.toastr.showToast(`Added as a reviwer to ${this.crucibleId}`, 'info')
-				window.open(`${this.config.crucibleUrl}/cru/${this.crucibleId}`, '_blank').focus();
+				this.openCrucible();
 			}, 
 			error => {
 				this.jira.processErrorResponse(error);
-				window.open(`${this.config.crucibleUrl}/cru/${this.crucibleId}`, '_blank').focus();
+				this.openCrucible();
 			}
 		);
 
 		return false;
+	}
+
+	/**
+	 * Tries to open a new window for the Crucible link
+	 */
+	openCrucible(){
+		const newWindow = window.open(`${this.config.crucibleUrl}/cru/${this.crucibleId}`, '_blank');
+
+		if(newWindow){
+			newWindow.focus();
+		} else {
+			this.toastr.showToast(`Could not open new window. Maybe you blocked the new window?`, 'error');
+		}
 	}
 }
