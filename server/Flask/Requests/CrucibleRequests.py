@@ -72,7 +72,7 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	data['title'] = crucible_obj.create_crucible_title(story_point=qa_response['story_point'], key=qa_response["key"], msrp=data['msrp'], summary=qa_response['summary'])
 
 	# create crucible
-	return crucible_obj.create_crucible(data=data, cred_hash=data['cred_hash'])
+	return crucible_obj.generate_crucible(data=data, cred_hash=data['cred_hash'])
 
 
 def get_repos(data, crucible_obj):

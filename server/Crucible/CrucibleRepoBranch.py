@@ -16,7 +16,7 @@ class CrucibleRepoBranch():
 		self.crucible_api = crucible_api
 
 		# hard coded repos
-		self.repos = ["aqe","devtools","external_modules","modules","nightwatch","sasha","taskmaster","teamdb","teamdbapi","teamdb_ember","templates","tqi","ud","ud_api","ud_ember","upm","upm_api","wam","wam_api"]
+		self.repos = ["aqe","external_modules","modules","sasha","taskmaster","teamdb","teamdbapi","teamdb_ember","templates","tqi","ud","ud_api","ud_ember","upm","upm_api","wam","wam_api"]
 
 	def get_repos_of_review(self, crucible_id, cred_hash):
 		'''get all repos tied to a review
@@ -76,12 +76,14 @@ class CrucibleRepoBranch():
 		branch_names = []
 
 		# get data from API
-		response = self.crucible_api.get(url=f'{self.crucible_api.crucible_api_changelog}/{repo_name}?q=&command=branches&limit=50', cred_hash=cred_hash)
+		url = f'{self.crucible_api.code_cloud_branches_api}{repo_name}/branches?start=0&limit=20'
+		response = self.crucible_api.get(url=url, cred_hash=cred_hash)
+		
 		if not response['status']:
 			return response
 		
-		for item in response.get('data', {}).get('items', []):
-			branch_names.append(item.get('id', ''))
+		for item in response.get('data', {}).get('values', {}):
+			branch_names.append(item.get('displayId', ''))
 
 		return {'status': True, 'data': branch_names}
 
@@ -121,10 +123,7 @@ class CrucibleRepoBranch():
 			be an array of dicts with repo/branches properties. branches property
 			will be an Array of branch names found
 		'''
-		# get all repoes
-		response = self.get_repos(cred_hash=cred_hash)
-		if not response['status']:
-			return response
+
 		branches = []
 		# for each repo get branches
 		for repo in self.repos:
@@ -137,3 +136,23 @@ class CrucibleRepoBranch():
 			return {'status': True, 'data': branches}
 		else:
 			return {'status': False, 'data': f'No branches found with MSRP {msrp}'}
+
+	def add_branches(self, repos, data, crucible_id):
+		'''
+		'''
+		# get manual Crucible session
+		self.crucible_api.manual_login(username=data['username'], password=data['password'])
+
+		# for each repo add it to review
+		for repo in repos:
+			json_data = {
+				"autoUpdate": "true",
+				"baseBranch": repo['baseBranch'],
+				"repositoryName": repo['repositoryName'],
+				"reviewedBranch": repo['reviewedBranch']
+			}
+
+		response = self.crucible_api.manual_post_json(url=f'{self.crucible_api.crucible_api_branch}/{crucible_id}.json', json=json_data)
+		if not response['status']:
+			return {'status': True, 'data': f'Could not add repo {repo}: '+response['data']}
+		return response

@@ -19,6 +19,9 @@ class CruciblePCR():
 		self.pcr_pass = "=#= PCR PASS =#="
 		self.pcr_pass_regex = re.compile(r"=#= PCR PASS =#=")
 
+		self.code_cloud_path = '/projects/ST_M5DTI/repos'
+		self.code_cloud_path2 = 'compare/diff'
+
 	def get_pcr_estimate(self, story_point):
 		'''gets the PCR estimate off the story points of a Jira issue
 
@@ -52,83 +55,19 @@ class CruciblePCR():
 		'''Adds a reviewer to a crucible
 		'''
 		url = f'{self.crucible_api.crucible_api_review}/{crucible_id}/reviewers'
-		return self.crucible_api.post(url=url, data=user, cred_hash=cred_hash)
+		response = self.crucible_api.post(url=url, data=user, cred_hash=cred_hash)
+		if not response['status']:
+			return {'status': False, 'data': f'Could not add review users for {crucible_id}'}
+		return response
 
 	def delete_reviewer(self, crucible_id, cred_hash, user):
 		'''Removes a reviewer from a crucible
 		'''
 		url = f'{self.crucible_api.crucible_api_review}/{crucible_id}/reviewers/{user}'
-		return self.crucible_api.delete(url=url, cred_hash=cred_hash)
-		
-	def add_comment(self, comment, crucible_id, cred_hash):
-		'''adds a comment to a Crucible review
-
-		Args:
-			comment (str) the comment to add
-			crucible_id (str) the Crucible ID to user
-			cred_hash (str) the user's basic auth hash
-			
-		Returns:
-			response dict with status property
-		'''
-		json_data = {
-			"message" : comment,
-			"draft" : False,
-			"deleted" : False,
-			"defectRaised" : False,
-			"defectApproved" : False,
-			"permaId" : { },
-			"permId" : { },
-			"parentCommentId" : { }
-		}
-		return self.crucible_api.post_json(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/comments.json?render=true', json_data=json_data, cred_hash=cred_hash)
-
-	def add_pcr_pass(self, crucible_id, cred_hash):
-		'''adds a comment of PCR pass to a Crucible review
-
-		Args:
-			crucible_id (str) the Crucible ID to user
-			cred_hash (str) the user's basic auth hash
-			
-		Returns:
-			response dict with status property
-		'''
-		return self.add_comment(comment=self.pcr_pass, crucible_id=crucible_id, cred_hash=cred_hash)
-
-	def get_comments(self, crucible_id, cred_hash):
-		'''gets all comments of a Crucible review
-
-		Args:
-			crucible_id (str) the Crucible ID to user
-			cred_hash (str) the user's basic auth hash
-			
-		Returns:
-			response dict with status property
-		'''
-		return self.crucible_api.get(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/comments.json?render=true', cred_hash=cred_hash)
-
-	def get_pcr_pass(self, crucible_id, cred_hash):
-		'''gets all comment of a Crucible review and see how many are PCR pass
-
-		Args:
-			crucible_id (str) the Crucible ID to user
-			cred_hash (str) the user's basic auth hash
-			
-		Returns:
-			response dict with status property
-		'''
-		# get comments
-		comments = self.get_comments(crucible_id=crucible_id, cred_hash=cred_hash)
-		pcr_passes = 0
-		# get comments if okay
-		if comments['status']:
-			comments = comments['data']['comments']
-			# for each comment see if PCR pass
-			for comment in comments:
-				# if we have a PCR pass then increment number of PCR passes
-				if re.match(self.pcr_pass_regex, comment['message']):
-					pcr_passes += 1
-		return pcr_passes
+		response = self.crucible_api.delete(url=url, cred_hash=cred_hash)
+		if not response['status']:
+			return {'status': False, 'data': f'Could not remove review users for {crucible_id}'}
+		return response
 
 	def complete_review(self, crucible_id, cred_hash):
 		'''sets a user's status on a Crucible review to 'complete'
@@ -142,4 +81,50 @@ class CruciblePCR():
 		'''
 		return self.crucible_api.post(url=f'{self.crucible_api.crucible_api_review}/{crucible_id}/complete.json', cred_hash=cred_hash)
 
+	def publish_review(self, crucible_id, cred_hash):
+		'''
+		'''
+		url = f'{self.crucible_api.crucible_api_review}/{crucible_id}/transition?action=action:approveReview&ignoreWarnings=true.json'
+		response = self.crucible_api.post_json(json_data={}, url=url, cred_hash=cred_hash)
+		if not response['status']:
+			return {'status': False, 'data': f'Could not publish review for {crucible_id}: '+response['data']}
+		return response
 
+	def create_crucible(self, data, cred_hash):
+		json_data = {
+			"reviewData": {
+				"allowReviewersToJoin": "true",
+				"author": {"userName":data['username']},
+				"creator": {"userName":data['username']},
+				"moderator": {"userName":data['username']},
+				"description": '',
+				"name": data['title'],
+				"projectKey": "CR-UD",
+				"description": self.generate_code_cloud_objectives(repos=data['repos'])
+			}
+		}
+		
+		response = self.crucible_api.post_json(url=f'{self.crucible_api.crucible_api_review}.json', json_data=json_data, cred_hash=cred_hash)
+		
+		if not response['status']:
+			return {'data':  'Could not create crucible review: '+response['data'], 'status': False}
+		if 'permaId' not in response['data']:
+			return {'data': 'Could not get permId: '+response['data'], 'status': False}
+
+		crucible_id = response['data']['permaId']['id']
+		return {'data': crucible_id, 'status': True}
+
+	def generate_code_cloud_objectives(self, repos):
+		'''
+		'''
+		objective = ''
+
+		for repo in repos:
+			baseBranch = repo['baseBranch']
+			repositoryName = repo['repositoryName']
+			reviewedBranch = repo['reviewedBranch']
+
+			branch_url = f'{self.crucible_api.code_cloud_api}{self.code_cloud_path}/{repositoryName}/{self.code_cloud_path2}?targetBranch=refs%2Fheads%2F{baseBranch}&sourceBranch=refs%2Fheads%2F{reviewedBranch}'
+			objective = f'{objective}\n\n{repositoryName}: {branch_url}'
+
+		return objective
