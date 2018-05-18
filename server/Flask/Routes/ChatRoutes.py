@@ -27,3 +27,12 @@ def define_routes(app, app_name, chat_obj, jira_obj, crucible_obj, sql_obj, g):
 
 		response = ChatRequests.set_user_pings(data=post_data, sql_obj=sql_obj)
 		return Response(response, mimetype='application/json')
+
+	@app.route(f'/{app_name}/chat/custom_ping', methods=['POST'])
+	@cross_origin()
+	def send_custom_ping():
+		post_data = request.get_json()
+		post_data['cred_hash'] = g.cred_hash
+		
+		response = ChatRequests.send_custom_ping(data=post_data, chat_obj=chat_obj, crucible_obj=crucible_obj, jira_obj=jira_obj)
+		return Response(response, mimetype='application/json')

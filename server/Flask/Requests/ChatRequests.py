@@ -39,8 +39,8 @@ def send_ping(data, chat_obj, jira_obj, crucible_obj):
 	# else send not implemented
 	else:
 		return {"data": "Ping reset not implemented", "status": False}
-
-def set_user_pings(data, sql_obj):
+	
+def set_user_pings(data, sql_obj, chat_obj):
 	'''
 	'''
 	# check for required data
@@ -58,3 +58,53 @@ def set_user_pings(data, sql_obj):
 	return response
 
 
+
+def send_custom_ping(data, chat_obj, crucible_obj, jira_obj):
+	'''
+	'''
+	# check for required data
+	missing_params = FlaskUtils.check_parameters(params=data, required=['ping_type', 'cred_hash'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+	if(data['ping_type'] == 'user'):
+		missing_params = FlaskUtils.check_parameters(params=data, required=['username', 'message'])
+		if missing_params:
+			return {"data": f"Missing required parameters: {missing_params}", "status": False}
+		chat_obj.send_message(message=data.get('message'), username=data('username'))
+
+	elif(data['ping_type'] == 'pcrNeeded'):
+		missing_params = FlaskUtils.check_parameters(params=data, required=['key'])
+		if missing_params:
+			return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+		response = _get_jira_ticket_for_ping(data=data, jira_obj=jira_obj, crucible_obj=crucible_obj)
+		if not response['status']:
+			return response
+
+		chat_obj.send_pcr_needed(
+			key=response.get('data').get('key'), 
+			msrp=response.get('data').get('msrp'), 
+			sprint=response.get('data').get('sprint'), 
+			label=response.get('data').get('label'), 
+			crucible_id=response.get('data').get('crucible_id'), 
+			pcr_estimate=response.get('data').get('pcr_estimate')
+		)
+	else:
+		chat_obj.send_meeting_message(message=data['message'], chatroom=data['username'])
+	
+	return {'status': True}
+
+
+def _get_jira_ticket_for_ping(data, jira_obj, crucible_obj):
+	'''
+	'''
+	jira_response = jira_obj.get_full_ticket(cred_hash=data['cred_hash'] , key=data['key'])
+
+	if not jira_response['status'] or len(jira_response['data']) == 0:
+		return {"data": f"could not get Jira ticket: "+{jira_response['data']}, "status": False}
+
+	data = jira_response['data'][0]
+	data['pcr_estimate'] = crucible_obj.get_pcr_estimate(story_point=data['story_point'])
+
+	return {"data": data, "status": True}

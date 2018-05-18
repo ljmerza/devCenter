@@ -21,7 +21,7 @@ export class JiraService {
 	 * @param {string} filterName the ticket filter name
 	 * @return {Object} returns an object with jql and title string properties
 	 */
-	_getFilterTitleAndJql(filterName:string){
+	_getFilterTitleAndJql(filterName:string): any{
 		// try to get ticket list data
 		const allProjectNames = this.config.allProjectNames.filter(ticketData=>ticketData.link===filterName);
 		const teamTicketListNames = this.config.teamTicketListNames.filter(ticketData=>ticketData.link===filterName);
@@ -61,7 +61,7 @@ export class JiraService {
 	 * @param {string} key the Jira ticket key to get details from
 	 * @return {Observable} 
 	 */
-	getATicketDetails(key){
+	getATicketDetails(key: string): Observable<any>{
 		let params = new HttpParams();
 		params = params.append('jql', `key%3D%20${key}`);
 		return this.dataService.get(`${this.dataService.apiUrl}/jira/tickets`, {params});
@@ -97,7 +97,7 @@ export class JiraService {
 	 * @param {Object} postData
 	 * @return {Observable} 
 	 */
-	generateQA(postData): Observable<any> {
+	generateQA(postData: any): Observable<any> {
 
 		// add creds to POST data
 		postData.username = this.user.username;
@@ -112,7 +112,7 @@ export class JiraService {
 	 * @param {Object} postData
 	 * @return {Observable} 
 	 */
-	changeStatus(postData): Observable<any> {
+	changeStatus(postData: any): Observable<any> {
 		postData.username = this.user.username;
 		return this.dataService.post(`${this.dataService.apiUrl}/jira/status`, postData);
 	}
@@ -123,7 +123,7 @@ export class JiraService {
 	 * @param {} message
 	 * @return {string} 
 	 */
-	processErrorResponse(message){
+	processErrorResponse(message: any): string{
 		return this.dataService.processErrorResponse(message);
 	}
 }

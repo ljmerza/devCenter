@@ -1,15 +1,15 @@
 $infoColor: #0275d8;
 
 #toast-container {
-	z-index: 1000;
+	z-index: 10000;
 
-	>div {
+	div {
 		border-radius: 0;
 		box-shadow: none;
 	}
 
 	&.toast-top-right {
-		top: 70px;
+		top: 100px;
 	}
 
 	.toast-info {

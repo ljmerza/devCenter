@@ -4,6 +4,7 @@ export * from './jira/jira-watchers.service';
 export * from './git.service';
 export * from './jira.service';
 export * from './misc.service';
+export * from './chat.service';
 export * from './user.service';
 export * from './config.service';
 export * from './profile.service';

@@ -52,7 +52,6 @@
 								<div class='col-6'>
 									<label *ngIf='i==0'>Branch:</label>
 									<select class="form-control" formControlName="reviewedBranch">
-										<option value="" disabled>Select a branch</option>
 										<option
 											[selected]="allBranch.value==branches.controls[i].controls.reviewedBranch.value"
 											*ngFor='let allBranch of branches.controls[i].controls.allBranches.controls'>

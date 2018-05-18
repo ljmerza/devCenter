@@ -3,7 +3,7 @@ import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy
 import { ActivatedRoute } from '@angular/router';
 import { select, NgRedux } from '@angular-redux/store';
 import { RootState } from '@store';
-import { JiraService, ToastrService, ConfigService } from '@services';
+import { JiraService, ToastrService, ConfigService, ChatService } from '@services';
 import { statuses } from '@models';
 
 @Component({
@@ -15,14 +15,16 @@ import { statuses } from '@models';
 export class CrucibleComponent implements OnDestroy, OnInit {
 
 	constructor(
-		public jira: JiraService, public config: ConfigService, public toastr: ToastrService, 
+		public jira: JiraService, public config: ConfigService, public toastr: ToastrService, public chat: ChatService,
 		private cd: ChangeDetectorRef, public store:NgRedux<RootState>, public route:ActivatedRoute
 	) { }
 
 	@Input() key;
 	ticketListType;
-	crucibleId;
 	crucibleId$;
+	crucibleId;
+
+	alreadyPinged:boolean = false;
 
 	/**
 	* Get crucible Id from store.
@@ -57,7 +59,7 @@ export class CrucibleComponent implements OnDestroy, OnInit {
   		this.jira.changeStatus({key:this.key, statusType:statuses.PCRADD.backend, crucible_id:this.crucibleId})
 		.subscribe(
 			() => {
-				this.toastr.showToast(`Added as a reviwer to ${this.crucibleId}`, 'info')
+				this.toastr.showToast(`Added as a reviwer to ${this.crucibleId}`, 'info');
 				this.openCrucible();
 			}, 
 			error => {
@@ -80,5 +82,33 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 		} else {
 			this.toastr.showToast(`Could not open new window. Maybe you blocked the new window?`, 'error');
 		}
+	}
+
+	/**
+	 * 
+	 */
+	pingPcrNeeded(){
+
+		if(this.alreadyPinged){
+			this.toastr.showToast(`You've already pinged the chatroom for ${this.crucibleId}.`, 'error');
+			return;
+		}
+
+		this.alreadyPinged = true;
+		this.toastr.showToast(`Pinging chatroom for PCR needed on ${this.crucibleId}.`, 'info');
+
+		const postData = {
+			key: this.key,
+			ping_type: statuses.PCRNEED.backend
+		};
+
+		this.chat.sendPing(postData).subscribe(
+			() => {
+				this.toastr.showToast(`Pinged chatroom for PCR needed on ${this.crucibleId}.`, 'info');
+			}, 
+			error => {
+				this.jira.processErrorResponse(error);
+			}
+		);
 	}
 }

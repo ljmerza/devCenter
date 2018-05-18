@@ -121,8 +121,16 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 * @param {FormControl} branch
 	 */
 	getBranches(repoName, branch) {
+		branch.setControl('allBranches', this.formBuilder.array(['Loading branches please wait...']));
+		branch.setControl('baseBranch', this.formBuilder.array([]));
+		this.cd.detectChanges();
+
 		this.git.getBranches(repoName).subscribe( 
-			branches => branch.setControl('allBranches', this.formBuilder.array(branches.data.length > 0 ? branches.data:[])),
+			branches => {
+				branches.data.unshift('Select a branch');
+				branch.setControl('allBranches', this.formBuilder.array(branches.data));
+				this.cd.detectChanges();
+			},
 			error => this.toastr.showToast(this.git.processErrorResponse(error), 'error')
 		);
 	}
