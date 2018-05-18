@@ -10,7 +10,7 @@ class ChatPcrQa():
 		self.chat_api = chat_api
 		self.is_qa_pcr = is_qa_pcr
 
-	def send_pcr_needed(self, pcr_estimate, key, msrp, sprint, label, crucible_id=''):
+	def send_pcr_needed(self, pcr_estimate, key, msrp, sprint, label, crucible_id='', override=False):
 		'''send pcr needed to chat room
 		Args:
 			pcr_estimate (str) the PCR estimate number
@@ -28,9 +28,9 @@ class ChatPcrQa():
 		if 'BETA' in label:
 			message += ' BETA'
 		# send message
-		self.get_qa_pcr_links(message=message, sprint=sprint, key=key, msrp=msrp, crucible_id=crucible_id)
+		self.get_qa_pcr_links(message=message, sprint=sprint, key=key, msrp=msrp, crucible_id=crucible_id, override=override)
 
-	def send_qa_needed(self, key, sprint, msrp, label, crucible_id):
+	def send_qa_needed(self, key, sprint, msrp, label, crucible_id, override=False):
 		'''send qa needed to chat room
 		Args:
 			key (str) the Jira key
@@ -49,9 +49,9 @@ class ChatPcrQa():
 		# add messge type
 		message += 'QA Needed'
 		# send message
-		self.get_qa_pcr_links(message=message, sprint=sprint, key=key, msrp=msrp, crucible_id=crucible_id)
+		self.get_qa_pcr_links(message=message, sprint=sprint, key=key, msrp=msrp, crucible_id=crucible_id, override=override)
 
-	def get_qa_pcr_links(self, message, sprint, key, msrp, crucible_id):
+	def get_qa_pcr_links(self, message, sprint, key, msrp, crucible_id, override):
 		'''get jira/crucible links along with sprint and send message to chatroom
 		Args:
 			key (str) the Jira key
@@ -78,7 +78,7 @@ class ChatPcrQa():
 
 		# send to jira  chat unless is_pcr_qa flag set -> then apex chat
 		chatroom = self.chat_api.jira_chat
-		if self.is_qa_pcr:
+		if self.is_qa_pcr or override:
 			chatroom = self.chat_api.apex_chat
 		# send message
 		self.chat_api.send_meeting_message(message=message, chatroom=chatroom)

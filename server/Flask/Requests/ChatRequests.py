@@ -88,7 +88,8 @@ def send_custom_ping(data, chat_obj, crucible_obj, jira_obj):
 			sprint=response.get('data').get('sprint'), 
 			label=response.get('data').get('label'), 
 			crucible_id=response.get('data').get('crucible_id'), 
-			pcr_estimate=response.get('data').get('pcr_estimate')
+			pcr_estimate=response.get('data').get('pcr_estimate'),
+			override=True
 		)
 	else:
 		chat_obj.send_meeting_message(message=data['message'], chatroom=data['username'])
