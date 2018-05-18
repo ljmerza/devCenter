@@ -370,4 +370,12 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		// get branch short branch name that has highest version found
 		return repos.filter( branch => branch.length < 15 && branch.includes(selections[selections.length-1]));
 	}
+
+	/**
+	 *  stops the auto search for branches
+	 */
+	stopSearch(){
+		if(this.gitBranches$) this.gitBranches$.unsubscribe();
+		this.loadingBranches = false;
+	}
 }
