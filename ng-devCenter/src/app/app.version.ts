@@ -1,7 +1,7 @@
-// This file was generated on Fri, May 18, 2018  4:04:09 PM
+// This file was generated on Mon, May 21, 2018  3:33:21 PM
 export const appVersion = {
   "name": "devCenter",
-  "version": "6.5.0",
+  "version": "6.6.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -17,7 +17,8 @@ export const appVersion = {
   },
   "private": true,
   "dependencies": {
-    "@angular-redux/store": "^7.1.1",
+    "@angular-redux/store": "^6.5.7",
+    "redux": "^3.7.2",
     "@angular/animations": "^5.2.8",
     "@angular/common": "^5.2.8",
     "@angular/compiler": "^5.2.8",
@@ -43,7 +44,6 @@ export const appVersion = {
     "moment": "^2.20.1",
     "ng2-toastr": "^4.1.2",
     "ngx-progressbar": "^2.1.1",
-    "redux": "^4.0.0",
     "rxjs": "^5.5.6",
     "socket.io-client": "^2.0.4",
     "zone.js": "^0.8.20"
