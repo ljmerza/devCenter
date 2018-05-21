@@ -10,11 +10,11 @@
   <ngb-accordion class='ticket-comments' #acc="ngbAccordion" [destroyOnHide]='false'>
 
     <!-- a comment panel -->
-    <ngb-panel *ngFor='let comment of comments'>
+    <ngb-panel *ngFor='let comment of comments; index as i' [id]="crucibleId+i">
   
       <!-- title -->
       <ng-template ngbPanelTitle>
-        <div class='comment-header' data-id={{comment.id}}>
+        <div class='comment-header' data-id={{comment.permId.id}}>
           <span>
             {{comment.user.displayName}}
             <img src="http://presence.q.att.com/presence/{{comment.user.userName}}.gif">
