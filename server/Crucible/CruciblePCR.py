@@ -17,7 +17,6 @@ class CruciblePCR():
 		
 		self.crucible_api = crucible_api
 		self.pcr_pass = "=#= PCR PASS =#="
-		self.pcr_pass_regex = re.compile(r"=#= PCR PASS =#=")
 
 		self.code_cloud_path = '/projects/ST_M5DTI/repos'
 		self.code_cloud_path2 = 'compare/diff'
@@ -125,6 +124,6 @@ class CruciblePCR():
 			reviewedBranch = repo['reviewedBranch']
 
 			branch_url = f'{self.crucible_api.code_cloud_api}{self.code_cloud_path}/{repositoryName}/{self.code_cloud_path2}?targetBranch=refs%2Fheads%2F{baseBranch}&sourceBranch=refs%2Fheads%2F{reviewedBranch}'
-			objective = f'{objective}\n\n{repositoryName}: {branch_url}'
+			objective = f'{objective}\n{repositoryName}: <a href="{branch_url}">Code Cloud</a>'
 
 		return objective

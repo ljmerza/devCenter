@@ -17,7 +17,11 @@ import { UserDetailsComponent } from './user-details/user-details.component';
 
 
 // services
-import { JiraService, JiraCommentsService, JiraPingsService, OrderService, JiraWatchersService, ChatService } from '@services';
+import { 
+	JiraService, JiraCommentsService, JiraPingsService, OrderService, 
+	JiraWatchersService, ChatService, CrucibleService
+} from '@services';
+
 import { LocalStorageService } from './services/local-storage.service';
 import { DataService } from './services/data.service';
 import { ConfigService } from './services/config.service';
@@ -49,7 +53,7 @@ export class SharedModule {
 			ngModule: SharedModule, 
 			providers: [
 				UserService, LocalStorageService, ToastrService, ConfigService, ItemsService, ChatService,
-				WebSocketService, MiscService, JiraService, ProfileService, JiraPingsService,
+				WebSocketService, MiscService, JiraService, ProfileService, JiraPingsService, CrucibleService,
 				DataService, GitService, JiraCommentsService, OrderService, JiraWatchersService,
 				{provide: HTTP_INTERCEPTORS, useClass: LoggerInterceptor, multi: true},
 				{provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true}

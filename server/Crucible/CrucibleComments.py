@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import re
 
 class CrucibleComments():
 	'''
@@ -14,6 +15,7 @@ class CrucibleComments():
 			
 		'''
 		self.crucible_api = crucible_api
+		self.pcr_pass_regex = re.compile(r"=#= PCR PASS =#=")
 
 	def add_comment(self, comment, crucible_id, cred_hash):
 		'''adds a comment to a Crucible review

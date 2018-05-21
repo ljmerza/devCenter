@@ -6,7 +6,10 @@ import { SharedModule } from '../shared/shared.module';
 
 
 import { TicketCommentsModalComponent } from './ticket-comments-modal/ticket-comments-modal.component';
+import { CrucibleCommentsModalComponent } from './crucible-comments-modal/crucible-comments-modal.component';
 import { TicketCommentsComponent } from './ticket-comments/ticket-comments.component';
+import { CrucibleCommentsComponent } from './crucible-comments/crucible-comments.component';
+
 
 import { SafehtmlPipe } from './safehtml.pipe';
 import { CommentFormatPipe } from './comment-format.pipe';
@@ -14,8 +17,8 @@ import { CommentFormatPipe } from './comment-format.pipe';
 @NgModule({
 	imports: [CommonModule, NgbModule, MomentModule, SharedModule],
 	declarations: [
-		TicketCommentsComponent, TicketCommentsModalComponent,
-		SafehtmlPipe, CommentFormatPipe,
+		TicketCommentsComponent, TicketCommentsModalComponent, CrucibleCommentsModalComponent,
+		SafehtmlPipe, CommentFormatPipe, CrucibleCommentsComponent
 	],
 	exports: [TicketCommentsComponent, TicketCommentsModalComponent]
 })

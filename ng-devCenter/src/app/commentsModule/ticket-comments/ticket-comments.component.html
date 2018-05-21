@@ -8,7 +8,6 @@
 			<div class='comment-header' data-id={{comment.id}}>
 				<span>
 					{{comment.display_name}}
-					{{openPanelIds}}
 					<img src="http://presence.q.att.com/presence/{{comment.username}}.gif">
 				</span>
 				<span class="float-right">
@@ -45,7 +44,7 @@
 				class='edit-area' cols="100" rows=25 value={{comment.raw_comment}}>
 			</textarea>
 
-			<dc-user-details [msrp]=ticket?.msrp [user]=comment></dc-user-details>
+			<dc-user-details [msrp]=msrp [user]=comment></dc-user-details>
 		</ng-template>
 	</ngb-panel>
 </ngb-accordion>

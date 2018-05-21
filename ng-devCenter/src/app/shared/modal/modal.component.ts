@@ -18,11 +18,10 @@ export class ModalComponent {
 
 	/**
 	*/
-	openModal(): NgbModalRef {
+	openModal(options?:any): NgbModalRef {
 		// create custom args
-		let options = {};
 		if(this.customModalCss){
-			options = {windowClass: this.customModalCss};
+			options = {...options, ...{windowClass: this.customModalCss}};
 		}		
 
 		// open modal and return modal ref

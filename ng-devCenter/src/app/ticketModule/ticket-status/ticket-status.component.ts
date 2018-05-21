@@ -45,7 +45,8 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private factoryResolver: ComponentFactoryResolver, private cd: ChangeDetectorRef, private store:NgRedux<RootState>,
-		private viewContRef: ViewContainerRef, private toastr: ToastrService, private jira: JiraService, public route:ActivatedRoute
+		private viewContRef: ViewContainerRef, private toastr: ToastrService, private jira: JiraService, 
+		public route:ActivatedRoute
 	) {
 		this.allTransistions = allTransistions;
 	}
