@@ -14,7 +14,7 @@
   
       <!-- title -->
       <ng-template ngbPanelTitle>
-        <div class='comment-header' data-id={{comment.permId.id}}>
+        <div class='comment-header' data-id={{comment.permId?.id}}>
           <span>
             {{comment.user.displayName}}
             <img src="http://presence.q.att.com/presence/{{comment.user.userName}}.gif">

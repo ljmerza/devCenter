@@ -206,11 +206,11 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).key = this.key;
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).msrp = this.msrp;
-	    	(<QaGeneratorComponent>this.qaComponentRef.instance).crucibleOnly = crucibleOnly;
 	    	(<QaGeneratorComponent>this.qaComponentRef.instance).statusChange.subscribe(this.statusChange.bind(this));
 		}
 		
 		// open modal
+    	(<QaGeneratorComponent>this.qaComponentRef.instance).crucibleOnly = crucibleOnly;
     	(<QaGeneratorComponent>this.qaComponentRef.instance).openQAModal();
 
 	}

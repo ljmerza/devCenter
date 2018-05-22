@@ -40,7 +40,7 @@ def send_ping(data, chat_obj, jira_obj, crucible_obj):
 	else:
 		return {"data": "Ping reset not implemented", "status": False}
 	
-def set_user_pings(data, sql_obj, chat_obj):
+def set_user_pings(data, sql_obj):
 	'''
 	'''
 	# check for required data

@@ -1,7 +1,7 @@
-// This file was generated on Mon, May 21, 2018  3:33:21 PM
+// This file was generated on Tue, May 22, 2018 10:13:21 AM
 export const appVersion = {
   "name": "devCenter",
-  "version": "6.6.0",
+  "version": "6.6.1",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
