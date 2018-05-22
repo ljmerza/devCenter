@@ -41,8 +41,8 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	@Output() statusChange = new EventEmitter();
 
 	ticketListType;
-	statuses$;
-	ticketStatus;
+	ticket$;
+	sprint;
 
 	constructor(
 		public jira:JiraService, private git: GitService, public toastr: ToastrService, 
@@ -69,10 +69,11 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		this.route.paramMap.subscribe((routeResponse:any) => {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 
-			this.statuses$ = this.store.select(`${this.ticketListType}_statuses`)
+			// get ticket sprint
+			this.ticket$ = this.store.select(`${this.ticketListType}`)
 			.subscribe((allTickets:any=[]) => {
 				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
-				this.ticketStatus = (ticket && ticket.status) || '';
+				this.sprint = (ticket && ticket.sprint) || '';
 			});
 
 		});
@@ -83,7 +84,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(){
 		if(this.repos$) this.repos$.unsubscribe();
-		if(this.statuses$) this.statuses$.unsubscribe();
+		if(this.ticket$) this.ticket$.unsubscribe();
 	}
 	
 	/**
@@ -353,7 +354,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 					allBranches: repo.all,
 					repositoryName: repo.repo,
 					reviewedBranch: devBranch,
-					baseBranch: baseBranch.length == 1 ? baseBranch[0] : ''
+					baseBranch: baseBranch || ''
 				};
 			})
 			.forEach(this.addBranch.bind(this));
@@ -364,10 +365,25 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	/**
 	 * gets the base branch that a branch branched off of.
 	 * @param {Array<Object>} repos list of all repos
-	 * @return {Array<Object>} the matching base branch
+	 * @return {string} the matching base branch
 	 */
-	getBaseBranch(repos): Array<any> {
+	getBaseBranch(repos): string {
 
+		// if sprint exists then try to get baseBranch from sprint name
+		if(this.sprint){
+			const branchBaseName = this.key.split('-');
+			const branchBase = `${branchBaseName[0]}${this.sprint}`;
+
+
+			let baseBranchFromSprint = repos.find(branch => branchBase === branch);
+			console.log('branchBaseName: ', branchBaseName, branchBase, baseBranchFromSprint);
+
+			if(baseBranchFromSprint){
+				return baseBranchFromSprint;
+			}
+		}
+		
+		// if we couldn't find baseBranch from sprint then try to
 		// get all short branch names with numbers in them and sort
 		const selections = repos
 			.filter(branch => branch.length < 15)
@@ -375,7 +391,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			.sort();
 
 		// get branch short branch name that has highest version found
-		return repos.filter( branch => branch.length < 15 && branch.includes(selections[selections.length-1]));
+		return repos.find( branch => branch.length < 15 && branch.includes(selections[selections.length-1]));
 	}
 
 	/**
