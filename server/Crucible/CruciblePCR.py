@@ -124,6 +124,6 @@ class CruciblePCR():
 			reviewedBranch = repo['reviewedBranch']
 
 			branch_url = f'{self.crucible_api.code_cloud_api}{self.code_cloud_path}/{repositoryName}/{self.code_cloud_path2}?targetBranch=refs%2Fheads%2F{baseBranch}&sourceBranch=refs%2Fheads%2F{reviewedBranch}'
-			objective = f'{objective}\n{repositoryName}: [Code Cloud|{branch_url}]'
+			objective = f'{objective}\nh1. {repositoryName}: [Code Cloud|{branch_url}]'
 
 		return objective

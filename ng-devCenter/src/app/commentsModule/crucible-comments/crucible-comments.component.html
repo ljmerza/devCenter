@@ -29,7 +29,7 @@
       <ng-template ngbPanelContent>
         <div>
           <div [innerHTML]="comment.messageAsHtml | safehtml"></div>
-          <a target='_blank' href='{{config.crucibleUrl}}/cru/{{crucibleId}}#{{comment.reviewItemId?.id}}'>View Comment on Crucible</a>
+          <a target='_blank' href='{{config.crucibleUrl}}/cru/{{crucibleId}}#{{comment.id}}'>View Comment on Crucible</a>
         </div>
       </ng-template>
       
