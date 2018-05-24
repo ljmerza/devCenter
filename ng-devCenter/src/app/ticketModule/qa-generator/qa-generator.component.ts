@@ -149,21 +149,19 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 */
 	submitQA(isSaving): void {
 
+		const isPcr = this.qaForm.controls.selections.controls.pcrNeeded.value;
+		if(!isPcr || !isSaving){
+			this.statusChange.emit({canceled: true, hideToast: this.crucibleOnly});
+		}
+
 		// cancel and close if not saving form
 		if(!isSaving){
-			this.statusChange.emit({canceled: true});
 			this.modalRef.close();
 			return;
 		}
 
 		if(this.qaForm.invalid) return;
 		this.modalRef.close();
-
-		// if not changing state then revert that now
-		const isPcr = this.qaForm.controls.selections.controls.pcrNeeded.value;
-		if(!isPcr){
-			this.statusChange.emit({canceled: true});
-		}
 		
 		const postData = this.generatePostBody();
 		this.showSubmitMessage(postData);
@@ -301,8 +299,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		this.modalRef.result.then(
     		() => null,
     		() => {
-    			this.store.dispatch({type: Actions.updateStatus, payload:{key:this.key, status:statuses.INDEV.frontend}});
-    			this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
+    			this.statusChange.emit({canceled: true, hideToast: this.crucibleOnly});
     		}
     	);
 
@@ -373,10 +370,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		if(this.sprint){
 			const branchBaseName = this.key.split('-');
 			const branchBase = `${branchBaseName[0]}${this.sprint}`;
-
-
 			let baseBranchFromSprint = repos.find(branch => branchBase === branch);
-			console.log('branchBaseName: ', branchBaseName, branchBase, baseBranchFromSprint);
 
 			if(baseBranchFromSprint){
 				return baseBranchFromSprint;

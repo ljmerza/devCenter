@@ -107,7 +107,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * @param {boolean} canceled
 	 * @param {string} statusName
 	 */
-	statusChange({canceled=true, statusName=''}):void {
+	statusChange({canceled=true, statusName='', hideToast=false}):void {
 		let ticketStateFilter;
 
 		// change state to canceled, custom state, or previous dropdown state
@@ -123,7 +123,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		const status = (this.ticketStates.find(ticketStateFilter) as any).name;
 		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.key, status} });
 
-		if(canceled){
+		if(canceled && !hideToast){
 			this.showCancelStatus();
 		}
 	}
@@ -241,7 +241,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * show ticket status canceled message
 	 */
 	showCancelStatus(){
-		this.toastr.showToast(`Ticket status change cancelled for ${this.key}`, 'info');
+		this.toastr.showToast(`Ticket status change canceled for ${this.key}`, 'info');
 	}
 
 	/**
