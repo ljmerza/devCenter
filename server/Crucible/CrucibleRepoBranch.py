@@ -76,7 +76,7 @@ class CrucibleRepoBranch():
 		branch_names = []
 
 		# get data from API
-		url = f'{self.crucible_api.code_cloud_branches_api}{repo_name}/branches?start=0&limit=20'
+		url = f'{self.crucible_api.code_cloud_branches_api}{repo_name}/branches?start=0&limit=30'
 		response = self.crucible_api.get(url=url, cred_hash=cred_hash)
 		
 		if not response['status']:
