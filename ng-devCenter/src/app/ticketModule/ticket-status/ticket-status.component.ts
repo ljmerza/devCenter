@@ -231,7 +231,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		this.modalRef.result.then(
     		() => null,
     		() => {
-    			this.statusChange({});
+    			this.statusChange({canceled:true});
     			this.showCancelStatus();
     		}
     	)
@@ -253,7 +253,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			this.changeStatus(this.statusType);
 		} else {
 			this.showCancelStatus();
-			this.statusChange({});
+			this.statusChange({canceled:true});
 		}
 
 		this.modalRef.close();	
@@ -269,7 +269,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			statusResponse => this.verifyStatusChangeSuccess(statusResponse.data, statusType),
 			error => {
 				this.jira.processErrorResponse(error);
-				this.statusChange({});
+				this.statusChange({canceled:true});
 				this.showCancelStatus();
 			}
 		);
