@@ -262,6 +262,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		let status = statuses.INDEV.frontend;
 		if(responseData.cr_response.status && responseData.pcr_response.status) {
 			status = statuses.PCRNEED.frontend;
+
 		} else if(postData.autoPCR){
 			// if we wanted PCR and we got here then there was a failure
 			const cr_message = responseData.cr_response.status ? '' : 'Code Review status change';
@@ -271,7 +272,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 
 		// if status changed -> update new status
 		if(status !== statuses.INDEV.frontend){
-			this.statusChange.emit({statusName: status});
+			this.statusChange.emit({statusName: status, canceled:false});
 		}
 
 		// add work log if given

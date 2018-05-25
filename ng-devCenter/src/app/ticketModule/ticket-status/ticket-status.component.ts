@@ -107,7 +107,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * @param {boolean} canceled
 	 * @param {string} statusName
 	 */
-	statusChange({canceled=true, statusName='', hideToast=false}):void {
+	statusChange({canceled, statusName='', hideToast=false}):void {
 		let ticketStateFilter;
 
 		// change state to canceled, custom state, or previous dropdown state
