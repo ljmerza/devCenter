@@ -35,16 +35,7 @@ class AutomationBot(object):
 		'''
 		self.username = os.environ['USER']
 		self.password = os.environ['PASSWORD']
-		self.filters = {
-			'my_filter':"11502", 
-			'beta':'11004', 
-			'qa':'11019', 
-			'cr':'11007', 
-			'uct':'11014', 
-			'all':'11002', 
-			'pcr':'11128'
-		}
-		self.filter_names = ['uct', 'qa', 'cr', 'uct', 'beta', 'pcr']
+
 		################################################################################
 		# create DB object and connect
 		self.sql_object = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
@@ -154,15 +145,13 @@ class AutomationBot(object):
 		Returns:
 			None
 		'''
-		filter_values = []
-		
+		stat_results = {}
 		# for each beta filter get total number of tickets
-		for filter_name in self.filter_names:
-			jira_tickets = self.jira_obj.get_jira_tickets(cred_hash=self.cred_hash, filter_number=self.filters[filter_name])
-			filter_values.append( len(jira_tickets['data']) )
+		for filter_name,jql in self.jira_obj.jira_api.filters.items():
+			jira_tickets = self.jira_obj.get_jira_tickets(cred_hash=self.cred_hash, jql=jql)
+			stat_results[filter_name] = jira_tickets
 
 		# create kwargs for pinging beta stats and ping stats
-		stat_results = dict(zip(self.filter_names, filter_values))
 		self.chat_obj.beta_statistics(**stat_results)
 		
 		# reset beta stat counter

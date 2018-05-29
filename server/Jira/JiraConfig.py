@@ -3,3 +3,14 @@ all_open_tickets = 'project in (SASHA, AQE, "Auto QM", "Customer DB", "Manager D
 fields = 'customfield_10109,comment,status,customfield_10212,summary,assignee,components,timeoriginalestimate,customfield_10001,customfield_10002,label,fixVersions,duedate,created,updated,customfield_10108,customfield_10102,customfield_10175,customfield_10103,customfield_10602,timetracking,labels,attachment,issuelinks,issuetype,customfield_10810,environment,priority,customfield_10812,customfield_10300,description'
 
 cron_fields='customfield_10212,comment,status,summary,assignee,components,timeoriginalestimate,fixVersions,labels,'
+
+
+projects ='project in (AQE, "Taskmaster Dashboard", TeamDB, TQI, "Unified Desktop", UPM, WAM) '
+
+filters = {
+	'beta': projects+'AND status != closed AND labels = BETA', 
+	'qa':projects+'AND status != closed AND status in ("Ready for QA", "IN QA")', 
+	'cr':projects+'AND component in ("PCR - Completed") AND Status = "code review"', 
+	'uct':projects+'AND status = "Ready for UCT"', 
+	'pcr': projects+'AND status != closed AND component in ("PCR - Needed")'
+}

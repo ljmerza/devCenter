@@ -31,6 +31,7 @@ class JiraAPI(DevCenterAPI):
 		self.all_open_tickets = urllib.parse.quote(JiraConfig.all_open_tickets)
 		self.fields = JiraConfig.fields
 		self.cron_fields = JiraConfig.cron_fields
+		self.filters = JiraConfig.filters
 
 	def post(self, url, cred_hash, data=''):
 		'''sends a POST request
