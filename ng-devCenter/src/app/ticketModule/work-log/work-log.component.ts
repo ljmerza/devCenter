@@ -53,7 +53,7 @@ export class WorkLogComponent	{
 
 		// add UCT not ready to comment if selected
 		formObj.value.comment = formObj.value.comment || '';
-		if(formObj.value.uctNotReady) formObj.value.comment += `\n\n{color:red}UUCT not ready as of ${new Date}{color}`;
+		if(formObj.value.uctNotReady) formObj.value.comment += `\n\n{color:red}UCT not ready as of ${new Date}{color}`;
 
 		// create POST body
 		let postData = {
