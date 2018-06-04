@@ -74,7 +74,7 @@ export class TicketComponent {
 			const factory = this.factoryResolver.resolveComponentFactory(SetPingsComponent);
 	    	this.pingComponentRef = this.viewContRef.createComponent(factory);
 	    	(<SetPingsComponent>this.pingComponentRef.instance).key = this.ticket.key;
-	    	(<SetPingsComponent>this.pingComponentRef.instance).sprint = this.ticket.sprint;
+	    	(<SetPingsComponent>this.pingComponentRef.instance).masterBranch = this.ticket.master_branch;
 	    	(<SetPingsComponent>this.pingComponentRef.instance).branch = this.ticket.branch;
 	    	(<SetPingsComponent>this.pingComponentRef.instance).commit = this.ticket.commit;
 		}
@@ -100,7 +100,7 @@ export class TicketComponent {
 	    	this.worklogComponentRef = this.viewContRef.createComponent(factory);
 	    	(<WorkLogComponent>this.worklogComponentRef.instance).key = this.ticket.key;
 	    	(<WorkLogComponent>this.worklogComponentRef.instance).branch = this.ticket.branch;
-	    	(<WorkLogComponent>this.worklogComponentRef.instance).sprint = this.ticket.sprint;
+	    	(<WorkLogComponent>this.worklogComponentRef.instance).masterBranch = this.ticket.master_branch;
 	    	(<WorkLogComponent>this.worklogComponentRef.instance).commit = this.ticket.commit;
 		}
     	(<WorkLogComponent>this.worklogComponentRef.instance).openLogModal();

@@ -11,7 +11,7 @@ export class BranchInfoComponent {
 
 	constructor(public misc: MiscService) { }
 
-	@Input() sprint:string = '';
+	@Input() masterBranch:string = '';
 	@Input() branch:string = '';
 	@Input() commit:string = '';
 

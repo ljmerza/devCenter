@@ -95,7 +95,10 @@ class JiraTickets():
 		ticket['status'] = get_status(issue)
 		ticket['story_point'] = get_story_point(issue)
 
-		ticket['sprint']  = get_sprint(issue)
+		ticket['sprint'] = get_sprint(issue)
+		if ticket['sprint']:
+			ticket['master_branch'] = get_master_branch(ticket['sprint'], ticket['key'])
+
 		ticket['epic_link'] = get_epic_link(issue)
 		ticket['label'] = get_label(issue)
 

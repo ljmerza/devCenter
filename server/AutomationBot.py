@@ -225,11 +225,7 @@ class AutomationBot(object):
 
 			# send me new ticket ping if it's not my ticket
 			if(username != self.username):
-				thr = threading.Thread(
-					target=self.chat_obj.send_me_ticket_info, 
-					kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':'New Ticket'}
-				)
-				thr.start()
+				self.ping_me(key=key, summary=summary, username=username, pingType='New Ticket')
 
 		# else if project manager then ping me if not my ticket and update my ping so I don't get it again 
 		elif(wants_ping == 2):
@@ -239,21 +235,23 @@ class AutomationBot(object):
 
 			# ping me if i havent been pinged of this new ticket
 			if(username != self.username and not me_pinged):
-				thr = threading.Thread(
-					target=self.chat_obj.send_me_ticket_info, 
-					kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':'New Ticket'}
-				)
-				thr.start()
+				self.ping_me(key=key, summary=summary, username=username, pingType='New Ticket')
 
 		# else user doesn't want ping so update new ping and send me ticket if its not mine
 		else:
 			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
 			if(username != self.username):
-				thr = threading.Thread(
-					target=self.chat_obj.send_me_ticket_info, 
-					kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':'New Ticket'}
-				)
-				thr.start()
+				self.ping_me(key=key, summary=summary, username=username, pingType='New Ticket')
+
+	def ping_me(self, key, summary, username, pingType):
+		'''pings the admin about a ticket
+		'''
+		thr = threading.Thread(
+			target=self.chat_obj.send_me_ticket_info, 
+			kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':pingType}
+		)
+		thr.start()
+
 
 
 	def check_for_status_pings(self, jira_ticket, session):
@@ -386,13 +384,9 @@ class AutomationBot(object):
 			)
 			thr.start()
 		
-		# send me Merge Conflict
+		# ping admin of status change
 		if(username != self.username):
-			thr = threading.Thread(
-				target=self.chat_obj.send_me_ticket_info, 
-				kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':ping_message}
-			)
-			thr.start()
+			self.ping_me(key=key, summary=summary, username=username, pingType=ping_message)
 
 		# reset pings
 		self.sql_object.reset_pings(ping_type=ping_type, key=key, session=session)

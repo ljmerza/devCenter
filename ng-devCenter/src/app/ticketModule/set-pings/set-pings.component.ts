@@ -13,7 +13,7 @@ export class SetPingsComponent {
 	@Input() key;
 	@Input() commit;
 	@Input() branch;
-	@Input() sprint;
+	@Input() masterBranch;
 
 	customModalCss ='setPings';
 	modalInstance: NgbModalRef;

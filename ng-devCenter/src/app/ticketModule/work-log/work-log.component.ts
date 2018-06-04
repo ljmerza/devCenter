@@ -31,7 +31,7 @@ export class WorkLogComponent	{
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;
-	@Input() sprint: string;
+	@Input() masterBranch: string;
 	@Input() branch: string;
 	@Input() commit: string;
 

@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
+import { NgForm } from '@angular/forms';
+
 import { DataTableDirective } from 'angular-datatables';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -102,13 +104,20 @@ export class EditOrdersComponent implements OnInit {
 		item.isNotEditing = true;
 
 		// if no changes then dont save
-		if(item.nameOld === item.name || item.linkOld === item.link || item.typeOld === item.type){
+		if(item.nameOld === item.name && item.linkOld === item.link && item.typeOld === item.type){
 			this.toastr.showToast(`No changes made to ${item.name}.`, 'info');
 			return;
 		}
 
+		this.toastr.showToast(`Saving changes to ${item.name}.`, 'info');
 		this.items.setItem(item).subscribe(
-			response => this.toastr.showToast(response.data, 'success'),				
+			response => {
+				// show success and save new old values
+				this.toastr.showToast(`Saved changes to ${item.name}.`, 'success');
+				item.nameOld = item.name;
+				item.linkOld = item.link;
+				item.typeOld = item.type;
+			},				
 			error => {
 				// show error and reset values
 				this.items.processErrorResponse(error);
@@ -137,22 +146,41 @@ export class EditOrdersComponent implements OnInit {
 	/**
 	 *
 	 */
-	trackByFn(index: number, item){
-		return item.id;
-	}
-
-	/**
-	 *
-	 */
 	closeModal(){
 		this.modalRef.close();
 	}
 
 	/**
-	 *
+	 * 
 	 */
 	openModal(){
 		this.modalRef = this.modal.openModal();
+	}
+
+	/**
+	 *
+	 */
+	submitInput(formObj:NgForm, save?:boolean){
+		if(!save) {
+			formObj.resetForm();
+			this.closeModal();
+			return;
+		}
+
+		const displayName = formObj.controls.displayName.value;
+		const emberRoute = formObj.controls.emberRoute.value;
+		const linkType = formObj.controls.linkType.value;
+
+		if(!linkType || !emberRoute || !linkType){
+			this.toastr.showToast('Missing required inputs', 'error');
+			return;
+		}
+
+		formObj.resetForm();
+		this.closeModal();
+
+		console.log({linkType, emberRoute, displayName});
+		
 	}
 
 }

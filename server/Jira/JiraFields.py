@@ -162,6 +162,16 @@ def get_sprint(issue):
 			sprint = issue['fields']['fixVersions'][0]['name']
 	return sprint
 
+def get_master_branch(sprint, key):
+	'''gets this current release's master branch
+	'''
+	key_items = key.split('-')
+	if len(key_items) == 2:
+		if key_items[0] in ['TEAMDB', 'UD', 'TASKMASTER', 'UPM', 'SASHA', '']:
+			return key_items[0] + sprint
+	return ''
+
+
 def get_epic_link(issue):
 	'''gets an issue's epic link in readable format
 
