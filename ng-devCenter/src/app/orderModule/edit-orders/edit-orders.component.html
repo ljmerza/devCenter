@@ -13,7 +13,7 @@
 			</thead>
 
 			<tbody>
-				<tr *ngFor='let item of navbarItems;trackBy:trackByFn'>
+				<tr *ngFor='let item of navbarItems'>
 					<td>
 						<span *ngIf='item.isNotEditing'>{{item.type}}</span>
 						<select class='form-control' *ngIf='!item.isNotEditing'>

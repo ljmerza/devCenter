@@ -25,6 +25,10 @@ export class EditOrdersComponent implements OnInit {
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
+	linkType;
+	emberRoute;
+	displayName;
+
 	dtOptions = {
 		dom: `
 			<'row'<'col-sm-12'Bfl>>
