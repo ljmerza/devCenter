@@ -113,6 +113,26 @@ def add_comment(data, jira_obj):
 
 	return response
 
+def add_commit_comment(data, jira_obj):
+	'''Adds a Jira comment with all the commits for this ticket
+	'''
+	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash', 'commit_ids'])
+	if missing_params:
+		return {"data": missing_params, "status": False}
+
+	comment = 'The following branches have been committed:\n || Repo || Branch || SHA-1 ||\n'
+	for commit in data.get('commit_ids'):
+		repo_name = commit.get('repo_name')
+		master_branch = commit.get('master_branch')
+		commit_id = commit.get('commit_id')
+		comment += f"| {repo_name} | {master_branch} | {commit_id} |\n"
+
+	return jira_obj.add_comment(
+		key=data["key"], 
+		comment=comment, 
+		cred_hash=data['cred_hash']
+	)
+
 def edit_comment(data, jira_obj):
 	'''adds a comment to a ticket
 
@@ -284,7 +304,6 @@ def parse_comment(data, jira_obj):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# get parsed comment
 	return jira_obj.parse_comment(cred_hash=data['cred_hash'], comment=data['comment'], key=data['key'])
-
 
 def modify_watchers(data, jira_obj):
 	'''

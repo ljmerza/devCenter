@@ -15,7 +15,7 @@ import { statuses, Ticket, Comment } from '@models';
 	encapsulation: ViewEncapsulation.None,
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkLogComponent	{
+export class WorkLogComponent {
 	modalRef: NgbModalRef;
 
 	// form input values
@@ -31,6 +31,7 @@ export class WorkLogComponent	{
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;
+	@Input() msrp:string;
 	@Input() masterBranch: string;
 	@Input() branch: string;
 	@Input() commit: string;
@@ -49,7 +50,7 @@ export class WorkLogComponent	{
 		if(!formObj) return;
 
 		const tasks = this.buildToastMessage(formObj);
-		this.toastr.showToast(`Running the following tasks: ${tasks}`, 'info');
+		this.toastr.showToast(`Running the following tasks: ${tasks} for ${this.key}`, 'info');
 
 		// add UCT not ready to comment if selected
 		formObj.value.comment = formObj.value.comment || '';
@@ -62,6 +63,7 @@ export class WorkLogComponent	{
 			remove_conflict: formObj.value.conflictCode || false,
 			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
 			key: this.key,
+			master_branch: this.masterBranch,
 			tasks: tasks
 		};
 
@@ -79,12 +81,13 @@ export class WorkLogComponent	{
 	checkWorklogEvents(responseData:any, postData:any, formObj?:NgForm){
 		let errorMessage = '';
 		responseData.key = this.key;
+		let successMessage = `Tasks updated for ${this.key}: ${postData.tasks}`;
 
 		// check for comment response
 		if(responseData.comment_response.status){
 			this.store.dispatch({ type: Actions.addComment, payload: responseData.comment_response.data });	
 		} else if( responseData.comment_response.status === false && postData.comment){
-			errorMessage += responseData.comment_response.data;
+			errorMessage += `adding Jira comment: ${responseData.comment_response.data}\n`;
 		}
 
 		// check for work log response
@@ -93,7 +96,7 @@ export class WorkLogComponent	{
 			this.store.dispatch({ type: Actions.updateWorklog, payload });	
 
 		} else if(responseData.log_response.status === false && postData.log_time){
-			errorMessage += responseData.comment_response.data;
+			errorMessage += `adding work log: ${responseData.log_response.data}\n`;
 		}
 
 		// check for status change responses
@@ -102,19 +105,32 @@ export class WorkLogComponent	{
 			const status = merge ? statuses.UCTREADY.frontend : statuses.QAREADY.frontend;
 			this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status}});
 
+			// if we removed merge and commit Jira comment was success then add comment to ticket
+			if(responseData.commit_comment_response.status){
+				this.store.dispatch({ type: Actions.addComment, payload: responseData.commit_comment_response.data});	
+			}
+
 		} else if(responseData.merge_response.status === false && postData.remove_merge){
-			errorMessage += responseData.comment_response.data;
+			errorMessage += `removing merge code status: ${responseData.merge_response.data}\n`;
 
 		} else if(responseData.conflict_response.status === false && postData.remove_conflict){
-			errorMessage += responseData.comment_response.data;
+			errorMessage += responseData.conflict_response.data;
+			errorMessage += `removing merge conflict status: ${responseData.conflict_response.data}\n`;
+		}
+
+		else if(responseData.commit_response.status === false  && postData.remove_merge){
+			errorMessage += `getting commit ids: ${responseData.commit_response.data}\n`;
+		}
+		else if(responseData.commit_comment_response.status === false && postData.remove_merge){
+			errorMessage += `adding commit Jira coment: ${responseData.commit_response.data}\n`;
 		}
 
 		// show any errors
 		if(errorMessage) {
-			this.toastr.showToast(errorMessage, 'error');
+			this.toastr.showToast(`The following errors have occurred:\n ${errorMessage}`, 'error');
 		} else {
 			this.resetForm();
-			this.toastr.showToast(`Tasks updated: ${postData.tasks}`, 'success');
+			this.toastr.showToast(successMessage, 'success');
 		}
 	}
 
@@ -156,9 +172,13 @@ export class WorkLogComponent	{
 		if (formObj.value.logTime.hour || formObj.value.logTime.minute){
 			message.push('adding time log');
 		}
-		if(formObj.value.mergedCode || formObj.value.conflictCode){
-			message.push('removing component(s)');
+		if(formObj.value.conflictCode){
+			message.push('removing merge conflict component');
 		} 
+		if(formObj.value.mergedCode){
+			message.push('removing merge code component and posting commit ids to Jira');
+		} 
+
 		if(formObj.value.comment){
 			message.push('posting comment');
 		}

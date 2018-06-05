@@ -1,6 +1,6 @@
 {
   "name": "devCenter",
-  "version": "6.8.0",
+  "version": "6.9.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

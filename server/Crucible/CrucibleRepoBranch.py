@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import re
 
 class CrucibleRepoBranch():
 	'''
@@ -86,6 +87,36 @@ class CrucibleRepoBranch():
 			branch_names.append(item.get('displayId', ''))
 
 		return {'status': True, 'data': branch_names}
+
+	def get_commit_ids(self, key, master_branch, cred_hash):
+		'''get all commit ids for a Jira ticket
+		'''
+		commit_ids = []
+		for repo_name in self.repos:
+			response = self.get_commit_id(repo_name=repo_name, key=key, cred_hash=cred_hash, master_branch=master_branch)
+			if response['status'] and response['data']:
+				commit_ids.append({'master_branch': master_branch, 'repo_name': repo_name, 'commit_id': response['data']})
+		return {'status': len(commit_ids) > 0, 'data': commit_ids}
+
+
+	def get_commit_id(self, repo_name, master_branch, key, cred_hash):
+		''' gets a commit id for a repo and key
+		'''
+		commit_id = ''
+
+		# get data from API
+		url = f'{self.crucible_api.code_cloud_branches_api}{repo_name}/commits?until=refs%2Fheads%2F{master_branch}'
+		response = self.crucible_api.get(url=url, cred_hash=cred_hash)
+		
+		if not response['status']:
+			return response
+
+		for item in response.get('data', {}).get('values', {}):
+			message = item.get('message', '')
+			if key in message:
+				commit_id = item.get('id')
+		
+		return {'status': True, 'data': commit_id}
 
 
 	def find_branch(self, repo_name, msrp, cred_hash):

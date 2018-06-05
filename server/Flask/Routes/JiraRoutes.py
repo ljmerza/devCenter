@@ -76,6 +76,8 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 			conflict_response = {}
 			merge_response = {}
 			comment_response = {}
+			commit_response = {}
+			commit_comment_response = {}
 
 			if data.get('log_time', False): 
 				log_response = JiraRequests.add_work_log(data=data, jira_obj=jira_obj)
@@ -85,12 +87,23 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 			if data.get('remove_merge', False):
 				data['status_type'] = 'removeMergeCode'
 				merge_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+
+				# get commit ids and add Jira comment if commit ids present
+				commit_response = CrucibleRequests.get_commit_ids(data=data, crucible_obj=crucible_obj)
+				
+				if commit_response['status']:
+					data['commit_ids'] = commit_response['data']
+					commit_comment_response = JiraRequests.add_commit_comment(data=data, jira_obj=jira_obj)
+
 			if data.get('comment', False):
 				comment_response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
+
 			response['data']['log_response'] = log_response
 			response['data']['conflict_response'] = conflict_response
 			response['data']['merge_response'] = merge_response
 			response['data']['comment_response'] = comment_response
+			response['data']['commit_response'] = commit_response
+			response['data']['commit_comment_response'] = commit_comment_response
 
 		# else get comments
 		else:

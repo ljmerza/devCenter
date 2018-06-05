@@ -116,3 +116,13 @@ def get_comments(data, crucible_obj):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	# return data
 	return crucible_obj.get_comments(crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
+
+def get_commit_ids(data, crucible_obj):
+	'''
+	'''
+	# check for required data
+	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash', 'master_branch'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+	# return data
+	return crucible_obj.get_commit_ids(key=data['key'], cred_hash=data['cred_hash'], master_branch=data['master_branch'])
