@@ -18,7 +18,7 @@ import { DataService } from './../../shared/services/data.service';
 export class TicketCommentsModalComponent {
 
 	modalRef: NgbModalRef;
-	customModalCss = 'ticketComments';
+	modalSize = 'ticketComments';
 	@Input() key;
 	@Input() ticketListType;
 	@ViewChild(ModalComponent) modal: ModalComponent;

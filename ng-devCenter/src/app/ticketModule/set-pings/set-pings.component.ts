@@ -15,7 +15,7 @@ export class SetPingsComponent {
 	@Input() branch;
 	@Input() masterBranch;
 
-	customModalCss ='setPings';
+	modalSize ='setPings';
 	modalInstance: NgbModalRef;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 

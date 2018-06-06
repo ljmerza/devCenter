@@ -12,7 +12,7 @@ import { ModalComponent } from '@modal';
 })
 export class TicketDetailsComponent {
 	loading:boolean = true;
-	customModalCss = 'ticketDetails';
+	modalSize = 'ticketDetails';
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	modalRef: NgbModalRef;

@@ -26,7 +26,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	qaForm;
 	hourStep = 1;
 	minuteStep = 15;
-	customModalCss = 'qaGen';
+	modalSize = 'qaGen';
 	repos:Array<Repo>;
 	repos$;
 	defaultLogTime = {hour: 0, minute: 0};
@@ -296,13 +296,13 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		this.cd.detectChanges();
 		this.modalRef = this.modal.openModal();
 
-		// set dismiss event to trigger status cancel
-		this.modalRef.result.then(
-    		() => null,
-    		() => {
-    			this.statusChange.emit({canceled: true, hideToast: this.crucibleOnly});
-    		}
-    	);
+		// // set dismiss event to trigger status cancel
+		// this.modalRef.result.then(
+  //   		() => null,
+  //   		() => {
+  //   			this.statusChange.emit({canceled: true, hideToast: this.crucibleOnly});
+  //   		}
+  //   	);
 
 		// if we already have branches then don't reload them
 		if( (this.qaForm.get('branches') as FormArray).length > 0 ) {

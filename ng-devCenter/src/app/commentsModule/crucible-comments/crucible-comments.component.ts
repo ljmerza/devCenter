@@ -17,7 +17,7 @@ export class CrucibleCommentsComponent implements OnInit {
 
 	modalRef:NgbModalRef;
 	@ViewChild(ModalComponent) modal: ModalComponent;
-	customModalCss:string = 'ticketComment';
+	modalSize:string = 'ticketComment';
 
 	comments:Array<any> = [];
 	@Input() crucibleId:string;

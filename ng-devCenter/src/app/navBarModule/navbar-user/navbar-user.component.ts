@@ -10,7 +10,7 @@ import { appVersion  } from './../../app.version';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarUserComponent {
-	customModalCss:string = 'navbarAbout';
+	modalSize:string = 'navbarAbout';
 	aboutModel;
 	packageFile;
 	frontendVersions = [];

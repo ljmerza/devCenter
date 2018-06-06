@@ -27,7 +27,7 @@ declare const $:any;
 export class TicketCommentsComponent implements OnInit, OnDestroy {
 	commentId:string;
 	modalRef:NgbModalRef;
-	customModalCss:string = 'ticketComment';
+	modalSize:string = 'ticketComment';
 	comments:Array<Comment>;
 	attachments:Array<Attachment>;
 

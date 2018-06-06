@@ -227,14 +227,14 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		this.statusName = ticketState.name;
 		this.modalRef = this.modal.openModal();
 
-		// set dismiss event to trigger status cancel
-		this.modalRef.result.then(
-    		() => null,
-    		() => {
-    			this.statusChange({canceled:true});
-    			this.showCancelStatus();
-    		}
-    	)
+		// // set dismiss event to trigger status cancel
+		// this.modalRef.result.then(
+  //   		() => null,
+  //   		() => {
+  //   			this.statusChange({canceled:true});
+  //   			this.showCancelStatus();
+  //   		}
+  //   	)
 	}
 
 	/**

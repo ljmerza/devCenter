@@ -17,7 +17,7 @@ import { JiraService, ToastrService, MiscService, UserService } from '@services'
 export class CrucibleCommentsModalComponent {
 
 	modalRef: NgbModalRef;
-	customModalCss = 'ticketComments';
+	modalSize = 'ticketComments';
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() crucibleId;
 

@@ -27,7 +27,7 @@ export class WorkLogComponent {
 	hourStep:number = 1;
 	minuteStep:number = 15;
 
-	customModalCss = 'timeLog';
+	modalSize = 'timeLog';
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;

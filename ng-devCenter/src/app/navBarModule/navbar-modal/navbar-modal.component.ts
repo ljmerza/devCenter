@@ -13,7 +13,7 @@ import { JiraService, ToastrService, UserService } from '@services';
 })
 export class NavbarModalComponent {
 	modalInstance: NgbModalRef;
-	customModalCss = 'userSettings';
+	modalSize = 'userSettings';
 
 	@ViewChild('userModal') private userModal;
 	@ViewChild(ModalComponent) modal: ModalComponent;

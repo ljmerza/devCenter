@@ -1,6 +1,12 @@
-import { Component, Output, Input, ViewEncapsulation, EventEmitter, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { 
+	Component, Output, Input, ViewEncapsulation, ContentChild, ViewChild, ViewChildren,
+	EventEmitter, ChangeDetectionStrategy, Inject, ContentChildren, ElementRef, ChangeDetectorRef
+} from '@angular/core';
+
 import { NgbModal, NgbModalRef, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
+
+declare var jsPanel;
 @Component({
 	selector: 'dev-center-modal',
 	templateUrl: './modal.component.html',
@@ -9,29 +15,39 @@ import { NgbModal, NgbModalRef, NgbActiveModal } from '@ng-bootstrap/ng-bootstra
 	encapsulation: ViewEncapsulation.None
 })
 export class ModalComponent {
-	@Input() customModalCss;
+	@Input() modalSize = '';
 	@Output() modalEvent = new EventEmitter();
-	@ViewChild('modal') modal: NgbModal;
-	modalRef;
 
-	constructor(private modalService: NgbModal) { }
+	@ViewChild('modalHeader') modalHeader;
+	@ContentChild('modalBody') modalBody: ElementRef;
+
+	modalRef;
+	_jspanelRef;
+
+	constructor(private cd: ChangeDetectorRef) { }
 
 	/**
 	*/
-	openModal(options?:any): NgbModalRef {
+	openModal(options?:any={}) {
+		this.cd.detectChanges();
+
+		this.modalRef = jsPanel.create({
+			headerTitle: this.modalHeader.nativeElement.innerHTML
+		});
+
 		// create custom args
-		if(this.customModalCss){
-			options = {...options, ...{windowClass: this.customModalCss}};
-		}		
+		// if(this.modalSize){
+		// 	options = {...options, ...{windowClass: this.modalSize}};
+		// }		
 
 		// open modal and return modal ref
-		this.modalRef = this.modalService.open(this.modal, options);
+		// this.modalRef = this.modalService.open(this.modal, options);
 		return this.modalRef;
 	}
 
 	/**
 	*/
-	closeModal(closeMessage){
+	closeModal(closeMessage:any){
 		this.modalRef.close();
 		this.modalEvent.emit(closeMessage);
 	}
