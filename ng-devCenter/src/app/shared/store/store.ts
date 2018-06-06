@@ -108,7 +108,8 @@ function addTickets(state, tickets){
 		statuses.push({
 			status: ticket.status,
 			key: ticket.key,
-			msrp: ticket.msrp
+			msrp: ticket.msrp,
+			master_branch: ticket.master_branch || ''
 		});
 	});
 

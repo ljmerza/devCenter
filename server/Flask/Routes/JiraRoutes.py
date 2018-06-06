@@ -77,23 +77,13 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 			merge_response = {}
 			comment_response = {}
 			commit_response = {}
-			commit_comment_response = {}
 
 			if data.get('log_time', False): 
 				log_response = JiraRequests.add_work_log(data=data, jira_obj=jira_obj)
+				
 			if data.get('remove_conflict', False):
 				data['status_type'] = 'removeMergeConflict'
 				conflict_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-			if data.get('remove_merge', False):
-				data['status_type'] = 'removeMergeCode'
-				merge_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
-
-				# get commit ids and add Jira comment if commit ids present
-				commit_response = CrucibleRequests.get_commit_ids(data=data, crucible_obj=crucible_obj)
-				
-				if commit_response['status']:
-					data['commit_ids'] = commit_response['data']
-					commit_comment_response = JiraRequests.add_commit_comment(data=data, jira_obj=jira_obj)
 
 			if data.get('comment', False):
 				comment_response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
@@ -103,7 +93,6 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 			response['data']['merge_response'] = merge_response
 			response['data']['comment_response'] = comment_response
 			response['data']['commit_response'] = commit_response
-			response['data']['commit_comment_response'] = commit_comment_response
 
 		# else get comments
 		else:
@@ -129,7 +118,9 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 			'key': post_data.get('key', ''),
 			'status_type': post_data.get('statusType', ''),
 			'crucible_id': post_data.get('crucible_id', ''),
-			'username': post_data.get('username', '')
+			'username': post_data.get('username', ''),
+			'add_commits': post_data.get('add_commits', False),
+			'master_branch': post_data.get('master_branch', '')
 		}
 
 		status_response = {'status': False, 'data': 'status type not given'}
@@ -148,6 +139,11 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g):
 		# if pcr pass/complete -> add user, complete review, add comment to Crucible
 		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
 			status_response = CrucibleRequests.pass_review(data=data, crucible_obj=crucible_obj)
+
+		# if uctReady then add commit hashes to Jira comment if specified
+		if data.get('add_commits', False):
+			status_response = JiraRequests.add_commit_comment(data=data, jira_obj=jira_obj, crucible_obj=crucible_obj)
+
 
 		return Response(status_response, mimetype='application/json')
 
