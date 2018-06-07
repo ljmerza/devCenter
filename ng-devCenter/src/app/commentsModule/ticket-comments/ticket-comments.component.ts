@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { NgRedux } from '@angular-redux/store';
 
@@ -26,8 +25,7 @@ declare const $:any;
 })
 export class TicketCommentsComponent implements OnInit, OnDestroy {
 	commentId:string;
-	modalRef:NgbModalRef;
-	modalSize:string = 'ticketComment';
+	modalSize:string = 'small';
 	comments:Array<Comment>;
 	attachments:Array<Attachment>;
 
@@ -99,8 +97,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 	 */
 	private deleteComment(commentId:string):void {
 		this.commentId = commentId;
-		// open delete modal
-		this.modalRef = this.modal.openModal();
+		this.modal.openModal();
 	}
 
 	/**
@@ -109,7 +106,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 	 * @param {Boolean} deleteComment do we delete the comment?
 	 */
 	public closeDeleteModal(deleteComment?:boolean):void {
-		this.modalRef.close();
+		this.modal.closeModal();
 		if(!deleteComment) return;
 
 		this.jira.deleteComment(this.commentId, this.key)

@@ -1,6 +1,6 @@
 import { Component, ViewChild, EventEmitter, ChangeDetectionStrategy, ElementRef, ViewEncapsulation, Output, Input, ChangeDetectorRef } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgRedux } from '@angular-redux/store';
 
 import { ModalComponent } from '@modal';
@@ -16,9 +16,6 @@ import { statuses, Ticket, Comment } from '@models';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkLogComponent {
-	modalRef: NgbModalRef;
-
-	// form input values
 	uctNotReady:boolean = false;
 	conflictCode:boolean = false;
 	comment:string = '';
@@ -26,7 +23,7 @@ export class WorkLogComponent {
 	hourStep:number = 1;
 	minuteStep:number = 15;
 
-	modalSize = 'timeLog';
+	modalSize = 'medium';
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;
@@ -45,7 +42,7 @@ export class WorkLogComponent {
 	 * @param {NgForm} formObj the reactive form object with all the inputs' values 
 	 */
 	submitLog(formObj?:NgForm) {
-		this.modalRef.close();
+		this.modal.closeModal();
 		if(!formObj) return;
 
 		const tasks = this.buildToastMessage(formObj);
@@ -169,13 +166,5 @@ export class WorkLogComponent {
 		}
 		// get string of all tasks to complete
 		return message.join(', ');
-	}
-
-	/**
-	 * Opens the work log dialog.
-	 */
-	openLogModal():void {
-		this.cd.detectChanges();
-		this.modalRef = this.modal.openModal();
 	}
 }

@@ -1,5 +1,4 @@
 import { Component, ViewChild, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ModalComponent } from '@modal';
 import { UserSettingsComponent } from './../user-settings/user-settings.component';
@@ -12,8 +11,7 @@ import { JiraService, ToastrService, UserService } from '@services';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarModalComponent {
-	modalInstance: NgbModalRef;
-	modalSize = 'userSettings';
+	modalSize = '500px 600px';
 
 	@ViewChild('userModal') private userModal;
 	@ViewChild(ModalComponent) modal: ModalComponent;
@@ -22,17 +20,17 @@ export class NavbarModalComponent {
 	constructor() {}	
 
 	/**
-	*/
+	 * opens the user settings modal
+	 */
 	openModal(): void {
-		this.modalInstance = this.modal.openModal();
+		this.modal.openModal();
 	}
 
 	/**
-	*/
-	closeModal(isSaving?): void {
-		// see if we need to save data then close modal
+	 * 
+	 */
+	willSaveSettings(isSaving=false): void {
 		this.userSettings.submit(isSaving);
-		this.modalInstance.close();
 	}
 }
 

@@ -3,7 +3,6 @@ import { NgForm } from '@angular/forms';
 
 import { DataTableDirective } from 'angular-datatables';
 import { Subject, Observable, Subscription } from 'rxjs';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ModalComponent } from '@modal';
 import { ItemsService, ToastrService } from '@services';
@@ -19,7 +18,6 @@ export class EditOrdersComponent implements OnInit {
 	tableTitle:string = 'Edit Orders';
 	navbarItems: Array<any>;
 	dropdownItems: Array<string> = [];
-	modalRef:NgbModalRef;
 
 	dtTrigger:Subject<any> = new Subject();
 	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
@@ -148,26 +146,19 @@ export class EditOrdersComponent implements OnInit {
 	}
 
 	/**
-	 *
-	 */
-	closeModal(){
-		this.modalRef.close();
-	}
-
-	/**
 	 * 
 	 */
 	openModal(){
-		this.modalRef = this.modal.openModal();
+		this.modal.openModal();
 	}
 
 	/**
 	 *
 	 */
-	submitInput(formObj:NgForm, save?:boolean){
+	submitInput(formObj:NgForm, save:boolean=false){
 		if(!save) {
 			formObj.resetForm();
-			this.closeModal();
+			this.modal.closeModal();
 			return;
 		}
 
@@ -180,11 +171,8 @@ export class EditOrdersComponent implements OnInit {
 			return;
 		}
 
+		this.modal.closeModal();
 		formObj.resetForm();
-		this.closeModal();
-
-		console.log({linkType, emberRoute, displayName});
-		
 	}
 
 }

@@ -1,11 +1,5 @@
-import { 
-	Component, ViewChild, ChangeDetectorRef,
-	ViewEncapsulation, Input, Output, ChangeDetectionStrategy
-} from '@angular/core';
-
-import { NgbModalRef, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { Component, ViewChild, ViewEncapsulation, Input, ChangeDetectionStrategy} from '@angular/core';
 import { ModalComponent } from '@modal';
-import { JiraService, ToastrService, MiscService, UserService } from '@services';
 
 @Component({
 	selector: 'crucible-comments-modal',
@@ -15,24 +9,16 @@ import { JiraService, ToastrService, MiscService, UserService } from '@services'
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CrucibleCommentsModalComponent {
-
-	modalRef: NgbModalRef;
-	modalSize = 'ticketComments';
+	modalSize = '1000px 700px';
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() crucibleId;
 
-	constructor(private cd: ChangeDetectorRef) {}
+	constructor() {}
 
   	/**
-  	*/
+	 *
+	 */
 	openModal(): void {
-		this.cd.detectChanges();
-		this.modalRef = this.modal.openModal();
-	}
-
-	/**
-	*/
-	closeModal() {
-		this.modalRef.close();
+		this.modal.openModal();
 	}
 }

@@ -32,7 +32,6 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 	crucibleId;
 
 	crucibleCommentsComponentRef;
-
 	alreadyPinged: boolean = false;
 
 	/**
@@ -130,7 +129,6 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 			(<CrucibleCommentsModalComponent>this.crucibleCommentsComponentRef.instance).crucibleId = this.crucibleId;
 		}
 
-		// open modal
 		(<CrucibleCommentsModalComponent>this.crucibleCommentsComponentRef.instance).openModal();
 	}
 }

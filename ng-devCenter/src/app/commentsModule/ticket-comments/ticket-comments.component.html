@@ -51,22 +51,17 @@
 
 
 <dev-center-modal (modalEvent)="closeDeleteModal()" [modalSize]=modalSize>
-
-	<div class='modal-text'>
-		<h4 class="modal-title">Delete Comment?'</h4>
-	</div>
+	<div class='modal-header'>Delete Comment?'</div>
 
 	<span class='modal-body'>
 		<p>Are you sure you want to delete this comment?</p>
 	</span>
 
 	<span class='modal-footer'>
-		<button type="button" class="btn btn-outline-primary" 
-		(click)="closeDeleteModal(true)">
+		<button type="button" class="btn btn-outline-primary" (click)="closeDeleteModal(true)">
 			Delete Comment
 		</button>
-		<button type="button" class="btn btn-outline-danger" 
-		(click)="closeDeleteModal()">
+		<button type="button" class="btn btn-outline-danger" (click)="closeDeleteModal()">
 			Cancel
 		</button>
 	</span>

@@ -1,12 +1,8 @@
-import { 
-	Component, Output, Input, ViewEncapsulation, ContentChild, ViewChild, ViewChildren,
-	EventEmitter, ChangeDetectionStrategy, Inject, ContentChildren, ElementRef, ChangeDetectorRef
-} from '@angular/core';
+import { Component, Output, Input, ViewEncapsulation, ViewChild, EventEmitter, ChangeDetectionStrategy} from '@angular/core';
 
-import { NgbModal, NgbModalRef, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+declare const jsPanel;
+declare const $;
 
-
-declare var jsPanel;
 @Component({
 	selector: 'dev-center-modal',
 	templateUrl: './modal.component.html',
@@ -15,40 +11,69 @@ declare var jsPanel;
 	encapsulation: ViewEncapsulation.None
 })
 export class ModalComponent {
-	@Input() modalSize = '';
-	@Output() modalEvent = new EventEmitter();
+	@Input() modalSize = '600px 150px';
+	@Output() modalCloseEvent = new EventEmitter();
 
 	@ViewChild('modalHeader') modalHeader;
-	@ContentChild('modalBody') modalBody: ElementRef;
+	@ViewChild('modalBody') modalBody;
+	@ViewChild('modalFooter') modalFooter;
 
-	modalRef;
-	_jspanelRef;
-
-	constructor(private cd: ChangeDetectorRef) { }
+	_jspanel;
+	constructor() { }
 
 	/**
-	*/
-	openModal(options?:any={}) {
-		this.cd.detectChanges();
+	 * opens a new jsPanel dialog
+	 */
+	openModal(options:any={}) {
+		setTimeout(() => this.createNewModal(options));
+	}
 
-		this.modalRef = jsPanel.create({
-			headerTitle: this.modalHeader.nativeElement.innerHTML
+	/**
+	 * closes the existing jsPanel and creates a new one
+	 * @param {Object?} options passed to jsPanel create method (overwrites default settings)
+	 */
+	createNewModal(options:any={}){
+		if(this._jspanel) this._jspanel.close();
+		
+		this._jspanel = jsPanel.create({
+			headerTitle: this.modalHeader.nativeElement,
+			content: this.modalBody.nativeElement,
+			footerToolbar: this.modalFooter.nativeElement,
+			contentSize: this.getSize(),
+			dragit: {
+			    cursor:  'move',
+			    handles: '.jsPanel-titlebar',
+			    opacity: 1,
+			    disableOnMaximized: true
+			},
+			maximizedMargin: [150, 5, 5, 5],
+			callback: () =>  {
+				setTimeout(() => {
+					this._jspanel.controlbar.querySelector('.jsPanel-btn-close').addEventListener('mouseup', (e) => {
+						e.preventDefault();
+						this.modalCloseEvent.emit();
+					});
+				});
+		    },
+			...options
 		});
-
-		// create custom args
-		// if(this.modalSize){
-		// 	options = {...options, ...{windowClass: this.modalSize}};
-		// }		
-
-		// open modal and return modal ref
-		// this.modalRef = this.modalService.open(this.modal, options);
-		return this.modalRef;
 	}
 
 	/**
-	*/
-	closeModal(closeMessage:any){
-		this.modalRef.close();
-		this.modalEvent.emit(closeMessage);
+	 * calculates modal size dimensions
+	 * @return {Object} with width and height properties
+	 */
+	private getSize(){
+		const [width, height] = this.modalSize.split(' ');
+		console.log('width, height: ', width, height);
+		return {width, height};
 	}
+
+	/**
+	 * closes jsPanel dialog
+	 */
+	closeModal(){
+		this._jspanel.close();
+	}
+
 }

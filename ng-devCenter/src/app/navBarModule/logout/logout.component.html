@@ -1,18 +1,15 @@
-<dev-center-modal (modalEvent)="closeModal()">
-
-	<div class='modal-text'>
-		<h4 class="modal-title">Logout Confirmation</h4>
-	</div>
+<dev-center-modal (modalEvent)="willResetUser()">
+	<div class='modal-header'>Logout Confirmation</div>
 
 	<span class='modal-body'>
 		<p>Are you sure you want to logout?</p>
 	</span>
 
 	<span class='modal-footer'>
-		<button type="button" class="btn btn-outline-primary" (click)="closeModal(true)">
+		<button type="button" class="btn btn-outline-primary" (click)="willResetUser(true)">
 			Logout
 		</button>
-		<button type="button" class="btn btn-outline-danger" (click)="closeModal()">
+		<button type="button" class="btn btn-outline-danger" (click)="willResetUser()">
 			Cancel
 		</button>
 	</span>

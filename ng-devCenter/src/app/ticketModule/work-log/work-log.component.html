@@ -1,8 +1,5 @@
-<dev-center-modal (modalEvent)="submitLog()" [modalSize]=modalSize>
-
-	<div class='modal-text'>
-		<h4 class="modal-title">Add Comment/Log for {{key}}</h4>
-	</div>
+<dev-center-modal>
+	<div class='modal-header'>Add Comment/Log for {{key}}</div>
 
 	<span class='modal-body'>
 		<form class="form-group" #logForm="ngForm">

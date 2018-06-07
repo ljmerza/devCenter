@@ -39,7 +39,7 @@
         "../node_modules/datatables.net-buttons/js/buttons.colVis.js",
         "./assets/highlight.pack.js",
         "../node_modules/socket.io-client/dist/socket.io.slim.js",
-        "../node_modules/jspanel4/dist/jspanel.min.js"
+        "../node_modules/jspanel4/dist/jspanel.js"
       ],
 
       "environmentSource": "environments/environment.ts",

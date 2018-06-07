@@ -51,9 +51,7 @@
 
 
 <dev-center-modal (modalEvent)="submitInput(newNavForm)">
-	<div class='modal-text'>
-		<h4 class="modal-title">Add new Link</h4>
-	</div>
+	<div class='modal-header'>Add new Link</div>
 
 	<span class='modal-body'>
 		<form #newNavForm="ngForm" (ngSubmit)="submitInput(newNavForm)">
