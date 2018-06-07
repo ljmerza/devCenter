@@ -20,7 +20,6 @@ export class WorkLogComponent {
 
 	// form input values
 	uctNotReady:boolean = false;
-	mergedCode:boolean = false;
 	conflictCode:boolean = false;
 	comment:string = '';
 	logTime = {hour: 0, minute: 0};
@@ -59,7 +58,6 @@ export class WorkLogComponent {
 		// create POST body
 		let postData = {
 			comment: formObj.value.comment || '',
-			remove_merge: formObj.value.mergedCode || false,
 			remove_conflict: formObj.value.conflictCode || false,
 			log_time: formObj.value.logTime.hour * 60 + formObj.value.logTime.minute,
 			key: this.key,
@@ -105,24 +103,12 @@ export class WorkLogComponent {
 			const status = merge ? statuses.UCTREADY.frontend : statuses.QAREADY.frontend;
 			this.store.dispatch({type: Actions.updateStatus, payload:{ key:this.key, status}});
 
-			// if we removed merge and commit Jira comment was success then add comment to ticket
-			if(responseData.commit_comment_response.status){
-				this.store.dispatch({ type: Actions.addComment, payload: responseData.commit_comment_response.data});	
-			}
-
 		} else if(responseData.merge_response.status === false && postData.remove_merge){
 			errorMessage += `removing merge code status: ${responseData.merge_response.data}\n`;
 
 		} else if(responseData.conflict_response.status === false && postData.remove_conflict){
 			errorMessage += responseData.conflict_response.data;
 			errorMessage += `removing merge conflict status: ${responseData.conflict_response.data}\n`;
-		}
-
-		else if(responseData.commit_response.status === false  && postData.remove_merge){
-			errorMessage += `getting commit ids: ${responseData.commit_response.data}\n`;
-		}
-		else if(responseData.commit_comment_response.status === false && postData.remove_merge){
-			errorMessage += `adding commit Jira coment: ${responseData.commit_response.data}\n`;
 		}
 
 		// show any errors
@@ -139,7 +125,6 @@ export class WorkLogComponent {
 	 */
 	resetForm(){
 		this.uctNotReady = false;
-		this.mergedCode = false;
 		this.conflictCode = false;
 		this.comment = '';
 		this.logTime = {hour: 0, minute: 0};
@@ -174,9 +159,6 @@ export class WorkLogComponent {
 		}
 		if(formObj.value.conflictCode){
 			message.push('removing merge conflict component');
-		} 
-		if(formObj.value.mergedCode){
-			message.push('removing merge code component and posting commit ids to Jira');
 		} 
 
 		if(formObj.value.comment){

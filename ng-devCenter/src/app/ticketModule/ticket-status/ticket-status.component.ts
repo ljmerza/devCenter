@@ -35,6 +35,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	ticketStatus;
 	crucibleId;
 	msrp;
+	master_branch;
 
 	status$
 	crucibleId$;
@@ -64,6 +65,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 				const ticket:any = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.ticketStatus = ticket.status;
 				this.msrp = ticket.msrp;
+				this.master_branch = ticket.master_branch;
 				this.validateTransitions();
 			});
 
@@ -264,13 +266,33 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * @param {string} statusType the status type string
 	 */
 	changeStatus(statusType:string): void {
-		this.jira.changeStatus({key:this.key, statusType, crucible_id: this.crucibleId})
+
+		let postData:any = {key:this.key, statusType, crucible_id: this.crucibleId};
+
+		// if transitioning from merge code to uct ready then add commit hash Jira comment
+		if(statusType === statuses.UCTREADY.backend && this.ticketStatus === statuses.MERGECODE.frontend){
+			postData.add_commits = true;
+			postData.master_branch = this.master_branch;
+			this.toastr.showToast(`Removing Merge Code component and adding commit hash Jira comment to ${this.key}`, 'info');
+		}
+
+		this.jira.changeStatus(postData)
 		.subscribe(
-			statusResponse => this.verifyStatusChangeSuccess(statusResponse.data, statusType),
+			statusResponse => {
+				this.verifyStatusChangeSuccess(statusResponse.data, statusType);
+
+				// add log if commit hash comment was success
+				if(postData.add_commits && statusResponse.status){
+					this.toastr.showToast(`Added commit hash comment to ${this.key}`, 'success');
+					this.store.dispatch({type: Actions.addComment, payload: statusResponse.data});
+				}
+			},
 			error => {
 				this.jira.processErrorResponse(error);
 				this.statusChange({canceled:true});
 				this.showCancelStatus();
+
+				
 			}
 		);
 	}

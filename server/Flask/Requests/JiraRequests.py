@@ -49,10 +49,7 @@ def set_status(data, jira_obj):
 	elif data['status_type'] == 'removeMergeConflict':
 		return jira_obj.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctReady':
-		return jira_obj.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'removeMergeCode':
 		return jira_obj.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-
 
 	elif data['status_type'] == 'inUct':
 		return jira_obj.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
@@ -113,15 +110,19 @@ def add_comment(data, jira_obj):
 
 	return response
 
-def add_commit_comment(data, jira_obj):
-	'''Adds a Jira comment with all the commits for this ticket
+def add_commit_comment(data, jira_obj, crucible_obj):
+	'''Adds a Jira comment with all the commits for a Jira ticket
 	'''
-	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash', 'commit_ids'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash', 'master_branch'])
 	if missing_params:
 		return {"data": missing_params, "status": False}
 
+	commit_response = crucible_obj.get_commit_ids(key=data['key'], master_branch=data['master_branch'], cred_hash=data['cred_hash'])
+	if not commit_response['status']:
+		return {"data": commit_response['data'], "status": False}
+
 	comment = 'The following branches have been committed:\n || Repo || Branch || SHA-1 ||\n'
-	for commit in data.get('commit_ids'):
+	for commit in commit_response.get('data', []):
 		repo_name = commit.get('repo_name')
 		master_branch = commit.get('master_branch')
 		commit_id = commit.get('commit_id')
