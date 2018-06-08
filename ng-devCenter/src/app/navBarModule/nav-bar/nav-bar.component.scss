@@ -8,6 +8,10 @@ $success: #28a745;
 	background-color: $darkblk;
 }
 
+.fixed-top {
+	z-index: 99;
+}
+
 .dropdown-submenu{
 	position: relative;
 

@@ -1,107 +1,50 @@
-$header-bg: #0275d8;
+$headerbg: #0275d8;
 $darkbg: #292b2c;
+$textcolor: #ffffff;
 
-.qaGen {
-	.modal-dialog {
-		max-width: 1000px;
-		width: 70%;
-	}
+.hidden {
+	display: none;
 }
 
-.ticketComments,  {
-	.modal-dialog {
-		max-width: 1200px;
-		width: 70%;
-	}
+.jsPanel-theme-default > .jsPanel-hdr * {
+	color: $textcolor !important;
 }
 
-.setPings, .timeLog {
-	.modal-dialog {
-		max-width: 700px;
-		width: 70%;
-	}
-}
+.jsPanel {
 
-.ticketDetails, .navbarAbout {
-	.modal-dialog {
-		max-width: 800px;
-		width: 70%;
-	}
-}
+	.jsPanel-headerbar {
+		background-color: $headerbg  !important;
 
+		.modal-header {
+			border-bottom: none;
+			padding: 0;
+		}
 
-.modal-dialog {
-	margin: 5% auto;
-}
-
-.modal-content {
-	border-radius: 0;
-	background-color: #333;
-	color: white;
-
-	.card, textarea, .form-control, .form-control:focus {
-		border-radius: 0;
-		background-color: #333;
-		color: white;
+		.modal-title {
+			font-size: 20px;
+		}
 	}
 
-	tr:nth-of-type(odd) {
-		background-color: $darkbg !important;
+	.jsPanel-content {
+		padding: 1rem;
+		color: $textcolor;
 	}
 
-	tr:nth-of-type(even) {
-		background-color: #333 !important;
-	}
+	.jsPanel-content, .jsPanel-ftr {
+		background-color: $darkbg  !important;
 
-	.card-header {
-		background-color: $darkbg;
-	}
+		.modal-footer {
+			border-top: none;
 
-	.modal-footer, .modal-header {
-		border-top: 0;
-		border-bottom: 0;
-	}
-
-	button {
-		border-radius: 0 !important;
-	}
-}
-
-
-.modal-header {
-	background-color: $header-bg;
-	color: #FFF;
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
-	padding: 0px;
-	margin: 0px;
-
-	h4, button {
-		margin-top: 15px;
-		justify-content: space-between;
-	}
-
-	h4 {
-		padding-left: 15px;
-	}
-
-	.close {
-		margin: 0px;
-		color: #FFF;
-	}
-
-	.icon {
-		cursor: default;
-	}
-
-	.material-icons {
-		color: #fff;
-		font-size: 35px;
-
-		&:hover {
-			color: #fff;
+			.btn {
+				border-radius: 0 !important;
+			}
 		}
 	}
 }
 
-
+#jsPanel-replacement-container {
+	.jsPanel-title{
+		color: $darkbg;
+	}
+}

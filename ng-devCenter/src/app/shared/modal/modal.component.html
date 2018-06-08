@@ -1,17 +1,14 @@
-<div dcDraggable class='test'>
-	<ng-template #modal dcDraggable>
-		<div class="modal-header">
-			<h4><i class="material-icons icon">warning</i></h4>
-			<ng-content select=".modal-text"></ng-content>
-
-			<button type="button" class="close" aria-label="Close" (click)="closeModal()">
-				<span aria-hidden="true">
-					<i class="material-icons">clear</i>
-				</span>
-			</button>
+<div class='hidden'>
+	<div #modalHeader>
+		<div class="modal-title">
+			<ng-content select=".modal-header"></ng-content>
 		</div>
+	</div>
 		
+	<div #modalBody>
 		<ng-content select=".modal-body"></ng-content>
+	</div>
+	<div #modalFooter>
 		<ng-content select=".modal-footer"></ng-content>
-	</ng-template>
+	</div>
 </div>

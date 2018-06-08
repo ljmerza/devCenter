@@ -1,11 +1,8 @@
-<dev-center-modal (modalEvent)="submitLog()" [customModalCss]=customModalCss>
-
-	<div class='modal-text'>
-		<h4 class="modal-title">Add Comment/Log for {{key}}</h4>
-	</div>
+<dev-center-modal [modalSize]=modalSize>
+	<div class='modal-header'>Add Comment/Log for {{key}}</div>
 
 	<span class='modal-body'>
-		<form class="form-group" #logForm="ngForm">
+		<form class="form-group work-log" #logForm="ngForm">
 			<h4>Comment:</h4>
 			<div class="form-group">
 				 <textarea class="form-control" name="comment" id="comment" rows=10 [(ngModel)]="comment"></textarea>

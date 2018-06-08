@@ -5,7 +5,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 import { NgForm, FormGroup, FormControl, Validators, FormBuilder, AbstractControl, ValidationErrors, FormArray } from '@angular/forms';
-import { NgbModalRef, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { select, NgRedux } from '@angular-redux/store';
 
@@ -26,7 +26,11 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	qaForm;
 	hourStep = 1;
 	minuteStep = 15;
-	customModalCss = 'qaGen';
+	modalSize = {
+        width: '900px',
+        height: () => window.innerHeight/1.3
+    };
+
 	repos:Array<Repo>;
 	repos$;
 	defaultLogTime = {hour: 0, minute: 0};
@@ -34,7 +38,6 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	gitBranches$;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
-	modalRef: NgbModalRef;
 	@Input() msrp;
 	@Input() key;
 	@Input() crucibleOnly;
@@ -147,7 +150,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 * Submits QA generator form inputs to generate Crucible and transition Jira ticket to PCR Needed.
 	 * @param {boolean} isSaving
 	 */
-	submitQA(isSaving): void {
+	submitQA(isSaving=false): void {
 
 		const isPcr = this.qaForm.controls.selections.controls.pcrNeeded.value;
 		if(!isPcr || !isSaving){
@@ -156,12 +159,12 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 
 		// cancel and close if not saving form
 		if(!isSaving){
-			this.modalRef.close();
+			this.modal.closeModal();
 			return;
 		}
 
 		if(this.qaForm.invalid) return;
-		this.modalRef.close();
+		this.modal.closeModal();
 		
 		const postData = this.generatePostBody();
 		this.showSubmitMessage(postData);
@@ -294,15 +297,15 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		// if only want crucible then set PCR needed to false
 		if(this.crucibleOnly) this.qaForm.get('selections').get('pcrNeeded').setValue(false);
 		this.cd.detectChanges();
-		this.modalRef = this.modal.openModal();
+		this.modal.openModal();
 
-		// set dismiss event to trigger status cancel
-		this.modalRef.result.then(
-    		() => null,
-    		() => {
-    			this.statusChange.emit({canceled: true, hideToast: this.crucibleOnly});
-    		}
-    	);
+		// // set dismiss event to trigger status cancel
+		// this.modalRef.result.then(
+  //   		() => null,
+  //   		() => {
+  //   			this.statusChange.emit({canceled: true, hideToast: this.crucibleOnly});
+  //   		}
+  //   	);
 
 		// if we already have branches then don't reload them
 		if( (this.qaForm.get('branches') as FormArray).length > 0 ) {

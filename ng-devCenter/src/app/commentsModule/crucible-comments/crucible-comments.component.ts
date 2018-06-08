@@ -1,7 +1,5 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { ModalComponent } from '@modal';
+import { Component, OnInit, ViewChild, Input, ViewEncapsulation } from '@angular/core';
 import { CrucibleService, MiscService, ConfigService } from '@services';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 
 declare const hljs:any;
@@ -11,13 +9,10 @@ declare const $:any;
 @Component({
 	selector: 'dc-crucible-comments',
 	templateUrl: './crucible-comments.component.html',
-	styleUrls: ['./crucible-comments.component.scss']
+	styleUrls: ['./crucible-comments.component.scss'],
+	encapsulation: ViewEncapsulation.None
 })
 export class CrucibleCommentsComponent implements OnInit {
-
-	modalRef:NgbModalRef;
-	@ViewChild(ModalComponent) modal: ModalComponent;
-	customModalCss:string = 'ticketComment';
 
 	comments:Array<any> = [];
 	@Input() crucibleId:string;

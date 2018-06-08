@@ -152,13 +152,4 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		navbarItem.link += `${queryAddition}cache=${this.user.cache}`;
 		return navbarItem;
 	}
-
-	aboutModel;
-	openAboutModal(){
-		this.aboutModel = this.modal.openModal();
-	}
-
-	closeAboutModal(){
-		this.aboutModel.close();
-	}
 }

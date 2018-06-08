@@ -1,17 +1,14 @@
-<dev-center-modal (modalEvent)=closePingModal($event) [customModalCss]=customModalCss>
-
-	<div class='modal-text'>
-		<h4 class="modal-title">Branch Information</h4>
-	</div>
+<dev-center-modal [modalSize]=modalSize>
+	<div class='modal-header'>Branch Information</div>
 
 	<span class='modal-body'>
 		<dc-branch-info [masterBranch]=masterBranch [branch]=branch [commit]=commit></dc-branch-info>
 	</span>
 
 	<span class='modal-footer'>
-		<button type="button" class="btn btn-outline-primary" (click)="closePingModal('new')">Send New Ping</button>
-		<button type="button" class="btn btn-outline-primary" (click)="closePingModal('merge')">Send Merge Ping</button>
-		<button type="button" class="btn btn-outline-danger" (click)="closePingModal('')">Cancel</button>
+		<button type="button" class="btn btn-outline-primary" (click)="setPing('new')">Send New Ping</button>
+		<button type="button" class="btn btn-outline-primary" (click)="setPing('merge')">Send Merge Ping</button>
+		<button type="button" class="btn btn-outline-danger" (click)="setPing('')">Cancel</button>
 	</span>
 	
 </dev-center-modal>

@@ -7,22 +7,18 @@
 </select>
 
 
-<dev-center-modal (modalEvent)=closeStatusModal($event)>
-	<div class='modal-text'>
-		<h4 class="modal-title">Status change to '{{statusName}}'</h4>
-	</div>
+<dev-center-modal (modalCloseEvent)='closeModal()'>
+	<div class='modal-header'>Status change to '{{statusName}}'?</div>
 
 	<span class='modal-body'>
-		<p>Would you like change {{key}} to '{{statusName}}'?</p>
+		<p>Would you like to change the status of {{key}} to '{{statusName}}'?</p>
 	</span>
 
 	<span class='modal-footer'>
-		<button type="button" class="btn btn-outline-primary" 
-		(click)="closeStatusModal(true)">
+		<button type="button" class="btn btn-outline-primary" (click)='closeModal(true)'>
 			Change to {{statusName}}
 		</button>
-		<button type="button" class="btn btn-outline-danger" 
-		(click)="closeStatusModal()">
+		<button type="button" class="btn btn-outline-danger"  (click)='closeModal()'>
 			Cancel
 		</button>
 	</span>

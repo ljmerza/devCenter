@@ -4,14 +4,13 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { NgRedux } from '@angular-redux/store';
 
 import { Actions, RootState } from '@store';
 import { Comment, Ticket, Attachment } from '@models';
 import { ModalComponent } from '@modal';
-import { JiraCommentsService, ToastrService, MiscService, UserService } from '@services';
+import { JiraCommentsService, ToastrService, MiscService, UserService, ConfigService } from '@services';
 
 
 declare const hljs:any;
@@ -26,8 +25,11 @@ declare const $:any;
 })
 export class TicketCommentsComponent implements OnInit, OnDestroy {
 	commentId:string;
-	modalRef:NgbModalRef;
-	customModalCss:string = 'ticketComment';
+	modalSizeDelete = {
+        width: '900px',
+        height: () => window.innerHeight/1.3
+    };
+    
 	comments:Array<Comment>;
 	attachments:Array<Attachment>;
 
@@ -40,7 +42,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 	constructor(
 		private toastr: ToastrService, private user:UserService, private jira:JiraCommentsService, 
 		private misc: MiscService, private store:NgRedux<RootState>, private cd: ChangeDetectorRef,
-		public route:ActivatedRoute
+		public route:ActivatedRoute, public config:ConfigService
 	) { }
 
 	/**
@@ -99,8 +101,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 	 */
 	private deleteComment(commentId:string):void {
 		this.commentId = commentId;
-		// open delete modal
-		this.modalRef = this.modal.openModal();
+		this.modal.openModal();
 	}
 
 	/**
@@ -109,7 +110,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 	 * @param {Boolean} deleteComment do we delete the comment?
 	 */
 	public closeDeleteModal(deleteComment?:boolean):void {
-		this.modalRef.close();
+		this.modal.closeModal();
 		if(!deleteComment) return;
 
 		this.jira.deleteComment(this.commentId, this.key)
@@ -146,7 +147,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 				response.data.key = this.key;
 				response.data.ticketListType = this.ticketListType;
 				this.store.dispatch({type: Actions.editComment, payload:response.data});
-				this.toastr.showToast('Comment Edited Successfully', 'success')
+				this.toastr.showToast(`Comment Edited Successfully for ${this.key}`, 'success');
 			},
 			this.jira.processErrorResponse.bind(this.jira)
 		);

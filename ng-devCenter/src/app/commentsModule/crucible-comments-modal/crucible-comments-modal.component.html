@@ -1,15 +1,12 @@
-<dev-center-modal (modalEvent)="closeModal()" [customModalCss]=customModalCss>
-
-	<div class='modal-text'>
-		<h4 class="modal-title">Crucible Comments for {{crucibleId}}</h4>
-	</div>
+<dev-center-modal [modalSize]=modalSize>
+	<div class='modal-header'>Crucible Comments for {{crucibleId}}</div>
 
 	<span class='modal-body'>
 		<dc-crucible-comments [crucibleId]=crucibleId></dc-crucible-comments>
 	</span>
 
 	<span class='modal-footer'>
-		<button type="button" class="btn btn-outline-danger" (click)="closeModal()"> Close</button>
+		<button type="button" class="btn btn-outline-danger" (click)="modal.closeModal()"> Close</button>
 	</span>
 	
 </dev-center-modal>

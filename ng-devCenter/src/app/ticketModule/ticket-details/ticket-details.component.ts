@@ -1,5 +1,4 @@
 import { Component, Input, ViewChild, ChangeDetectorRef, ElementRef, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ConfigService, ToastrService, JiraService } from '@services'
 import { ModalComponent } from '@modal';
 
@@ -12,10 +11,9 @@ import { ModalComponent } from '@modal';
 })
 export class TicketDetailsComponent {
 	loading:boolean = true;
-	customModalCss = 'ticketDetails';
+	modalSize = '800px 700px';
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
-	modalRef: NgbModalRef;
 	@Input() key;
 
 	links = [];
@@ -39,21 +37,14 @@ export class TicketDetailsComponent {
 	}
 
 	/**
-	 * if ticket details don't exist then get them. Always open modal.
+	 * Always get ticket details when opening modal
 	 */
 	openModel(){
 		this.getDetails();
-
 		this.cd.detectChanges();
-		this.modalRef = this.modal.openModal();
+		this.modal.openModal();
 	}
 
-	/**
-	 * close the ticket details modal.
-	 */
-	closeModel(){
-		this.modalRef.close();
-	}
 
 	/**
 	 * gets a ticket's details.

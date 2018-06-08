@@ -30,7 +30,6 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 	statusType: string;
 	statusName: string;
-	modalRef: NgbModalRef;
 
 	ticketStatus;
 	crucibleId;
@@ -63,6 +62,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			this.status$ = this.store.select(`${this.ticketListType}_statuses`)
 			.subscribe((allTickets:Array<Ticket>=[]) => {
 				const ticket:any = allTickets.find(ticket => ticket.key === this.key) || {};
+				
 				this.ticketStatus = ticket.status;
 				this.msrp = ticket.msrp;
 				this.master_branch = ticket.master_branch;
@@ -100,7 +100,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		} else if(ticketDropdown.value == statuses.QAGEN.backend) {
 			this.openQAModal(true);
 		} else {
-			this.openStatusModal(ticketDropdown);
+			this.openModal(ticketDropdown);
 		}	
 	}
 
@@ -221,22 +221,13 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * opens the confirm status change modal.
 	 * @param {HtmlElement} ticketDropdown the select element for the ticket status
 	 */
-	openStatusModal(ticketDropdown): void {
+	openModal(ticketDropdown): void {
 		const ticketState = this.ticketStates.find(state => state.id == ticketDropdown.value);
 
 		// save transition data for modal then open model
 		this.statusType = ticketState.id
 		this.statusName = ticketState.name;
-		this.modalRef = this.modal.openModal();
-
-		// set dismiss event to trigger status cancel
-		this.modalRef.result.then(
-    		() => null,
-    		() => {
-    			this.statusChange({canceled:true});
-    			this.showCancelStatus();
-    		}
-    	)
+		this.modal.openModal();
 	}
 
 	/**
@@ -250,22 +241,21 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * close status change modal and trigger a status change if confirmed
 	 * @param {boolean} submit do we submit a status change event?
 	 */
-	closeStatusModal(submit:boolean=false): void{
+	closeModal(submit:boolean=false): void{
+		this.modal.closeModal();
+		
 		if(submit){
-			this.changeStatus(this.statusType);
+			this.persistStatusChange(this.statusType);
 		} else {
-			this.showCancelStatus();
 			this.statusChange({canceled:true});
 		}
-
-		this.modalRef.close();	
 	}
 
 	/**
 	 * Persists the status change to the backend
 	 * @param {string} statusType the status type string
 	 */
-	changeStatus(statusType:string): void {
+	persistStatusChange(statusType:string): void {
 
 		let postData:any = {key:this.key, statusType, crucible_id: this.crucibleId};
 

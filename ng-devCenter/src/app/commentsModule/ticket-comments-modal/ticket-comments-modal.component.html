@@ -1,15 +1,12 @@
-<dev-center-modal (modalEvent)="closeModal()" [customModalCss]=customModalCss>
-
-	<div class='modal-text'>
-		<h4 class="modal-title">Comments for {{key}}</h4>
-	</div>
+<dev-center-modal [modalSize]=modalSize>
+	<div class='modal-header'>Comments for {{key}}</div>
 
 	<span class='modal-body'>
 		<dc-ticket-comments [key]=key></dc-ticket-comments>
 	</span>
 
 	<span class='modal-footer'>
-		<button type="button" class="btn btn-outline-danger" (click)="closeModal()"> Close</button>
+		<button type="button" class="btn btn-outline-danger" (click)="modal.closeModal()"> Close</button>
 	</span>
 	
 </dev-center-modal>

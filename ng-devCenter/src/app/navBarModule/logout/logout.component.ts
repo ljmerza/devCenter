@@ -1,6 +1,5 @@
 import { Component, ViewChild, ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { UserService } from '@services';
 import { ModalComponent } from '@modal';
@@ -13,26 +12,15 @@ import { ModalComponent } from '@modal';
 })
 export class LogoutComponent {
 	@ViewChild(ModalComponent) modal: ModalComponent;
-	modalRef: NgbModalRef;
 
 	constructor(public user: UserService, private router: Router) { }
 
-
-	/*
-	*/
-	public closeModal(resetUser:boolean=false): void {
-		this.modalRef.close();
-
-		if(resetUser){
-			this.user.resetUserData();
-			this.router.navigate(['/login']);
-		}
-	}
-
 	/**
-	*/
-	public openModal(){
-		this.modalRef = this.modal.openModal();
+	 * resets all local user settings and redirects to login page
+	 */
+	public resetUser(): void {
+		this.modal.closeModal();
+		this.user.resetUserData();
+		this.router.navigate(['/login']);
 	}
-
 }

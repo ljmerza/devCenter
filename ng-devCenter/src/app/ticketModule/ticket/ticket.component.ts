@@ -1,8 +1,7 @@
 import { 
-	Component, Input, ViewChild, ComponentFactoryResolver, ViewEncapsulation, OnInit, OnDestroy,
-	EventEmitter, Output, ViewContainerRef, ChangeDetectionStrategy, ChangeDetectorRef 
+	Component, Input, ViewChild, ComponentFactoryResolver, ViewEncapsulation, 
+	ViewContainerRef, ChangeDetectionStrategy 
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 
 import { TicketCommentsModalComponent } from './../../commentsModule/ticket-comments-modal/ticket-comments-modal.component';
 import { WorkLogComponent } from './../work-log/work-log.component';
@@ -11,13 +10,7 @@ import { TicketDetailsComponent } from './../ticket-details/ticket-details.compo
 import { TicketStatusComponent } from './../ticket-status/ticket-status.component';
 import { WatchersComponent } from './../watchers/watchers.component';
 
-import { MiscService, UserService, ConfigService, JiraService, ToastrService } from '@services';
-
-import { Subject, Observable, Subscription } from 'rxjs';
-import { NgRedux } from '@angular-redux/store';
-
-import { Actions, RootState } from '@store';
-import { Comment, Ticket, Attachment } from '@models';
+import { MiscService, ConfigService } from '@services';
 
 @Component({
 	selector: '.appTicket',
@@ -32,44 +25,35 @@ import { Comment, Ticket, Attachment } from '@models';
 
 })
 export class TicketComponent {
-	ticketDropdown; // ticket dropdown reference
-
-	ticketDetails;
 	detailsComponentRef;
 	pingComponentRef;
 	commentComponentRef;
 	worklogComponentRef;
 
 	@Input() ticket;
-	@Output() rerender = new EventEmitter();
-
-	ticketDates;
-
 	@ViewChild(TicketStatusComponent) ticketStatusRef: TicketStatusComponent;
 	@ViewChild(WatchersComponent) watchersComponentRef: WatchersComponent;
 
-	constructor(
-		private toastr: ToastrService, public jira: JiraService, public config: ConfigService, public route:ActivatedRoute,
-		public user: UserService, private factoryResolver: ComponentFactoryResolver, public store:NgRedux<RootState>,
-		private viewContRef: ViewContainerRef, public misc: MiscService, private cd: ChangeDetectorRef
+	constructor(public config: ConfigService, private factoryResolver: ComponentFactoryResolver,
+		private viewContRef: ViewContainerRef, public misc: MiscService
 	) { }
 
 	/**
-	*/
+	 * creates a ticket additional details modal if one doesn't exist then opens it
+	 */
 	openAdditionalDataModal(){
 		if(!this.detailsComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketDetailsComponent);
 	    	this.detailsComponentRef = this.viewContRef.createComponent(factory);
 	    	(<TicketDetailsComponent>this.detailsComponentRef.instance).key = this.ticket.key;
 		}
-
-		// open modal
     	this.detailsComponentRef.instance.openModel();
 	}
 
 	/**
-	*/
-	openPingModel() {
+	 * creates a ticket ping modal if one doesn't exist then opens it
+	 */
+	openPingModal() {
 		if(!this.pingComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(SetPingsComponent);
 	    	this.pingComponentRef = this.viewContRef.createComponent(factory);
@@ -78,22 +62,24 @@ export class TicketComponent {
 	    	(<SetPingsComponent>this.pingComponentRef.instance).branch = this.ticket.branch;
 	    	(<SetPingsComponent>this.pingComponentRef.instance).commit = this.ticket.commit;
 		}
-    	(<SetPingsComponent>this.pingComponentRef.instance).openPingModel();
+    	(<SetPingsComponent>this.pingComponentRef.instance).modal.openModal();
 	}
 
 	/**
-	*/
-	openModal() {
+	 * creates a ticket comments modal if one doesn't exist then opens it
+	 */
+	openCommentsModal() {
 		if(!this.commentComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(TicketCommentsModalComponent);
 	    	this.commentComponentRef = this.viewContRef.createComponent(factory);
 	    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).key = this.ticket.key;
 		}
-    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).openModal();
+    	(<TicketCommentsModalComponent>this.commentComponentRef.instance).modal.openModal();
 	}
 
 	/**
-	*/
+	 * creates a ticket log modal if one doesn't exist then opens it
+	 */
 	openLogModal() {
 		if(!this.worklogComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(WorkLogComponent);
@@ -103,6 +89,6 @@ export class TicketComponent {
 	    	(<WorkLogComponent>this.worklogComponentRef.instance).masterBranch = this.ticket.master_branch;
 	    	(<WorkLogComponent>this.worklogComponentRef.instance).commit = this.ticket.commit;
 		}
-    	(<WorkLogComponent>this.worklogComponentRef.instance).openLogModal();
+    	(<WorkLogComponent>this.worklogComponentRef.instance).modal.openModal();
 	}
 }
