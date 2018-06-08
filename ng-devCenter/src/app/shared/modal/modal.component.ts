@@ -69,7 +69,6 @@ export class ModalComponent {
 		else if(this.modalSize) jsPanelOptions.contentSize = this.getSize();
 		else jsPanelOptions.contentSize = {width: 'auto', height: 'auto'};
 
-		console.log('jsPanelOptions.contentSize: ', jsPanelOptions.contentSize);
 		return jsPanelOptions;
 	}
 

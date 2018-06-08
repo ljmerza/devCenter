@@ -6,7 +6,7 @@
 			{{userProfile?.displayName}}
 		</a>
 		<div ngbDropdownMenu aria-labelledby="userDropdown">
-			<li><a class="dropdown-item" (click)='userSetting.openModal()'>User Settings</a></li>
+			<li><a class="dropdown-item" (click)='userSetting.modal.openModal()'>User Settings</a></li>
 			<li><a class="dropdown-item" [routerLink]="['/metrics']">User Metrics</a></li>
 			<li><a class="dropdown-item" (click)='modal.openModal()'>About</a></li>
 			<li><div class="dropdown-divider"></div></li>

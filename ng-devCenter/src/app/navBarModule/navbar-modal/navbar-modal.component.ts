@@ -20,16 +20,10 @@ export class NavbarModalComponent {
 	constructor() {}	
 
 	/**
-	 * opens the user settings modal
-	 */
-	openModal(): void {
-		this.modal.openModal();
-	}
-
-	/**
 	 * 
 	 */
 	willSaveSettings(isSaving=false): void {
+		this.modal.closeModal();
 		this.userSettings.submit(isSaving);
 	}
 }

@@ -1,4 +1,4 @@
-// This file was generated on Wed, Jun 06, 2018 12:53:53 PM
+// This file was generated on Fri, Jun 08, 2018  1:26:46 PM
 export const appVersion = {
   "name": "devCenter",
   "version": "7.0.0",
@@ -18,7 +18,6 @@ export const appVersion = {
   "private": true,
   "dependencies": {
     "@angular-redux/store": "^6.5.7",
-    "redux": "^3.7.2",
     "@angular/animations": "^5.2.8",
     "@angular/common": "^5.2.8",
     "@angular/compiler": "^5.2.8",
@@ -41,9 +40,11 @@ export const appVersion = {
     "datatables.net-dt": "^1.10.16",
     "highlight.js": "^9.12.0",
     "jquery": "^3.3.1",
+    "jspanel4": "^4.0.0",
     "moment": "^2.20.1",
     "ng2-toastr": "^4.1.2",
     "ngx-progressbar": "^2.1.1",
+    "redux": "^3.7.2",
     "rxjs": "^5.5.6",
     "socket.io-client": "^2.0.4",
     "zone.js": "^0.8.20"

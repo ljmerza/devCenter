@@ -25,10 +25,7 @@ declare const $:any;
 })
 export class TicketCommentsComponent implements OnInit, OnDestroy {
 	commentId:string;
-	modalSizeDelete = {
-        width: '900px',
-        height: () => window.innerHeight/1.3
-    };
+	modalSizeDelete = {width: 'auto', height: 'auto'};
     
 	comments:Array<Comment>;
 	attachments:Array<Attachment>;
