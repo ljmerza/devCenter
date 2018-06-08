@@ -14,7 +14,7 @@ export class SetPingsComponent {
 	@Input() branch;
 	@Input() masterBranch;
 
-	modalSize ='medium';
+	modalSize ='700px 350px';
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(private toastr: ToastrService, private jira: JiraPingsService, private cd: ChangeDetectorRef, public misc: MiscService){}
@@ -25,8 +25,9 @@ export class SetPingsComponent {
 	 */
 	setPing(pingType:string){
 		this.modal.closeModal();
-		if(!pingType) return; 
+		if(!pingType) return;
 
+		this.toastr.showToast(`Sending a ${pingType} ping`, 'info');
 		this.jira.setPing({key: this.key, pingType}).subscribe(
 			response => {
 				pingType = pingType.replace('_', ' ');

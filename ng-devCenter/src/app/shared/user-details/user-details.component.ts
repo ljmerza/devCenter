@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { MiscService } from '@services';
+import { MiscService, ConfigService } from '@services';
 
 @Component({
 	selector: 'dc-user-details',
@@ -12,6 +12,6 @@ export class UserDetailsComponent {
 	@Input() msrp;
 	@Input() user;
 
-	constructor(public misc: MiscService) { }
+	constructor(public misc: MiscService, public config: ConfigService) { }
 
 }

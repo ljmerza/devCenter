@@ -8,9 +8,9 @@
 		<div ngbDropdownMenu aria-labelledby="userDropdown">
 			<li><a class="dropdown-item" (click)='userSetting.openModal()'>User Settings</a></li>
 			<li><a class="dropdown-item" [routerLink]="['/metrics']">User Metrics</a></li>
-			<li><a class="dropdown-item" (click)='openAboutModal()'>About</a></li>
+			<li><a class="dropdown-item" (click)='modal.openModal()'>About</a></li>
 			<li><div class="dropdown-divider"></div></li>
-			<li><a class="dropdown-item"(click)='logout.openModal()'>Logout</a></li>
+			<li><a class="dropdown-item"(click)='logout.modal.openModal()'>Logout</a></li>
 		</div>
 	</li>
 </ul>
@@ -19,7 +19,7 @@
 <dc-logout #logout></dc-logout>
 
 
-<dev-center-modal (modalEvent)="closeAboutModal()" [modalSize]=modalSize>
+<dev-center-modal [modalSize]=modalSizeAbout>
 	<div class='modal-header'>About</div>
 
 	<span class='modal-body'>
@@ -51,6 +51,6 @@
 	</span>
 
 	<span class='modal-footer'>
-		<button type="submit" class="btn btn-outline-danger" (click)="closeAboutModal()">Close</button>
+		<button type="submit" class="btn btn-outline-danger" (click)="modal.closeModal()">Close</button>
 	</span>
 </dev-center-modal>

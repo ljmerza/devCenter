@@ -26,7 +26,10 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	qaForm;
 	hourStep = 1;
 	minuteStep = 15;
-	modalSize = 'large';
+	modalSize = {
+        width: '900px',
+        height: () => window.innerHeight/1.3
+    };
 
 	repos:Array<Repo>;
 	repos$;

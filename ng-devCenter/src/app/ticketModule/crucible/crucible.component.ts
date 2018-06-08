@@ -120,15 +120,15 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 		);
 	}
 
+	/**
+	 *
+	 */
 	openCrucibleComments() {
-		// create QA gen component if not created yet
 		if (!this.crucibleCommentsComponentRef) {
 			const factory = this.factoryResolver.resolveComponentFactory(CrucibleCommentsModalComponent);
 			this.crucibleCommentsComponentRef = this.viewContRef.createComponent(factory);
-
 			(<CrucibleCommentsModalComponent>this.crucibleCommentsComponentRef.instance).crucibleId = this.crucibleId;
 		}
-
-		(<CrucibleCommentsModalComponent>this.crucibleCommentsComponentRef.instance).openModal();
+		(<CrucibleCommentsModalComponent>this.crucibleCommentsComponentRef.instance).modal.openModal();
 	}
 }

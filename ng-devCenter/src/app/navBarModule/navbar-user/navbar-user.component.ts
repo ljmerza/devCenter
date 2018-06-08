@@ -10,7 +10,11 @@ import { appVersion  } from './../../app.version';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarUserComponent {
-	modalSize:string = 'navbarAbout';
+	modalSizeAbout = {
+        width: () => window.innerWidth/2,
+        height: () => window.innerHeight/1.5
+    };
+    
 	aboutModel;
 	packageFile;
 	frontendVersions = [];
@@ -30,14 +34,4 @@ export class NavbarUserComponent {
 			}
 		});
 	}
-
-
-	openAboutModal(){
-		this.aboutModel = this.modal.openModal();
-	}
-
-	closeAboutModal(){
-		this.aboutModel.close();
-	}
-
 }

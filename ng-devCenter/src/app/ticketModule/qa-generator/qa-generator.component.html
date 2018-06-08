@@ -1,11 +1,11 @@
-<dev-center-modal (modalEvent)="submitQA(false)" [modalSize]=modalSize>
+<dev-center-modal (modalCloseEvent)="submitQA(false)" [modalSize]=modalSize>
 	<div class='modal-header'>
 		<span *ngIf='crucibleOnly; else qaGenTitle'>Crucible Generator</span>
 		<ng-template #qaGenTitle>QA Generator</ng-template>
 	</div>
 
 	<span class='modal-body'>
-		<form [formGroup]="qaForm">
+		<form [formGroup]="qaForm" class='qa-generator-form'>
 			<h4>Your Branches:</h4>
 
 			<div class='loading' *ngIf="loadingBranches; else ticketTable">

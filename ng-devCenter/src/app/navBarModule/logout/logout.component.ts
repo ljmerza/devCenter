@@ -16,20 +16,11 @@ export class LogoutComponent {
 	constructor(public user: UserService, private router: Router) { }
 
 	/**
-	 *
+	 * resets all local user settings and redirects to login page
 	 */
-	public willResetUser(resetUser:boolean=false): void {
-		if(resetUser){
-			this.user.resetUserData();
-			this.router.navigate(['/login']);
-		}
+	public resetUser(): void {
+		this.modal.closeModal();
+		this.user.resetUserData();
+		this.router.navigate(['/login']);
 	}
-
-	/**
-	 *
-	 */
-	public openModal(){
-		this.modal.openModal();
-	}
-
 }

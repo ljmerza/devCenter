@@ -23,7 +23,10 @@ export class WorkLogComponent {
 	hourStep:number = 1;
 	minuteStep:number = 15;
 
-	modalSize = 'medium';
+	modalSize = {
+        width: '900px',
+        height: () => window.innerHeight/1.3
+    };
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key:string;

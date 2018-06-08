@@ -1,38 +1,40 @@
-<div class='text-center' *ngIf='loadingComments'>
-  Loading comments...
-</div>
+<span class="crucible-comments">
+	<div class='text-center' *ngIf='loadingComments'>
+		Loading comments...
+	</div>
 
-<div class='text-center' *ngIf='!loadingComments && comments.length === 0; else showComments'>
-  No comments found!
-</div>
+	<div class='text-center' *ngIf='!loadingComments && comments.length === 0; else showComments'>
+		No comments found!
+	</div>
 
-<ng-template #showComments>
-  <ngb-accordion class='ticket-comments' #acc="ngbAccordion" [destroyOnHide]='false'>
+	<ng-template #showComments>
+		<ngb-accordion class='ticket-comments' #acc="ngbAccordion" [destroyOnHide]='false'>
 
-    <!-- a comment panel -->
-    <ngb-panel *ngFor='let comment of comments; index as i' [id]="crucibleId+i">
-  
-      <!-- title -->
-      <ng-template ngbPanelTitle>
-        <div class='comment-header' data-id={{comment.permId?.id}}>
-          <span>
-            {{comment.user.displayName}}
-            <img src="http://presence.q.att.com/presence/{{comment.user.userName}}.gif">
-          </span>
-          <span class="float-right">
-            {{comment.createDate | amDateFormat:'MM/D/YY h:mm A'}}
-          </span>
-        </div>
-      </ng-template>
-      
-      <!-- body -->
-      <ng-template ngbPanelContent>
-        <div>
-          <div [innerHTML]="comment.messageAsHtml | safehtml"></div>
-          <a target='_blank' href='{{config.crucibleUrl}}/cru/{{crucibleId}}#{{comment.id}}'>View Comment on Crucible</a>
-        </div>
-      </ng-template>
-      
-    </ngb-panel>
-  </ngb-accordion>
-</ng-template>
+			<!-- a comment panel -->
+			<ngb-panel *ngFor='let comment of comments; index as i' [id]="crucibleId+i">
+		
+				<!-- title -->
+				<ng-template ngbPanelTitle>
+					<div class='comment-header' data-id={{comment.permId?.id}}>
+					<span>
+						{{comment.user.displayName}}
+						<img src="{{config.chatIconUrl}}/{{comment.user.userName}}.gif">
+					</span>
+					<span class="float-right">
+						{{comment.createDate | amDateFormat:'MM/D/YY h:mm A'}}
+					</span>
+					</div>
+				</ng-template>
+			
+				<!-- body -->
+				<ng-template ngbPanelContent>
+					<div>
+					<div [innerHTML]="comment.messageAsHtml | safehtml"></div>
+					<a target='_blank' href='{{config.crucibleUrl}}/cru/{{crucibleId}}#{{comment.id}}'>View Comment on Crucible</a>
+					</div>
+				</ng-template>
+				
+			</ngb-panel>
+		</ngb-accordion>
+	</ng-template>
+</span>

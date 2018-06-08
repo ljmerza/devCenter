@@ -9,16 +9,11 @@ import { ModalComponent } from '@modal';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CrucibleCommentsModalComponent {
-	modalSize = '1000px 700px';
+	modalSize = {
+        width: '900px',
+        height: () => window.innerHeight/1.3
+    };
+
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() crucibleId;
-
-	constructor() {}
-
-  	/**
-	 *
-	 */
-	openModal(): void {
-		this.modal.openModal();
-	}
 }

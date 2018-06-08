@@ -11,7 +11,7 @@ declare const $;
 	encapsulation: ViewEncapsulation.None
 })
 export class ModalComponent {
-	@Input() modalSize = '600px 150px';
+	@Input() modalSize;
 	@Output() modalCloseEvent = new EventEmitter();
 
 	@ViewChild('modalHeader') modalHeader;
@@ -34,12 +34,19 @@ export class ModalComponent {
 	 */
 	createNewModal(options:any={}){
 		if(this._jspanel) this._jspanel.close();
-		
-		this._jspanel = jsPanel.create({
+		this._jspanel = jsPanel.create( this.getJsPanelOptions(options) );
+	}
+
+	/**
+	 * sets the JjPanel options object
+	 * @param {Object} options
+	 * @return {Object} 
+	 */
+	private getJsPanelOptions(options){
+		let jsPanelOptions = {
 			headerTitle: this.modalHeader.nativeElement,
 			content: this.modalBody.nativeElement,
 			footerToolbar: this.modalFooter.nativeElement,
-			contentSize: this.getSize(),
 			dragit: {
 			    cursor:  'move',
 			    handles: '.jsPanel-titlebar',
@@ -56,7 +63,14 @@ export class ModalComponent {
 				});
 		    },
 			...options
-		});
+		}
+
+		if(this.modalSize && this.modalSize.width) jsPanelOptions.contentSize = this.modalSize;
+		else if(this.modalSize) jsPanelOptions.contentSize = this.getSize();
+		else jsPanelOptions.contentSize = {width: 'auto', height: 'auto'};
+
+		console.log('jsPanelOptions.contentSize: ', jsPanelOptions.contentSize);
+		return jsPanelOptions;
 	}
 
 	/**
@@ -65,7 +79,6 @@ export class ModalComponent {
 	 */
 	private getSize(){
 		const [width, height] = this.modalSize.split(' ');
-		console.log('width, height: ', width, height);
 		return {width, height};
 	}
 

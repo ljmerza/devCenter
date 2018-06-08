@@ -62,6 +62,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			this.status$ = this.store.select(`${this.ticketListType}_statuses`)
 			.subscribe((allTickets:Array<Ticket>=[]) => {
 				const ticket:any = allTickets.find(ticket => ticket.key === this.key) || {};
+				
 				this.ticketStatus = ticket.status;
 				this.msrp = ticket.msrp;
 				this.master_branch = ticket.master_branch;

@@ -10,7 +10,7 @@ import { NgRedux } from '@angular-redux/store';
 import { Actions, RootState } from '@store';
 import { Comment, Ticket, Attachment } from '@models';
 import { ModalComponent } from '@modal';
-import { JiraCommentsService, ToastrService, MiscService, UserService } from '@services';
+import { JiraCommentsService, ToastrService, MiscService, UserService, ConfigService } from '@services';
 
 
 declare const hljs:any;
@@ -25,7 +25,11 @@ declare const $:any;
 })
 export class TicketCommentsComponent implements OnInit, OnDestroy {
 	commentId:string;
-	modalSize:string = 'small';
+	modalSizeDelete = {
+        width: '900px',
+        height: () => window.innerHeight/1.3
+    };
+    
 	comments:Array<Comment>;
 	attachments:Array<Attachment>;
 
@@ -38,7 +42,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 	constructor(
 		private toastr: ToastrService, private user:UserService, private jira:JiraCommentsService, 
 		private misc: MiscService, private store:NgRedux<RootState>, private cd: ChangeDetectorRef,
-		public route:ActivatedRoute
+		public route:ActivatedRoute, public config:ConfigService
 	) { }
 
 	/**
@@ -143,7 +147,7 @@ export class TicketCommentsComponent implements OnInit, OnDestroy {
 				response.data.key = this.key;
 				response.data.ticketListType = this.ticketListType;
 				this.store.dispatch({type: Actions.editComment, payload:response.data});
-				this.toastr.showToast('Comment Edited Successfully', 'success')
+				this.toastr.showToast(`Comment Edited Successfully for ${this.key}`, 'success');
 			},
 			this.jira.processErrorResponse.bind(this.jira)
 		);

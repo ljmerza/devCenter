@@ -1,4 +1,4 @@
-<dev-center-modal (modalEvent)="willResetUser()">
+<dev-center-modal>
 	<div class='modal-header'>Logout Confirmation</div>
 
 	<span class='modal-body'>
@@ -6,10 +6,10 @@
 	</span>
 
 	<span class='modal-footer'>
-		<button type="button" class="btn btn-outline-primary" (click)="willResetUser(true)">
+		<button type="button" class="btn btn-outline-primary" (click)="resetUser()">
 			Logout
 		</button>
-		<button type="button" class="btn btn-outline-danger" (click)="willResetUser()">
+		<button type="button" class="btn btn-outline-danger" (click)="modal.closeModal()">
 			Cancel
 		</button>
 	</span>
