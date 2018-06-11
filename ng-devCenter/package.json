@@ -1,7 +1,7 @@
 {
   "name": "devCenter",
   "version": "7.0.0",
-  "license": "MIT",
+  "license": "",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --aot",
