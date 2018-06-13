@@ -11,7 +11,7 @@ import { JiraService, ToastrService, UserService } from '@services';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarModalComponent {
-	modalSize = '500px 600px';
+	modalSize = {width: '500px', height: '600px'};
 
 	@ViewChild('userModal') private userModal;
 	@ViewChild(ModalComponent) modal: ModalComponent;

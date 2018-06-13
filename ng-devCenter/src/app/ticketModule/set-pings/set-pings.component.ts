@@ -14,7 +14,7 @@ export class SetPingsComponent {
 	@Input() branch;
 	@Input() masterBranch;
 
-	modalSize ='700px 350px';
+	modalSize = {width: '700px', height: '350px'};
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(private toastr: ToastrService, private jira: JiraPingsService, private cd: ChangeDetectorRef, public misc: MiscService){}

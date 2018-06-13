@@ -9,7 +9,7 @@ import { ModalComponent } from '@modal';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TicketCommentsModalComponent {
-	modalSize = '1000px 700px';
+	modalSize = {width: '1000px', height: '700px'};
 	@Input() key;
 	@Input() ticketListType;
 	@ViewChild(ModalComponent) modal: ModalComponent;

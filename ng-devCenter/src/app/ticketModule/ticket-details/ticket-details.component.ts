@@ -11,7 +11,7 @@ import { ModalComponent } from '@modal';
 })
 export class TicketDetailsComponent {
 	loading:boolean = true;
-	modalSize = '800px 700px';
+	modalSize = {width: '800px', height: '700px'};
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key;

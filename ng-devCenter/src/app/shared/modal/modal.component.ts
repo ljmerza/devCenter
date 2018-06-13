@@ -1,4 +1,7 @@
-import { Component, Output, Input, ViewEncapsulation, ViewChild, EventEmitter, ChangeDetectionStrategy} from '@angular/core';
+import { 
+	Component, Output, Input, ViewEncapsulation, ViewChild, 
+	EventEmitter, ChangeDetectionStrategy, OnDestroy
+} from '@angular/core';
 
 declare const jsPanel;
 declare const $;
@@ -10,7 +13,7 @@ declare const $;
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	encapsulation: ViewEncapsulation.None
 })
-export class ModalComponent {
+export class ModalComponent implements OnDestroy {
 	@Input() modalSize;
 	@Output() modalCloseEvent = new EventEmitter();
 
@@ -20,6 +23,13 @@ export class ModalComponent {
 
 	_jspanel;
 	constructor() { }
+
+	/**
+	 * destroy any open js panels
+	 */
+	ngOnDestroy(){
+		if(this._jspanel) this._jspanel.close();
+	}
 
 	/**
 	 * opens a new jsPanel dialog
@@ -42,7 +52,7 @@ export class ModalComponent {
 	 * @param {Object} options
 	 * @return {Object} 
 	 */
-	private getJsPanelOptions(options){
+	getJsPanelOptions(options){
 		let jsPanelOptions = {
 			headerTitle: this.modalHeader.nativeElement,
 			content: this.modalBody.nativeElement,
@@ -65,20 +75,9 @@ export class ModalComponent {
 			...options
 		}
 
-		if(this.modalSize && this.modalSize.width) jsPanelOptions.contentSize = this.modalSize;
-		else if(this.modalSize) jsPanelOptions.contentSize = this.getSize();
+		if(this.modalSize) jsPanelOptions.contentSize = this.modalSize;
 		else jsPanelOptions.contentSize = {width: 'auto', height: 'auto'};
-
 		return jsPanelOptions;
-	}
-
-	/**
-	 * calculates modal size dimensions
-	 * @return {Object} with width and height properties
-	 */
-	private getSize(){
-		const [width, height] = this.modalSize.split(' ');
-		return {width, height};
 	}
 
 	/**
