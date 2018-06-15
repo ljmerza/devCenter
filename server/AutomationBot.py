@@ -13,6 +13,7 @@ from Jira import Jira
 from Crucible import Crucible
 from DevCenterSQL import DevCenterSQL
 from Chat import Chat
+from reminders import reminders
 
 class AutomationBot(object):
 	'''Handles Scraping data from Jira and Crucible to Store in DB and handle any ping notifications'''
@@ -42,6 +43,7 @@ class AutomationBot(object):
 		self.jira_obj = Jira()
 		self.crucible_obj = Crucible()
 		self.chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts, no_pings=no_pings)
+		self.reminders = reminders(chat_obj=self.chat_obj)
 		################################################################################
 		self.beta_wait_time = 300 # how many times to wait for beta message
 		 # how many times we've waited for beta message - start off with a message
@@ -69,6 +71,7 @@ class AutomationBot(object):
 			
 		'''
 		try:
+			self.reminders.calc_messages()
 			start_get = time.time()
 
 			# get all open Jira tickets
