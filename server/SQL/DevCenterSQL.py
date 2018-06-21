@@ -40,13 +40,7 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar):
 			database = 'dev_center'
 
 		charset = 'utf8'
-
-		# create SQL engine and inspector
-		engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}', echo=sql_echo)
-		self.inspector = inspect(engine)
-		# create DB session
-		self.Session = sessionmaker(bind=engine, autoflush=False)
-
+		self.engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}', echo=sql_echo)
 
 	def login(self):
 		'''logs into the SQL DB
@@ -57,7 +51,8 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar):
 		Returns:
 			the session
 		'''		
-		return self.Session()
+		Session = sessionmaker(bind=self.engine, autoflush=False)
+		return Session()
 
 	def logout(self, session):
 		'''closes the DB connection
