@@ -98,10 +98,11 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 	}
 
 	/**
-	 *	destroy redux subscribers
+	 *	destroy any subscribers
 	 */
 	ngOnDestroy(){
 		if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
+		if(this.getTickets$) this.getTickets$.unsubscribe();
 	}
 
 	/**
@@ -147,12 +148,6 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 		}
 
 		this.loadingTickets = false;
-
-		// if the list is the same then we end here (don't refresh list)
-		if(JSON.parse(JSON.stringify(this.tickets)) === JSON.parse(JSON.stringify(tickets))){
-			return;
-		}
-
 		this.renderDatatable(tickets);
 	}
 
