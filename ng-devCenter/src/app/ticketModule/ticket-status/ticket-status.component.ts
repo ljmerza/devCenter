@@ -192,7 +192,6 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 		// always allow to generate crucible
 		this.ticketStates.push(this.allTransistions.find(state => state.name === statuses.QAGEN.frontend));
-
 		this.cd.markForCheck();
 	}
 

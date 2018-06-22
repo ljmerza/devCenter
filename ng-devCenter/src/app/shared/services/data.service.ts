@@ -17,12 +17,11 @@ export class DataService extends HttpClient {
 	/**
 	 * processes a thrown observable httpClient response to show toastr error notification.
 	 * @param {HttpErrorResponse} response
+	 * @param {string} optionalMessage
 	 */
-	public processErrorResponse(response:HttpErrorResponse):string {
-		let responseError = response.error ? response.error.data : null; 
-		responseError = responseError || response.message || response.error;
-
-		if(!this.toastr) return responseError;
+	public processErrorResponse(response:HttpErrorResponse, optionalMessage:string=''):string {
+		let responseError = (response.error && response.error.data) || (response.message || response.error) || response; 
+		if(optionalMessage) responseError += `: ${optionalMessage}`;
 
 		this.toastr.showToast(responseError, 'error');
 		return responseError;

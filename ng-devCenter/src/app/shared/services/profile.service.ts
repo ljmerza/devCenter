@@ -23,7 +23,7 @@ export class ProfileService {
 	/**
 	 * @param {string} error
 	 */
-	processErrorResponse(error){
-		this.dataService.processErrorResponse(error);
+	processErrorResponse(error, optionalMessage){
+		this.dataService.processErrorResponse(error, optionalMessage);
 	}
 }

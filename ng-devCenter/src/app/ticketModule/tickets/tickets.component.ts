@@ -73,20 +73,20 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 		if(this.user.needRequiredCredentials()) return;
 
 		this.git.getRepos().subscribe(
-			repos => this.store.dispatch({type: Actions.repos, payload: repos.data }),
+			repos => this.store.dispatch({type: Actions.repos, payload: repos.data}),
 			this.git.processErrorResponse.bind(this.git)
 		);
 		
 		this.route.paramMap.subscribe((routeResponse:any) => {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 			this.store.dispatch({type: Actions.ticketType, payload: this.ticketListType });
+
+			this.tickets = [];
 			this.getTickets();
 				
 			if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
 			this.ticketsRedux$ = this.store.select(this.ticketListType)
-			.subscribe(tickets => {
-				this.processTickets(tickets || []);
-			});
+			.subscribe(tickets => this.processTickets(tickets || []));
 		});
 	}
 

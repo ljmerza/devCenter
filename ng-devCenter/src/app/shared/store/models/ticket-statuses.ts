@@ -19,7 +19,7 @@ export const statuses:any = {
 	INUCT: {frontend: 'In UCT', backend: 'inUct'},
 	UCTFAIL: {frontend: 'UCT Fail', backend: 'uctFail'},
 	UCTPASS: {frontend: 'UCT Pass', backend: 'uctPass'},
-	RELEASE: {frontend: 'Ready For Release', backend: 'releaseReady'},
+	RELEASE: {frontend: 'Ready for Release', backend: 'releaseReady'},
 	REMOVEPCR: {frontend: 'Remove PCR Needed', backend: 'removePcrNeeded'},
 	REMOVEPCRC: {frontend: 'Remove PCR Completed', backend: 'removePcrCompleted'},
 	QAGEN: {frontend: 'Generate Crucible', backend: 'generateCrucible'}

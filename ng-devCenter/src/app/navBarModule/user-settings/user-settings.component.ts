@@ -78,7 +78,7 @@ export class UserSettingsComponent implements OnInit {
 				}
 			},
 			error => {
-				this.profile.processErrorResponse('Incorrect username and/or password.');
+				this.profile.processErrorResponse(error, `Incorrect username and/or password.`);
 			}
 		);
 	}
