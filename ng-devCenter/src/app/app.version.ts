@@ -1,4 +1,4 @@
-// This file was generated on Fri, Jun 22, 2018  3:07:45 PM
+// This file was generated on Mon, Jun 25, 2018  3:49:33 PM
 export const appVersion = {
   "name": "devCenter",
   "version": "7.0.2",
