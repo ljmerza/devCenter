@@ -32,17 +32,7 @@ export class UserSettingsComponent implements OnInit {
 			)),
 			emberUrl: new FormControl(user.emberUrl, [Validators.required]),
 			teamUrl: new FormControl(user.teamUrl, [Validators.required]),
-			cache: new FormControl(user.cache),
-			pings: new FormGroup({
-				allPing: new FormControl(),
-				newPing: new FormControl(),
-				conflictPing: new FormControl(),
-				crFailPing: new FormControl(),
-				mergePing: new FormControl(),
-				neverPing: new FormControl(),
-				qaFailPing: new FormControl(),
-				uctFailPing: new FormControl()
-			})
+			cache: new FormControl(user.cache)
 		});
 	}
 
@@ -73,7 +63,6 @@ export class UserSettingsComponent implements OnInit {
 				if(!profile.data) return;
 				if(!this.gotProfile) {
 					this.gotProfile = true;
-					this.setUserPings(profile.data.ping_settings);
 					this.store.dispatch({type: Actions.userProfile, payload: profile.data });
 				}
 			},
@@ -81,25 +70,6 @@ export class UserSettingsComponent implements OnInit {
 				this.profile.processErrorResponse(error, `Incorrect username and/or password.`);
 			}
 		);
-	}
-
-	/**
-	 * sets a user's ping values on the form
-	 * @param {Object} pingSettings
-	 */
-	setUserPings(pingSettings:any={}):void{
-		let pingControlGroup = this.pings;
-
-		// set form group ping settings from what we got back from the DB
-		pingControlGroup.get('allPing').setValue(!!pingSettings.all_ping);
-		pingControlGroup.get('newPing').setValue(!!pingSettings.new_ping);
-		pingControlGroup.get('conflictPing').setValue(!!pingSettings.conflict_ping);
-		pingControlGroup.get('crFailPing').setValue(!!pingSettings.cr_fail_ping);
-		pingControlGroup.get('mergePing').setValue(!!pingSettings.merge_ping);
-		pingControlGroup.get('neverPing').setValue(!!pingSettings.never_ping);
-		pingControlGroup.get('qaFailPing').setValue(!!pingSettings.qa_fail_ping);
-		pingControlGroup.get('uctFailPing').setValue(!!pingSettings.uct_fail_ping);
-		pingControlGroup.markAsPristine();
 	}
 
 	/**
@@ -128,7 +98,6 @@ export class UserSettingsComponent implements OnInit {
 	get emberUrl(){ return this.userSettingsForm.get('emberUrl'); }
 	get teamUrl(){ return this.userSettingsForm.get('teamUrl'); }
 	get cache(){ return this.userSettingsForm.get('cache'); }
-	get pings() { return this.userSettingsForm.get('pings'); }
 
 	/**
 	 * submits changes to a user's profile
@@ -155,15 +124,9 @@ export class UserSettingsComponent implements OnInit {
 		this.user.setUserData('teamUrl', userData.teamUrl.value);
 		this.user.setUserData('cache', userData.cache.value);
 
-		// get new user profile
 		this.getProfile();
-
-		if(!this.pings.pristine){
-			this.savePingSettings();
-		} else {
-			this.toastr.showToast('Saved User Settings', 'success');
-			this.reloadPage();
-		}
+		this.toastr.showToast('Saved User Settings', 'success');
+		this.reloadPage();
 
 		return false;
 	}
@@ -180,27 +143,6 @@ export class UserSettingsComponent implements OnInit {
  		}
 			
 		this.router.navigate(['/']);
- 	}
-
- 	/**
- 	 * saves user's ping settings. (currently only saves the allPing setting)
- 	 */
- 	savePingSettings(){
- 		let pingControlGroup = this.pings;
-
- 		const postData = {
- 			fields: [
- 				{name:'all_ping', value:pingControlGroup.get('allPing').value ? 1 : 0}
- 			]
- 		}
-
- 		this.jira.setPingSettings(postData).subscribe(
- 			response => {
-	 			this.toastr.showToast('Saved User Settings', 'success');
-	 			this.reloadPage();
-			},
-			this.jira.processErrorResponse.bind(this.jira)
-		);
  	}
 
 	/**

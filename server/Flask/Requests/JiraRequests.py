@@ -281,18 +281,9 @@ def get_profile(data, jira_obj, sql_obj):
 	if not jira_response['status']:
 		return {'status': False, 'data': f'Could not get user profile:'+ jira_response.get('data', '') }
 
-	# get user ping settings
-	session = sql_obj.login()
-	sql_response = sql_obj.get_user_ping_values(username=data['username'], session=session)
-	sql_obj.logout(session=session)
-	if not sql_response['status']:
-		return {'status': False, 'data': f'Could not get user ping settings:'+ sql_response.get('data', '') }
-
 	# is admin?
 	jira_response['data']['is_admin'] = os.environ['USER'] == data['username']
 
-	# merge settings to one dict and return
-	jira_response['data']['ping_settings'] = sql_response['data']
 	return jira_response
 
 

@@ -1,15 +1,16 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DataTableDirective } from 'angular-datatables';
 import { NgProgress } from 'ngx-progressbar';
 
-import { Subject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import 'rxjs/add/observable/interval';
 import { select, NgRedux } from '@angular-redux/store';
 
-import { UserService, JiraService, ToastrService, WebSocketService, GitService } from '@services';
+import { UserService, JiraService, GitService } from '@services';
 import { RootState, Actions } from '@store';
-import { Repo, Ticket, APIResponse } from '@models';
+import { Repo, APIResponse } from '@models';
+
+declare let $;
 
 @Component({
 	selector: 'dc-tickets',
@@ -27,37 +28,15 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 	renderTimeoutId;
 	ticketsRedux$;
 
-	dtTrigger:Subject<any> = new Subject();
-	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
 	@select('repos') getRepos$: Observable<Array<Repo>>;
+
+	@ViewChild('table') table:ElementRef
+	@ViewChild('tbody') tbody:ElementRef
+	@ViewChild('filterInput') filterInput:ElementRef
 
 	get tableTitle(){
 		return `${this.jira.title} Tickets`;
 	}
-
-	dtOptions = {
-		order: [[5, 'desc']],
-		columnDefs: [
-			{targets: [9,10], visible: false},
-			{targets: 4, width: '10%'},
-			{targets: [5,6,9,10], type: 'date'}
-		],
-		dom: `
-			<'row'<'col-sm-12'Bfl>>
-			<'row'<'col-sm-12'tr>>
-			<'row'<'col-sm-12'ip>>
-		`,
-		pageLength: 10,
-		lengthMenu: [5, 10, 15, 20, 100],
-		buttons: ['colvis', 'excel'],
-		stateSave: true,
-		pagingType: 'full',
-		language: {
-			search: "",
-        	searchPlaceholder: "Search Ticket",
-        	zeroRecords: 'No matching tickets found'
-        }
-	};
 
 	constructor(
 		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>,
@@ -81,7 +60,6 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 			this.store.dispatch({type: Actions.ticketType, payload: this.ticketListType });
 
-			this.tickets = [];
 			this.getTickets();
 				
 			if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
@@ -94,7 +72,7 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 	 * create data table on init of UI
 	 */
 	ngAfterViewInit(): void {
-    	this.dtTrigger.next();
+		
 	}
 
 	/**
@@ -148,23 +126,45 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 		}
 
 		this.loadingTickets = false;
-		this.renderDatatable(tickets);
+		this.tickets = tickets;
+
+		this.filterTable();
+		this.addSortTable();
 	}
 
 	/**
-	 * render the data table with a debounce
-	 * @param {Array<Ticket>} list of ticket to update
+	 * 
 	 */
-	private async renderDatatable(tickets){
-		// queue up a data table refresh
-		if(this.renderTimeoutId) clearInterval(this.renderTimeoutId);
+	addSortTable(){
+		$(this.table.nativeElement).trigger('destroy');
 
-		// refresh data table if not other requests come in soon
-		this.renderTimeoutId = setTimeout(async () => {
-			this.tickets = tickets;
-			let dtInstance = await this.dtElement.dtInstance;
-			if(dtInstance) dtInstance.destroy();
-			this.dtTrigger.next();
-		}, 200);
+		setTimeout(() => {
+			$(this.table.nativeElement).tablesorter({
+				sortList: [[5,1]] 
+			});
+		});
+	}
+
+	/**
+	 *  hacky way to add tabel filtering
+	 */
+	public filterTable(){
+		let filterEl = $(this.filterInput.nativeElement);
+		let filterValue = ($(filterEl[0]).val() || '').toUpperCase();
+
+		let tr = $(this.tbody.nativeElement).children("tr");
+		
+		for (let i=0; i<tr.length; i++) {
+			let td = $(tr[i]).children("td");
+			let found = false;
+
+			for (let j=0; j<td.length; j++) {
+				const trText = ($(td[j]).text() || '').toUpperCase();
+				if (trText.indexOf(filterValue) > -1) found = true;
+			}
+			
+			if(found) $(tr[i]).css('display', '');
+			else $(tr[i]).css('display', 'none');
+		}
 	}
 }

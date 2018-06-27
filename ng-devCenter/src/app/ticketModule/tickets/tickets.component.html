@@ -1,5 +1,9 @@
 <dc-loading-table [loadingTable]=loadingTickets [loadingIcon]=loadingIcon [tableTitle]=tableTitle (refreshData)="getTickets()" (stopRefresh)="stopGetTickets()">
-	<table class='table-striped' datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+	<div>
+		<input type="text" class='filterInput' placeholder='Filter tickets' #filterInput (keyup)="filterTable()">
+	</div>
+	
+	<table #table class='table table-striped tablesorter'>
 		<thead>
 			<tr>
 				<th>Key</th>
@@ -19,7 +23,7 @@
 			</tr>
 		</thead>
 
-		<tbody>
+		<tbody #tbody>
 			<tr *ngFor='let ticket of tickets' [ticket]=ticket id='{{ticket.key}}' class="appTicket"></tr>
 		</tbody>
 	</table>

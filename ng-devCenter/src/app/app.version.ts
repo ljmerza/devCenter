@@ -1,7 +1,7 @@
-// This file was generated on Mon, Jun 25, 2018  3:49:33 PM
+// This file was generated on Wed, Jun 27, 2018  1:07:38 PM
 export const appVersion = {
   "name": "devCenter",
-  "version": "7.0.2",
+  "version": "7.1.0",
   "license": "",
   "scripts": {
     "ng": "ng",
@@ -31,6 +31,7 @@ export const appVersion = {
     "@types/datatables.net-buttons": "^1.4.0",
     "@types/jqueryui": "^1.12.2",
     "angular-datatables": "^5.0.0",
+    "angular-tablesort": "^1.6.1",
     "angular2-moment": "^1.8.0",
     "bootstrap": "4.1.0",
     "core-js": "^2.4.1",
@@ -47,6 +48,7 @@ export const appVersion = {
     "redux": "^3.7.2",
     "rxjs": "^5.5.6",
     "socket.io-client": "^2.0.4",
+    "tablesorter": "^2.30.6",
     "zone.js": "^0.8.20"
   },
   "devDependencies": {

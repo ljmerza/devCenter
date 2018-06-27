@@ -1,0 +1,29 @@
+.filterInput {
+	background-color: #292b2c;
+    border-radius: 0;
+	color: #fff;
+	padding: .375rem .75rem;
+	font-size: 1.1em;
+	background-clip: padding-box;
+	border: 1px solid #ced4da;
+	margin-bottom: 20px;
+	float: right;
+}
+
+th:focus {
+    outline: none;
+}
+
+.table {
+	thead th {
+		border-bottom: 1px solid #dee2e63b;
+	}
+
+	td, th {
+		border-top: 1px solid #dee2e63b;
+	}
+
+	tbody tr:nth-of-type(even), thead tr {
+		background-color: rgba(0, 0, 0, 0.23) !important;
+	}
+}

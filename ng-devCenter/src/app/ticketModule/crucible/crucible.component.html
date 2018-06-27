@@ -1,11 +1,9 @@
-<!-- cru id -->
-<td>
-	<div class='float-left' *ngIf='crucibleId'>
-		<a title='Open Crucible as Reviewer' target="_blank" href="{{config.crucibleUrl}}/cru/{{crucibleId}}" (click)="addReviewer()">
-			{{crucibleId}}
-		</a>
-
+<div class='float-left' *ngIf='crucibleId'>
+	<a title='Open Crucible as Reviewer' target="_blank" href="{{config.crucibleUrl}}/cru/{{crucibleId}}" (click)="addReviewer()">
+		{{crucibleId}}
+	</a>
+	<div>
 		<i (click)="pingPcrNeeded()" class="material-icons text-primary" title='Ping chat PCR Needed'>chat</i>
 		<i (click)="openCrucibleComments()" class="material-icons text-success" title='View Crucible Comments'>storage</i>
 	</div>
-</td>
+</div>
