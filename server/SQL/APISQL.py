@@ -15,7 +15,7 @@ class APISQL():
 		drivername = 'mysql+pymysql'
 		username = os.environ['USER']
 		password = os.environ['SQL_PASSWORD']
-		host = os.environ['DEV_SERVER']
+		host = os.environ['SQL_HOST']
 		port = 3306
 		database = 'ud'
 		charset = 'utf8'
