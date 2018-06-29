@@ -12,7 +12,7 @@
     "e2e": "ng e2e",
     "demo": "ng serve --environment=test",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
-    "deploy": "version.sh"
+    "deploy": "bash ./version.sh"
   },
   "private": true,
   "dependencies": {

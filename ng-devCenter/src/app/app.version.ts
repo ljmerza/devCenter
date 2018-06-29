@@ -1,4 +1,4 @@
-// This file was generated on Thu, Jun 28, 2018  2:44:54 PM
+// This file was generated on Fri Jun 29 14:18:49 GMT 2018
 export const appVersion = {
   "name": "devCenter",
   "version": "7.1.0",
@@ -13,7 +13,7 @@ export const appVersion = {
     "e2e": "ng e2e",
     "demo": "ng serve --environment=test",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
-    "deploy": "version.sh"
+    "deploy": "bash ./version.sh"
   },
   "private": true,
   "dependencies": {
