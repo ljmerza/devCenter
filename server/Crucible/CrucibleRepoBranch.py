@@ -187,3 +187,47 @@ class CrucibleRepoBranch():
 		if not response['status']:
 			return {'status': True, 'data': f'Could not add repo {repo}: '+response['data']}
 		return response
+
+	def create_pull_requests(self, repos, key, msrp):
+
+		for repo in repos:
+			repo_name = repos['repo_name']
+			branch_name = repos['branch_name']
+			master_branch_name = repos['master_branch_name']
+
+			json_data = {
+				"title": f"Pull Request for {key} (Ticket #{msrp})",
+				"description": "",
+				"state": "OPEN",
+				"open": True,
+				"closed": False,
+				"fromRef": {
+					"id": f"refs/heads/{branch_name}",
+					"repository": {
+						"slug": repo_name,
+						"name": None,
+						"project": {
+							"key": self.crucible_api.project_name
+						}
+					}
+				},
+				"toRef": {
+					"id": f"refs/heads/{master_branch_name}",
+					"repository": {
+						"slug": repo_name,
+						"name": None,
+						"project": {
+							"key": self.crucible_api.project_name
+						}
+					}
+				},
+				"locked": False,
+				"reviewers": [],
+				"links": {"self":[None]}
+			}
+
+			response = self.crucible_api.manual_post_json(url=f'{self.crucible_api.code_cloud_pull_req}/{repo}/pull-requests.json', json=json_data)
+			if not response['status']:
+				pass
+
+		return response

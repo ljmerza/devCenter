@@ -100,6 +100,32 @@
 								</ul>
 							</li>
 
+							<!-- rds list -->
+							<li class="dropdown-submenu" dropdownSubmenu>
+								<a class="dropdown-item" data-toggle="dropdown">RDS Packages <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+								<ul class="dropdown-menu" dropdownSubmenuMenu>
+									<li>
+										<a *ngFor='let navLink of rdsLinks' class="dropdown-item"  target="_blank" 
+										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/rds/{{navLink.link}}">
+											<span>{{navLink.orderName}} {{navLink.name}}</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+
+							<!-- gps list -->
+							<li class="dropdown-submenu" dropdownSubmenu>
+								<a class="dropdown-item" data-toggle="dropdown">GPS <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+								<ul class="dropdown-menu" dropdownSubmenuMenu>
+									<li>
+										<a *ngFor='let navLink of gpsLinks' class="dropdown-item"  target="_blank" 
+										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}/{{navLink.link}}">
+											<span>{{navLink.orderName}} {{navLink.name}}</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+
 							<!-- WFA list -->
 							<li class="dropdown-submenu" dropdownSubmenu>
 								<a class="dropdown-item" data-toggle="dropdown">WFA Tickets <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>

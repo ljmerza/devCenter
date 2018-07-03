@@ -29,6 +29,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	betaLinks;
 	devLinks;
 	emberLinks;
+	rdsLinks;
+	gpsLinks;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
@@ -128,7 +130,16 @@ export class NavBarComponent implements OnInit, OnDestroy {
  			this.teamdbEmberLinks = response.data
  			.filter(link => link.type === 'teamdb_ember')
  			.map(this.addCacheParameter.bind(this))
- 			.map(this.addUserNameToUrl.bind(this));
+			.map(this.addUserNameToUrl.bind(this));
+			 
+			this.rdsLinks = response.data
+ 			.filter(link => link.type === 'rds')
+ 			.map(this.addCacheParameter.bind(this))
+			 
+			this.gpsLinks = response.data
+ 			.filter(link => link.type === 'gps')
+ 			.map(this.addCacheParameter.bind(this))
+ 			.map(this.addGpsIdToUrl.bind(this));
 
 	 	},
 	 	error => this.toastr.showToast(this.items.processErrorResponse(error), 'error'));
@@ -141,6 +152,16 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	addUserNameToUrl(navbarItem){
 		navbarItem.link = navbarItem.link.replace('##username##', this.user.username);
  		return navbarItem;
+	}
+
+	/**
+	 * adds GPS username to any URLs that need it
+	 * @param {Object} navbarItem
+	 */
+	addGpsIdToUrl(navbarItem){
+		const queryAddition = navbarItem.link.includes('?') ? '&' : '?';
+		navbarItem.link += `${queryAddition}gpsid=${this.user.username}`;
+		return navbarItem;
 	}
 
 	/**

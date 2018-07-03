@@ -19,13 +19,18 @@ class CrucibleAPI(DevCenterAPI):
 		DevCenterAPI.__init__(self)
 		self.crucible_url = os.environ['CRUCIBLE_URL']
 		self.atl_token = os.environ['ATL_TOKEN']
+		self.project_name = 'ST_M5DTI'
 		
 		self.crucible_api_review = f'{self.crucible_url}/rest-service/reviews-v1'
 		self.crucible_api_repo = f'{self.crucible_url}/rest-service/repositories-v1'
 		self.crucible_api_branch = f'{self.crucible_url}/rest/branchreview/latest/trackedbranch'
-		self.code_cloud_api = os.environ['CODE_CLOUD_URL']
 
-		self.code_cloud_branches_api = f'{self.code_cloud_api}/rest/api/latest/projects/ST_M5DTI/repos/'
+		self.code_cloud_api = os.environ['CODE_CLOUD_URL']
+		self.code_cloud_pull_req = f'{self.code_cloud_api}/rest/api/1.0/projects/{self.project_name}/repos'
+		# https://docs.atlassian.com/bitbucket-server/rest/4.9.1/bitbucket-rest.html?utm_source=%2Fstatic%2Frest%2Fbitbucket-server%2F4.9.1%2Fbitbucket-rest.html&utm_medium=301#idp2022432
+
+		
+		self.code_cloud_branches_api = f'{self.code_cloud_api}/rest/api/latest/projects/{self.project_name}/repos/'
 
 	def post(self, url, cred_hash, data=''):
 		'''sends a POST request
