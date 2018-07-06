@@ -41,6 +41,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		cr_response = {'status': False}
 		pcr_response = {'status': False}
 		cru_response = {'status': False}
+		pull_response = {'status': False}
 
 		# if repos given then create crucible
 		if len(data['repos']):
@@ -61,12 +62,14 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 			data['comment'] = data['qa_steps']
 			comment_response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
 
-		# add PCR needed component and code review status if wanted
+		# if transitioning it pcr then add statrus/compoentn and add pull request
 		if data['autoPCR']:
 			data['status_type'] = 'pcrNeeded'
 			pcr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
 			data['status_type'] = 'cr'
 			cr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+			# create pull requests
+			pull_response = CrucibleRequests.create_pull_requests(data, crucible_obj)
 
 		# add worklog if wanted
 		if data['log_time']:
@@ -78,6 +81,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		response['data']['cr_response'] = cr_response
 		response['data']['pcr_response'] = pcr_response
 		response['data']['cru_response'] = cru_response
+		response['data']['pull_response'] = pull_response
 		return Response(response, mimetype='application/json')
 
 

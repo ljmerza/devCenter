@@ -60,7 +60,6 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	repo = data['repos'][0]
 	if 'reviewedBranch' not in repo:
 		return {"status": False, "data": 'No repos provided to create Crucible'}
-	branch = repo['reviewedBranch']
 	
 	# get issue data from Crucible title
 	qa_response = jira_obj.find_crucible_title_data(msrp=data['msrp'], cred_hash=data['cred_hash'])
@@ -78,41 +77,41 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 def get_repos(data, crucible_obj):
 	'''
 	'''
-	# check for required data
 	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-	# return data
 	return crucible_obj.get_repos(cred_hash=data['cred_hash'])
 
 
 def get_branches(data, crucible_obj):
 	'''
 	'''
-	# check for required data
 	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash', 'repo_name'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-	# return data
 	return crucible_obj.get_branches(cred_hash=data['cred_hash'], repo_name=data['repo_name'])
 
 
 def ticket_branches(data, crucible_obj):
 	'''
 	'''
-	# check for required data
 	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash', 'msrp'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-	# return data
 	return crucible_obj.ticket_branches(cred_hash=data['cred_hash'], msrp=data['msrp'])
 
 def get_comments(data, crucible_obj):
 	'''
 	'''
-	# check for required data
 	missing_params = FlaskUtils.check_parameters(params=data, required=['crucible_id', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-	# return data
 	return crucible_obj.get_comments(crucible_id=data['crucible_id'], cred_hash=data['cred_hash'])
+
+def create_pull_requests(data, crucible_obj):
+	'''
+	'''
+	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash', 'repos', 'key', 'msrp'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+	return crucible_obj.create_pull_requests(repos=data['repos'], key=data['key'], msrp=data['msrp'], cred_hash=data['cred_hash'])
