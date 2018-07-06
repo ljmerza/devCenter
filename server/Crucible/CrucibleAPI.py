@@ -26,7 +26,7 @@ class CrucibleAPI(DevCenterAPI):
 		self.crucible_api_branch = f'{self.crucible_url}/rest/branchreview/latest/trackedbranch'
 
 		self.code_cloud_api = os.environ['CODE_CLOUD_URL']
-		self.code_cloud_pull_req = f'{self.code_cloud_api}/rest/api/1.0/projects/{self.project_name}/repos'
+		self.code_cloud_pull_req = f'{self.code_cloud_api}/rest/api/latest/projects/{self.project_name}/repos'
 		# https://docs.atlassian.com/bitbucket-server/rest/4.9.1/bitbucket-rest.html?utm_source=%2Fstatic%2Frest%2Fbitbucket-server%2F4.9.1%2Fbitbucket-rest.html&utm_medium=301#idp2022432
 
 		

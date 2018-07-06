@@ -188,18 +188,19 @@ class CrucibleRepoBranch():
 			return {'status': True, 'data': f'Could not add repo {repo}: '+response['data']}
 		return response
 
-	def create_pull_requests(self, repos, key, msrp, cred_hash):
+	def create_pull_requests(self, repos, key, msrp, summary, cred_hash):
 		'''
 		'''
+		all_responses = []
 
 		for repo in repos:
-			repo_name = repos['repositoryName']
-			branch_name = repos['reviewedBranch']
-			master_branch_name = repos['baseBranch']
+			repo_name = repo['repositoryName']
+			branch_name = repo['reviewedBranch']
+			master_branch_name = repo['baseBranch']
 
 			json_data = {
-				"title": f"Pull Request for {key} (Ticket #{msrp})",
-				"description": "",
+				"title": f"[{key}] Ticket #{msrp} - {summary}",
+				"description": summary,
 				"state": "OPEN",
 				"open": True,
 				"closed": False,
@@ -228,9 +229,13 @@ class CrucibleRepoBranch():
 				"links": {"self":[None]}
 			}
 
-			url = f'{self.crucible_api.code_cloud_pull_req}/{repo}/pull-requests.json'
-			response = self.crucible_api.post_json(url=url, json=json_data, cred_hash=cred_hash)
-			if not response['status']:
-				return response
+			url = f'{self.crucible_api.code_cloud_pull_req}/{repo_name}/pull-requests'
+			response = self.crucible_api.post_json(url=url, json_data=json_data, cred_hash=cred_hash)
+			all_responses.append(response)
+		
+		response = {'status': True, 'data': all_responses}
+		for repo in all_responses:
+			if not repo.get('status'):
+				response['status'] = False
 
 		return response

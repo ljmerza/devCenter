@@ -111,7 +111,7 @@ def get_comments(data, crucible_obj):
 def create_pull_requests(data, crucible_obj):
 	'''
 	'''
-	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash', 'repos', 'key', 'msrp'])
+	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash', 'repos', 'key', 'msrp', 'summary'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-	return crucible_obj.create_pull_requests(repos=data['repos'], key=data['key'], msrp=data['msrp'], cred_hash=data['cred_hash'])
+	return crucible_obj.create_pull_requests(repos=data['repos'], key=data['key'], msrp=data['msrp'], cred_hash=data['cred_hash'], summary=data['summary'])

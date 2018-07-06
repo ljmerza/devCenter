@@ -46,6 +46,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	ticketListType;
 	ticket$;
 	sprint;
+	summary;
 
 	constructor(
 		public jira:JiraService, private git: GitService, public toastr: ToastrService, 
@@ -77,6 +78,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			.subscribe((allTickets:any=[]) => {
 				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.sprint = (ticket && ticket.sprint) || '';
+				this.summary = (ticket && ticket.summary) || '';
 			});
 
 		});
@@ -225,6 +227,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			autoPCR: selections.pcrNeeded.value,
 			key: this.key,
 			msrp: this.msrp,
+			summary: this.summary,
 			repos: branches.map(branch => {
 				return {
 					baseBranch: branch.controls.baseBranch.value,
@@ -243,7 +246,19 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		let toastMessage = `<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>`;
 		
 		if(response.data.cru_response.status){
-			toastMessage += `<br><a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.cru_response.data}'>Crucible Link</a>`
+			toastMessage += `	<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.cru_response.data}'>Crucible Link</a>`;
+		}
+		
+		if (response.data.pull_response.status) {
+			// get name/request link for each repo
+			const repoLinks = response.data.pull_response.data.map(response => {
+				if(response.status){
+					return `<br><a target="_blank" href='${response.data.links.self[0].href}'>${response.data.toRef.repository.name}</a>`;
+				}
+				return '';
+			});
+
+			toastMessage += `<br>Pull Request Links:${repoLinks.join('')}`
 		}
 		this.toastr.showToast(toastMessage, 'success', true);
 	}
@@ -263,14 +278,30 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		// check for status changes okay - if status change came back success then set to pcr needed
 		// else if status change error and we did try to change status then show error
 		let status = statuses.INDEV.frontend;
-		if(responseData.cr_response.status && responseData.pcr_response.status) {
+		if (postData.autoPCR && responseData.cr_response.status && responseData.pcr_response.status && responseData.pull_response.status){
 			status = statuses.PCRNEED.frontend;
 
 		} else if(postData.autoPCR){
 			// if we wanted PCR and we got here then there was a failure
-			const cr_message = responseData.cr_response.status ? '' : 'Code Review status change';
-			const pcr_message = responseData.pcr_response.status ? '' : 'PCR Needed component change';
-			this.toastr.showToast('The following transitions failed: ${cr_message} ${pcr_message}', 'error');
+			const cr_message = responseData.cr_response.status ? '' : `Code Review status change<br>${responseData.cr_response.data}<br><br>`;
+			const pcr_message = responseData.pcr_response.status ? '' : `PCR Needed component change<br>${responseData.pcr_response.data}<br><br>`;
+
+			// if pull request failed then get all erro/rsuccess messages
+			let pull_message = '';
+			if (!responseData.pull_response.status){
+				pull_message = `Creating pull request:`
+				pull_message += responseData.pull_response.data.map(response => {
+					if(response.status){
+						return `<br>Success: <a target="_blank" href='${response.data.links.self[0].href}'>${response.data.toRef.repository.name}</a>`;
+
+					} else {
+						const errors = response.data.errors.map(err => err.message);
+						return `<br>Failed: ${errors}</a>`;
+					}
+				});
+			}
+
+			this.toastr.showToast(`The following transitions failed: ${cr_message} ${pcr_message} ${pull_message}`, 'error');
 		}
 
 		// if status changed -> update new status

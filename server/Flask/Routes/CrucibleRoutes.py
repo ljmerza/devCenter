@@ -32,7 +32,8 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 			"autoCR": post_data.get('autoCR', False),
 			"autoPCR": post_data.get('autoPCR', False),
 			"log_time": post_data.get('log_time', 0),
-			"msrp": post_data.get('msrp', '')
+			"msrp": post_data.get('msrp', ''),
+			"summary": post_data.get('summary', '')
 		}
 
 		response = {'status': True, 'data':{}}
