@@ -89,7 +89,10 @@ class CruciblePCR():
 			return {'status': False, 'data': f'Could not publish review for {crucible_id}: '+response['data']}
 		return response
 
-	def create_crucible(self, data, cred_hash):
+	def create_crucible(self, data, cred_hash, pull_response):
+
+		description = self.generate_code_cloud_objectives(repos=data['repos'], pull_response=pull_response)
+
 		json_data = {
 			"reviewData": {
 				"allowReviewersToJoin": "true",
@@ -99,7 +102,7 @@ class CruciblePCR():
 				"description": '',
 				"name": data['title'],
 				"projectKey": "CR-UD",
-				"description": self.generate_code_cloud_objectives(repos=data['repos'])
+				"description": description
 			}
 		}
 		
@@ -111,9 +114,9 @@ class CruciblePCR():
 			return {'data': 'Could not get permId: '+response['data'], 'status': False}
 
 		crucible_id = response['data']['permaId']['id']
-		return {'data': crucible_id, 'status': True}
+		return {'data': crucible_id, 'status': True, 'description': description}
 
-	def generate_code_cloud_objectives(self, repos):
+	def generate_code_cloud_objectives(self, repos, pull_response):
 		'''
 		'''
 		objective = ''
@@ -123,7 +126,14 @@ class CruciblePCR():
 			repositoryName = repo['repositoryName']
 			reviewedBranch = repo['reviewedBranch']
 
+			pull_request_link = self.get_pull_request_link(pull_response=pull_response, repositoryName=repositoryName)
+
+			# get link to code cloud link
 			branch_url = f'{self.crucible_api.code_cloud_api}{self.code_cloud_path}/{repositoryName}/{self.code_cloud_path2}?targetBranch=refs%2Fheads%2F{baseBranch}&sourceBranch=refs%2Fheads%2F{reviewedBranch}'
 			objective = objective+'\nh1. {color:red}'+repositoryName+'{color}: [Code Cloud|'+branch_url+']'
+
+			# add pull request link if found
+			if pull_request_link:
+				objective += ' [Pull Request|'+pull_request_link+'/diff]'
 
 		return objective

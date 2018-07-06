@@ -97,8 +97,8 @@ class JiraMisc():
 		# POST work log and return data
 		return self.jira_api.post_json(url=f'{self.jira_api.api_base}/issue/{key}/worklog', json_data={"timeSpent":time}, cred_hash=cred_hash)
 
-	def generate_qa_template(self, qa_steps, repos, crucible_id):
-		return generate_qa_template(qa_steps, repos, crucible_id)
+	def generate_qa_template(self, qa_steps, repos, crucible_id, description):
+		return generate_qa_template(qa_steps, repos, crucible_id, description)
 
 	def get_profile(self, cred_hash):
 		'''

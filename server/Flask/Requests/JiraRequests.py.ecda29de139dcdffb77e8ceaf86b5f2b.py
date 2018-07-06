@@ -61,7 +61,7 @@ def set_status(data, jira_obj):
 		return {"status": False, "data": 'Invalid status type'}
 
 
-def add_qa_comment(data, jira_obj):
+def add_qa_comment(data, jira_obj, code_cloud_links):
 	'''creates a QA comment and posts it to a ticket
 
 	Args:

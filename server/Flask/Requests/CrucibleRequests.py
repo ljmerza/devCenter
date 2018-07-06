@@ -43,7 +43,7 @@ def pass_review(data, crucible_obj):
 	# return ok
 	return {"status": True}
 
-def crucible_create_review(data, crucible_obj, jira_obj):
+def crucible_create_review(data, crucible_obj, jira_obj, pull_response):
 	'''creates a crucible review and returns the cru id created
 	'''
 
@@ -71,7 +71,7 @@ def crucible_create_review(data, crucible_obj, jira_obj):
 	data['title'] = crucible_obj.create_crucible_title(story_point=qa_response['story_point'], key=qa_response["key"], msrp=data['msrp'], summary=qa_response['summary'])
 
 	# create crucible
-	return crucible_obj.generate_crucible(data=data, cred_hash=data['cred_hash'])
+	return crucible_obj.generate_crucible(data=data, cred_hash=data['cred_hash'], pull_response=pull_response)
 
 
 def get_repos(data, crucible_obj):

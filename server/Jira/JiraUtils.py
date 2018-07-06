@@ -47,7 +47,7 @@ def format_qa_steps(qa_steps):
 	return qa_steps
 
 
-def generate_qa_template(qa_steps, repos, crucible_id):
+def generate_qa_template(qa_steps, repos, crucible_id, description):
 	'''generates the QA steps in proper format
 
 	Args:
@@ -57,6 +57,7 @@ def generate_qa_template(qa_steps, repos, crucible_id):
 			repositoryName (str) the repo name
 			reviewedBranch (str) the branch to review
 		crucible_id (str) the Crucible ID of the review created
+		description (str) links added in crucbile description
 		
 	Returns:
 		The formatted QA table string
@@ -70,6 +71,7 @@ def generate_qa_template(qa_steps, repos, crucible_id):
 
 """+'[Crucible Review|'+crucible_url+'/cru/'+crucible_id+"""]
 
+"""+description+"""
 
 """+qa_begin+"""
 
