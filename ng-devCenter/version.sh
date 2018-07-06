@@ -5,4 +5,4 @@ echo "// This file was generated on $(date)
 export const appVersion = $value;" > $version_file;
 git add $version_file;
 
-npm run beta;
+npm run build;
