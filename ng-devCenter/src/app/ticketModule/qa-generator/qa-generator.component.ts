@@ -253,7 +253,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			// get name/request link for each repo
 			const repoLinks = response.data.pull_response.data.map(response => {
 				if(response.status){
-					return `<br><a target="_blank" href='${response.data.links.self[0].href}'>${response.data.toRef.repository.name}</a>`;
+					return `<br><a target="_blank" href='${response.data.links.self[0].href}/diff'>${response.data.toRef.repository.name}</a>`;
 				}
 				return '';
 			});

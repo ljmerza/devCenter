@@ -239,3 +239,9 @@ class CrucibleRepoBranch():
 				response['status'] = False
 
 		return response
+
+	def get_pull_request_comments(self, repo_name, pull_request_id, cred_hash):
+		'''
+		'''
+		url = f'{self.crucible_api.code_cloud_pull_req}/{repo_name}/pull-requests/{pull_request_id}/comments'
+		return self.crucible_api.get(url=url, cred_hash=cred_hash)
