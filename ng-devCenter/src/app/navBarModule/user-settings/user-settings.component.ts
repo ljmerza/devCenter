@@ -120,7 +120,6 @@ export class UserSettingsComponent implements OnInit {
 
 		// save data to localstorage
 		const userData = this.userSettingsForm.controls;
-		console.log(userData, userData.emberUrl.value)
 		this.user.setUserData('username', userData.username.value);
 		this.user.setUserData('password', userData.password.value);
 		this.user.setUserData('port', userData.port.value);
