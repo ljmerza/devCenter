@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
 import { ConfigService } from './config.service';
-import { ToastrService } from './toastr.service';
 import { DataService } from './data.service';
 import { LocalStorageService } from './local-storage.service';
 
@@ -11,10 +7,12 @@ import { LocalStorageService } from './local-storage.service';
 @Injectable()
 export class UserService {
 
-	constructor(public dataService:DataService, public config:ConfigService, private ls:LocalStorageService) {	}
+	constructor(public dataService:DataService, public config:ConfigService, private ls:LocalStorageService) {
+		this.devServers = config.devServers;
+	}
 
 	public redirectUrl:string;
-	userValues:Array<string> = ['username', 'password', 'port', 'cache', 'emberUrl', 'teamUrl'];
+	userValues:Array<string> = ['username', 'password', 'port', 'cache', 'emberUrl', 'teamUrl', 'devServer'];
 
 	public emberLocalPort:string = '4200';
 	public emberApiPort:string = '3';
@@ -22,9 +20,18 @@ export class UserService {
 	public teamApiPort:string = '5';
 
 	emberBuilds:Array<Object> = [
-		{'label':'Dev Server', 'value':this.config.devUrl},
-		{'label':'Locally', 'value':'http://localhost'}
+		{ 'label':'Dev Server', 'value': 'devServer' },
+		{ 'label':'Locally', 'value':'localServer' }
 	];
+
+	devServers: Array<Object>;
+
+	public get breakVersion(): string {
+		return this.ls.getItem('v8.0.0') || '';
+	}
+	public set breakVersion(breakVersion) {
+		this.ls.setItem('v8.0.0', breakVersion);
+	}
 
 	public get username():string{
 		return this.ls.getItem('username') || '';
@@ -61,14 +68,18 @@ export class UserService {
 	}
 
 	public get emberUrl():string{
-		return this.ls.getItem('emberUrl') || '';
+		const emberUrl = this.ls.getItem('emberUrl') || '';
+		if (!emberUrl) return emberUrl;
+		else return emberUrl === 'localServer' ? 'http://localhost' : this.devServer;
 	}
 	public set emberUrl(emberUrl){
 		this.ls.setItem('emberUrl', emberUrl);
 	}
 
 	public get teamUrl():string{
-		return this.ls.getItem('teamUrl') || '';
+		const teamUrl = this.ls.getItem('teamUrl') || '';
+		if(!teamUrl) return teamUrl;
+		else return teamUrl === 'localServer' ? 'http://localhost' : this.devServer;
 	}
 	public set teamUrl(teamUrl){
 		this.ls.setItem('teamUrl', teamUrl);
@@ -81,6 +92,18 @@ export class UserService {
 		this.ls.setItem('cache', cache);
 	}
 
+	public get devServer(): string {
+		const devServer = this.ls.getItem('devServer') || '';
+		if (!devServer) return devServer;
+		else return `http://${devServer}.${this.config.rootDomain}`;
+	}
+	public set devServer(devServer) {
+		this.ls.setItem('devServer', devServer);
+	}
+
+	/**
+	 * 
+	 */
 	public get emberLocal():string{
 		if(this.emberUrl && this.emberUrl.match(/local/i)){
 			return '#/';
@@ -89,6 +112,9 @@ export class UserService {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public get emberPort():string{
 		if(this.emberUrl && this.emberUrl.match(/local/i)){
 			return this.emberLocalPort;
@@ -97,6 +123,9 @@ export class UserService {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public get teamLocal():string{
 		// set teamUrl based on if localhost or not
 		if(this.teamUrl && this.teamUrl.match(/local/i)){
@@ -114,10 +143,12 @@ export class UserService {
 		}
 	}
 
-	/*
-	*/
+	/**
+	 * 
+	 * @param key 
+	 * @param value 
+	 */
 	public setUserData(key:string, value): void {
-
 		if(key == 'cache'){
 			value = value ? '1' : '';
 		}
@@ -125,8 +156,9 @@ export class UserService {
 		this[key] = value;
 	}
 
-	/*
-	*/
+	/**
+	 * 
+	 */
 	public resetUserData(): void {
 		this.redirectUrl = '';
 
@@ -136,12 +168,23 @@ export class UserService {
 	}
 
 	/**
-	*/
+	 * 
+	 */
 	public needRequiredCredentials():boolean {
-		return !(this.username && this.password && this.port && this.emberUrl && this.teamUrl);
+
+		// if introducing a break version reset user data to 
+		// force all users to log back in
+		if (!this.breakVersion){
+			this.breakVersion = '1';
+			this.resetUserData();
+		}
+
+		return !(this.username && this.password && this.port && this.emberUrl && this.teamUrl && this.devServer);
 	}
 
-
+	/**
+	 * 
+	 */
 	processErrorResponse(error):string{
 		return this.dataService.processErrorResponse(error);
 	}

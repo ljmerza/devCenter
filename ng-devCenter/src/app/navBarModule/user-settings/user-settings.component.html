@@ -38,6 +38,22 @@
 					</div>
 				</div>
 
+				<!-- dev server url -->
+				<div class="form-group">
+					<label for="devServer">Development Server:</label>
+					<!-- ember select -->
+					<select formControlName="devServer" class='form-control'>
+						<option disabled>Please choose...</option>
+						<option *ngFor="let server of user.devServers" [ngValue]="server.value" 
+						[attr.selected]="server.value === user.devServer">
+							{{server.label}}
+						</option>
+					</select>
+					<div class='text-danger' *ngIf='devServer.invalid'>
+						<span *ngIf="devServer.errors.required">Development Server required</span>
+					</div>
+				</div>
+
 				<!-- ember url -->
 				<div class="form-group">
 					<label for="emberUrl">Ember Url:</label>
@@ -45,11 +61,10 @@
 					<select formControlName="emberUrl" class='form-control'>
 						<option disabled>Please choose...</option>
 						<option *ngFor="let emberBuild of user.emberBuilds" [ngValue]="emberBuild.value"
-						[attr.selected]="emberBuild.value === emberUrl ? true : false">
+						[attr.selected]="emberBuild.value === user.emberUrl">
 							{{emberBuild.label}}
 						</option>
 					</select>
-					<!-- invalids -->
 					<div class='text-danger' *ngIf='emberUrl.invalid'>
 						<span *ngIf="emberUrl.errors.required">Ember URL required</span>
 					</div>
@@ -62,11 +77,10 @@
 					<select formControlName="teamUrl" class='form-control'>
 						<option disabled>Please choose...</option>
 						<option *ngFor="let emberBuild of user.emberBuilds" [ngValue]="emberBuild.value"
-						[attr.selected]="emberBuild.value === teamUrl ? true : null">
+						[attr.selected]="emberBuild.value === user.teamUrl">
 							{{emberBuild.label}}
 						</option>
 					</select>
-					<!-- invalids -->
 					<div class='text-danger' *ngIf='teamUrl.invalid'>
 						<span *ngIf="teamUrl.errors.required">Team URL required</span>
 					</div>

@@ -30,6 +30,7 @@ export class UserSettingsComponent implements OnInit {
 			port: new FormControl(user.port, Validators.compose(
 				[Validators.required, UserSettingsComponent.portValidator]
 			)),
+			devServer: new FormControl(user.devServer, [Validators.required]),
 			emberUrl: new FormControl(user.emberUrl, [Validators.required]),
 			teamUrl: new FormControl(user.teamUrl, [Validators.required]),
 			cache: new FormControl(user.cache)
@@ -80,6 +81,7 @@ export class UserSettingsComponent implements OnInit {
 			username: this.user.username,
 			password: this.user.password,
 			port: this.user.port,
+			devServer: this.user.devServer,
 			emberUrl: this.user.emberUrl,
 			teamUrl: this.user.teamUrl,
 			cache: this.user.cache
@@ -95,6 +97,7 @@ export class UserSettingsComponent implements OnInit {
 	get username(){ return this.userSettingsForm.get('username'); }
 	get password(){ return this.userSettingsForm.get('password'); }
 	get port(){ return this.userSettingsForm.get('port'); }
+	get devServer(){ return this.userSettingsForm.get('devServer'); }
 	get emberUrl(){ return this.userSettingsForm.get('emberUrl'); }
 	get teamUrl(){ return this.userSettingsForm.get('teamUrl'); }
 	get cache(){ return this.userSettingsForm.get('cache'); }
@@ -121,11 +124,10 @@ export class UserSettingsComponent implements OnInit {
 		this.user.setUserData('username', userData.username.value);
 		this.user.setUserData('password', userData.password.value);
 		this.user.setUserData('port', userData.port.value);
+		this.user.setUserData('devServer', userData.devServer.value);
 		this.user.setUserData('emberUrl', userData.emberUrl.value);
 		this.user.setUserData('teamUrl', userData.teamUrl.value);
 		this.user.setUserData('cache', userData.cache.value);
-
-		console.log()
 
 		this.getProfile();
 		this.toastr.showToast('Saved User Settings', 'success');
