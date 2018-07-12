@@ -37,10 +37,6 @@ def get_raw_jira_tickets():
 	print('get_raw_jira_tickets')
 	response = jira.get_raw_jira_tickets(filter_number=filter_number, cred_hash=cred_hash)
 	print(response)
-	response = jira.get_raw_jira_tickets(filter_number=filter_number, cred_hash=cred_hash, max_results=3)
-	print(response)
-	response = jira.get_raw_jira_tickets(filter_number=filter_number, cred_hash=cred_hash, start_at=3)
-	print(response)
 	print(divider)
 	return response
 
@@ -49,11 +45,6 @@ def get_jira_tickets():
 	print('get_jira_tickets')
 	response = jira.get_jira_tickets(jql=jql, filter_number=filter_number, cred_hash=cred_hash)
 	print(response)
-	# response = jira.get_jira_tickets(filter_number=filter_number, cred_hash=cred_hash, max_results=3)
-	# print(response)
-	# response = jira.get_jira_tickets(filter_number=filter_number, cred_hash=cred_hash, start_at=3)
-	# print(response)
-	# print(divider)
 	return response
 
 def find_key_by_msrp():
