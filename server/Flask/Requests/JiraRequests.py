@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 import os
 
-from Flask import FlaskUtils
-from ChatUtils import build_commit_message, get_branch_name
+from ..FlaskUtils import check_parameters
+from ....ServerUtils import build_commit_message, get_branch_name
 
 def set_status(data, jira_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash','key','status_type'])
+	missing_params = check_parameters(params=data, required=['cred_hash','key','status_type'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -59,7 +59,7 @@ def set_status(data, jira_obj):
 		return {"status": False, "data": 'Invalid status type'}
 
 def add_qa_comment(data, jira_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'crucible_id','repos', 'qa_steps', 'cred_hash'])
+	missing_params = check_parameters(params=data, required=['key', 'crucible_id','repos', 'qa_steps', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -71,7 +71,7 @@ def add_qa_comment(data, jira_obj):
 
 def add_comment(data, jira_obj):
 	response = ''
-	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash', 'comment'])
+	missing_params = check_parameters(params=data, required=['key', 'cred_hash', 'comment'])
 	if missing_params:
 		return {"data": missing_params, "status": False}
 
@@ -84,7 +84,7 @@ def add_comment(data, jira_obj):
 	return response
 
 def add_commit_comment(data, jira_obj, crucible_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash', 'master_branch'])
+	missing_params = check_parameters(params=data, required=['key', 'cred_hash', 'master_branch'])
 	if missing_params:
 		return {"data": missing_params, "status": False}
 
@@ -106,7 +106,7 @@ def add_commit_comment(data, jira_obj, crucible_obj):
 	)
 
 def edit_comment(data, jira_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash', 'comment_id', 'comment'])
+	missing_params = check_parameters(params=data, required=['key', 'cred_hash', 'comment_id', 'comment'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -118,7 +118,7 @@ def edit_comment(data, jira_obj):
 	)
 
 def delete_comment(data, jira_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'cred_hash', 'comment_id'])
+	missing_params = check_parameters(params=data, required=['key', 'cred_hash', 'comment_id'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -129,7 +129,7 @@ def delete_comment(data, jira_obj):
 	)
 
 def add_work_log(data, jira_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['key', 'log_time', 'cred_hash'])
+	missing_params = check_parameters(params=data, required=['key', 'log_time', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -137,7 +137,7 @@ def add_work_log(data, jira_obj):
 	
 
 def get_jira_tickets(data, jira_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash'])
+	missing_params = check_parameters(params=data, required=['cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 		
@@ -159,14 +159,14 @@ def get_jira_tickets(data, jira_obj):
 
 
 def find_key_by_msrp(data, jira_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash','msrp'])
+	missing_params = check_parameters(params=data, required=['cred_hash','msrp'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return jira_obj.find_key_by_msrp(msrp=data['msrp'], cred_hash=data['cred_hash'])
 
 def get_profile(data, jira_obj, sql_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['username', 'cred_hash'])
+	missing_params = check_parameters(params=data, required=['username', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -179,7 +179,7 @@ def get_profile(data, jira_obj, sql_obj):
 
 
 def parse_comment(data, jira_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['cred_hash', 'comment', 'key'])
+	missing_params = check_parameters(params=data, required=['cred_hash', 'comment', 'key'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -193,7 +193,7 @@ def modify_watchers(data, jira_obj):
 	type_of_modify = data.get('type_of_modify', '')
 
 	if type_of_modify in ['add','remove']:
-		missing_params = FlaskUtils.check_parameters(params=data, required=['username'])
+		missing_params = check_parameters(params=data, required=['username'])
 		if missing_params:
 			return {"data": f"Missing required parameters: {missing_params}", "status": False}
 

@@ -1,11 +1,8 @@
 #!/usr/bin/python3
 
-from Flask import FlaskUtils
+from ..FlaskUtils import check_parameters
 
 def get_navbar_items(sql_obj):
-	'''
-	'''
-
 	session = sql_obj.login()
 	data = sql_obj.get_navbar_items(session)
 	sql_obj.logout(session)
@@ -16,8 +13,6 @@ def get_navbar_items(sql_obj):
 	}
 
 def set_navbar_item(sql_obj, data):
-	'''
-	'''
 	item = {
 		'id': data.get('id', ''),
 		'name': data.get('name', ''),
@@ -26,7 +21,7 @@ def set_navbar_item(sql_obj, data):
 	}
 
 	# make sure we have required item fields
-	missing_params = FlaskUtils.check_parameters(params=item, required=['id', 'name', 'type', 'link'])
+	missing_params = check_parameters(params=item, required=['id', 'name', 'type', 'link'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 

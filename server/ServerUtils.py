@@ -1,39 +1,18 @@
-#!/usr/bin/python3
-
-import os
 import re
+import os
+
+trantab = "".maketrans(",!.;:/\\()@#$%^&*[]'<>|~`", "------------------------")
 
 td_style = "border: 1px solid #dddddd;padding: 8px;"
 td_alt_style = "background-color: #dddddd;"
 table_style = "border-collapse: collapse;"
-trantab = "".maketrans(",!.;:/\\()@#$%^&*[]'<>|~`", "------------------------")
 
 jira_url = os.environ['JIRA_URL']
 jira_ticket_base = f'{jira_url}/browse'
 
+
 crucible_url = os.environ['CRUCIBLE_URL']
 crucible_ticket_base = f'{crucible_url}/cru'
-
-def get_estimate_string(story_point):
-	if(story_point):
-		if(story_point < 1):
-			story_point = str(int(8*story_point)) + ' hours'
-		elif(story_point // 5 >= 1):
-
-			week = story_point // 5
-			days = story_point % 5
-			story_point = str(int(week)) + ' week'
-			if(days >= 1):
-				story_point = story_point + ' ' + str(int(days))
-				if days == 1:
-					story_point += ' day'
-				else:
-					story_point += ' days'
-		elif(story_point == 1):
-			story_point = str(int(story_point)) + ' day'
-		else:
-			story_point = str(int(story_point)) + ' days'
-	return story_point
 
 def get_branch_name(username, msrp, summary):
 	branch = summary.translate(trantab)
@@ -56,12 +35,12 @@ def get_branch_name(username, msrp, summary):
 
 	return branch_name
 
+
 def build_commit_message(key, msrp, summary):
 	return f"[{key}] Ticket #{msrp} {summary}"
 
 def build_message(data, commit_message=False, jira_message=False, branch_message=False, crucible_message=False, sprint_message=False, msrp_message=False, summary_message=False, crucible_title_message=False, estimate_message=False):
-
-	# keep track of odd table rows
+    	# keep track of odd table rows
 	color_bg = 0
 
 	# make message table and the type of message string
@@ -72,24 +51,25 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 	# add commit message
 	if commit_message:
 		# increment color_bg and see if this row needs bg coloring
-		color_bg +=1
+		color_bg += 1
 		if color_bg % 2 == 1:
 			color = td_alt_style
 		else:
 			color = ''
 		# build commit message
-		commit_message = build_commit_message(data['key'], data['msrp'], data['summary'])
+		commit_message = build_commit_message(
+			data['key'], data['msrp'], data['summary'])
 		# create message piece
 		message += f"\
 		<tr> \
 			<td style='{td_style} {color}'>Commit Message</td> \
 			<td style='{td_style} {color}'>{commit_message}</td> \
-		</tr>" 
+		</tr>"
 
 	# add Jira link
 	if jira_message:
 		# increment color_bg and see if this row needs bg coloring
-		color_bg +=1
+		color_bg += 1
 		if color_bg % 2 == 1:
 			color = td_alt_style
 		else:
@@ -105,7 +85,7 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 	# add crucible link
 	if crucible_message:
 		# increment color_bg and see if this row needs bg coloring
-		color_bg +=1
+		color_bg += 1
 		if color_bg % 2 == 1:
 			color = td_alt_style
 		else:
@@ -121,7 +101,7 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 	# add branch name
 	if branch_message:
 		# increment color_bg and see if this row needs bg coloring
-		color_bg +=1
+		color_bg += 1
 		if color_bg % 2 == 1:
 			color = td_alt_style
 		else:
@@ -137,7 +117,7 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 	# add sprint
 	if sprint_message:
 		# increment color_bg and see if this row needs bg coloring
-		color_bg +=1
+		color_bg += 1
 		if color_bg % 2 == 1:
 			color = td_alt_style
 		else:
@@ -153,13 +133,13 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 	# add MSRP number
 	if msrp_message:
 		# increment color_bg and see if this row needs bg coloring
-		color_bg +=1
+		color_bg += 1
 		if color_bg % 2 == 1:
 			color = td_alt_style
 		else:
 			color = ''
 		# get data
-		msrp = data['msrp']	
+		msrp = data['msrp']
 		message += f"\
 		<tr> \
 			<td style='{td_style} {color}'>MSRP</td> \
@@ -169,7 +149,7 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 	# add summary
 	if summary_message:
 		# increment color_bg and see if this row needs bg coloring
-		color_bg +=1
+		color_bg += 1
 		if color_bg % 2 == 1:
 			color = td_alt_style
 		else:
@@ -185,7 +165,7 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 	# add estimate
 	if estimate_message:
 		# increment color_bg and see if this row needs bg coloring
-		color_bg +=1
+		color_bg += 1
 		if color_bg % 2 == 1:
 			color = td_alt_style
 		else:
@@ -201,7 +181,7 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 	# add crucible title format
 	if crucible_title_message:
 		# increment color_bg and see if this row needs bg coloring
-		color_bg +=1
+		color_bg += 1
 		if color_bg % 2 == 1:
 			color = td_alt_style
 		else:
@@ -216,7 +196,29 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 			<td style='{td_style} {color}'>Crucible Title</td> \
 			<td style='{td_style} {color}'>(PCR-{pcr_estimate}) [{key}] Ticket #{msrp} {summary}</td>\
 		</tr>"
-		
+
 	# close table and return message string
 	message += "</table>"
 	return message
+
+
+def get_estimate_string(story_point):
+	if(story_point):
+		if(story_point < 1):
+			story_point = str(int(8*story_point)) + ' hours'
+		elif(story_point // 5 >= 1):
+
+			week = story_point // 5
+			days = story_point % 5
+			story_point = str(int(week)) + ' week'
+			if(days >= 1):
+				story_point = story_point + ' ' + str(int(days))
+				if days == 1:
+					story_point += ' day'
+				else:
+					story_point += ' days'
+		elif(story_point == 1):
+			story_point = str(int(story_point)) + ' day'
+		else:
+			story_point = str(int(story_point)) + ' days'
+	return story_point

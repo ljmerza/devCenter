@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from ..Flask import FlaskUtils
+from .. import FlaskUtils
 
 def send_ping(data, chat_obj, jira_obj, crucible_obj):
 

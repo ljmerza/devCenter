@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
-from Flask import FlaskUtils
-
+from .. import FlaskUtils
 
 def add_reviewer(data, crucible_obj):
 	# check for required data
