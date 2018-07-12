@@ -19,7 +19,7 @@ class JiraComponent():
 	def remove_pcr_needed(self, key, cred_hash):
 		return self._remove_component(key=key, name='PCR - Needed', cred_hash=cred_hash)
 
-	def add_pcr_working(self, key, cred_hash):
+	def set_pcr_working(self, key, cred_hash):
 		return self._remove_component(key=key, name='PCR - Working', cred_hash=cred_hash)
 
 	def remove_pcr_working(self, key, cred_hash):
@@ -33,15 +33,15 @@ class JiraComponent():
 
 	def set_code_review_working(self, key, cred_hash):
 		return self._set_component(key=key, name='Code Review - Working', cred_hash=cred_hash)
+	
+	def remove_code_review_working(self, key, cred_hash):
+		return self._remove_component(key=key, name='Code Review - Working', cred_hash=cred_hash)
 
 	def set_merge_code(self, key, cred_hash):
 		return self._set_component(key=key, name='Merge Code', cred_hash=cred_hash)
 
 	def remove_merge_code(self, key, cred_hash):
 		return self._remove_component(key=key, name='Merge Code', cred_hash=cred_hash)
-
-	def remove_merge_conflict(self, key, cred_hash):
-		return self._remove_component(key=key, name='Merge Conflict', cred_hash=cred_hash)
 
 	def set_merge_conflict(self, key, cred_hash):
 		return self._set_component(key=key, name='Merge Conflict', cred_hash=cred_hash)

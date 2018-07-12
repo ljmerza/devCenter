@@ -47,11 +47,6 @@ response = crucible.get_pcr_estimate(story_point=3)
 print(response)
 print(divider)
 
-print('get_pcr_pass')
-response = crucible.get_pcr_pass(crucible_id=crucible_id, cred_hash=cred_hash)
-print(response)
-print(divider)
-
 print('complete_review')
 response = crucible.complete_review(crucible_id=crucible_id, cred_hash=cred_hash)
 print(response)

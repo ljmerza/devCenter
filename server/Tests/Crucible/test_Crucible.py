@@ -70,16 +70,6 @@ response = crucible.get_review_id(msrp='99999', key='QWE-2345', cred_hash=cred_h
 print(response)
 print(divider)
 
-print('get_review_ids')
-response = crucible.get_review_ids(issues=issues, cred_hash=cred_hash)
-print(response)
-print(divider)
-
-print('get_review_ids_from_keys')
-response = crucible.get_review_ids_from_keys(keys=keys, cred_hash=cred_hash)
-print(response)
-print(divider)
-
 print('create_crucible')
 response = crucible.create_crucible(data=data, cred_hash=cred_hash)
 print(response)
@@ -99,18 +89,8 @@ print(divider)
 # print(response)
 # print(divider)
 
-# print('get_30_day_reviews')
-# response = crucible.get_30_day_reviews(cred_hash=cred_hash)
-# print(response)
-# print(divider)
-
 # print('get_14_day_reviews')
 # response = crucible.get_14_day_reviews(cred_hash=cred_hash)
-# print(response)
-# print(divider)
-
-# print('get_7_day_reviews')
-# response = crucible.get_7_day_reviews(cred_hash=cred_hash)
 # print(response)
 # print(divider)
 

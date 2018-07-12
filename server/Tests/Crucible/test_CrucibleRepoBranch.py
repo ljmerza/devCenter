@@ -17,16 +17,6 @@ crucible_id = 'CR-UD-3633'
 crucible = CrucibleRepoBranch.CrucibleRepoBranch()
 
 
-print('get_repos_of_review')
-response = crucible.get_repos_of_review(crucible_id=crucible_id, cred_hash=cred_hash)
-print(response)
-print(divider)
-
-print('get_repos')
-response = crucible.get_repos(cred_hash=cred_hash)
-print(response)
-print(divider)
-
 print('get_branches')
 response = crucible.get_branches(repo_name='ud', cred_hash=cred_hash)
 print(response)

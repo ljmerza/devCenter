@@ -6,8 +6,6 @@ import os
 
 class ChatAPI():	
 	def __init__(self, debug, no_pings):
-		'''
-		'''
 		
 		self.crucible_url = os.environ['CRUCIBLE_URL']
 		self.crucible_ticket_base = f'{self.crucible_url}/cru'
@@ -35,63 +33,31 @@ class ChatAPI():
 
 
 	def send_message(self, message, username):
-		'''make a POST request to the chat to send a message
-		Args:
-			message (str) - the message to send to the user
-			username (str) the username to send the ping to
-		Returns:
-			response from POST request
-		'''
-		# if in debug mode then send all messages to me
 		if self.debug:
 			username = self.username
 			message = '--DEBUG--'+message
 
-		# make POST request
 		if self.no_pings:
 			return {'status': True, 'data': 'OKAY'}
 		else:
-			response = requests.post(f"{self.chat_api}/{username}", data=message.encode('latin-1', "ignore"), auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+			url = f"{self.chat_api}/{username}"
+			auth = HTTPBasicAuth(self.bot_name, self.bot_password)
+			response = requests.post(url, data=message.encode('latin-1', "ignore"), auth=auth)
 			return self._process_response(response=response)
 
 	def send_meeting_message(self, message, chatroom):
-		'''make a post request to the chat to send a message to a chat room
-
-		Args:
-			message (str) - the message to send to the chatroom
-			chatroom (str) the chatroom ID to send the ping to
-
-		Returns:
-			None
-		'''
-		# if in debug mode then send all message to test chatroom
 		if self.debug:
 			message = '--DEBUG--'+message
 
-		# make POST request
 		if self.no_pings:
 			return {'status': True, 'data': 'OKAY'}
 		else:
-			response = requests.post(f"{self.chat_api_chatroom}{chatroom}", data=message.encode('latin-1', "ignore"), auth=HTTPBasicAuth(self.bot_name, self.bot_password))
+			url = f"{self.chat_api_chatroom}{chatroom}"
+			auth = HTTPBasicAuth(self.bot_name, self.bot_password)
+			response = requests.post(url, data=message.encode('latin-1', "ignore"), auth=auth)
 			return self._process_response(response=response)
 
-	def set_z_menu(self, username):
-		'''
-		Args:
-			username - the username of the user to add the menu to
-
-		Returns:
-			None
-		'''
-		response = requests.post(f"{self.chat_api_menu}{username}", data='', auth=HTTPBasicAuth(self.bot_name, self.bot_password))
-		return self._process_response(response=response)
-
 	def _process_response(self, response):
-		'''
-		'''
-		if response.status_code == 200:
-			return {'status': True, 'data': response.text}
-		else:
-			return {'status': False, 'data': response.text}
+		return {'status': response.status_code == 200, 'data': response.text}
 
 
