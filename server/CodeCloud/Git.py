@@ -1,0 +1,142 @@
+
+class Git():
+    def __init__(self, code_cloud_api):
+        self.repos = [
+            "aqe", "external_modules", "modules", 
+            "sasha", "taskmaster", "teamdb", 
+            "teamdbapi", "teamdb_ember", "templates", 
+            "tqi", "ud", "ud_api", "ud_ember", "upm", 
+            "upm_api", "wam", "wam_api"
+        ]
+
+        self.code_cloud_api = code_cloud_api
+
+    def get_repos(self):
+        data = []
+        for repo in self.repos:
+            data.append({'name': repo})
+        return {'status': True, 'data': data}
+
+    def find_branch(self, repo_name, msrp, cred_hash):
+        returned_branches = []
+        response = self.get_branches(repo_name=repo_name, cred_hash=cred_hash)
+        if not response['status']:
+            return response
+
+        for branch_name in response['data']:
+            if msrp in branch_name:
+                returned_branches.append(branch_name)
+
+        if len(returned_branches) > 0:
+            return {'status': True, 'data': returned_branches, 'all': response['data']}
+        else:
+            return {'status': False, 'data': f'No branches found with MSRP {msrp}'}
+
+    def ticket_branches(self, msrp, cred_hash):
+        branches = []
+
+        for repo in self.repos:
+            response = self.find_branch(repo_name=repo, msrp=msrp, cred_hash=cred_hash)
+            if response['status']:
+                branches.append({'repo': repo, 'branches': response['data'], 'all': response['all']})
+
+        if len(branches) > 0:
+            return {'status': True, 'data': branches}
+        else:
+            return {'status': False, 'data': f'No branches found with MSRP {msrp}'}
+
+    def get_branches(self, repo_name, cred_hash):
+        branch_names = []
+
+        url = f'{self.code_cloud_api.code_cloud_branches_api}{repo_name}/branches?start=0&limit=30'
+        response = self.code_cloud_api.get(url=url, cred_hash=cred_hash)
+        if not response['status']:
+            return response
+        
+        for item in response.get('data', {}).get('values', {}):
+            branch_names.append(item.get('displayId', ''))
+
+        return {'status': True, 'data': branch_names}
+
+    def get_commit_ids(self, key, master_branch, cred_hash):
+        commit_ids = []
+
+        for repo_name in self.repos:
+            response = self.get_commit_id(
+                repo_name=repo_name, key=key, cred_hash=cred_hash, master_branch=master_branch)
+            if response['status'] and response['data']:
+                commit_ids.append({'master_branch': master_branch,
+                                  'repo_name': repo_name, 'commit_id': response['data']})
+
+        return {'status': len(commit_ids) > 0, 'data': commit_ids}
+
+    def get_commit_id(self, repo_name, master_branch, key, cred_hash):
+        commit_id = ''
+
+        url = f'{self.code_cloud_api.code_cloud_branches_api}{repo_name}/commits?until=refs%2Fheads%2F{master_branch}'
+        response = self.code_cloud_api.get(url=url, cred_hash=cred_hash)
+        
+        if not response['status']:
+            return response
+
+        for item in response.get('data', {}).get('values', {}):
+            message = item.get('message', '')
+            if key in message:
+                commit_id = item.get('id')
+        
+        return {'status': True, 'data': commit_id}
+
+    def create_pull_requests(self, repos, key, msrp, summary, cred_hash):
+        all_responses = []
+
+        for repo in repos:
+            repo_name = repo['repositoryName']
+            branch_name = repo['reviewedBranch']
+            master_branch_name = repo['baseBranch']
+
+            json_data = {
+                "title": f"[{key}] Ticket #{msrp} - {summary}",
+                "description": summary,
+                "state": "OPEN",
+                "open": True,
+                "closed": False,
+                "fromRef": {
+                    "id": f"refs/heads/{branch_name}",
+                    "repository": {
+                        "slug": repo_name,
+                        "name": None,
+                        "project": {
+                            "key": self.code_cloud_api.project_name
+                        }
+                    }
+                },
+                "toRef": {
+                    "id": f"refs/heads/{master_branch_name}",
+                    "repository": {
+                        "slug": repo_name,
+                        "name": None,
+                        "project": {
+                            "key": self.code_cloud_api.project_name
+                        }
+                    }
+                },
+                "locked": False,
+                "reviewers": [],
+                "links": {"self":[None]}
+            }
+
+            url = f'{self.code_cloud_api.code_cloud_pull_req}/{repo_name}/pull-requests'
+            response = self.code_cloud_api.post_json(
+                url=url, json_data=json_data, cred_hash=cred_hash)
+            all_responses.append(response)
+        
+        response = {'status': True, 'data': all_responses}
+        for repo in all_responses:
+            if not repo.get('status'):
+                response['status'] = False
+
+        return response
+
+    def get_pull_request_comments(self, repo_name, pull_request_id, cred_hash):
+        url = f'{self.code_cloud_api.code_cloud_pull_req}/{repo_name}/pull-requests/{pull_request_id}/comments'
+        return self.code_cloud_api.get(url=url, cred_hash=cred_hash)
