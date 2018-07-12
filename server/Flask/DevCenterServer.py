@@ -4,12 +4,9 @@ from flask import Flask
 from flask_socketio import SocketIO
 from flask_cors import CORS
 
-from DevCenterRoutes import *
+from .DevCenterRoutes import define_routes
 
 def start_server(devflk, host, port, app_name, jira_obj, crucible_obj, sql_obj, chat_obj, order_object):
-	'''
-	'''
-
 	app = Flask(__name__)
 	cors = CORS(app)
 	socketio = SocketIO(app)
