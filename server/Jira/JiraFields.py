@@ -225,7 +225,6 @@ def get_comments(issue):
 		an array of the issue's comments or empty array
 	'''
 	comments = []
-	raw_comment = ''
 	key = issue.get('key')
 
 	# for each comment save it and see if QA steps
@@ -236,14 +235,10 @@ def get_comments(issue):
 		if len(raw_comments) > index-1:
 			comment['raw_comment'] = raw_comments[index].get('body', '')
 
-		
-
 		comments.append( format_comment(comment, key) )
 	return comments
 
 def format_comment(comment, key):
-	'''
-	'''
 	raw_comment = comment.get('raw_comment', '')
 	rendered_comment = comment.get('renderedBody', '')
 
@@ -271,67 +266,20 @@ def format_comment(comment, key):
 		'closeText': 'Edit Comment',
 		'editId': 'E' + comment.get('id', ''),
 		'visibility': 'Developers' if 'visibility' in comment else ''
-
 	}
 
-def get_qa_steps(issue):
-	'''finds an issue's QA steps in the comments if they exist
-	
-	Args:
-		issue (dict) a Jira issue object
-
-	Returns:
-		the issue's QA steps or empty string
-	'''
-	issue_qa_step = ''
-	# get all comments
-	comments = get_comments(issue)
-	# for each comment see if is qa step
-	for comment in comments:
-		# test if qa step begin exists
-		result = re.split(qa_regex_begin, comment['comment'])
-		# if we found beginning of QA then let's find end
-		if len(result) > 1:
-			result = re.split(qa_regex_end, str(result[1]))
-			# if found end of QA then we've found QA
-			if len(result) > 1:
-				issue_qa_step = result[0]
-	return issue_qa_step
-
 def get_crucible_id(issue):
-	'''finds an issue's crucible id through the comments
-	
-	Args:
-		issue (dict) a Jira issue object
-
-	Returns:
-		the issue's crucible ID or an empty string
-	'''
 	crucible_id = ''
-	# get all comments
 	comments = get_comments(issue)
-	# for each comment see if has crucible id
+
 	for comment in comments:
-		# try to pull out Crucible ID and if we have a match then save it
 		match = re.search(r'CR-UD-[0-9]{4}', comment['comment'])
 		if match:
 			crucible_id = match.group(0)
-	# return our results
+
 	return crucible_id
 
 def get_customer_details(issue):
-	'''gets an issue's customer info
-
-	Args:
-		issue (dict) a Jira issue object
-
-	Returns:
-		dict with the following properties (with a value or empty string):
-			username (str) the username of the customer
-			email (str) the email of the customer
-			display_name (str) the full name of the customer
-			phone_number (str) the phone number of the customer
-	'''
 	return {
 		'username': issue.get('fields', {}).get('customfield_10102', ''),
 		'email': issue.get('fields', {}).get('customfield_10175', ''),
@@ -340,20 +288,6 @@ def get_customer_details(issue):
 	}
 
 def get_dates(issue):
-	'''gets an issue's dates
-
-	Args:
-		issue (dict) a Jira issue object
-
-	Returns:
-		dict with the following properties (with a value or empty string):
-			estimate (str) the time given to finish the ticket
-			logged (str) time logged on the ticket
-			duedate (str) epoch due date of ticket 
-			created (str) epoch when ticket created
-			updated (str) epoch last when ticket was updated
-			started (str) epoch when ticket was started
-	'''
 	return {
 		'estimate': issue.get('fields', {}).get('timetracking', {}).get('originalEstimate', ''),
 		'estimate_seconds': issue.get('fields', {}).get('timetracking', {}).get('originalEstimateSeconds', ''),
@@ -366,33 +300,19 @@ def get_dates(issue):
 	}
 
 def get_attachments(issue):
-	'''gets an issue's attachments
-
-	Args:
-		issue (dict) a Jira issue object
-
-	Returns:
-		list of hashes with filename and link properties
-	'''
 	attachments = []
+
 	if 'attachment' in issue['fields']:
 		for attachment in issue['fields']['attachment']:
 			attachments.append({
 				'filename': attachment['filename'],
 				'link': attachment['content']
 			})
+
 	return attachments
 
 
 def get_watchers(issue):
-	'''gets an issue's watchers
-
-	Args:
-		issue (dict) a Jira issue object
-
-	Returns:
-		list of hashes with username and displayName properties
-	'''
 	watchers = []
 	if 'customfield_10300' in issue['fields'] and len(issue['fields']['customfield_10300']):
 		for watcher in issue['fields']['customfield_10300']:
@@ -403,34 +323,23 @@ def get_watchers(issue):
 	return watchers
 
 def get_priority(issue):
-	'''
-	'''
 	priority = ''
 	if 'priority' in issue['fields']:
 		priority = issue['fields']['priority'].get('name', '')
 	return priority
 
 def get_severity(issue):
-	'''
-	'''
 	severity = ''
 	if 'customfield_10108' in issue['fields']:
 		severity = issue['fields']['customfield_10108'].get('value', '')
 	return severity
 
 def get_code_reviewer(issue):
-	'''gets an issue's assigned code reviwer
-
-	Args:
-		issue (dict) a Jira issue object
-
-	Returns:
-		list of hashes with username and displayName properties
-	'''
 	code_reviewer = {
 		'username': '',
 		'displayName': ''
 	}
+
 	if 'customfield_10812' in issue['fields'] and issue['fields']['customfield_10812'] is not None:
 		code_reviewer = {
 			'username': issue['fields']['customfield_10812'].get('name', ''),
@@ -439,31 +348,24 @@ def get_code_reviewer(issue):
 	return code_reviewer
 
 def get_issue_type(issue):
-	'''
-	'''
 	issue_type = ''
 	if 'issuetype' in issue['fields'] and issue['fields']['issuetype'] is not None:
 		issue_type = issue['fields']['issuetype'].get('name', '')
 	return issue_type
 
 def get_environment(issue):
-	'''
-	'''
-	return issue['fields'].get('environment','')
+	return issue['fields'].get('environment', '')
+
+def get_dev_changes(issue):
+	return issue['fields'].get('customfield_10138', '')
 
 def get_issue_links(issue):
-	'''
-	'''
 	return issue['fields'].get('issuelinks',[])
 
 def get_description(issue):
-	'''
-	'''
 	return issue['fields'].get('description','')
 
 def get_history(issue):
-	'''
-	'''
 	histories = issue.get('changelog', {}).get('histories', [])
 	
 	formatted_history = {

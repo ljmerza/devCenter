@@ -56,28 +56,30 @@ class JiraTickets():
 			response = self.get_filter_url(filter_number=filter_number, cred_hash=cred_hash)
 			if not response['status']:
 				return response
-			# get raw url
+				
 			url = response['data']
 		else:
 			url = f'{self.jira_api.jira_search_url}?jql={jql}'
-		# if fields not passed use default
 
 		if not fields:
 			fields = self.jira_api.fields
+
 		# get filter data
 		full_url = f'{url}&startAt={start_at}&maxResults={max_results}&fields={fields}&expand=names,renderedFields,changelog'
 		response = self.jira_api.get(url=full_url, cred_hash=cred_hash)
 		if not response['status']:
 			return response
+
 		return {'status': True, 'data': response['data']['issues']}
 
 
 	def get_full_ticket(self, key, cred_hash):
 		return self.get_jira_tickets(cred_hash=cred_hash, jql=f"key%3D%27{key}%27", fields=self.jira_api.fields)
 
+	def get_ticket_dev_changes(self, key, cred_hash):
+		return self.get_jira_tickets(cred_hash=cred_hash, jql=f"key%3D%27{key}%27", fields='customfield_10138')
+
 	def get_ticket_fields(self, issue, fields):
-		'''
-		'''
 		ticket = {}
 
 		ticket['key'] = get_key(issue)
@@ -103,8 +105,6 @@ class JiraTickets():
 		ticket['label'] = get_label(issue)
 
 		ticket['comments'] = get_comments(issue)
-		ticket['qa_steps'] = get_qa_steps(issue)
-
 		ticket['attachments'] = get_attachments(issue)
 
 		ticket['watchers'] = get_watchers(issue)
@@ -119,6 +119,7 @@ class JiraTickets():
 
 		ticket['description'] = get_description(issue)
 		ticket['history'] = get_history(issue)
+		ticket['dev_changes'] = get_dev_changes(issue)
 
 		return ticket
 
