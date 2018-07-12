@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 
-from Flask import FlaskUtils
+from ..Flask import FlaskUtils
 
 def send_ping(data, chat_obj, jira_obj, crucible_obj):
-	'''
-	'''
+
 	# check for required data
 	missing_params = FlaskUtils.check_parameters(params=data, required=['username', 'ping_type','cred_hash'])
 	if missing_params:
