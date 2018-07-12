@@ -1,15 +1,4 @@
 def check_parameters(params=[], required=[], one_required=[]):
-	'''checks for required parameters and parameters that you 
-		need at least one to have a value
-
-	Args
-		params (list) all parameters given to method/function
-		required (list) all required parameters
-		one_required (list) need at least one parameter from this list
-
-	Returns
-		empty string if nothing missing or a string of missing args
-	'''
 	missing = ''
 
 	# get any missing required keys
@@ -26,8 +15,6 @@ def check_parameters(params=[], required=[], one_required=[]):
 				missing += ', and at least one of the following optional args: '
 			else: 
 				missing = 'Missing at least one of the following optional args: '
-			# add missing optional args
 			missing += ', '.join(one_required)
 
-	# return result
 	return missing

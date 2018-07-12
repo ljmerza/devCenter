@@ -2,7 +2,6 @@
 
 import datetime
 
-
 class reminders(object):
 
 	def __init__(self, chat_obj):

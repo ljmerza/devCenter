@@ -8,32 +8,15 @@ import logging
 import time
 import threading
 
-from JiraFields import *
-from Jira import Jira
-from Crucible import Crucible
-from DevCenterSQL import DevCenterSQL
-from Chat import Chat
-from reminders import reminders
+from .Jira.JiraFields import *
+from .Jira.Jira import Jira
+from .Crucible.Crucible import Crucible
+from .SQL.DevCenterSQL import DevCenterSQL
+from .Chat.Chat import Chat
+from .reminders import reminders
 
 class AutomationBot(object):
-	'''Handles Scraping data from Jira and Crucible to Store in DB and handle any ping notifications'''
-
 	def __init__(self, is_beta_week, beta_stat_ping_now, devbot, is_qa_pcr, merge_alerts, devdb, sql_echo, no_pings):
-		'''
-
-		Args:
-			is_beta_week (boolean) 
-			beta_stat_ping_now (boolean) 
-			devbot (boolean) 
-			is_qa_pcr (boolean) 
-			merge_alerts (boolean) 
-			devdb (boolean) do we use dev db or prod?
-			sql_echo (boolean) do we echo all sSQL statements?
-			no_pings (boolean) disable all pings from chat
-
-		Returns:
-
-		'''
 		self.username = os.environ['USER']
 		self.password = os.environ['PASSWORD']
 

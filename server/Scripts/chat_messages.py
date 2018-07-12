@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 import sys
 
-sys.path.append('../Chat')
-
-from ChatAPI import ChatAPI
-chat = ChatAPI(0,0)
+from ..Chat.ChatAPI import ChatAPI
+chat = ChatAPI(0, 0)
 
 message = ''
 meeting_room = ''

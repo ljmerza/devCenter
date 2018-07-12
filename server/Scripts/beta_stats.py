@@ -4,13 +4,8 @@ import base64
 import os
 import datetime
 
-sys.path.append('..')
-sys.path.append('../Jira')
-sys.path.append('../Common')
-sys.path.append('../Crucible')
-
-import Jira
-jira_obj = Jira.Jira()
+from ..Jira.Jira import Jira
+jira_obj = Jira()
 
 # create auth header
 username = os.environ['USER']

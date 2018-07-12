@@ -1,22 +1,19 @@
 #!/usr/bin/python3
-
 import sys
+import os
 
-sys.path.append('Common')
-sys.path.append('Chat')
-sys.path.append('Crucible')
-sys.path.append('Jira')
-sys.path.append('Flask')
-sys.path.append('SQL')
-sys.path.append('APIs')
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(
+    os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from Flask import DevCenterServer
 
-from Jira import Jira
-from Crucible import Crucible
-from DevCenterSQL import DevCenterSQL
-from Chat import Chat
-from Order import OrderAPI
+from .Jira import Jira
+from .Crucible import Crucible
+from .DevCenterSQL import DevCenterSQL
+from .Chat import Chat
+from .Order import OrderAPI
 
 
 sql_echo = False

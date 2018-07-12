@@ -3,18 +3,14 @@ import os
 import time
 import datetime
 import sys
-
 import requests
 
-sys.path.append('Common')
-sys.path.append('Chat')
-sys.path.append('Crucible')
-sys.path.append('Jira')
-sys.path.append('Flask')
-sys.path.append('SQL')
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(
+    os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-
-import AutomationBot
+from .AutomationBot import AutomationBot
 
 ########################################################################
 devbot = True
@@ -60,15 +56,14 @@ if 'sql' in sys.argv:
 
 if 'nopings' in sys.argv:
 	no_pings = True
-########################################################################
 
-# start CRON instance
-automationBot = AutomationBot.AutomationBot(
+########################################################################
+automationBot = AutomationBot(
 	is_beta_week=is_beta_week, beta_stat_ping_now=beta_stat_ping_now, no_pings=no_pings,
 	devbot=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts, devdb=devdb, sql_echo=sql_echo
 )
-
 ########################################################################
+
 while True:
 	# if between 6am-7pm monday-friday then update tickets else wait a minute
 	# prod server is in GMT so time shift if we are in prod mode
