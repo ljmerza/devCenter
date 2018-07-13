@@ -20,7 +20,6 @@ def set_navbar_item(sql_obj, data):
 		'link': data.get('link', '')
 	}
 
-	# make sure we have required item fields
 	missing_params = check_parameters(params=item, required=['id', 'name', 'type', 'link'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}

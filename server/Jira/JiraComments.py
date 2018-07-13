@@ -2,7 +2,7 @@
 
 import datetime
 from time import gmtime, strftime
-from JiraFields import format_comment
+from .JiraFields import format_comment
 
 
 class JiraComments():

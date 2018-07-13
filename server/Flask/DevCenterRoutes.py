@@ -5,38 +5,38 @@ from flask_cors import cross_origin
 import requests
 import json
 
-from .Routes.JiraRoutes import JiraRoutes
-from .Routes.CrucibleRoutes import CrucibleRoutes
-from .Routes.GitRoutes import GitRoutes
-from .Routes.ChatRoutes import ChatRoutes
-from .Routes.UserRoutes import UserRoutes
-from .Routes.ApiRoutes import ApiRoutes
+from .Routes.JiraRoutes import define_routes as JiraRoutes_define_routes
+from .Routes.CrucibleRoutes import define_routes as CrucibleRoutes_define_routes
+from .Routes.ChatRoutes import define_routes as ChatRoutes_define_routes
+from .Routes.UserRoutes import define_routes as UserRoutes_define_routes
+from .Routes.ApiRoutes import define_routes as ApiRoutes_define_routes
+from .Routes.CodeCloudRoutes import define_routes as CodeCloudRoutes_define_routes
 
-def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_obj, chat_obj, order_object):
-	'''
-	'''
 
-	JiraRoutes.define_routes(app=app, app_name=app_name, jira_obj=jira_obj, crucible_obj=crucible_obj, sql_obj=sql_obj, g=g)
-	CrucibleRoutes.define_routes(app=app, app_name=app_name, jira_obj=jira_obj, crucible_obj=crucible_obj, g=g)
-	GitRoutes.define_routes(app=app, app_name=app_name, crucible_obj=crucible_obj, g=g)
-	ChatRoutes.define_routes(app=app, app_name=app_name, chat_obj=chat_obj, jira_obj=jira_obj, crucible_obj=crucible_obj, sql_obj=sql_obj, g=g)
-	UserRoutes.define_routes(app=app, app_name=app_name, jira_obj=jira_obj, sql_obj=sql_obj, g=g)
-	ApiRoutes.define_routes(app=app, app_name=app_name, order_object=order_object)
+def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_obj, chat_obj, order_object, code_cloud_obj):
+
+	JiraRoutes_define_routes(app=app, app_name=app_name, jira_obj=jira_obj, crucible_obj=crucible_obj, sql_obj=sql_obj, g=g, code_cloud_obj=code_cloud_obj)
+
+	CrucibleRoutes_define_routes(app=app, app_name=app_name, jira_obj=jira_obj, crucible_obj=crucible_obj, g=g, code_cloud_obj=code_cloud_obj)
+
+	CodeCloudRoutes_define_routes(app=app, app_name=app_name, code_cloud_obj=code_cloud_obj, g=g)
+
+	ChatRoutes_define_routes(app=app, app_name=app_name, chat_obj=chat_obj, jira_obj=jira_obj, crucible_obj=crucible_obj, sql_obj=sql_obj, g=g)
+
+	UserRoutes_define_routes(app=app, app_name=app_name, jira_obj=jira_obj, sql_obj=sql_obj, g=g)
+
+	ApiRoutes_define_routes(app=app, app_name=app_name, order_object=order_object)
 
 
 	@app.route(f"/{app_name}/socket_tickets", methods=['POST'])
 	@cross_origin()
 	def socket_tickets():
-		'''
-		'''
 		socketio.emit('update_tickets', request.get_json())
 		return Response(status=200)
 
 
 	@app.before_request
 	def get_cred_hash():
-		'''
-		'''
 		# print url if in dev mode
 		if devflk:
 			print(request.url)
@@ -55,9 +55,6 @@ def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_o
 
 	@app.after_request
 	def check_status(response):
-		'''
-		'''
-
 		# if preflight then just accept
 		if request.method == 'OPTIONS' or 'socket_tickets' in request.url:
 			return Response(status=200)

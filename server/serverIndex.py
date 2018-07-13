@@ -2,18 +2,14 @@
 import sys
 import os
 
-PACKAGE_PARENT = '..'
-SCRIPT_DIR = os.path.dirname(os.path.realpath(
-    os.path.join(os.getcwd(), os.path.expanduser(__file__))))
-sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+from .Flask import DevCenterServer
 
-from Flask import DevCenterServer
-
-from .Jira import Jira
-from .Crucible import Crucible
-from .DevCenterSQL import DevCenterSQL
-from .Chat import Chat
-from .Order import OrderAPI
+from .Jira.Jira import Jira
+from .Crucible.Crucible import Crucible
+from .CodeCloud.CodeCloud import CodeCloud
+from .SQL.DevCenterSQL import DevCenterSQL
+from .Chat.Chat import Chat
+from .APIs.Order import OrderAPI
 
 
 sql_echo = False
@@ -50,6 +46,7 @@ if 'prodChat':
 # create instances
 jira_obj = Jira()
 crucible_obj = Crucible()
+code_cloud_obj = CodeCloud()
 sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
 chat_obj = Chat(debug=devChat, no_pings=False)
 order_object = OrderAPI()
@@ -57,6 +54,6 @@ order_object = OrderAPI()
 # start flask server
 DevCenterServer.start_server(
 	devflk=devflk, host=host, port=port, app_name=app_name, 
-	jira_obj=jira_obj, crucible_obj=crucible_obj, 
+	jira_obj=jira_obj, crucible_obj=crucible_obj, code_cloud_obj=code_cloud_obj,
 	sql_obj=sql_obj, chat_obj=chat_obj, order_object=order_object
 )

@@ -3,7 +3,6 @@ import os
 import json
 
 class OrderAPI():
-	def __init__(self):
 
 	def get_orders(self):
 		data = []

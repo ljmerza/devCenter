@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
-from JiraComponent import JiraComponent
-from JiraComments import JiraComments
-from JiraStatus import JiraStatus
-from JiraMisc import JiraMisc
-from JiraTickets import JiraTickets
-from JiraWatchers import JiraWatchers
+from .JiraComponent import JiraComponent
+from .JiraComments import JiraComments
+from .JiraStatus import JiraStatus
+from .JiraMisc import JiraMisc
+from .JiraTickets import JiraTickets
+from .JiraWatchers import JiraWatchers
 
-from JiraAPI import JiraAPI
+from .JiraAPI import JiraAPI
 
 class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments, JiraWatchers):
 	def __init__(self):

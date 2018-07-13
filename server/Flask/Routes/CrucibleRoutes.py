@@ -3,24 +3,17 @@
 from flask import request, Response
 from flask_cors import cross_origin
 
-import Requests.JiraRequests as JiraRequests
-import Requests.CrucibleRequests as CrucibleRequests
+from ..Requests.JiraRequests import set_status, add_qa_comment, add_comment, add_commit_comment, edit_comment, delete_comment, add_work_log, get_jira_tickets, find_key_by_msrp, get_profile, parse_comment, modify_watchers
 
-def define_routes(app, app_name, jira_obj, crucible_obj, g):
-	'''
-	'''
+from ..Requests.CrucibleRequests import add_reviewer as CrucibleRequests_add_reviewer, crucible_create_review, get_comments as CrucibleRequests_get_comments
 
+from ..Requests.CodeCloudRequests import create_pull_requests
+
+
+def define_routes(app, app_name, jira_obj, crucible_obj, g, code_cloud_obj):
 	@app.route(f'/{app_name}/crucible/create', methods=['POST'])
 	@cross_origin()
 	def create_review():
-		'''creates a Crucible review with the proper header and branches passed in the body of the request
-
-		Args:
-			
-
-		Returns:
-			the Crucible ID number if successful else error
-		'''
 		post_data = request.get_json()
 		data = {
 			"cred_hash": g.cred_hash,
@@ -43,44 +36,36 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 		pcr_response = {'status': False}
 		cru_response = {'status': False}
 		pull_response = {'status': False}
-		crucible_links = []
 
 		# if repos given then create crucible
 		if len(data['repos']):
 
-			# create pull request first
-			# if data['autoPCR']:
-			pull_response = CrucibleRequests.create_pull_requests(data, crucible_obj)
+			if data['autoPCR']:
+				pull_response = create_pull_requests(
+					data=data, code_cloud_obj=code_cloud_obj)
 
-			# create crucible review
-			cru_response = CrucibleRequests.crucible_create_review(data=data, crucible_obj=crucible_obj, jira_obj=jira_obj, pull_response=pull_response)
-			# crucible id required to move forward
+			cru_response = crucible_create_review(data=data, crucible_obj=crucible_obj, jira_obj=jira_obj, pull_response=pull_response)
 			if not cru_response['status']:
 				return Response(cru_response, mimetype='application/json')
 
-			# add comment to Jira if QA steps exist
 			if data['qa_steps']:
 				data['crucible_id'] = cru_response['data']
 				data['description'] = cru_response['description']
-				comment_response = JiraRequests.add_qa_comment(data=data, jira_obj=jira_obj)
+				comment_response = add_qa_comment(data=data, jira_obj=jira_obj)
 
 		elif data['qa_steps']:
-			# else if 'qa steps' aka a comment given then add comment
 			data['comment'] = data['qa_steps']
-			comment_response = JiraRequests.add_comment(data=data, jira_obj=jira_obj)
+			comment_response = add_comment(data=data, jira_obj=jira_obj)
 
-		# if transitioning it pcr then add statrus/component
 		if data['autoPCR']:
 			data['status_type'] = 'pcrNeeded'
-			pcr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+			pcr_response = set_status(data=data, jira_obj=jira_obj)
 			data['status_type'] = 'cr'
-			cr_response = JiraRequests.set_status(data=data, jira_obj=jira_obj)
+			cr_response = set_status(data=data, jira_obj=jira_obj)
 
-		# add worklog if wanted
 		if data['log_time']:
-			log_response = JiraRequests.add_work_log(data=data, jira_obj=jira_obj)
+			log_response = add_work_log(data=data, jira_obj=jira_obj)
 
-		# return responses from each call
 		response['data']['comment_response'] = comment_response
 		response['data']['log_response'] = log_response
 		response['data']['cr_response'] = cr_response
@@ -93,8 +78,6 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 	@app.route(f'/{app_name}/crucible/add_reviewer', methods=['POST'])
 	@cross_origin()
 	def add_reviewer():
-		'''
-		'''
 		post_data = request.get_json()
 		data = {
 			"cred_hash": g.cred_hash,
@@ -102,18 +85,16 @@ def define_routes(app, app_name, jira_obj, crucible_obj, g):
 			"username": post_data.get('username', '')
 		}
 		
-		# add reviewer and return response
-		cru_response = CrucibleRequests.add_reviewer(data=data, crucible_obj=crucible_obj)
+		cru_response = CrucibleRequests_add_reviewer(
+			data=data, crucible_obj=crucible_obj)
 		return Response(cru_response, mimetype='application/json')
 
 	@app.route(f'/{app_name}/crucible/comments/<crucible_id>')
 	@cross_origin()
 	def get_comments(crucible_id):
-		'''
-		'''
 		data = {
 			"cred_hash": g.cred_hash,
 			"crucible_id": crucible_id,
 		}
-		cru_response = CrucibleRequests.get_comments(data=data, crucible_obj=crucible_obj)
+		cru_response = CrucibleRequests_get_comments(data=data, crucible_obj=crucible_obj)
 		return Response(cru_response, mimetype='application/json')

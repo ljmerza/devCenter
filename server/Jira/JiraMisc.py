@@ -2,8 +2,8 @@
 
 import datetime
 from time import gmtime, strftime
-from JiraQa import *
-from JiraFields import *
+from .JiraQa import *
+from .JiraFields import *
 
 
 class JiraMisc():

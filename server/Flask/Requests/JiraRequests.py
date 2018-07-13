@@ -2,7 +2,7 @@
 import os
 
 from ..FlaskUtils import check_parameters
-from ....ServerUtils import build_commit_message, get_branch_name
+from ..ServerUtils import build_commit_message, get_branch_name
 
 def set_status(data, jira_obj):
 	missing_params = check_parameters(params=data, required=['cred_hash','key','status_type'])
@@ -83,12 +83,12 @@ def add_comment(data, jira_obj):
 
 	return response
 
-def add_commit_comment(data, jira_obj, crucible_obj):
+def add_commit_comment(data, jira_obj, code_cloud_obj):
 	missing_params = check_parameters(params=data, required=['key', 'cred_hash', 'master_branch'])
 	if missing_params:
 		return {"data": missing_params, "status": False}
 
-	commit_response = crucible_obj.get_commit_ids(key=data['key'], master_branch=data['master_branch'], cred_hash=data['cred_hash'])
+	commit_response = code_cloud_obj.get_commit_ids(key=data['key'], master_branch=data['master_branch'], cred_hash=data['cred_hash'])
 	if not commit_response['status']:
 		return {"data": commit_response['data'], "status": False}
 
@@ -186,7 +186,7 @@ def parse_comment(data, jira_obj):
 	return jira_obj.parse_comment(cred_hash=data['cred_hash'], comment=data['comment'], key=data['key'])
 
 def modify_watchers(data, jira_obj):
-	missing_params = FlaskUtils.check_parameters(params=data, required=['type_of_modify', 'key'])
+	missing_params = check_parameters(params=data, required=['type_of_modify', 'key'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 

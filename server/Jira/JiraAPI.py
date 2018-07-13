@@ -3,7 +3,7 @@ import urllib.parse
 import os
 import re
 from ..Common.DevCenterAPI import DevCenterAPI
-import JiraConfig
+from .JiraConfig import *
 
 class JiraAPI(DevCenterAPI):
 
@@ -18,10 +18,10 @@ class JiraAPI(DevCenterAPI):
 		self.crcible_review = f'{self.crucible_url}/cru/'
 		self.api_base = f'{self.jira_url}/rest/api/2'
 
-		self.all_open_tickets = urllib.parse.quote(JiraConfig.all_open_tickets)
-		self.fields = JiraConfig.fields
-		self.cron_fields = JiraConfig.cron_fields
-		self.filters = JiraConfig.filters
+		self.all_open_tickets = urllib.parse.quote(all_open_tickets)
+		self.fields = fields
+		self.cron_fields = cron_fields
+		self.filters = filters
 
 	def post(self, url, cred_hash, data=''):
 		response = super(JiraAPI, self).post(url=url, data=data, cred_hash=cred_hash)

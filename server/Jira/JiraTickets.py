@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import os
-from JiraFields import get_key, get_msrp, get_user_details, get_customer_details, get_dates, get_crucible_id, get_summary, get_component, get_status, get_story_point, get_sprint, get_master_branch, get_epic_link, get_label, get_comments, get_attachments, get_watchers, get_priority, get_severity, get_code_reviewer, get_issue_type, get_environment, get_issue_links, get_description, get_history, get_dev_changes
+from .JiraFields import get_key, get_msrp, get_user_details, get_customer_details, get_dates, get_crucible_id, get_summary, get_component, get_status, get_story_point, get_sprint, get_master_branch, get_epic_link, get_label, get_comments, get_attachments, get_watchers, get_priority, get_severity, get_code_reviewer, get_issue_type, get_environment, get_issue_links, get_description, get_history, get_dev_changes
 
 class JiraTickets():
 	def __init__(self, jira_api):
