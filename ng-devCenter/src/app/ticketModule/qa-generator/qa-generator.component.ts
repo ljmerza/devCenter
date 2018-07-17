@@ -47,6 +47,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	ticket$;
 	sprint;
 	summary;
+	story_point;
 
 	constructor(
 		public jira:JiraService, private git: GitService, public toastr: ToastrService, 
@@ -79,6 +80,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.sprint = (ticket && ticket.sprint) || '';
 				this.summary = (ticket && ticket.summary) || '';
+				this.story_point = (ticket && ticket.story_point) || 0;
 			});
 
 		});
@@ -228,6 +230,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			key: this.key,
 			msrp: this.msrp,
 			summary: this.summary,
+			story_point: this.story_point,
 			repos: branches.map(branch => {
 				return {
 					baseBranch: branch.controls.baseBranch.value,

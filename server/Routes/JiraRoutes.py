@@ -5,10 +5,10 @@ from flask_cors import cross_origin
 
 from ..Requests.JiraRequests import get_jira_tickets, find_key_by_msrp, edit_comment, add_work_log, set_status, add_comment, set_status, add_commit_comment, modify_watchers as JiraRequests_modify_watchers, parse_comment as JiraRequests_parse_comment, delete_comment
 
-from ..Requests.CrucibleRequests import add_reviewer, pass_review
+from ..Requests.CodeCloudRequests import add_reviewer, pass_review
 
 
-def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_obj):
+def define_routes(app, app_name, g):
 	@app.route(f'/{app_name}/jira/tickets')
 	@cross_origin()
 	def jiraTickets():
@@ -17,7 +17,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_
 			'jql': request.args.get('jql'),
 			'fields': request.args.get('fields'),
 			'cred_hash': g.cred_hash
-		}, jira_obj=jira_obj)
+		})
 		return Response(data, mimetype='application/json')
 
 	@app.route(f'/{app_name}/jira/getkey/<msrp>')
@@ -26,7 +26,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_
 		data = find_key_by_msrp(data={
 			'msrp': msrp,
 			'cred_hash': g.cred_hash
-		}, jira_obj=jira_obj)
+		})
 		return Response(data, mimetype='application/json')
 
 	@app.route(f'/{app_name}/jira/comment', methods=['PUT', 'DELETE', 'POST'])
@@ -38,7 +38,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_
 		if request.method == 'PUT':
 			data=request.get_json()
 			data['cred_hash'] = g.cred_hash
-			response = edit_comment(data=data, jira_obj=jira_obj)
+			response = edit_comment(data=data)
 
 		# POST - add a comment
 		elif request.method == 'POST':
@@ -51,14 +51,14 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_
 			commit_response = {}
 
 			if data.get('log_time', False): 
-				log_response = add_work_log(data=data, jira_obj=jira_obj)
+				log_response = add_work_log(data=data)
 				
 			if data.get('remove_conflict', False):
 				data['status_type'] = 'removeMergeConflict'
-				conflict_response = set_status(data=data, jira_obj=jira_obj)
+				conflict_response = set_status(data=data)
 
 			if data.get('comment', False):
-				comment_response = add_comment(data=data, jira_obj=jira_obj)
+				comment_response = add_comment(data=data)
 
 			response['data']['log_response'] = log_response
 			response['data']['conflict_response'] = conflict_response
@@ -73,7 +73,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_
 				'key': request.args.get('key'),
 				'cred_hash': g.cred_hash
 			}
-			response = delete_comment(data=data, jira_obj=jira_obj)
+			response = delete_comment(data=data)
 
 		return Response(response, mimetype='application/json')
 
@@ -96,22 +96,22 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_
 
 		# change status on Jira if not pcr pass/add (they are 'fake' statuses)
 		if data['status_type'] != 'pcrPass' and data['status_type'] != 'pcrAdd':
-			status_response = set_status(data=data, jira_obj=jira_obj)
+			status_response = set_status(data=data)
 		
 		# if pcrAdd then add user to review
 		if data['status_type'] == 'pcrAdd':
 			if data['crucible_id']:
-				status_response = add_reviewer(data=data, crucible_obj=crucible_obj)
+				status_response = add_reviewer(data=data)
 			else:
 				status_response['status'] = True
 
 		# if pcr pass/complete -> add user, complete review, add comment to Crucible
 		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
-			status_response = pass_review(data=data, crucible_obj=crucible_obj)
+			status_response = pass_review(data=data)
 
 		# if uctReady then add commit hashes to Jira comment if specified
 		if data.get('add_commits', False):
-			status_response = add_commit_comment(data=data, jira_obj=jira_obj, code_cloud_obj=code_cloud_obj)
+			status_response = add_commit_comment(data=data)
 
 		return Response(status_response, mimetype='application/json')
 
@@ -121,7 +121,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_
 		data=request.get_json()
 		data['cred_hash'] = g.cred_hash
 
-		data = JiraRequests_parse_comment(data=data, jira_obj=jira_obj)
+		data = JiraRequests_parse_comment(data=data)
 		return Response(data, mimetype='application/text')
 
 	@app.route(f'/{app_name}/jira/watchers/<key>/<username>', methods=['POST', 'DELETE', 'GET'])
@@ -135,7 +135,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_
 				'type_of_modify': 'get',
 				'cred_hash': g.cred_hash,
 				'key': key
-			}, jira_obj=jira_obj)
+			})
 
 		# POST - add watcher
 		elif request.method == 'POST':
@@ -145,7 +145,7 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_
 				'key': key,
 				'username': username
 			}
-			response = JiraRequests_modify_watchers(data=data, jira_obj=jira_obj)
+			response = JiraRequests_modify_watchers(data=data)
 
 		# else remove watcher
 		else:
@@ -155,6 +155,6 @@ def define_routes(app, app_name, jira_obj, crucible_obj, sql_obj, g, code_cloud_
 				'cred_hash': g.cred_hash,
 				'type_of_modify': 'remove'
 			}
-			response = JiraRequests_modify_watchers(data=data, jira_obj=jira_obj)
+			response = JiraRequests_modify_watchers(data=data)
 
 		return Response(response, mimetype='application/json')

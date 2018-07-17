@@ -4,17 +4,13 @@ import re
 qa_begin = "h3. ==== QA Steps ===="
 qa_end = "h3. ==============="
 
-def generate_qa_template_string(qa_steps, repos, crucible_id, description):
-	crucible_url = os.environ['CRUCIBLE_URL']
-
+def generate_qa_template(qa_steps, repos, pull_request_comments=''):
 	repo_table = generate_repo_table(repos)
+	
 	return """
-"""+repo_table+"""
+"""+repo_table"""
 
-
-"""+'[Crucible Review|'+crucible_url+'/cru/'+crucible_id+"""]
-
-"""+description+"""
+"""+pull_request_comments"""
 
 """+qa_begin+"""
 
@@ -22,7 +18,6 @@ def generate_qa_template_string(qa_steps, repos, crucible_id, description):
 
 """+qa_end+"""
 """
-
 
 def generate_repo_table(repos):
 	# create table header

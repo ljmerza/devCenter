@@ -26,7 +26,7 @@ export function updateStatus(state, newStatus) {
  * @param {Object} newCrucible action item
  */
 export function updateCrucible(state, newCrucible) {
-	const ticketType = `${state.ticketType}_crucible`;
+	const ticketType = `${state.ticketType}_codeCloud`;
 
 	// get ticket and create new one with new crucible id
 	const ticket = state[ticketType].find(ticket => ticket.key === newCrucible.key);

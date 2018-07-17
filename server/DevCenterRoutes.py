@@ -6,34 +6,25 @@ import requests
 import json
 
 from .Routes.JiraRoutes import define_routes as JiraRoutes_define_routes
-from .Routes.CrucibleRoutes import define_routes as CrucibleRoutes_define_routes
 from .Routes.ChatRoutes import define_routes as ChatRoutes_define_routes
 from .Routes.UserRoutes import define_routes as UserRoutes_define_routes
 from .Routes.ApiRoutes import define_routes as ApiRoutes_define_routes
 from .Routes.CodeCloudRoutes import define_routes as CodeCloudRoutes_define_routes
 
 
-def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_obj, chat_obj, order_object, code_cloud_obj):
+def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no_pings):
 
-	JiraRoutes_define_routes(app=app, app_name=app_name, jira_obj=jira_obj, crucible_obj=crucible_obj, sql_obj=sql_obj, g=g, code_cloud_obj=code_cloud_obj)
-
-	CrucibleRoutes_define_routes(app=app, app_name=app_name, jira_obj=jira_obj, crucible_obj=crucible_obj, g=g, code_cloud_obj=code_cloud_obj)
-
-	CodeCloudRoutes_define_routes(app=app, app_name=app_name, code_cloud_obj=code_cloud_obj, g=g)
-
-	ChatRoutes_define_routes(app=app, app_name=app_name, chat_obj=chat_obj, jira_obj=jira_obj, crucible_obj=crucible_obj, sql_obj=sql_obj, g=g)
-
-	UserRoutes_define_routes(app=app, app_name=app_name, jira_obj=jira_obj, sql_obj=sql_obj, g=g)
-
-	ApiRoutes_define_routes(app=app, app_name=app_name, order_object=order_object)
-
+	JiraRoutes_define_routes(app=app, app_name=app_name, g=g)
+	CodeCloudRoutes_define_routes(app=app, app_name=app_name, g=g)
+	ChatRoutes_define_routes(app=app, app_name=app_name, g=g, devdb=devdb, sql_echo=sql_echo, dev_chat=dev_chat, no_pings=no_pings)
+	UserRoutes_define_routes(app=app, app_name=app_name, g=g, devdb=devdb, sql_echo=sql_echo)
+	ApiRoutes_define_routes(app=app, app_name=app_name)
 
 	@app.route(f"/{app_name}/socket_tickets", methods=['POST'])
 	@cross_origin()
 	def socket_tickets():
 		socketio.emit('update_tickets', request.get_json())
 		return Response(status=200)
-
 
 	@app.before_request
 	def get_cred_hash():
@@ -51,7 +42,6 @@ def define_routes(app, devflk, socketio, app_name, jira_obj, crucible_obj, sql_o
 			else:
 				# set creds to global object
 				g.cred_hash = cred_hash
-
 
 	@app.after_request
 	def check_status(response):

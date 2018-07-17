@@ -2,7 +2,7 @@
 import os
 import json
 
-class OrderAPI():
+class Order():
 
 	def get_orders(self):
 		data = []

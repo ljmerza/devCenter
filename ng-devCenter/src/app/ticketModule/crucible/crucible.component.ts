@@ -30,6 +30,7 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 	ticketListType;
 	crucibleId$;
 	crucibleId;
+	pullRequests;
 
 	crucibleCommentsComponentRef;
 	alreadyPinged: boolean = false;
@@ -41,10 +42,11 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 		this.route.paramMap.subscribe((routeResponse: any) => {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 
-			this.crucibleId$ = this.store.select(`${this.ticketListType}_crucible`)
+			this.crucibleId$ = this.store.select(`${this.ticketListType}_codeCloud`)
 				.subscribe((allTickets: any = []) => {
 					const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 					this.crucibleId = ticket.crucible_id || '';
+					this.pullRequests = ticket.pullRequests || '';
 					this.cd.markForCheck();
 				});
 

@@ -93,7 +93,7 @@ export class JiraService {
 	}
 
 	/**
-	 * Generates QA fields - Crucible review, Jira comment, Log time, and state transition to PCR
+	 * Generates QA fields - code cloud review, Jira comment, Log time, and state transition to PCR
 	 * @param {Object} postData
 	 * @return {Observable} 
 	 */
@@ -103,8 +103,8 @@ export class JiraService {
 		postData.username = this.user.username;
 		postData.password = this.user.password;
 
-		// create crucible and post comment
-		return this.dataService.post(`${this.dataService.apiUrl}/crucible/create`, postData);
+		// create code cloud and post comment
+		return this.dataService.post(`${this.dataService.apiUrl}/codecloud/create`, postData);
 	}
 
 	/**

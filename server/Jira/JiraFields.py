@@ -1,8 +1,10 @@
 import re
+import os
 
 qa_regex_begin = re.compile(r"h3\. ==== QA Steps ====")
 qa_regex_end = re.compile(r"h3\. ===============")
 qa_step_regex = re.compile("qa step", flags=re.IGNORECASE)
+code_cloud_api = os.environ['CODE_CLOUD_URL']
 
 def get_key(issue):
 	'''gets an issue's key
@@ -44,6 +46,8 @@ def get_status(issue):
 		status = 'Code Review - Working'
 	elif 'Merge Code' in all_components:
 		status = 'Merge Code'
+	elif 'PCR - Working' in all_components:
+		status = 'PCR - Working'
 	elif 'PCR - Needed' in all_components:
 		status = 'PCR - Needed'
 	elif 'PCR - Completed' in all_components and status == 'Code Review':

@@ -32,13 +32,14 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	statusName: string;
 
 	ticketStatus;
-	crucibleId;
 	msrp;
 	master_branch;
 
 	status$
-	crucibleId$;
 	allTransistions;
+
+	pullRequests$;
+	pullRequests;
 
 	@Input() key;
 	@ViewChild(ModalComponent) modal: ModalComponent;
@@ -69,11 +70,11 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 				this.validateTransitions();
 			});
 
-			// get ticket crucible
-			this.crucibleId$ = this.store.select(`${this.ticketListType}_crucible`)
+			// get ticket pull requests
+			this.pullRequests$ = this.store.select(`${this.ticketListType}_codeCloud`)
 			.subscribe((allTickets:any=[]) => {
 				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
-				this.crucibleId = ticket.crucible_id || '';
+				this.pullRequests = ticket.pullRequests || '';
 			});
 		});
 	}
@@ -83,7 +84,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(){
 		if(this.status$) this.status$.unsubscribe();
-		if(this.crucibleId$) this.crucibleId$.unsubscribe();
+		if(this.pullRequests$) this.pullRequests$.unsubscribe();
 	}
 
 	/**
@@ -140,7 +141,9 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			this.ticketStates = this.allTransistions.filter(state => [statuses.SPRINT.frontend,statuses.PCRNEED.frontend].includes(state.name));
 		
 		} else if(this.ticketStatus === statuses.PCRNEED.frontend){
-			this.ticketStates = this.allTransistions.filter(state => [statuses.INDEV.frontend,statuses.PCRPASS.frontend,statuses.PCRCOMP.frontend].includes(state.name));
+			this.ticketStates = this.allTransistions.filter(state => [statuses.INDEV.frontend,statuses.PCRWORK.frontend].includes(state.name));
+		} else if(this.ticketStatus === statuses.PCRWORK.frontend){
+			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRPASS.frontend,statuses.PCRCOMP.frontend].includes(state.name));
 		} else if(this.ticketStatus === statuses.PCRPASS.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRCOMP.frontend].includes(state.name));
 		} else if(this.ticketStatus === statuses.PCRCOMP.frontend){
@@ -255,8 +258,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * @param {string} statusType the status type string
 	 */
 	persistStatusChange(statusType:string): void {
-
-		let postData:any = {key:this.key, statusType, crucible_id: this.crucibleId};
+		let postData:any = {key:this.key, statusType, pullRequests: this.pullRequests};
 
 		// if transitioning from merge code to uct ready then add commit hash Jira comment
 		if(statusType === statuses.UCTREADY.backend && this.ticketStatus === statuses.MERGECODE.frontend){

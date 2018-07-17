@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 import datetime
+import math
+
 from time import gmtime, strftime
 from .JiraQa import *
 from .JiraFields import *
@@ -21,7 +23,7 @@ class JiraMisc():
 		else:
 			return {'status': False, 'data': f'Did not find any key matching {msrp}'}
 
-	def find_crucible_title_data(self, msrp, cred_hash):
+	def find_qa_title_data(self, msrp, cred_hash):
 		# get ticket data based off MSRP and check for status
 		url = f'{self.jira_api.api_base}/search?jql=MSRP_Number~{msrp}&fields=timeoriginalestimate,summary'
 		search_response = self.jira_api.get(url=url, cred_hash=cred_hash)
@@ -57,9 +59,6 @@ class JiraMisc():
 
 		return self.jira_api.post_json(url=f'{self.jira_api.api_base}/issue/{key}/worklog', json_data={"timeSpent":time}, cred_hash=cred_hash)
 
-	def generate_qa_template(self, qa_steps, repos, crucible_id, description):
-		return generate_qa_template_string(qa_steps, repos, crucible_id, description)
-
 	def get_profile(self, cred_hash):
 		response = self.jira_api.get(url=f'{self.jira_api.api_base}/myself', cred_hash=cred_hash)
 		
@@ -74,6 +73,27 @@ class JiraMisc():
 			del response['data']['locale']
 			del response['data']['expand']
 			return response
+
+	def set_dev_changes(self, dev_value, key, cred_hash):
+		'''sets the dev changes value of a Jira ticket
+		'''
+		json_data = {"fields":{"customfield_10138":dev_value}}
+		return self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
+
+	def add_dev_changes(self, pull_response, data):
+		'''
+		'''
+		dev_value = 'PULL REQUESTS:\n'
+		for request in pull_response['data']:
+			if request['status']:
+				repo = request['data']['fromRef']['repository']['name']
+				link = request['data']['links']['self'][0]['href']
+				dev_value += f'{repo}: {link}\n'
+
+		pcr_number = math.ceil(data['story_point']/2)
+		dev_value += f'\nPCR needed: {pcr_number}'
+
+		return self.set_dev_changes(dev_value=dev_value, cred_hash=data['cred_hash'], key=data['key'])
 
 	
 	

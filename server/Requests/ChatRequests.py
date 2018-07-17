@@ -1,11 +1,21 @@
 #!/usr/bin/python3
 
-from ..FlaskUtils import check_parameters
+from ..FlaskUtils import missing_parameters
+from ..Crucible.Crucible import Crucible
+from ..Jira.Jira import Jira
+from ..Chat.Chat import Chat
+from ..SQL.DevCenterSQL import DevCenterSQL
 
-def send_ping(data, chat_obj, jira_obj, crucible_obj):
-	missing_params = check_parameters(params=data, required=['username', 'ping_type','cred_hash'])
-	if missing_params:
+
+def send_ping(data):
+	'''sends a ping to the chatroom
+	'''
+	if missing_parameters(params=data, required=['username', 'ping_type','cred_hash']):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+	
+	chat_obj = Chat()
+	jira_obj = Jira()
+	crucible_obj = Crucible()
 
 	# we dont have enough ticket info so get that from Jira now
 	jira_response = jira_obj.get_full_ticket(cred_hash=data['cred_hash'] , key=data['key'])
@@ -34,11 +44,13 @@ def send_ping(data, chat_obj, jira_obj, crucible_obj):
 	else:
 		return {"data": "Ping reset not implemented", "status": False}
 	
-def set_user_pings(data, sql_obj):
-	missing_params = check_parameters(params=data, required=['username', 'fields'])
-	if missing_params:
+def set_user_pings(data, devdb, sql_echo):
+	'''sets a user's ping settings
+	'''
+	if missing_parameters(params=data, required=['username', 'fields']):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
+	
+	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
 	session = sql_obj.login()
 	response = sql_obj.set_user_pings(
 		username=data['username'],
@@ -49,25 +61,26 @@ def set_user_pings(data, sql_obj):
 	sql_obj.logout(session=session)
 	return response
 
-
-
-def send_custom_ping(data, chat_obj, crucible_obj, jira_obj):
-	missing_params = check_parameters(params=data, required=['ping_type', 'cred_hash'])
-	if missing_params:
+def send_custom_ping(data, dev_chat, no_pings):
+	'''send a custom ping to chatroom or a generated one from a ticket status transition
+	'''
+	if missing_parameters(params=data, required=['ping_type', 'cred_hash']):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
+	chat_obj = Chat(debug=dev_chat, no_pings=no_pings)
+
 	if(data['ping_type'] == 'user'):
-		missing_params = check_parameters(params=data, required=['username', 'message'])
+		missing_params = missing_parameters(params=data, required=['username', 'message'])
 		if missing_params:
 			return {"data": f"Missing required parameters: {missing_params}", "status": False}
 		chat_obj.send_message(message=data.get('message'), username=data('username'))
 
 	elif(data['ping_type'] == 'pcrNeeded'):
-		missing_params = check_parameters(params=data, required=['key'])
+		missing_params = missing_parameters(params=data, required=['key'])
 		if missing_params:
 			return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-		response = _get_jira_ticket_for_ping(data=data, jira_obj=jira_obj, crucible_obj=crucible_obj)
+		response = _get_jira_ticket_for_ping(data=data)
 		if not response['status']:
 			return response
 
@@ -86,13 +99,16 @@ def send_custom_ping(data, chat_obj, crucible_obj, jira_obj):
 	return {'status': True}
 
 
-def _get_jira_ticket_for_ping(data, jira_obj, crucible_obj):
-	missing_params = check_parameters(params=data, required=['cred_hash', 'key'])
-	if missing_params:
+def _get_jira_ticket_for_ping(data):
+	'''gets required Jira information for a ping message generation
+	'''
+	if missing_parameters(params=data, required=['cred_hash', 'key']):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	jira_response = jira_obj.get_full_ticket(cred_hash=data['cred_hash'] , key=data['key'])
+	jira_obj = Jira()
+	crucible_obj = Crucible()
 
+	jira_response = jira_obj.get_full_ticket(cred_hash=data['cred_hash'] , key=data['key'])
 	if not jira_response['status'] or len(jira_response['data']) == 0:
 		return {"data": f"could not get Jira ticket: "+{jira_response['data']}, "status": False}
 

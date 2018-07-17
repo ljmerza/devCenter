@@ -88,9 +88,24 @@ export function rootReducer(state, action){
  */
 function addTickets(state, tickets){
 	let comments = [];
-	let crucibles = [];
+	let codeClouds = [];
 	let statuses = [];
 	let dates = [];
+
+	// extract pull requests
+	tickets = tickets.map(ticket => {
+		const pullRequests = (ticket.dev_changes || '')
+			.split(/\n/)
+			.filter(request => request.startsWith('http'))
+			.map(request => request.trimStart());
+
+		ticket.pullRequests = pullRequests.map(request => {
+			const repo = /repos\/(\w+)\/pull-requests/.exec(request);
+			return {repo: repo[1] || 'Unknown Repo', link: request};
+		});
+
+		return ticket;
+	});
 
 	tickets.forEach(ticket => {
 		comments.push({
@@ -99,10 +114,10 @@ function addTickets(state, tickets){
 			msrp: ticket.msrp
 		});
 
-		crucibles.push({
-			crucible_id: ticket.crucible_id,
+		codeClouds.push({
 			key: ticket.key,
-			msrp: ticket.msrp
+			msrp: ticket.msrp,
+			pullRequests: ticket.pullRequests
 		});
 
 		statuses.push({
@@ -120,7 +135,7 @@ function addTickets(state, tickets){
 	const newState = {
 		[ticketType]: tickets,
 		[`${ticketType}_comments`]: comments,
-		[`${ticketType}_crucible`]: crucibles,
+		[`${ticketType}_codeCloud`]: codeClouds,
 		[`${ticketType}_statuses`]: statuses,
 		[`${ticketType}_dates`]: dates
 	};
