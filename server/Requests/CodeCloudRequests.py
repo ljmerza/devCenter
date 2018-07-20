@@ -129,7 +129,7 @@ def pass_review_for_pull_requests(data):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	comment = 'PCR Pass'
-	responses = {'status': True, data: []}
+	responses = {'status': True, 'data': []}
 
 	for pull_request in data['pull_requests']:
 		add_response = CodeCloud().add_comment_to_pull_request(
