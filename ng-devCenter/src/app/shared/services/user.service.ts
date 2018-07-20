@@ -20,17 +20,17 @@ export class UserService {
 	public teamApiPort:string = '5';
 
 	emberBuilds:Array<Object> = [
-		{ 'label':'Dev Server', 'value': 'devServer' },
-		{ 'label':'Locally', 'value':'localServer' }
+		{ 'label':'Development Server', 'value': 'devServer' },
+		{ 'label':'Local Server', 'value':'localServer' }
 	];
 
 	devServers: Array<Object>;
 
 	public get breakVersion(): string {
-		return this.ls.getItem('v8.0.0') || '';
+		return this.ls.getItem('v9.0.0') || '';
 	}
 	public set breakVersion(breakVersion) {
-		this.ls.setItem('v8.0.0', breakVersion);
+		this.ls.setItem('v9.0.0', breakVersion);
 	}
 
 	public get username():string{
@@ -67,19 +67,21 @@ export class UserService {
 		this.ls.setItem('port', port);
 	}
 
+	public get emberUrlBase():string{
+		return this.emberUrl === 'localServer' ? 'http://localhost' : this.devServerUrl;
+	}
 	public get emberUrl():string{
-		const emberUrl = this.ls.getItem('emberUrl') || '';
-		if (!emberUrl) return emberUrl;
-		else return emberUrl === 'localServer' ? 'http://localhost' : this.devServer;
+		return this.ls.getItem('emberUrl') || '';
 	}
 	public set emberUrl(emberUrl){
 		this.ls.setItem('emberUrl', emberUrl);
 	}
 
+	public get teamUrlBase():string{
+		return this.teamUrl === 'localServer' ? 'http://localhost' : this.devServerUrl;
+	}
 	public get teamUrl():string{
-		const teamUrl = this.ls.getItem('teamUrl') || '';
-		if(!teamUrl) return teamUrl;
-		else return teamUrl === 'localServer' ? 'http://localhost' : this.devServer;
+		return this.ls.getItem('teamUrl') || '';
 	}
 	public set teamUrl(teamUrl){
 		this.ls.setItem('teamUrl', teamUrl);
@@ -93,10 +95,14 @@ export class UserService {
 	}
 
 	public get devServer(): string {
-		const devServer = this.ls.getItem('devServer') || '';
-		if (!devServer) return devServer;
-		else return `http://${devServer}.${this.config.rootDomain}`;
+		return this.ls.getItem('devServer') || '';
 	}
+
+	public get devServerUrl(): string {
+		const devServer = this.ls.getItem('devServer') || '';
+		return `http://${devServer}.${this.config.rootDomain}`;
+	}
+
 	public set devServer(devServer) {
 		this.ls.setItem('devServer', devServer);
 	}

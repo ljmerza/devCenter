@@ -3,7 +3,7 @@
 class PullRequests():
 
 	def __init__(self, code_cloud_api):
-		self.code_cloud_api = CodeCloudAPI()
+		self.code_cloud_api = code_cloud_api
 
 	def generate_pull_request_comment(self, repos, pull_response):
 		'''

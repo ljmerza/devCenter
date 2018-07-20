@@ -112,11 +112,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
  			this.devLinks = response.data
  			.filter(link => link.type === 'dev_links')
- 			.map(this.addUserNameToUrl.bind(this))
- 			.map(link => {
- 				if( !/^http/.test(link.link) ) link.link = `${this.config.devUrl}:${this.user.port}/${link.link}`;
- 				return link;
- 			});
+ 			.map(this.addUserNameToUrl.bind(this));
 
  			this.emberLinks = response.data
  			.filter(link => link.type === 'ember_links')

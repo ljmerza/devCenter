@@ -21,19 +21,26 @@ export class UserSettingsComponent implements OnInit {
 		public route: ActivatedRoute, private router: Router, private profile: ProfileService, public store:NgRedux<RootState>
 	) {
 
+		
+	}
+
+	/**
+	 * builds the form object
+	 */
+	buildForm(){
 		// create form group
 		this.userSettingsForm = new FormGroup({
-			username: new FormControl(user.username, Validators.compose(
+			username: new FormControl(this.user.username, Validators.compose(
 				[Validators.required, UserSettingsComponent.usernameValidator]
 			)),
-			password: new FormControl(user.password, [Validators.required]),
-			port: new FormControl(user.port, Validators.compose(
+			password: new FormControl(this.user.password, [Validators.required]),
+			port: new FormControl(this.user.port, Validators.compose(
 				[Validators.required, UserSettingsComponent.portValidator]
 			)),
-			devServer: new FormControl(user.devServer, [Validators.required]),
-			emberUrl: new FormControl(user.emberUrl, [Validators.required]),
-			teamUrl: new FormControl(user.teamUrl, [Validators.required]),
-			cache: new FormControl(user.cache)
+			devServer: new FormControl(this.user.devServer, [Validators.required]),
+			emberUrl: new FormControl(this.user.emberUrl, [Validators.required]),
+			teamUrl: new FormControl(this.user.teamUrl, [Validators.required]),
+			cache: new FormControl(this.user.cache)
 		});
 	}
 
@@ -42,6 +49,8 @@ export class UserSettingsComponent implements OnInit {
 	 * if yes then if login page then redirect else get user profile.
 	 */
 	ngOnInit() {
+		this.buildForm();
+		
 		this.route.url.subscribe( (urlSegment:UrlSegment[]) => {
 			if(this.user.needRequiredCredentials()) return;
 
@@ -52,6 +61,8 @@ export class UserSettingsComponent implements OnInit {
 				else return this.router.navigate(['/']);
 			} 
 			else this.getProfile();
+
+
 		});
 	}
 

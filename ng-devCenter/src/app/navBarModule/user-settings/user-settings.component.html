@@ -45,7 +45,7 @@
 					<select formControlName="devServer" class='form-control'>
 						<option disabled>Please choose...</option>
 						<option *ngFor="let server of user.devServers" [ngValue]="server.value" 
-						[attr.selected]="server.value === user.devServer">
+						[attr.selected]="server.value === user.devServer ? true : null">
 							{{server.label}}
 						</option>
 					</select>
@@ -61,7 +61,7 @@
 					<select formControlName="emberUrl" class='form-control'>
 						<option disabled>Please choose...</option>
 						<option *ngFor="let emberBuild of user.emberBuilds" [ngValue]="emberBuild.value"
-						[attr.selected]="emberBuild.value === user.emberUrl">
+						[attr.selected]="emberBuild.value === user.emberUrl ? true : null">
 							{{emberBuild.label}}
 						</option>
 					</select>
@@ -77,12 +77,12 @@
 					<select formControlName="teamUrl" class='form-control'>
 						<option disabled>Please choose...</option>
 						<option *ngFor="let emberBuild of user.emberBuilds" [ngValue]="emberBuild.value"
-						[attr.selected]="emberBuild.value === user.teamUrl">
+						[attr.selected]="emberBuild.value === user.teamUrl ? true : null">
 							{{emberBuild.label}}
 						</option>
 					</select>
 					<div class='text-danger' *ngIf='teamUrl.invalid'>
-						<span *ngIf="teamUrl.errors.required">Team URL required</span>
+						<span *ngIf="teamUrl.errors.required">TeamDB URL required</span>
 					</div>
 				</div>
 

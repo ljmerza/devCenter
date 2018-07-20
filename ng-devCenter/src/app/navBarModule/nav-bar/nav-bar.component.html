@@ -93,7 +93,7 @@
 								<ul class="dropdown-menu" dropdownSubmenuMenu>
 									<li>
 										<a *ngFor='let navLink of orders' class="dropdown-item"  target="_blank" 
-										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/{{navLink.link}}">
+										href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/{{navLink.link}}">
 											<span>{{navLink.orderName}} {{navLink.name}}</span>
 										</a>
 									</li>
@@ -106,7 +106,7 @@
 								<ul class="dropdown-menu" dropdownSubmenuMenu>
 									<li>
 										<a *ngFor='let navLink of rdsLinks' class="dropdown-item"  target="_blank" 
-										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/rds/{{navLink.link}}">
+										href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/rds/{{navLink.link}}">
 											<span>{{navLink.orderName}} {{navLink.name}}</span>
 										</a>
 									</li>
@@ -119,7 +119,7 @@
 								<ul class="dropdown-menu" dropdownSubmenuMenu>
 									<li>
 										<a *ngFor='let navLink of gpsLinks' class="dropdown-item"  target="_blank" 
-										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}/{{navLink.link}}">
+										href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}/{{navLink.link}}">
 											<span>{{navLink.orderName}} {{navLink.name}}</span>
 										</a>
 									</li>
@@ -131,7 +131,7 @@
 								<a class="dropdown-item" data-toggle="dropdown">WFA Tickets <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 								<ul class="dropdown-menu" dropdownSubmenuMenu>
 									<li><a *ngFor='let navLink of wfaTickets' class="dropdown-item" target="_blank" 
-										href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
+										href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
 										>{{navLink.name}}
 									</a></li>
 								</ul>
@@ -139,7 +139,7 @@
 
 							<!-- ember list -->
 							<li><a *ngFor='let navLink of emberLinks' class="dropdown-item" target="_blank" 
-								href="{{user.emberUrl}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
+								href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
 								>{{navLink.name}}
 							</a></li>
 						</ul>
@@ -151,7 +151,7 @@
 						<ul class="dropdown-menu" dropdownSubmenuMenu>
 							<li>
 								<a *ngFor='let navLink of teamdbEmberLinks' class="dropdown-item" target="_blank" 
-								href="{{user.teamUrl}}:{{user.teamPort}}/teamdb/{{user.teamLocal}}{{navLink.link}}">
+								href="{{user.teamUrlBase}}:{{user.teamPort}}/teamdb/{{user.teamLocal}}{{navLink.link}}">
 									{{navLink.name}}
 								</a>
 							</li>
@@ -161,7 +161,7 @@
 					<!-- dev links -->
 					<li>
 						<a *ngFor='let navLink of devLinks' class="dropdown-item" target="_blank" 
-						href="{{navLink.link}}">
+						href="{{this.user.devServerUrl}}:{{this.user.port}}/{{navLink.link}}">
 							{{navLink.name}}
 						</a>
 					</li>
