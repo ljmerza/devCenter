@@ -7,7 +7,8 @@ from ..Crucible.Crucible import Crucible
 def crucible_create_review(data, pull_response):
 	'''creates a crucbile review
 	'''
-	if missing_parameters(params=data, required=['key', 'msrp', 'username', 'password', 'repos','cred_hash']):
+	missing_params = missing_parameters(params=data, required=['key', 'msrp', 'username', 'password', 'repos','cred_hash']):
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	crucible_obj = Crucible()

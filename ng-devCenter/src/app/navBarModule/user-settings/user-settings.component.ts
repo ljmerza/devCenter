@@ -19,10 +19,7 @@ export class UserSettingsComponent implements OnInit {
 	constructor(
 		public user: UserService, private jira: JiraPingsService, private toastr: ToastrService, 
 		public route: ActivatedRoute, private router: Router, private profile: ProfileService, public store:NgRedux<RootState>
-	) {
-
-		
-	}
+	) { }
 
 	/**
 	 * builds the form object
@@ -50,7 +47,7 @@ export class UserSettingsComponent implements OnInit {
 	 */
 	ngOnInit() {
 		this.buildForm();
-		
+
 		this.route.url.subscribe( (urlSegment:UrlSegment[]) => {
 			if(this.user.needRequiredCredentials()) return;
 
@@ -129,7 +126,7 @@ export class UserSettingsComponent implements OnInit {
 		// if form is invalid then do nothing
 		if(this.userSettingsForm.invalid) return;
 
-		// save data to localstorage
+		// save data to local storage
 		const userData = this.userSettingsForm.controls;
 		this.user.setUserData('username', userData.username.value);
 		this.user.setUserData('password', userData.password.value);

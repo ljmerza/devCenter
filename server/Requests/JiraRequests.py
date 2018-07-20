@@ -9,7 +9,8 @@ from ..CodeCloud.CodeCloud import CodeCloud
 def set_status(data):
 	'''sets a Jira ticket's status
 	'''
-	if missing_parameters(params=data, required=['cred_hash','key','status_type']):
+	missing_params = missing_parameters(params=data, required=['cred_hash','key','status_type'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	
 	jira = Jira()
@@ -71,7 +72,8 @@ def set_status(data):
 def add_comment(data):
 	'''Add a Jira comment to a ticket
 	'''
-	if missing_parameters(params=data, required=['key', 'cred_hash', 'comment']):
+	missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'comment'])
+	if missing_params:
 		return {"data": missing_params, "status": False}
 
 	response = Jira().add_comment(
@@ -84,7 +86,8 @@ def add_comment(data):
 def add_commit_comment(data):
 	'''add a Jira comment with the list of commited branches related to this ticket
 	'''
-	if missing_parameters(params=data, required=['key', 'cred_hash', 'master_branch']):
+	missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'master_branch'])
+	if missing_params:
 		return {"data": missing_params, "status": False}
 
 	commit_response = CodeCloud().get_commit_ids(key=data['key'], master_branch=data['master_branch'], cred_hash=data['cred_hash'])
@@ -107,7 +110,8 @@ def add_commit_comment(data):
 def edit_comment(data):
 	'''Edits a Jira comment
 	'''
-	if missing_parameters(params=data, required=['key', 'cred_hash', 'comment_id', 'comment']):
+	missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'comment_id', 'comment'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return Jira().edit_comment(
@@ -120,7 +124,8 @@ def edit_comment(data):
 def delete_comment(data):
 	'''deletes a jira comment
 	'''
-	if missing_parameters(params=data, required=['key', 'cred_hash', 'comment_id']):
+	missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'comment_id'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return Jira().delete_comment(
@@ -132,7 +137,8 @@ def delete_comment(data):
 def add_work_log(data):
 	'''add work time to a ticket
 	'''
-	if missing_parameters(params=data, required=['key', 'log_time', 'cred_hash']):
+	missing_params = missing_parameters(params=data, required=['key', 'log_time', 'cred_hash'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return Jira().add_work_log(key=data["key"], time=data['log_time'], cred_hash=data['cred_hash'])
@@ -140,7 +146,8 @@ def add_work_log(data):
 def get_jira_tickets(data):
 	'''gets all jira tickets by given filter number or JQL
 	'''
-	if missing_parameters(params=data, required=['cred_hash']):
+	missing_params = missing_parameters(params=data, required=['cred_hash'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 		
 	filter_number = data.get('filter_number', False)
@@ -167,7 +174,8 @@ def get_jira_tickets(data):
 def find_key_by_msrp(data):
 	'''find a Jira key by it's MSRP
 	'''
-	if missing_parameters(params=data, required=['cred_hash','msrp']):
+	missing_params = missing_parameters(params=data, required=['cred_hash','msrp'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return Jira().find_key_by_msrp(msrp=data['msrp'], cred_hash=data['cred_hash'])
@@ -175,7 +183,8 @@ def find_key_by_msrp(data):
 def get_profile(data):
 	'''get a Jira user's profile data
 	'''
-	if missing_parameters(params=data, required=['username', 'cred_hash']):
+	missing_params = missing_parameters(params=data, required=['username', 'cred_hash'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	jira_response = Jira().get_profile(cred_hash=data['cred_hash'])
@@ -188,7 +197,8 @@ def get_profile(data):
 def parse_comment(data):
 	'''parse out a Jira comment
 	'''
-	if missing_parameters(params=data, required=['cred_hash', 'comment', 'key']):
+	missing_params = missing_parameters(params=data, required=['cred_hash', 'comment', 'key'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return Jira().parse_comment(cred_hash=data['cred_hash'], comment=data['comment'], key=data['key'])
@@ -196,13 +206,15 @@ def parse_comment(data):
 def modify_watchers(data):
 	'''add, remove, or get all Jira ticket watchers
 	'''
-	if missing_parameters(params=data, required=['type_of_modify', 'key']):
+	missing_params = missing_parameters(params=data, required=['type_of_modify', 'key'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	type_of_modify = data.get('type_of_modify', '')
 
 	if type_of_modify in ['add','remove']:
-		if missing_parameters(params=data, required=['username']):
+		missing_params = missing_parameters(params=data, required=['username'])
+		if missing_params:
 			return {"data": f"Missing required parameters: {missing_params}", "status": False}
 		
 	jira = Jira()

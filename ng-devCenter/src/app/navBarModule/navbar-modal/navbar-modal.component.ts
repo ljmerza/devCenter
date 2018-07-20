@@ -13,11 +13,11 @@ import { JiraService, ToastrService, UserService } from '@services';
 export class NavbarModalComponent {
 	modalSize = {width: '500px', height: '600px'};
 
-	@ViewChild('userModal') private userModal;
+	@ViewChild('userSetting') private userSetting;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 	@ViewChild(UserSettingsComponent) userSettings: UserSettingsComponent;
 
-	constructor() {}	
+	constructor() {}
 
 	/**
 	 * 

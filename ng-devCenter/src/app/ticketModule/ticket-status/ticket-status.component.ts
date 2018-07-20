@@ -141,7 +141,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			this.ticketStates = this.allTransistions.filter(state => [statuses.SPRINT.frontend,statuses.PCRNEED.frontend].includes(state.name));
 		
 		} else if(this.ticketStatus === statuses.PCRNEED.frontend){
-			this.ticketStates = this.allTransistions.filter(state => [statuses.INDEV.frontend,statuses.PCRWORK.frontend].includes(state.name));
+			this.ticketStates = this.allTransistions.filter(state => [statuses.INDEV.frontend,statuses.PCRWORK.frontend, statuses.PCRPASS.frontend].includes(state.name));
 		} else if(this.ticketStatus === statuses.PCRWORK.frontend){
 			this.ticketStates = this.allTransistions.filter(state => [statuses.PCRPASS.frontend,statuses.PCRCOMP.frontend].includes(state.name));
 		} else if(this.ticketStatus === statuses.PCRPASS.frontend){
@@ -258,13 +258,22 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 * @param {string} statusType the status type string
 	 */
 	persistStatusChange(statusType:string): void {
-		let postData:any = {key:this.key, statusType, pullRequests: this.pullRequests};
+		let postData:any = {
+			key:this.key, 
+			statusType, 
+			pullRequests: this.pullRequests
+		};
 
 		// if transitioning from merge code to uct ready then add commit hash Jira comment
 		if(statusType === statuses.UCTREADY.backend && this.ticketStatus === statuses.MERGECODE.frontend){
 			postData.add_commits = true;
 			postData.master_branch = this.master_branch;
 			this.toastr.showToast(`Removing Merge Code component and adding commit hash Jira comment to ${this.key}`, 'info');
+		
+		} else if([statuses.PCRPASS.backend, statuses.PCRCOMP.backend].includes(statusType)){
+			// need pull request info for pcr pass/complete
+			postData.pull_request_ids = true;
+			postData.repo_name = this.master_branch;
 		}
 
 		this.jira.changeStatus(postData)

@@ -102,9 +102,18 @@ function addTickets(state, tickets){
 
 		ticket.pullRequests = pullRequests.map(request => {
 			request = request.split('\n')[0]; // make sure we only have the url
+
 			const repo = /repos\/(\w+)(\/pull-requests)|(commit)/.exec(request);
-			return {repo: (repo && repo[1]) || 'Unknown Repo', link: request};
+			const requestId = /pull-requests\/(\w+)\//.exec(request);
+
+			return {
+				repo: (repo && repo[1]) || 'Unknown Repo', 
+				link: request,
+				requestId: (requestId && requestId[1]) || ''
+			};
 		});
+
+		console.log('ticket.pullRequests: ', ticket.pullRequests);
 
 		return ticket;
 	});

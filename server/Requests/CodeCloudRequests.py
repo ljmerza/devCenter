@@ -7,7 +7,8 @@ from ..Jira.Jira import Jira
 def create_review(data):
 	'''
 	'''
-	if missing_parameters(params=data, required=['cred_hash', 'msrp', 'key', 'summary']):
+	missing_params =missing_parameters(params=data, required=['cred_hash', 'msrp', 'key', 'summary'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	response = {'status': True, 'data':{}}
@@ -66,7 +67,8 @@ def get_repos(data):
 def get_branches(data):
 	'''gets all branches for a given repo
 	'''
-	if missing_parameters(params=data, required=['cred_hash', 'repo_name']):
+	missing_params = missing_parameters(params=data, required=['cred_hash', 'repo_name'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return CodeCloud().get_branches(cred_hash=data['cred_hash'], repo_name=data['repo_name'])
@@ -74,7 +76,8 @@ def get_branches(data):
 def ticket_branches(data):
 	'''gets a branches related to a Jira ticket
 	'''
-	if missing_parameters(params=data, required=['cred_hash', 'msrp']):
+	missing_params = missing_parameters(params=data, required=['cred_hash', 'msrp'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return CodeCloud().ticket_branches(cred_hash=data['cred_hash'], msrp=data['msrp'])
@@ -82,7 +85,8 @@ def ticket_branches(data):
 def create_pull_requests(data):
 	'''creates a pull request for a Jira ticket
 	'''
-	if missing_parameters(params=data, required=['cred_hash', 'repos', 'key', 'msrp', 'summary', 'qa_title']):
+	missing_params = missing_parameters(params=data, required=['cred_hash', 'repos', 'key', 'msrp', 'summary', 'qa_title'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return CodeCloud().create_pull_requests(
@@ -98,7 +102,8 @@ def create_pull_requests(data):
 def add_qa_comment(data, pull_response=None):
 	'''add a QA steps generated Jira comment 
 	'''
-	if missing_parameters(params=data, required=['key','repos', 'qa_steps', 'cred_hash']):
+	missing_params = missing_parameters(params=data, required=['key','repos', 'qa_steps', 'cred_hash'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# if given pull requests then add to QA comment
@@ -118,21 +123,34 @@ def add_qa_comment(data, pull_response=None):
 	data['comment'] = qa_steps
 	return add_comment(data=data)
 	
-def pass_review_for_pull_request(data):
-	if missing_parameters(params=data, required=['pull_request_id', 'repo_name', 'cred_hash']):
+def pass_review_for_pull_requests(data):
+	missing_params = missing_parameters(params=data, required=['pull_requests', 'cred_hash'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	comment = 'PCR Pass'
+	responses = {'status': True, data: []}
 
-	return CodeCloud().add_comment_to_pull_request(
-		repo_name=data['repo_name'], 
-		pull_request_id=data['pull_request_id'], 
-		comment=comment, 
-		cred_hash=data['cred_hash']
-	)
+	for pull_request in data['pull_requests']:
+		add_response = CodeCloud().add_comment_to_pull_request(
+			repo_name=pull_request['repo'], 
+			pull_request_id=pull_request['requestId'], 
+			comment=comment, 
+			cred_hash=data['cred_hash']
+		)
+
+		print(add_response)
+
+		# add response from adding pass comment and check errors
+		responses['data'].append(add_response)
+		if not add_response['status']:
+			responses['status'] = False
+
+	return responses
 
 def add_reviewer_to_pull_request(data):
-	if missing_parameters(params=data, required=['pull_request_id', 'repo_name', 'username', 'cred_hash']):
+	missing_params = missing_parameters(params=data, required=['pull_request_id', 'repo_name', 'username', 'cred_hash'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return CodeCloud().add_reviewer_to_pull_request(

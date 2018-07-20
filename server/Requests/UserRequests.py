@@ -7,12 +7,10 @@ def get_navbar_items(devdb, sql_echo):
 	'''gets all navbar items
 	'''
 	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
-
-	session = sql_obj.login()
-	data = sql_obj.get_navbar_items(session)
-	sql_obj.logout(session)
-
-	return {'status': True,'data': data}
+	return {
+		'status': True,
+		'data': sql_obj.get_navbar_items()
+	}
 
 def set_navbar_item(data):
 	'''sets a new navbar item or edits a current one
@@ -24,11 +22,8 @@ def set_navbar_item(data):
 		'link': data.get('link', '')
 	}
 
-	if missing_parameters(params=item, required=['id', 'name', 'type', 'link']):
+	missing_params = missing_parameters(params=item, required=['id', 'name', 'type', 'link'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	session = sql_obj.login()
-	response = sql_obj.set_navbar_item(session=session, item=item)
-	sql_obj.logout(session)
-	
-	return response
+	return sql_obj.set_navbar_item(item=item)

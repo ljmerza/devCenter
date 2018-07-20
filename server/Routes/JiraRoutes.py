@@ -5,7 +5,7 @@ from flask_cors import cross_origin
 
 from ..Requests.JiraRequests import get_jira_tickets, find_key_by_msrp, edit_comment, add_work_log, set_status, add_comment, set_status, add_commit_comment, modify_watchers as JiraRequests_modify_watchers, parse_comment as JiraRequests_parse_comment, delete_comment
 
-from ..Requests.CodeCloudRequests import pass_review_for_pull_request
+from ..Requests.CodeCloudRequests import pass_review_for_pull_requests
 
 
 def define_routes(app, app_name, g):
@@ -89,7 +89,9 @@ def define_routes(app, app_name, g):
 			'crucible_id': post_data.get('crucible_id', ''),
 			'username': post_data.get('username', ''),
 			'add_commits': post_data.get('add_commits', False),
-			'master_branch': post_data.get('master_branch', '')
+			'master_branch': post_data.get('master_branch', ''),
+			'pull_requests': post_data.get('pull_requests', []),
+			'repo_name': post_data.get('repo_name', '')
 		}
 
 		status_response = {'status': False, 'data': 'status type not given'}
@@ -100,14 +102,11 @@ def define_routes(app, app_name, g):
 		
 		# if pcrAdd then add user to review
 		if data['status_type'] == 'pcrAdd':
-			if data['crucible_id']:
-				status_response = add_reviewer(data=data)
-			else:
-				status_response['status'] = True
+			status_response = add_reviewer_to_pull_request(data=data)
 
 		# if pcr pass/complete -> add user, complete review, add comment to Crucible
 		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
-			status_response = pass_review_for_pull_request(data=data)
+			status_response = pass_review_for_pull_requests(data=data)
 
 		# if uctReady then add commit hashes to Jira comment if specified
 		if data.get('add_commits', False):

@@ -9,7 +9,8 @@ from ..SQL.DevCenterSQL import DevCenterSQL
 def send_ping(data):
 	'''sends a ping to the chatroom
 	'''
-	if missing_parameters(params=data, required=['username', 'ping_type','cred_hash']):
+	missing_params = missing_parameters(params=data, required=['username', 'ping_type','cred_hash'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	
 	chat_obj = Chat()
@@ -45,7 +46,8 @@ def send_ping(data):
 def set_user_pings(data, devdb, sql_echo):
 	'''sets a user's ping settings
 	'''
-	if missing_parameters(params=data, required=['username', 'fields']):
+	missing_params = missing_parameters(params=data, required=['username', 'fields'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	
 	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
@@ -62,7 +64,8 @@ def set_user_pings(data, devdb, sql_echo):
 def send_custom_ping(data, dev_chat, no_pings):
 	'''send a custom ping to chatroom or a generated one from a ticket status transition
 	'''
-	if missing_parameters(params=data, required=['ping_type', 'cred_hash']):
+	missing_params = missing_parameters(params=data, required=['ping_type', 'cred_hash'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	chat_obj = Chat(debug=dev_chat, no_pings=no_pings)
@@ -100,7 +103,8 @@ def send_custom_ping(data, dev_chat, no_pings):
 def _get_jira_ticket_for_ping(data):
 	'''gets required Jira information for a ping message generation
 	'''
-	if missing_parameters(params=data, required=['cred_hash', 'key']):
+	missing_params = missing_parameters(params=data, required=['cred_hash', 'key'])
+	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	jira_obj = Jira()
