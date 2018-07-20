@@ -272,7 +272,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		
 		} else if([statuses.PCRPASS.backend, statuses.PCRCOMP.backend].includes(statusType)){
 			// need pull request info for pcr pass/complete
-			postData.pull_request_ids = true;
+			postData.pullRequests = this.pullRequests;
 			postData.repo_name = this.master_branch;
 		}
 
