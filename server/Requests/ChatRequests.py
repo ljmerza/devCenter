@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from ..FlaskUtils import missing_parameters
-from ..Crucible.Crucible import Crucible
 from ..Jira.Jira import Jira
 from ..Chat.Chat import Chat
 from ..SQL.DevCenterSQL import DevCenterSQL
@@ -15,7 +14,6 @@ def send_ping(data):
 	
 	chat_obj = Chat()
 	jira_obj = Jira()
-	crucible_obj = Crucible()
 
 	# we dont have enough ticket info so get that from Jira now
 	jira_response = jira_obj.get_full_ticket(cred_hash=data['cred_hash'] , key=data['key'])
@@ -27,7 +25,7 @@ def send_ping(data):
 	data = {**data, **jira_response['data'][0]}
 
 	if data['ping_type'] == 'new':
-		pcr_estimate = crucible_obj.get_pcr_estimate(story_point=data['story_point'])
+		pcr_estimate = jira_obj.get_pcr_estimate(story_point=data['story_point'])
 
 		return chat_obj.send_new_ticket( 
 			key=data['key'], msrp=data['msrp'], summary=data['summary'], 
@@ -106,13 +104,12 @@ def _get_jira_ticket_for_ping(data):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	jira_obj = Jira()
-	crucible_obj = Crucible()
 
 	jira_response = jira_obj.get_full_ticket(cred_hash=data['cred_hash'] , key=data['key'])
 	if not jira_response['status'] or len(jira_response['data']) == 0:
 		return {"data": f"could not get Jira ticket: "+{jira_response['data']}, "status": False}
 
 	data = jira_response['data'][0]
-	data['pcr_estimate'] = crucible_obj.get_pcr_estimate(story_point=data['story_point'])
+	data['pcr_estimate'] = jira_obj.get_pcr_estimate(story_point=data['story_point'])
 
 	return {"data": data, "status": True}

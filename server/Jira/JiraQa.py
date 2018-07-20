@@ -1,37 +1,36 @@
-import os
-import re
+class JiraQa():
+	def _init__(self):
+		self.qa_begin = "h3. ==== QA Steps ===="
+		self.qa_end = "h3. ==============="
 
-qa_begin = "h3. ==== QA Steps ===="
-qa_end = "h3. ==============="
+	def generate_qa_template(qa_steps, repos, pull_request_comments=''):
+		repo_table = self.generate_repo_table(repos)
+		
+		return """
+	"""+repo_table+"""
 
-def generate_qa_template(qa_steps, repos, pull_request_comments=''):
-	repo_table = generate_repo_table(repos)
-	
-	return """
-"""+repo_table"""
+	"""+pull_request_comments+"""
 
-"""+pull_request_comments"""
+	"""+self.qa_begin+"""
 
-"""+qa_begin+"""
+	"""+qa_steps+"""
 
-"""+qa_steps+"""
+	"""+self.qa_end+"""
+	"""
 
-"""+qa_end+"""
-"""
+	def generate_repo_table(repos):
+		# create table header
+		table_data = "|| Repo || Branch || Branched From ||"
 
-def generate_repo_table(repos):
-	# create table header
-	table_data = "|| Repo || Branch || Branched From ||"
+		# for each repo create table row
+		for repo in repos:
+			# get repo data
+			baseBranch = repo['baseBranch']
+			repositoryName = repo['repositoryName']
+			reviewedBranch = repo['reviewedBranch']
 
-	# for each repo create table row
-	for repo in repos:
-		# get repo data
-		baseBranch = repo['baseBranch']
-		repositoryName = repo['repositoryName']
-		reviewedBranch = repo['reviewedBranch']
+			# create new table row
+			table_data+="""
+	|"""+repositoryName+'|'+reviewedBranch+'|'+baseBranch+'|'
 
-		# create new table row
-		table_data+="""
-|"""+repositoryName+'|'+reviewedBranch+'|'+baseBranch+'|'
-
-	return table_data
+		return table_data

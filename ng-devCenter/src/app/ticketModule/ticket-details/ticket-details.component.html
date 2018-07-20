@@ -7,45 +7,47 @@
 		<ng-template #detailsTable>
 			<table class="table table-striped ticket-details">
 				<tbody>
-					<tr *ngIf='ticket?.environment'>
-						<td>Environment</td>
-						<td>{{ticket?.environment}}</td>
-					</tr>
-					<tr *ngIf='ticket?.issue_type'>
-						<td>Issue Type</td>
+					<tr>
+						<td class="text-right">Environment:</td>
+						<td colspan='2'>{{ticket?.environment}}</td>
+						<td class="text-right">Issue Type:</td>
 						<td>{{ticket?.issue_type}}</td>
 					</tr>
-					<tr *ngIf='ticket?.sprint'>
-						<td>Sprint</td>
-						<td>{{ticket?.sprint}}</td>
-					</tr>
-					<tr *ngIf='ticket?.priority'>
-						<td>Priority</td>
+
+					<tr>
+						<td class="text-right">Sprint:</td>
+						<td colspan='2'>{{ticket?.sprint}}</td>
+						<td class="text-right">Priority:</td>
 						<td>{{ticket?.priority}}</td>
 					</tr>
-					<tr *ngIf='ticket?.severity'>
-						<td>Severity</td>
-						<td>{{ticket?.severity}}</td>
-					</tr>
-					<tr *ngIf='ticket?.description'>
-						<td>Description</td>
+
+					<tr>
+						<td class="text-right">Severity:</td>
+						<td colspan='2'>{{ticket?.severity}}</td>
+						<td class="text-right">Description:</td>
 						<td>{{ticket?.description}}</td>
 					</tr>
-					<tr *ngIf='ticket?.code_reviewer.username'>
-						<td>Code Reviewer</td>
+
+					<tr>
+						<td class="text-right">Label:</td>
+						<td colspan='2'>{{ticket?.label}}</td>
+						<td class="text-right">Code Reviewer:</td>
 						<td>
 							{{ticket?.code_reviewer.username}}
 							{{ticket?.code_reviewer.displayName}}
 						</td>
 					</tr>
-					<tr *ngIf='ticket?.label'>
-						<td>Label</td>
-						<td>{{ticket?.label}}</td>
+
+					<tr>
+						<td>Dev Changes:</td>
+						<td colspan='4'>
+							{{ticket?.dev_changes}}
+						</td>
 					</tr>
 
 					<tr *ngIf='links.length'>
 						<td>Links:</td>
-						<td>
+						<td colspan='4'>
 							<table class="table table-striped">
 								<tbody>
 									<tr *ngFor='let link of links;trackBy:link?.id'>
@@ -84,7 +86,7 @@
 					</tr>
 					<tr>
 						<td>Status Changes:</td>
-						<td>
+						<td colspan='4'>
 							<table class="table table-striped">
 								<tbody>
 									<tr *ngFor='let status of ticket?.history?.status;trackBy:status?.id'>

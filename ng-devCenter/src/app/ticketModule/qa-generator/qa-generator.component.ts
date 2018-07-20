@@ -273,6 +273,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	 * @param {boolean} isPcr if true then don't show cancel message.
 	 */
 	checkForStateChange(postData, responseData, isPcr):void {
+		console.log('responseData: ', responseData);
 
 		if(responseData.comment_response.status) {
 			this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});
@@ -317,9 +318,9 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			this.store.dispatch({type: Actions.updateWorklog, payload: {key:this.key, loggedSeconds:responseData.log_response.data.timeSpentSeconds}});
 		}
 
-		// add crucible id if given
-		if(responseData.cru_response.status) {
-			this.store.dispatch({type: Actions.updateCrucible, payload:{ key:this.key, cruid: responseData.cru_response.data}});
+		// add pull requests if given
+		if(responseData.pull_response.status) {
+			// this.store.dispatch({type: Actions.updatePullRequests, payload:{ key:this.key, cruid: responseData.cru_response.data}});
 		}
 	}
 

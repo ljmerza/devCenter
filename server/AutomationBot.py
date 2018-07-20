@@ -10,7 +10,6 @@ import threading
 
 from .Jira.JiraFields import *
 from .Jira.Jira import Jira
-from .Crucible.Crucible import Crucible
 from .SQL.DevCenterSQL import DevCenterSQL
 from .Chat.Chat import Chat
 from .reminders import reminders
@@ -24,7 +23,6 @@ class AutomationBot(object):
 		# create DB object and connect
 		self.sql_object = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
 		self.jira_obj = Jira()
-		self.crucible_obj = Crucible()
 		self.chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts, no_pings=no_pings)
 		self.reminders = reminders(chat_obj=self.chat_obj)
 		################################################################################
@@ -194,7 +192,7 @@ class AutomationBot(object):
 			self.sql_object.update_ping(key=key, field='new_ping', value=1, session=session)
 
 			# get pcr estimate
-			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point)
+			pcr_estimate = self.jira_obj.get_pcr_estimate(story_point=story_point)
 
 			# ping ticket to user
 			thr = threading.Thread(
@@ -261,7 +259,6 @@ class AutomationBot(object):
 		summary = jira_ticket['summary']
 		component = jira_ticket['component']
 		status = jira_ticket['status']
-		crucible_id = jira_ticket['crucible_id']
 
 		# get jira ticket's ping settings
 		pings = self.sql_object.get_pings(key=key, session=session)
@@ -273,7 +270,7 @@ class AutomationBot(object):
 		# if pcr needed and has not been pinged - update db and send ping
 		if("PCR - Needed" in component and not pings.pcr_ping):
 			# get PCR estimate
-			pcr_estimate = self.crucible_obj.get_pcr_estimate(story_point=story_point)
+			pcr_estimate = self.jira_obj.get_pcr_estimate(story_point=story_point)
 			# send ping
 			thr = threading.Thread(
 				target=self.chat_obj.send_pcr_needed, 
@@ -282,7 +279,6 @@ class AutomationBot(object):
 				'msrp':msrp, 
 				'sprint':sprint, 
 				'label':label, 
-				'crucible_id':crucible_id, 
 				'pcr_estimate':pcr_estimate
 			})
 			thr.start()
@@ -295,7 +291,7 @@ class AutomationBot(object):
 		elif("Ready for QA" in status and not pings.qa_ping):
 			thr = threading.Thread(
 				target=self.chat_obj.send_qa_needed, 
-				kwargs={'key':key, 'msrp':msrp, 'sprint':sprint, 'label':label, 'crucible_id':crucible_id}
+				kwargs={'key':key, 'msrp':msrp, 'sprint':sprint, 'label':label}
 			)
 			thr.start()
 			# reset ping settings if needed
@@ -322,12 +318,12 @@ class AutomationBot(object):
 		# if ready in uct, has no merge code component, ticket has already been pinged for merge code and hasnt been pinged for code merged then ping
 		elif("Ready for UCT" in status and "Merge Code" not in component and pings.merge_ping and not pings.uct_ping):
 			# notify of repo update
-			# repos_merged = self.crucible_obj.get_repos_of_review(crucible_id=crucible_id, cred_hash=self.cred_hash)
+			# repos_merged = self.crucible_obj.get_repos_of_review(cred_hash=self.cred_hash)
 			# if repos_merged['status']:
 			# 	self.chat_obj.send_merge_alert(
 			# 	key=key, msrp=msrp, sprint=sprint, 
 			# 	username=username, repos_merged=repos_merged['data'], 
-			# 	crucible_id=crucible_id, summary=summary
+			# 	summary=summary
 			# )
 			# else:
 			# 	self.sql_object.log_error(message='Could not retrieve repos for repo update ping: '+repos_merged['data'], session=session)

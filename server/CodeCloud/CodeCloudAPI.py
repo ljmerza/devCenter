@@ -10,12 +10,13 @@ class CodeCloudAPI(DevCenterAPI):
 		self.project_name = 'ST_M5DTI'
 		self.code_cloud_api = os.environ['CODE_CLOUD_URL']
 		self.code_cloud_pull_req = f'{self.code_cloud_api}/rest/api/latest/projects/{self.project_name}/repos'
-
 		self.code_cloud_branches_api = f'{self.code_cloud_api}/rest/api/latest/projects/{self.project_name}/repos/'
 
-	def post(self, url, cred_hash, data=''):
-		response = super(CodeCloudAPI, self).post(
-			url=url, data=data, cred_hash=cred_hash)
+	def post(self, url, cred_hash, data='', json_data=None):
+		if json_data:
+			response = super(CodeCloudAPI, self).post_json(url=url, json_data=json_data, cred_hash=cred_hash)
+		else:
+			response = super(CodeCloudAPI, self).post(url=url, data=data, cred_hash=cred_hash)
 		return self._process_response(response)
 
 	def delete(self, url, cred_hash, data=''):
@@ -24,11 +25,6 @@ class CodeCloudAPI(DevCenterAPI):
 
 	def get(self, url, cred_hash):
 		response = super(CodeCloudAPI, self).get(url=url, cred_hash=cred_hash)
-		return self._process_response(response)
-
-	def post_json(self, url, json_data, cred_hash):
-		response = super(CodeCloudAPI, self).post_json(
-			url=url, json_data=json_data, cred_hash=cred_hash)
 		return self._process_response(response)
 
 	def _process_response(self, response):

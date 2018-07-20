@@ -25,12 +25,12 @@ export function updateStatus(state, newStatus) {
  * @param {RootState} state the current state of the store
  * @param {Object} newCrucible action item
  */
-export function updateCrucible(state, newCrucible) {
+export function updatePullRequests(state, newPullRequests) {
 	const ticketType = `${state.ticketType}_codeCloud`;
 
 	// get ticket and create new one with new crucible id
-	const ticket = state[ticketType].find(ticket => ticket.key === newCrucible.key);
-	const newTicket = { ...ticket, ...{crucible_id: newCrucible.cruid} };
+	const ticket = state[ticketType].find(ticket => ticket.key === newPullRequests.key);
+	const newTicket = { ...ticket, ...{pullRequests: newPullRequests.requests} };
 
 	// replace new ticket object with old one
 	const newTickets = state[ticketType].map(ticket => {

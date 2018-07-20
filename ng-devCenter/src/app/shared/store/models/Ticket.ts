@@ -13,7 +13,6 @@ export interface Ticket {
 	username: String,
 	customer_details: UserDetails,
 	dates: Dates,
-	crucible_id?: String,
 	summary: String,
 	component: String,
 	status: String,
@@ -31,5 +30,6 @@ export interface Ticket {
 	environment: String,
 	links: Link,
 	commit: String,
-	branch: String
+	branch: String,
+	dev_changes: String
 }

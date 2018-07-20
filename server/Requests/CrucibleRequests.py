@@ -24,7 +24,5 @@ def crucible_create_review(data, pull_response):
 	if not qa_response['status']:
 		return {"status": False, "data": 'Could not get Jira ticket data to make title: '+qa_response['data']}
 
-	qa_response = qa_response['data']
-	data['title'] = crucible_obj.create_crucible_title(story_point=qa_response['story_point'], key=qa_response["key"], msrp=data['msrp'], summary=qa_response['summary'])
 
 	return crucible_obj.generate_crucible(data=data, cred_hash=data['cred_hash'], pull_response=pull_response)

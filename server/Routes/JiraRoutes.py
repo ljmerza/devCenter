@@ -5,7 +5,7 @@ from flask_cors import cross_origin
 
 from ..Requests.JiraRequests import get_jira_tickets, find_key_by_msrp, edit_comment, add_work_log, set_status, add_comment, set_status, add_commit_comment, modify_watchers as JiraRequests_modify_watchers, parse_comment as JiraRequests_parse_comment, delete_comment
 
-from ..Requests.CodeCloudRequests import add_reviewer, pass_review
+from ..Requests.CodeCloudRequests import pass_review_for_pull_request
 
 
 def define_routes(app, app_name, g):
@@ -107,7 +107,7 @@ def define_routes(app, app_name, g):
 
 		# if pcr pass/complete -> add user, complete review, add comment to Crucible
 		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
-			status_response = pass_review(data=data)
+			status_response = pass_review_for_pull_request(data=data)
 
 		# if uctReady then add commit hashes to Jira comment if specified
 		if data.get('add_commits', False):

@@ -50,3 +50,24 @@ class CodeCloud(Git):
 							'links').get('self')[0].get('href')
 
 		return pull_request_link
+
+	def add_comment_to_pull_request(self, repo_name, pull_request_id, comment, cred_hash):
+		'''
+		'''
+		url = f'{self.code_cloud_api.code_cloud_branches_api}/{repo_name}/pull-requests/{pull_request_id}/comments'
+		return self.post(url=url, post_data={'text':comment}, cred_hash=cred_hash)
+
+	def add_reviewer_to_pull_request(self, username, repo_name, pull_request_id, cred_hash):
+		'''
+		'''
+		url = f'{self.code_cloud_api.code_cloud_branches_api}/{repo_name}/pull-requests/{pull_request_id}/participants'
+		post_data = {
+		'role':'reviewer', 
+		'user':{
+				'name': username,
+				'slug': username,
+				'type': 'NORMAL'
+			}
+		}
+
+		return self.post(url=url, post_data=post_data, cred_hash=cred_hash)

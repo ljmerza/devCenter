@@ -23,29 +23,6 @@ class JiraMisc():
 		else:
 			return {'status': False, 'data': f'Did not find any key matching {msrp}'}
 
-	def find_qa_title_data(self, msrp, cred_hash):
-		# get ticket data based off MSRP and check for status
-		url = f'{self.jira_api.api_base}/search?jql=MSRP_Number~{msrp}&fields=timeoriginalestimate,summary'
-		search_response = self.jira_api.get(url=url, cred_hash=cred_hash)
-
-		if not search_response['status']:
-			return search_response
-
-		if not search_response['data']['issues']:
-			return {'status':False, 'data': 'Could not find MSRP from branch name'}
-
-		# get first issue found
-		issue = search_response['data']['issues'][0]
-
-		return { 
-			'status': True, 
-			'data':{
-				'summary': get_summary(issue),
-				'key': get_key(issue),
-				'story_point': get_story_point(issue)
-			}
-		}
-
 	def add_work_log(self, time, key, cred_hash, private_log=True):
 		json_data = {
 			'comment': '', 
@@ -94,6 +71,15 @@ class JiraMisc():
 		dev_value += f'\nPCR needed: {pcr_number}'
 
 		return self.set_dev_changes(dev_value=dev_value, cred_hash=data['cred_hash'], key=data['key'])
+
+	def build_qa_title(self, key, msrp, summary):
+		return f"[{key}] Ticket #{msrp} - {summary}"
+
+	def get_pcr_estimate(self, story_point):
+		pcr_estimate = 1
+		if(story_point > 1):
+			pcr_estimate = int(math.ceil(story_point / 2))
+		return pcr_estimate	
 
 	
 	

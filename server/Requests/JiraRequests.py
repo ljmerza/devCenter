@@ -68,29 +68,6 @@ def set_status(data):
 	else:
 		return {"status": False, "data": 'Invalid status type'}
 
-def add_qa_comment(data, pull_response=None):
-	'''add a QA steps generated Jira comment 
-	'''
-	if missing_parameters(params=data, required=['key','repos', 'qa_steps', 'cred_hash']):
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
-	# if given pull requests then add to QA comment
-	pull_request_comments = ''
-	if pull_response:
-		pull_request_comments = CodeCloud().generate_pull_request_comment(
-			pull_response=pull_response,
-			repos=data.get('repos', []),
-		)
-
-	qa_steps = Jira().generate_qa_template(
-		qa_steps=data['qa_steps'], 
-		repos=data['repos'], 
-		pull_request_comments=pull_request_comments, 
-	)
-
-	data['comment'] = qa_steps
-	return add_comment(data=data)
-
 def add_comment(data):
 	'''Add a Jira comment to a ticket
 	'''

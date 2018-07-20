@@ -86,22 +86,24 @@ class Git():
         
         return {'status': True, 'data': commit_id}
 
-    def create_pull_requests(self, repos, key, msrp, summary, cred_hash):
+    def create_pull_requests(self, repos, key, msrp, summary, cred_hash, qa_title):
+        '''submits pull requests for a list of branches
+        '''
         all_responses = []
 
         for repo in repos:
             repo_name = repo['repositoryName']
-            branch_name = repo['reviewedBranch']
-            master_branch_name = repo['baseBranch']
+            reviewed_branch = repo['reviewedBranch']
+            base_branch = repo['baseBranch']
 
             json_data = {
-                "title": f"[{key}] Ticket #{msrp} - {summary}",
+                "title": qa_title,
                 "description": summary,
                 "state": "OPEN",
                 "open": True,
                 "closed": False,
                 "fromRef": {
-                    "id": f"refs/heads/{branch_name}",
+                    "id": f"refs/heads/{reviewed_branch}",
                     "repository": {
                         "slug": repo_name,
                         "name": None,
@@ -111,7 +113,7 @@ class Git():
                     }
                 },
                 "toRef": {
-                    "id": f"refs/heads/{master_branch_name}",
+                    "id": f"refs/heads/{base_branch}",
                     "repository": {
                         "slug": repo_name,
                         "name": None,
@@ -127,7 +129,11 @@ class Git():
 
             url = f'{self.code_cloud_api.code_cloud_pull_req}/{repo_name}/pull-requests'
             response = self.code_cloud_api.post_json(
-                url=url, json_data=json_data, cred_hash=cred_hash)
+                url=url, 
+                json_data=json_data, 
+                cred_hash=cred_hash
+            )
+            
             all_responses.append(response)
         
         response = {'status': True, 'data': all_responses}

@@ -2,7 +2,7 @@ import { Ticket, Comment, Repo } from '@models';
 
 import { 
 	addComment, deleteComment, editComment, 
-	updateStatus, updateCrucible, updateWorklog, 
+	updateStatus, updatePullRequests, updateWorklog, 
 	addOrders 
 } from './reducers';
 
@@ -66,8 +66,8 @@ export function rootReducer(state, action){
 			
 		case Actions.updateStatus:
 			return updateStatus(state, action.payload);
-		case Actions.updateCrucible:
-			return updateCrucible(state, action.payload);
+		case Actions.updatePullRequests:
+			return updatePullRequests(state, action.payload);
 
 		case Actions.updateWorklog:
 			return updateWorklog(state, action.payload);
@@ -84,7 +84,7 @@ export function rootReducer(state, action){
 }
 
 /**
- *
+ * adds a list of ticket to the store. Adds them based on the type of list we are trying to retrieve
  */
 function addTickets(state, tickets){
 	let comments = [];
@@ -94,14 +94,16 @@ function addTickets(state, tickets){
 
 	// extract pull requests
 	tickets = tickets.map(ticket => {
-		const pullRequests = (ticket.dev_changes || '')
-			.split(/\n/)
+		const devChangeLines = (ticket.dev_changes || '').split(/\n | /g);
+
+		const pullRequests = devChangeLines
 			.filter(request => request.startsWith('http'))
 			.map(request => request.trimStart());
 
 		ticket.pullRequests = pullRequests.map(request => {
-			const repo = /repos\/(\w+)\/pull-requests/.exec(request);
-			return {repo: repo[1] || 'Unknown Repo', link: request};
+			request = request.split('\n')[0]; // make sure we only have the url
+			const repo = /repos\/(\w+)(\/pull-requests)|(commit)/.exec(request);
+			return {repo: (repo && repo[1]) || 'Unknown Repo', link: request};
 		});
 
 		return ticket;

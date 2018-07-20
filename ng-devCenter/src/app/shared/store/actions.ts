@@ -5,7 +5,7 @@ export const Actions = {
 	editComment: 'EDIT_COMMENT',
 	updateStatus: 'UPDATE_STATUS',
 	repos: 'ADD_REPOS',
-	updateCrucible: 'UPDATE_CRUCIBLE',
+	updatePullRequests: 'UPDATE_PULL_REQUESTS',
 	userProfile: 'USER_PROFILE',
 	updateWorklog: 'UPDATE_WORKLOG',
 	newOrders: 'NEW_ORDERS',
