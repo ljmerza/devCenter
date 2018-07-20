@@ -261,7 +261,6 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		let postData:any = {
 			key:this.key, 
 			statusType, 
-			pullRequests: this.pullRequests
 		};
 
 		// if transitioning from merge code to uct ready then add commit hash Jira comment

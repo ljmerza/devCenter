@@ -90,7 +90,7 @@ def define_routes(app, app_name, g):
 			'username': post_data.get('username', ''),
 			'add_commits': post_data.get('add_commits', False),
 			'master_branch': post_data.get('master_branch', ''),
-			'pull_requests': post_data.get('pull_requests', []),
+			'pull_requests': post_data.get('pullRequests', []),
 			'repo_name': post_data.get('repo_name', '')
 		}
 
