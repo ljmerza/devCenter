@@ -6,7 +6,7 @@ class Reviewers():
 
 	def add_comment_to_pull_request(self, repo_name, pull_request_id, comment, cred_hash):
 		url = f'{self.code_cloud_api.code_cloud_branches_api}/{repo_name}/pull-requests/{pull_request_id}/comments'
-		return self.post(url=url, post_data={'text':comment}, cred_hash=cred_hash)
+		return self.code_cloud_apipost(url=url, post_data={'text':comment}, cred_hash=cred_hash)
 
 	def add_reviewer_to_pull_request(self, username, repo_name, pull_request_id, cred_hash):
 		return self._change_pull_quest_status(username, repo_name, pull_request_id, cred_hash, role='REVIEWER')
@@ -19,4 +19,4 @@ class Reviewers():
 		url = f'{self.code_cloud_api.code_cloud_branches_api}/{repo_name}/pull-requests/{pull_request_id}/participants/{username}'
 		post_data = {'role':role}
 
-		return self.post(url=url, post_data=post_data, cred_hash=cred_hash)
+		return self.code_cloud_api.post(url=url, post_data=post_data, cred_hash=cred_hash)
