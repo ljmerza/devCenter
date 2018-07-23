@@ -48,7 +48,7 @@ class Git():
     def get_branches(self, repo_name, cred_hash):
         branch_names = []
 
-        url = f'{self.code_cloud_api.code_cloud_branches_api}{repo_name}/branches?start=0&limit=30'
+        url = f'{self.code_cloud_api.branch_api}/{repo_name}/branches?start=0&limit=30'
         response = self.code_cloud_api.get(url=url, cred_hash=cred_hash)
         if not response['status']:
             return response
@@ -62,7 +62,7 @@ class Git():
         commit_ids = []
 
         for repo_name in self.repos:
-            response = self.get_commit_id(
+            response = self._get_commit_id(
                 repo_name=repo_name, key=key, cred_hash=cred_hash, master_branch=master_branch)
             if response['status'] and response['data']:
                 commit_ids.append({'master_branch': master_branch,
@@ -70,10 +70,10 @@ class Git():
 
         return {'status': len(commit_ids) > 0, 'data': commit_ids}
 
-    def get_commit_id(self, repo_name, master_branch, key, cred_hash):
+    def _get_commit_id(self, repo_name, master_branch, key, cred_hash):
         commit_id = ''
 
-        url = f'{self.code_cloud_api.code_cloud_branches_api}{repo_name}/commits?until=refs%2Fheads%2F{master_branch}'
+        url = f'{self.code_cloud_api.branch_api}/{repo_name}/commits?until=refs%2Fheads%2F{master_branch}'
         response = self.code_cloud_api.get(url=url, cred_hash=cred_hash)
         
         if not response['status']:
@@ -127,7 +127,7 @@ class Git():
                 "links": {"self":[None]}
             }
 
-            url = f'{self.code_cloud_api.code_cloud_pull_req}/{repo_name}/pull-requests'
+            url = f'{self.code_cloud_api.branch_api}/{repo_name}/pull-requests'
             response = self.code_cloud_api.post_json(
                 url=url, 
                 json_data=json_data, 

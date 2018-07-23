@@ -9,8 +9,7 @@ class CodeCloudAPI(DevCenterAPI):
 		DevCenterAPI.__init__(self)
 		self.project_name = 'ST_M5DTI'
 		self.code_cloud_api = os.environ['CODE_CLOUD_URL']
-		self.code_cloud_pull_req = f'{self.code_cloud_api}/rest/api/latest/projects/{self.project_name}/repos'
-		self.code_cloud_branches_api = f'{self.code_cloud_api}/rest/api/latest/projects/{self.project_name}/repos/'
+		self.branch_api = f'{self.code_cloud_api}/rest/api/1.0/projects/{self.project_name}/repos'
 		
 		self.code_cloud_path = f'/projects/{self.project_name}/repos'
 		self.code_cloud_path2 = 'compare/diff'

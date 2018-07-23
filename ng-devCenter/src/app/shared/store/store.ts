@@ -94,10 +94,10 @@ function addTickets(state, tickets){
 
 	// extract pull requests
 	tickets = tickets.map(ticket => {
-		const devChangeLines = (ticket.dev_changes || '').split(/\n | /g);
+		const devChangeLines = (ticket.dev_changes || '').split(/\n|(\n\r)| /g)
 
 		const pullRequests = devChangeLines
-			.filter(request => request.startsWith('http'))
+			.filter(request => request && request.startsWith('http'))
 			.map(request => request.trimStart());
 
 		ticket.pullRequests = pullRequests.map(request => {
@@ -112,8 +112,6 @@ function addTickets(state, tickets){
 				requestId: (requestId && requestId[1]) || ''
 			};
 		});
-
-		console.log('ticket.pullRequests: ', ticket.pullRequests);
 
 		return ticket;
 	});

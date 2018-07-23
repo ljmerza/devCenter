@@ -32,7 +32,7 @@ def create_review(data):
 
 		# add pull request info to dev changes tab
 		if pull_response['status']:
-			dev_change_response = jira.add_dev_changes(pull_response=pull_response, data=data)
+			dev_change_response = jira.add_pr_to_dev_changes(pull_response=pull_response, data=data)
 			if not dev_change_response['status']:
 				return dev_change_response
 

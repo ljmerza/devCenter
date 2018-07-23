@@ -14,22 +14,74 @@ def set_status(data):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	
 	jira = Jira()
+	cc = CodeCloud()
 
 	if data['status_type'] == 'inDev':
 		return jira.set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
 
 	if data['status_type'] == 'pcrNeeded':
 		return jira.set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
+
 	if data['status_type'] == 'removePcrNeeded':
 		return jira.remove_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
+
 	if data['status_type'] == 'pcrWorking':
-		return jira.set_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
+		missing_params = missing_parameters(params=data, required=['repo_name','pull_request_id','dev_value','username'])
+		if missing_params:
+			return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+		# pcr working - convert status to pcr working, add as reviewer to pull request, add dev changes username as reviewer
+		response = {'status': True, 'data': {}}
+		response['data']['set_pcr_working'] = jira.set_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
+		response['data']['add_reviewer_to_pull_request'] = cc.add_reviewer_to_pull_request(
+			username=data['username'], 
+			repo_name=data['repo_name'], 
+			pull_request_id=data['pull_request_id'], 
+			cred_hash=data['cred_hash']
+		)
+
+		dev_value = data['dev_value'] + f'\n{[username] - PCR}'
+		response['data']['add_dev_changes'] = jira.add_dev_changes(dev_value=dev_value, cred_hash=data['cred_hash'], key=data['key'])
+		return response
 		
 	if data['status_type'] == 'pcrPass':
-		return jira.remove_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
+		missing_params = missing_parameters(params=data, required=['repo_name','pull_request_id','username'])
+		if missing_params:
+			return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+		response = {'status': True, 'data': {}}
+		response['data']['remove_pcr_working'] = jira.remove_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
+		response['data']['pass_pull_request_review'] = cc.pass_pull_request_review(
+			username=data['username'], 
+			repo_name=data['repo_name'], 
+			pull_request_id=data['pull_request_id'], 
+			cred_hash=data['cred_hash']
+		)
+
 	if data['status_type'] == 'pcrCompleted':
-		return jira.remove_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
-		return jira.set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
+		missing_params = missing_parameters(params=data, required=['repo_name','pull_request_id','username','comment'])
+		if missing_params:
+			return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+		response = {'status': True, 'data': {}}
+		response['data']['remove_pcr_working'] = jira.remove_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
+		response['data']['set_pcr_complete'] =  jira.set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
+		response['data']['pass_pull_request_review'] = cc.pass_pull_request_review(
+			username=data['username'], 
+			repo_name=data['repo_name'], 
+			pull_request_id=data['pull_request_id'], 
+			cred_hash=data['cred_hash']
+		)
+		response['data']['add_comment_to_pull_request'] = cc.add_comment_to_pull_request(
+			username=data['username'], 
+			repo_name=data['repo_name'], 
+			pull_request_id=data['pull_request_id'], 
+			cred_hash=data['cred_hash'],
+			comment='PCR Pass'
+		)
+
+		return response
+
 	if data['status_type'] == 'removePcrCompleted':
 		return jira.remove_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
 
@@ -43,8 +95,10 @@ def set_status(data):
 
 	elif data['status_type'] == 'inQa':
 		return jira.set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
+
 	elif data['status_type'] == 'qaFail':
 		return jira.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
+
 	elif data['status_type'] == 'qaPass':
 		response = {'status': True, 'data': {}}
 		response['data']['qa_pass'] = jira.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])

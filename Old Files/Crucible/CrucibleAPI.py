@@ -19,8 +19,7 @@ class CrucibleAPI(DevCenterAPI):
 
 		self.code_cloud_api = os.environ['CODE_CLOUD_URL']
 		self.code_cloud_pull_req = f'{self.code_cloud_api}/rest/api/latest/projects/{self.project_name}/repos'
-
-		self.code_cloud_branches_api = f'{self.code_cloud_api}/rest/api/latest/projects/{self.project_name}/repos/'
+		self.branch_api = f'{self.code_cloud_api}/rest/api/latest/projects/{self.project_name}/repos/'
 
 	def post(self, url, cred_hash, data=''):
 		response = super(CrucibleAPI, self).post(url=url, data=data, cred_hash=cred_hash)
