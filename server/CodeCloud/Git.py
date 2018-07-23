@@ -18,13 +18,15 @@ class Git():
         return {'status': True, 'data': data}
 
     def find_branch(self, repo_name, msrp, cred_hash):
+        '''
+        '''
         returned_branches = []
         response = self.get_branches(repo_name=repo_name, cred_hash=cred_hash)
         if not response['status']:
             return response
 
         for branch_name in response['data']:
-            if msrp in branch_name:
+            if str(msrp) in branch_name:
                 returned_branches.append(branch_name)
 
         if len(returned_branches) > 0:

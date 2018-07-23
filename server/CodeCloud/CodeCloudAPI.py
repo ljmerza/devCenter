@@ -11,7 +11,7 @@ class CodeCloudAPI(DevCenterAPI):
 		self.code_cloud_api = os.environ['CODE_CLOUD_URL']
 		self.branch_api = f'{self.code_cloud_api}/rest/api/1.0/projects/{self.project_name}/repos'
 		
-		self.code_cloud_path = f'/projects/{self.project_name}/repos'
+		self.code_cloud_path = f'{self.code_cloud_api}/projects/{self.project_name}/repos'
 		self.code_cloud_path2 = 'compare/diff'
 
 	def post(self, url, cred_hash, data='', json_data=None):

@@ -18,7 +18,7 @@ class PullRequests():
 			pull_request_link = self.get_pull_request_link(pull_response=pull_response, repositoryName=repositoryName)
 
 			# get link to code cloud link
-			branch_url = f'{self.code_cloud_api.code_cloud_api}{self.code_cloud_api.code_cloud_path}/{repositoryName}/{self.code_cloud_api.code_cloud_path2}?targetBranch=refs%2Fheads%2F{baseBranch}&sourceBranch=refs%2Fheads%2F{reviewedBranch}'
+			branch_url = f'{self.code_cloud_api.code_cloud_path}/{repositoryName}/{self.code_cloud_api.code_cloud_path2}?targetBranch=refs%2Fheads%2F{baseBranch}&sourceBranch=refs%2Fheads%2F{reviewedBranch}'
 			comment = comment+'\n{color:red}'+repositoryName+'{color}: [Code Cloud|'+branch_url+']'
 
 			# add pull request link if found
@@ -43,3 +43,21 @@ class PullRequests():
 							'links').get('self')[0].get('href')
 
 		return pull_request_link
+
+	def generate_diff_links(self, msrp, cred_hash):
+		'''
+		'''
+		response = {'status': True, 'data': []}
+		repos = self.ticket_branches(msrp=msrp, cred_hash=cred_hash)
+		if not repos['status']:
+			return repos
+
+		for repo in repos['data']:
+			for branch in repo:
+				link = f'{self.code_cloud_api.code_cloud_path}/'
+				response['data'].append({
+					'link': link,
+					'repo': branch['repo']
+				})
+		
+		return response

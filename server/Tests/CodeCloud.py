@@ -14,9 +14,13 @@ cred_hash = f'Basic {encoded_header}'
 repo_name = 'ud_api'
 pull_request_id = '20'
 comment = 'TEST'
-msrp = '135888'
+msrp = '136372'
 
 
+
+response = cc.generate_diff_links(msrp, cred_hash)
+print('--generate_diff_links--')
+print(response)
 
 ################# Comments
 # response = cc.add_comment_to_pull_request(repo_name, pull_request_id, comment, cred_hash)
@@ -30,9 +34,9 @@ msrp = '135888'
 
 
 ################# Reviewers
-response = cc.add_reviewer_to_pull_request(username, repo_name, pull_request_id, cred_hash)
-print('--add_reviewer_to_pull_request--')
-print(response)
+# response = cc.add_reviewer_to_pull_request(username, repo_name, pull_request_id, cred_hash)
+# print('--add_reviewer_to_pull_request--')
+# print(response)
 
 # response = cc.pass_pull_request_review(username, repo_name, pull_request_id, cred_hash)
 # print('--pass_pull_request_review--')
