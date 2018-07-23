@@ -20,7 +20,7 @@ class JiraComponent():
 		return self._remove_component(key=key, name='PCR - Needed', cred_hash=cred_hash)
 
 	def set_pcr_working(self, key, cred_hash):
-		return self._remove_component(key=key, name='PCR - Working', cred_hash=cred_hash)
+		return self._set_component(key=key, name='PCR - Working', cred_hash=cred_hash)
 
 	def remove_pcr_working(self, key, cred_hash):
 		return self._remove_component(key=key, name='PCR - Working', cred_hash=cred_hash)

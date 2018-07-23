@@ -96,15 +96,15 @@ def define_routes(app, app_name, g):
 
 		status_response = {'status': False, 'data': 'status type not given'}
 
-		# change status on Jira if not pcr pass/add (they are 'fake' statuses)
-		if data['status_type'] != 'pcrPass' and data['status_type'] != 'pcrAdd':
+		# change ticket status
+		if data['status_type'] != 'pcrAdd':
 			status_response = set_status(data=data)
 		
 		# if pcrAdd then add user to review
 		if data['status_type'] == 'pcrAdd':
 			status_response = add_reviewer_to_pull_request(data=data)
 
-		# if pcr pass/complete -> add user, complete review, add comment to Crucible
+		# if pcr pass/complete -> add pass comment to review
 		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
 			status_response = pass_review_for_pull_requests(data=data)
 

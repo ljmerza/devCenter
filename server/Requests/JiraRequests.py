@@ -24,9 +24,11 @@ def set_status(data):
 		return jira.remove_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
 	if data['status_type'] == 'pcrWorking':
 		return jira.set_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
-	if data['status_type'] == 'removePcrWorking':
+		
+	if data['status_type'] == 'pcrPass':
 		return jira.remove_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
 	if data['status_type'] == 'pcrCompleted':
+		return jira.remove_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
 		return jira.set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
 	if data['status_type'] == 'removePcrCompleted':
 		return jira.remove_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
