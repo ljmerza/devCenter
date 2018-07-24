@@ -14,6 +14,12 @@ import { JiraService, ToastrService, GitService, ConfigService, UserService } fr
 import { RootState, Actions } from '@store';
 import { statuses, Repo, Ticket, APIResponse } from '@models';
 
+import {
+	showQaSubmitSuccessMessage, showSubmitMessage, checkForStateChange,
+	checkDiffResponse, qaStepCheck, checkautoPcr, checkWorklog
+} from './successChecker';
+import {processBranches, getTicketBranches, getBranches, addBranch, removeBranch, getBaseBranch} from './branchActions';
+
 @Component({
 	selector: 'dc-qa-generator',
 	templateUrl: './qa-generator.component.html',
@@ -48,6 +54,15 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	sprint;
 	summary;
 	story_point;
+	master_branch;
+
+	addBranch;
+	removeBranch;
+	getBaseBranch;
+	checkDiffResponse;
+	qaStepCheck;
+	checkautoPcr;
+	checkWorklog;
 
 	constructor(
 		public jira:JiraService, private git: GitService, public toastr: ToastrService, 
@@ -63,6 +78,15 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			qaSteps: this.formBuilder.control(''),
 			branches: this.formBuilder.array([])
 		});
+
+		// link imported functions
+		this.addBranch = addBranch.bind(this);
+		this.removeBranch = removeBranch.bind(this);
+		this.getBaseBranch = getBaseBranch.bind(this);
+		this.checkDiffResponse = checkDiffResponse.bind(this);
+		this.qaStepCheck = qaStepCheck.bind(this);
+		this.checkautoPcr = checkautoPcr.bind(this);
+		this.checkWorklog = checkWorklog.bind(this);
 	}
 
 	/**
@@ -81,6 +105,7 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 				this.sprint = (ticket && ticket.sprint) || '';
 				this.summary = (ticket && ticket.summary) || '';
 				this.story_point = (ticket && ticket.story_point) || 0;
+				this.master_branch = (ticket && ticket.master_branch) || 0;
 			});
 
 		});
@@ -103,83 +128,23 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	};
 
 	/**
-	 * Adds a new branch to the branches form array. Adds subscription to
-	 * value change on repository selection to get all branches for that repository.
-	 * @param {Object} the new branch object to add to the ngForm
-	 */
-	addBranch(newBranch){
-		let repositoryName = this.formBuilder.control(newBranch.repositoryName || '');
-
-		const branch = this.formBuilder.group({
-			allRepos: this.formBuilder.array(this.repos.map(repo => repo.name)),
-			allBranches: this.formBuilder.array(newBranch.allBranches || []),
-			allBranchedFrom: this.formBuilder.array(newBranch.allBranches || []),
-			repositoryName,
-			reviewedBranch: this.formBuilder.control(newBranch.reviewedBranch || ''),
-			baseBranch: this.formBuilder.control(newBranch.baseBranch || '')
-		});
-
-		repositoryName.valueChanges.subscribe(repoName => this.getBranches(repoName, branch));
-		(this.qaForm.get('branches') as FormArray).push(branch);
-	}
-
-	/**
-	 * gets a repository's branch list and adds it to the corresponding branch form control.
-	 * @param {string} repoName the name of the repository
-	 * @param {FormControl} branch
-	 */
-	getBranches(repoName, branch) {
-		branch.setControl('allBranches', this.formBuilder.array(['Loading branches please wait...']));
-		this.cd.detectChanges();
-
-		this.git.getBranches(repoName).subscribe( 
-			branches => {
-				branches.data.unshift('Select a branch');
-				branch.setControl('allBranches', this.formBuilder.array(branches.data));
-				this.cd.detectChanges();
-			},
-			error => this.toastr.showToast(this.git.processErrorResponse(error), 'error')
-		);
-	}
-
-	/**
-	 * removes a branch from the branch form array.
-	 * @param {number} branchIndex the index of the branch to remove from the array.
-	 */
-	removeBranch(branchIndex:number): void {
-		(this.qaForm.get('branches') as FormArray).removeAt(branchIndex);
-	}
-
-	/**
-	 * Submits QA generator form inputs to generate Crucible and transition Jira ticket to PCR Needed.
+	 * Submits QA generator form inputs to generate diff and transition Jira ticket to PCR Needed.
 	 * @param {boolean} isSaving
 	 */
 	submitQA(isSaving=false): void {
-
-		const isPcr = this.qaForm.controls.selections.controls.pcrNeeded.value;
-		if(!isPcr || !isSaving){
-			this.statusChange.emit({canceled: true, hideToast: this.crucibleOnly});
-		}
-
-		// cancel and close if not saving form
-		if(!isSaving){
-			this.modal.closeModal();
-			return;
-		}
-
-		if(this.qaForm.invalid) return;
-		this.modal.closeModal();
+		if(!this._validSumbission(isSaving)) return;
 		
 		const postData = this.generatePostBody();
-		this.showSubmitMessage(postData);
-
+		showSubmitMessage.call(this, postData);
 		this.jira.generateQA(postData).subscribe(
 			response => {
 				// if still trying to get branches then cancel that
 				if(this.gitBranches$) this.gitBranches$.unsubscribe();
 
-				this.showQaSubmitSuccessMessage(response);
-				this.checkForStateChange(postData, response.data, isPcr);
+				showQaSubmitSuccessMessage.call(this, response, postData);
+
+				const isPcr = this.qaForm.controls.selections.controls.pcrNeeded.value;
+				checkForStateChange.call(this, postData, response.data, isPcr);
 				this._resetForm();
 			},
 			error => {
@@ -190,30 +155,33 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	}
 
 	/**
+	 *
+	 */
+	_validSumbission(isSaving){
+		const isPcr = this.qaForm.controls.selections.controls.pcrNeeded.value;
+		if(!isPcr || !isSaving){
+			this.statusChange.emit({canceled: true, hideToast: this.crucibleOnly});
+		}
+
+		// cancel and close if not saving form
+		if(!isSaving){
+			this.modal.closeModal();
+			return false;
+		}
+
+		if(this.qaForm.invalid) return;
+		this.modal.closeModal();
+
+		return true
+	}
+
+	/**
 	 * Resets forms fields to default values
 	 */
 	_resetForm(){
 		this.qaForm.get('selections').get('pcrNeeded').setValue(this.defaultPcrNeeded);
 		this.qaForm.get('selections').get('logTime').setValue(this.defaultLogTime);
 		this.qaForm.get('qaSteps').reset();
-	}
-
-	/**
-	 * Creates toast message on what is being processed on ticket from form values entered.
-	 * @param {Object} postData
-	 */
-	showSubmitMessage(postData):void {
-		// create info message based on form selections
-		let message = [];
-		if(postData.repos.length > 0) message.push('creating Crucible');
-		if(postData.qa_steps) message.push('adding comment to Jira');
-		if(postData.autoPCR) message.push('transitioning to PCR Needed');
-		if(postData.log_time) message.push('logging work');
-
-		// create info message and display
-		if(message.length > 1) message[message.length-1] = 'and ' + message[message.length-1];
-		const joiner = message.length > 2 ? ', ' : ' ';
-		this.toastr.showToast(message.join(joiner), 'info');
 	}
 
 	/**
@@ -231,6 +199,8 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 			msrp: this.msrp,
 			summary: this.summary,
 			story_point: this.story_point,
+			sprint: this.sprint,
+			master_branch: this.master_branch,
 			repos: branches.map(branch => {
 				return {
 					baseBranch: branch.controls.baseBranch.value,
@@ -242,189 +212,22 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Processes toast message for QA generator success.
-	 * @param {APIResponse} response
-	 */
-	showQaSubmitSuccessMessage(response){
-		let toastMessage = `<a target="_blank" href='${this.config.jiraUrl}/browse/${this.key}'>Jira Link</a>`;
-		
-		if(response.data.cru_response.status){
-			toastMessage += `	<a target="_blank" href='${this.config.crucibleUrl}/cru/${response.data.cru_response.data}'>Crucible Link</a>`;
-		}
-		
-		if (response.data.pull_response.status) {
-			// get name/request link for each repo
-			const repoLinks = response.data.pull_response.data.map(response => {
-				if(response.status){
-					return `<br><a target="_blank" href='${response.data.links.self[0].href}/diff'>${response.data.toRef.repository.name}</a>`;
-				}
-				return '';
-			});
-
-			toastMessage += `<br>Pull Request Links:${repoLinks.join('')}`
-		}
-		this.toastr.showToast(toastMessage, 'success', true);
-	}
-
-	/**
-	 * checks for any state changes such as ticket status, crucible ids added, and added comments.
-	 * @param {Object} postData the data used in the POST call to QA generator endpoint.
-	 * @param {Object} responseData the data in the response from the QA generator endpoint.
-	 * @param {boolean} isPcr if true then don't show cancel message.
-	 */
-	checkForStateChange(postData, responseData, isPcr):void {
-		console.log('responseData: ', responseData);
-
-		if(responseData.comment_response.status) {
-			this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});
-		}
-
-		// check for status changes okay - if status change came back success then set to pcr needed
-		// else if status change error and we did try to change status then show error
-		let status = statuses.INDEV.frontend;
-		if (postData.autoPCR && responseData.cr_response.status && responseData.pcr_response.status && responseData.pull_response.status){
-			status = statuses.PCRNEED.frontend;
-
-		} else if(postData.autoPCR){
-			// if we wanted PCR and we got here then there was a failure
-			const cr_message = responseData.cr_response.status ? '' : `Code Review status change<br>${responseData.cr_response.data}<br><br>`;
-			const pcr_message = responseData.pcr_response.status ? '' : `PCR Needed component change<br>${responseData.pcr_response.data}<br><br>`;
-
-			// if pull request failed then get all erro/rsuccess messages
-			let pull_message = '';
-			if (!responseData.pull_response.status){
-				pull_message = `Creating pull request:`
-				pull_message += responseData.pull_response.data.map(response => {
-					if(response.status){
-						return `<br>Success: <a target="_blank" href='${response.data.links.self[0].href}'>${response.data.toRef.repository.name}</a>`;
-
-					} else {
-						const errors = response.data.errors.map(err => err.message);
-						return `<br>Failed: ${errors}</a>`;
-					}
-				});
-			}
-
-			this.toastr.showToast(`The following transitions failed: ${cr_message} ${pcr_message} ${pull_message}`, 'error');
-		}
-
-		// if status changed -> update new status
-		if(status !== statuses.INDEV.frontend){
-			this.statusChange.emit({statusName: status, canceled:false});
-		}
-
-		// add work log if given
-		if(responseData.log_response.status) {
-			this.store.dispatch({type: Actions.updateWorklog, payload: {key:this.key, loggedSeconds:responseData.log_response.data.timeSpentSeconds}});
-		}
-
-		// add pull requests if given
-		if(responseData.pull_response.status) {
-			// this.store.dispatch({type: Actions.updatePullRequests, payload:{ key:this.key, cruid: responseData.cru_response.data}});
-		}
-	}
-
-	/**
 	 * Opens the QA generator dialog and starts a search for related branches.
 	 */
 	openQAModal():void {
+		this._resetForm();
 
 		// if only want crucible then set PCR needed to false
 		if(this.crucibleOnly) this.qaForm.get('selections').get('pcrNeeded').setValue(false);
 		this.cd.detectChanges();
 		this.modal.openModal();
 
-		// // set dismiss event to trigger status cancel
-		// this.modalRef.result.then(
-  //   		() => null,
-  //   		() => {
-  //   			this.statusChange.emit({canceled: true, hideToast: this.crucibleOnly});
-  //   		}
-  //   	);
-
 		// if we already have branches then don't reload them
 		if( (this.qaForm.get('branches') as FormArray).length > 0 ) {
 			return;
 		}
 
-		this.getTicketBranches();
-	}
-
-	/**
-	 * gets all branches related to a Jira ticket.
-	 */
-	getTicketBranches(){
-		this.loadingBranches = true;
-		this.cd.detectChanges();
-
-		// get all branches associated with this msrp
-		this.gitBranches$ = this.git.getTicketBranches(this.msrp).subscribe(
-			response =>{
-				this.processBranches(response.data);
-				this.loadingBranches = false;
-				this.cd.detectChanges();
-			},
-			error => {
-				this.jira.processErrorResponse(error),
-				this.loadingBranches = false;
-				this.cd.detectChanges();
-			}
-		);
-	}
-
-	/**
-	 * adds all branches related to a Jira ticket into the form object
-	 * @param {Array<Object>} branches 
-	 */
-	processBranches(branches): void {
-		branches.forEach(repo => {
-			
-			// for each matching dev branch found get list of branches
-			repo.branches.map( devBranch => {
-				let baseBranch;
-				if(repo.repo === 'external_modules') baseBranch = ['dev'];
-				else baseBranch = this.getBaseBranch(repo.all);
-
-				return {
-					allRepos: this.repos,
-					allBranches: repo.all,
-					repositoryName: repo.repo,
-					reviewedBranch: devBranch,
-					baseBranch: baseBranch || ''
-				};
-			})
-			.forEach(this.addBranch.bind(this));
-		});
-	}
-
-
-	/**
-	 * gets the base branch that a branch branched off of.
-	 * @param {Array<Object>} repos list of all repos
-	 * @return {string} the matching base branch
-	 */
-	getBaseBranch(repos): string {
-
-		// if sprint exists then try to get baseBranch from sprint name
-		if(this.sprint){
-			const branchBaseName = this.key.split('-');
-			const branchBase = `${branchBaseName[0]}${this.sprint}`;
-			let baseBranchFromSprint = repos.find(branch => branchBase === branch);
-
-			if(baseBranchFromSprint){
-				return baseBranchFromSprint;
-			}
-		}
-		
-		// if we couldn't find baseBranch from sprint then try to
-		// get all short branch names with numbers in them and sort
-		const selections = repos
-			.filter(branch => branch.length < 15)
-			.map(branch => branch.replace(/[^0-9.]/g,''))
-			.sort();
-
-		// get branch short branch name that has highest version found
-		return repos.find( branch => branch.length < 15 && branch.includes(selections[selections.length-1]));
+		getTicketBranches.call(this);
 	}
 
 	/**

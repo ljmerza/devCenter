@@ -51,10 +51,10 @@ class JiraMisc():
 			del response['data']['expand']
 			return response
 
-	def set_dev_changes(self, dev_value, key, cred_hash):
+	def set_dev_changes(self, dev_changes, key, cred_hash):
 		'''sets the dev changes value of a Jira ticket
 		'''
-		json_data = {"fields":{"customfield_10138":dev_value}}
+		json_data = {"fields":{"customfield_10138":dev_changes}}
 		return self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
 
 	def add_pr_to_dev_changes(self, pull_response, data):
@@ -72,10 +72,10 @@ class JiraMisc():
 
 		return self.add_dev_changes(dev_value=dev_value, cred_hash=cred_hash, key=key)
 		
-	def add_dev_changes(self, dev_value, cred_hash, key):
+	def add_dev_changes(self, dev_changes, cred_hash, key):
 		'''add text to dev changes field
 		'''
-		return self.set_dev_changes(dev_value=dev_value, cred_hash=data['cred_hash'], key=data['key'])
+		return self.set_dev_changes(dev_changes=dev_changes, cred_hash=data['cred_hash'], key=data['key'])
 
 	def build_qa_title(self, key, msrp, summary):
 		return f"[{key}] Ticket #{msrp} - {summary}"

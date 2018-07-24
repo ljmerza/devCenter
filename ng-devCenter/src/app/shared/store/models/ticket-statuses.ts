@@ -23,7 +23,7 @@ export const statuses:any = {
 	RELEASE: {frontend: 'Ready for Release', backend: 'releaseReady'},
 	REMOVEPCR: {frontend: 'Remove PCR Needed', backend: 'removePcrNeeded'},
 	REMOVEPCRC: {frontend: 'Remove PCR Completed', backend: 'removePcrCompleted'},
-	QAGEN: {frontend: 'Generate Crucible', backend: 'generateCrucible'}
+	QAGEN: {frontend: 'Generate Diff Links', backend: 'generateDiff'}
 };
 
 export const allTransistions:Array<Object> = [

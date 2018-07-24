@@ -4,8 +4,8 @@ from ..FlaskUtils import missing_parameters
 from ..CodeCloud.CodeCloud import CodeCloud
 from ..Jira.Jira import Jira
 
-def create_review(data):
-	'''
+def transition_to_pcr(data):
+	'''creates a bit bucket review
 	'''
 	missing_params =missing_parameters(params=data, required=['cred_hash', 'msrp', 'key'])
 	if missing_params:
@@ -14,7 +14,7 @@ def create_review(data):
 	response = {'status': True, 'data':{}}
 	pull_response = {'status': False}
 	comment_response = {'status': False}
-	pcr_response = {'status': False}x
+	pcr_response = {'status': False}
 	cr_response = {'status': False}
 	dev_change_response = {'status': False}
 	log_response = {'status': False}
@@ -25,9 +25,9 @@ def create_review(data):
 	# if repos given and transitioning to PCR then create pull requests
 	# else if only have repos then we just want diff links
 	if len(data['repos']) and data['autoPCR']:
-		pull_response = create_pull_request(data)
+		pull_response = create_pull_requests(data)
 	elif len(data['repos']):
-		diff_response = {}
+		diff_response = CodeCloud().generate_diff_links(repos=data['repos'], master_branch=data['master_branch'])
 
 	# if QA steps given then add QA comment with optional pull request data
 	if data['qa_steps']:
@@ -55,7 +55,7 @@ def get_repos(data):
 	'''get a list of all current repos'''
 	return CodeCloud().get_repos()
 
-def create_pull_request(data):
+def create_pull_requests(data):
 	'''generate pull requests
 	'''
 	missing_params =missing_parameters(params=data, required=['summary','repos'])
@@ -149,8 +149,6 @@ def pass_review_for_pull_requests(data):
 			comment=comment, 
 			cred_hash=data['cred_hash']
 		)
-
-		print(add_response)
 
 		# add response from adding pass comment and check errors
 		responses['data'].append(add_response)

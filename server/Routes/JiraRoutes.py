@@ -91,7 +91,8 @@ def define_routes(app, app_name, g):
 			'add_commits': post_data.get('add_commits', False),
 			'master_branch': post_data.get('master_branch', ''),
 			'pull_requests': post_data.get('pullRequests', []),
-			'repo_name': post_data.get('repo_name', '')
+			'repo_name': post_data.get('repo_name', ''),
+			'dev_changes': post_data.get('dev_changes', '')
 		}
 
 		status_response = {'status': False, 'data': 'status type not given'}

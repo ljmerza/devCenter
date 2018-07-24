@@ -1,6 +1,6 @@
 <dev-center-modal (modalCloseEvent)="submitQA()" [modalSize]=modalSize>
 	<div class='modal-header'>
-		<span *ngIf='crucibleOnly; else qaGenTitle'>Crucible Generator</span>
+		<span *ngIf='crucibleOnly; else qaGenTitle'>Diff Link Generator</span>
 		<ng-template #qaGenTitle>QA Generator</ng-template>
 	</div>
 
@@ -87,7 +87,7 @@
 				<!-- QA steps -->
 				<h4>QA Steps:</h4>
 				<div class="form-group">
-					 <textarea class="form-control" name="qaSteps" id="qaSteps" rows=15 formControlName="qaSteps"></textarea>
+					 <textarea class="form-control" name="qaSteps" id="qaSteps" rows=10 formControlName="qaSteps"></textarea>
 				</div>
 
 				<!-- checkboxes -->

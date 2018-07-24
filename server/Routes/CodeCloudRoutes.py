@@ -3,7 +3,7 @@
 from flask import Response, request
 from flask_cors import cross_origin
 
-from ..Requests.CodeCloudRequests import get_repos, create_pull_requests, get_branches, ticket_branches as CCRequests_ticket_branches, create_review as ccCreate_review, add_reviewer_to_pull_request
+from ..Requests.CodeCloudRequests import get_repos, create_pull_requests, get_branches, ticket_branches as CCRequests_ticket_branches, transition_to_pcr, add_reviewer_to_pull_request
 
 from ..Requests.JiraRequests import add_comment, add_commit_comment, edit_comment, delete_comment, add_work_log, get_jira_tickets, find_key_by_msrp, get_profile, parse_comment, modify_watchers
 
@@ -29,24 +29,24 @@ def define_routes(app, app_name, g):
 
 	@app.route(f'/{app_name}/codecloud/create', methods=['POST'])
 	@cross_origin()
-	def create_review():
+	def transition_ticket_to_pcr():
 		post_data = request.get_json()
 		data = {
 			"cred_hash": g.cred_hash,
 			"key": post_data.get('key', ''),
 			"repos": post_data.get('repos', ''),
-			"password": post_data.get('password', ''),
-			"username": post_data.get('username', ''),
 			"qa_steps": post_data.get('qa_steps', ''),
 			"autoCR": post_data.get('autoCR', False),
 			"autoPCR": post_data.get('autoPCR', False),
 			"log_time": post_data.get('log_time', 0),
 			"msrp": post_data.get('msrp', ''),
 			"story_point": post_data.get('story_point', ''),
-			"summary": post_data.get('summary', '')
+			"summary": post_data.get('summary', ''),
+			"sprint": post_data.get('sprint', ''),
+			"master_branch": post_data.get('master_branch', '')
 		}
 
-		response = ccCreate_review(data=data)
+		response = transition_to_pcr(data=data)
 		return Response(response, mimetype='application/json')
 
 	@app.route(f'/{app_name}/codecloud/add_reviewer', methods=['POST'])
