@@ -6,11 +6,10 @@ from .JiraStatus import JiraStatus
 from .JiraMisc import JiraMisc
 from .JiraTickets import JiraTickets
 from .JiraWatchers import JiraWatchers
-from .JiraQa import JiraQa
 
 from .JiraAPI import JiraAPI
 
-class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments, JiraWatchers, JiraQa):
+class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments, JiraWatchers):
 	def __init__(self):
 		self.jira_api = JiraAPI()
 
@@ -20,4 +19,3 @@ class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments, JiraW
 		JiraTickets.__init__(self, self.jira_api)
 		JiraComments.__init__(self, self.jira_api)
 		JiraWatchers.__init__(self, self.jira_api)
-		JiraQa.__init__(self)

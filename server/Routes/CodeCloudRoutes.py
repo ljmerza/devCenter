@@ -34,7 +34,7 @@ def define_routes(app, app_name, g):
 		data = {
 			"cred_hash": g.cred_hash,
 			"key": post_data.get('key', ''),
-			"repos": post_data.get('repos', ''),
+			"repos": post_data.get('repos', []),
 			"qa_steps": post_data.get('qa_steps', ''),
 			"autoCR": post_data.get('autoCR', False),
 			"autoPCR": post_data.get('autoPCR', False),
@@ -43,7 +43,8 @@ def define_routes(app, app_name, g):
 			"story_point": post_data.get('story_point', ''),
 			"summary": post_data.get('summary', ''),
 			"sprint": post_data.get('sprint', ''),
-			"master_branch": post_data.get('master_branch', '')
+			"master_branch": post_data.get('master_branch', ''),
+			"skip_pulls": post_data.get('skill_pulls', False)
 		}
 
 		response = transition_to_pcr(data=data)

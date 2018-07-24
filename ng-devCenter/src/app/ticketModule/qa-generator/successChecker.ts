@@ -10,31 +10,35 @@ export function showQaSubmitSuccessMessage(response, postData){
 	let successMessage = '';
 	let errorMessage = '';
 
-	// check for diff links
-	if(!postData.autoPCR && !postData.qa_steps && postData.repos.length > 0){
-		const [diffSuccessMessage, diffErrorMessage] = this.checkDiffResponse(response);
+	// if repos were given check for pull requests links or diff links 
+	if(postData.autoPCR && postData.repos.length > 0){
+		const [pullSuccessMessage, pullErrorMessage] = checkPullRequestResponse(response);
+		successMessage += pullSuccessMessage;
+		errorMessage += pullErrorMessage;
+
+	} else if(postData.repos.length > 0){
+		const [diffSuccessMessage, diffErrorMessage] = checkDiffResponse(response);
 		successMessage += diffSuccessMessage;
 		errorMessage += diffErrorMessage;
-
 	}
 
 	// check for auto pcr
 	if(postData.autoPCR){
-		const [pcrSuccessMessage, pcrErrorMessage] = checkautoPcr(postData, response);
+		const [pcrSuccessMessage, pcrErrorMessage] = checkAutoPcrResponse(postData, response);
 		successMessage += pcrSuccessMessage;
 		errorMessage += pcrErrorMessage;
 	}
 
 	// check for work log
 	if(postData.log_time){
-		const [pcrSuccessMessage, pcrErrorMessage] = checkWorklog(postData, response);
+		const [pcrSuccessMessage, pcrErrorMessage] = checkWorklogResponse(postData, response);
 		successMessage += pcrSuccessMessage;
 		errorMessage += pcrErrorMessage;
 	}
 
 	// check for QA steps
 	if(postData.qa_steps){
-		const [qaSuccessMessage, qaErrorMessage] = qaStepCheck(postData, response);
+		const [qaSuccessMessage, qaErrorMessage] = checkQaStepResponse(postData, response);
 		successMessage += qaSuccessMessage;
 		errorMessage += qaErrorMessage;
 	}
@@ -45,28 +49,31 @@ export function showQaSubmitSuccessMessage(response, postData){
 	if(errorMessage) this.toastr.showToast(errorMessage, 'error', true);
 }
 
-export function checkWorklog(postData, response){
+/**
+ * checks the work log response
+ */
+export function checkWorklogResponse(postData, response){
 	let successMessage = '';
 	let errorMessage = '';
 
 	if(response.log_response.status){
-		successMessage = '<br>Work log added.'
+		successMessage = 'Work log added.<br>'
 	} else {
-		errorMessage =  `<br>addingwork log failed: ${response.log_response.data}`;
+		errorMessage =  `Adding worklog failed: ${response.log_response.data}<br>`;
 	}
 
 	return [successMessage, errorMessage];
 }
 
 
-export function qaStepCheck(postData, response){
+export function checkQaStepResponse(postData, response){
 	let successMessage = '';
 	let errorMessage = '';
 
 	if(response.comment_response.status){
-		successMessage = '<br>QA steps created.'
+		successMessage = 'QA steps created.<br>'
 	} else {
-		errorMessage =  `<br>creating QA steps failed: ${response.comment_response.data}`;
+		errorMessage =  `Creating QA steps failed: ${response.comment_response.data}<br>`;
 	}
 
 	return [successMessage, errorMessage];
@@ -75,7 +82,7 @@ export function qaStepCheck(postData, response){
 /**
  * check for CR/PCR transitions and pull request generation
  */
-export function checkautoPcr(postData, response){
+export function checkAutoPcrResponse(postData, response){
 	let successMessage = '';
 	let errorMessage = '';
 
@@ -87,8 +94,18 @@ export function checkautoPcr(postData, response){
 		if(pcrMessage) errorMessage += pcrMessage;
 	}
 
+	return [successMessage, errorMessage];
+}
+
+/**
+ * check response for creation of pull request links
+ */
+export function checkPullRequestResponse(response){
+	let successMessage = '';
+	let errorMessage = '';
+
 	if(!response.pull_response.status){
-		errorMessage = response.pull_response.data;
+		errorMessage = `Error creating pull requests links: ${response.pull_response.data}<br>`;
 
 	} else {
 		let pullSuccess = '';
@@ -97,36 +114,39 @@ export function checkautoPcr(postData, response){
 			if(pull.status){
 				const link = pull.data.links.self[0].href;
 				const repo = pull.data.toRef.repository.name;
-				pullSuccess += `<br><a target="_blank" href='${link}'>${repo}</a>`;
+				pullSuccess += `<a target="_blank" href='${link}'>${repo}</a><br>`;
+
 			} else {
 				const messages = pull.data.errors.map(err => err.message);
-				pullErrors += `<br>${messages}`;
+				pullErrors += `${messages}<br>`;
 			}
 		});
 
-		if(pullSuccess) successMessage += `The following pull requests were made: ${pullSuccess}`;
-		if(pullErrors) errorMessage += `The following pull requests failed: ${pullErrors}`;
+		if(pullSuccess) successMessage += `The following pull requests were made: ${pullSuccess}<br>`;
+		if(pullErrors) errorMessage += `The following pull requests failed: ${pullErrors}<br>`;
 	}
 
 	return [successMessage, errorMessage];
 }
 
+
+
 /**
- * check response for creation of diff links
+ * check response for creation of pull request links
  */
 export function checkDiffResponse(response){
 	let successMessage = '';
 	let errorMessage = '';
 
-	if(!response.data.diff_response.status){
-		errorMessage = `Error creating diff links: ${response.data.diff_response.data}`;
+	if(!response.diff_response.status){
+		errorMessage = `Error creating diff links: ${response.diff_response.data}<br>`;
 
 	} else {
-		const diffLinks = (response.data.diff_response.data || []).map(diff => {
-			return `<br><a target="_blank" href='${diff.link}'>${diff.repo}</a>`;
+		const pullLinks = (response.diff_response.data || []).map(diff => {
+			return `<a target="_blank" href='${diff.link}'>${diff.repo}</a>`;
 		});
 
-		successMessage = `diff links created for:\n${diffLinks.join('')}`;
+		successMessage = `Diff links created for:<br>${pullLinks.join('<br>')}<br>`;
 	}
 
 	return [successMessage, errorMessage];

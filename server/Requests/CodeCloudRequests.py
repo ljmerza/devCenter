@@ -4,7 +4,10 @@ from ..FlaskUtils import missing_parameters
 from ..CodeCloud.CodeCloud import CodeCloud
 from ..Jira.Jira import Jira
 
+from ..Requests.JiraRequests import set_status
+
 def transition_to_pcr(data):
+	print('data', data)
 	'''creates a bit bucket review
 	'''
 	missing_params =missing_parameters(params=data, required=['cred_hash', 'msrp', 'key'])
@@ -19,27 +22,26 @@ def transition_to_pcr(data):
 	dev_change_response = {'status': False}
 	log_response = {'status': False}
 	diff_response = {'status': False}
-
-	jira = Jira()
 	
 	# if repos given and transitioning to PCR then create pull requests
 	# else if only have repos then we just want diff links
-	if len(data['repos']) and data['autoPCR']:
+	if len(data['repos']) and data['autoPCR'] and not data['skip_pulls']:
 		pull_response = create_pull_requests(data)
-	elif len(data['repos']):
+	if len(data['repos']):
 		diff_response = CodeCloud().generate_diff_links(repos=data['repos'], master_branch=data['master_branch'])
 
-	# if QA steps given then add QA comment with optional pull request data
 	if data['qa_steps']:
-		comment_response = add_qa_comment(data=data, pull_response=pull_response)
+		comment_response = add_qa_comment(data=data, pull_response=pull_response, diff_response=diff_response)
 
-	# if transitioning to PCR then update JHira ticket statuses and add dev changes text
+	# if transitioning to PCR then update Jira ticket statuses and add dev changes text
 	if data['autoPCR']:
-		dev_change_response = auto_pcr(data=data, pull_response=pull_response)
+		auto_pcr_response = auto_pcr(data=data, pull_response=pull_response)
+		pcr_response = auto_pcr_response['pcr_response']
+		cr_response = auto_pcr_response['cr_response']
+		dev_change_response = auto_pcr_response['dev_change_response']
 
-	# update work log if given
 	if data['log_time']:
-		log_response = add_work_log(data=data)
+		log_response = Jira().add_work_log(time=data['log_time'], key=data['key'], cred_hash=data['cred_hash'])
 
 	# save all response and return
 	response['data']['comment_response'] = comment_response
@@ -58,12 +60,13 @@ def get_repos(data):
 def create_pull_requests(data):
 	'''generate pull requests
 	'''
-	missing_params =missing_parameters(params=data, required=['summary','repos'])
+	missing_params = missing_parameters(params=data, required=['summary','repos'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	# generate pull request title and then generate all pull requests
-	qa_title = jira.build_qa_title(key=data['key'], msrp=data['msrp'], summary=data['summary'])
+	qa_title = Jira().build_qa_title(key=data['key'], msrp=data['msrp'], summary=data['summary'])
+
 	return CodeCloud().create_pull_requests(
 		repos=data['repos'], 
 		key=data['key'],
@@ -73,23 +76,33 @@ def create_pull_requests(data):
 		summary=data['summary']
 	)
 
-def autoPcr(data, pull_response):
+def auto_pcr(data, pull_response):
 	''' transition Jira ticket and add dev changes text from pull request data
 	'''
+	jira = Jira()
+
 	response = {'status': False}
 	data['status_type'] = 'pcrNeeded'
+	data['status_type'] = 'inDev'
 	pcr_response = set_status(data=data)
 
 	data['status_type'] = 'cr'
+	data['status_type'] = 'inDev'
 	cr_response = set_status(data=data)
 
 	# add pull request info to dev changes tab
+	dev_change_response = {'status': False, 'data': ''}
 	if pull_response['status']:
-		missing_params =missing_parameters(params=data, required=['story_point'])
+		missing_params = missing_parameters(params=data, required=['story_point'])
 		if missing_params:
 			return {"data": f"Missing required parameters: {missing_params}", "status": False}
-		response = jira.add_pr_to_dev_changes(pull_response=pull_response, data=data)
-	return response
+		dev_change_response = jira.add_pr_to_dev_changes(pull_response=pull_response, data=data)
+
+	return {
+		'pcr_response': pcr_response,
+		'cr_response': cr_response,
+		'dev_change_response': dev_change_response
+	}
 
 def get_branches(data):
 	'''gets all branches for a given repo
@@ -110,29 +123,25 @@ def ticket_branches(data):
 	return CodeCloud().ticket_branches(cred_hash=data['cred_hash'], msrp=data['msrp'])
 
 
-def add_qa_comment(data, pull_response=None):
+def add_qa_comment(data, pull_response=None, diff_response=None):
 	'''add a QA steps generated Jira comment 
 	'''
 	missing_params = missing_parameters(params=data, required=['key','repos', 'qa_steps', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	# if given pull requests then add to QA comment
-	pull_request_comments = ''
-	if pull_response:
-		pull_request_comments = CodeCloud().generate_pull_request_comment(
-			pull_response=pull_response,
-			repos=data.get('repos', []),
-		)
-
-	qa_steps = Jira().generate_qa_template(
+	qa_step_comment = CodeCloud().generate_qa_template(
 		qa_steps=data['qa_steps'], 
 		repos=data['repos'], 
-		pull_request_comments=pull_request_comments, 
+		pull_response=pull_response, 
+		diff_response=diff_response, 
 	)
 
-	data['comment'] = qa_steps
-	return add_comment(data=data)
+	return Jira().add_comment(
+		key=data['key'], 
+		cred_hash=data['cred_hash'], 
+		comment=qa_step_comment
+	)
 	
 def pass_review_for_pull_requests(data):
 	missing_params = missing_parameters(params=data, required=['pull_requests', 'cred_hash'])

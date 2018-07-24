@@ -4,9 +4,7 @@ import datetime
 import math
 
 from time import gmtime, strftime
-from .JiraQa import *
 from .JiraFields import *
-
 
 class JiraMisc():
 	def __init__(self, jira_api):

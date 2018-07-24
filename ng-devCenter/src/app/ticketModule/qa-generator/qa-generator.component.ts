@@ -14,10 +14,7 @@ import { JiraService, ToastrService, GitService, ConfigService, UserService } fr
 import { RootState, Actions } from '@store';
 import { statuses, Repo, Ticket, APIResponse } from '@models';
 
-import {
-	showQaSubmitSuccessMessage, showSubmitMessage, checkForStateChange,
-	checkDiffResponse, qaStepCheck, checkautoPcr, checkWorklog
-} from './successChecker';
+import {showQaSubmitSuccessMessage, showSubmitMessage, checkForStateChange} from './successChecker';
 import {processBranches, getTicketBranches, getBranches, addBranch, removeBranch, getBaseBranch} from './branchActions';
 
 @Component({
@@ -59,10 +56,8 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 	addBranch;
 	removeBranch;
 	getBaseBranch;
-	checkDiffResponse;
-	qaStepCheck;
-	checkautoPcr;
-	checkWorklog;
+	checkForStateChange;
+	showQaSubmitSuccessMessage;
 
 	constructor(
 		public jira:JiraService, private git: GitService, public toastr: ToastrService, 
@@ -83,10 +78,8 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		this.addBranch = addBranch.bind(this);
 		this.removeBranch = removeBranch.bind(this);
 		this.getBaseBranch = getBaseBranch.bind(this);
-		this.checkDiffResponse = checkDiffResponse.bind(this);
-		this.qaStepCheck = qaStepCheck.bind(this);
-		this.checkautoPcr = checkautoPcr.bind(this);
-		this.checkWorklog = checkWorklog.bind(this);
+		this.checkForStateChange = checkForStateChange.bind(this);
+		this.showQaSubmitSuccessMessage = showQaSubmitSuccessMessage.bind(this);
 	}
 
 	/**
@@ -138,13 +131,13 @@ export class QaGeneratorComponent implements OnInit, OnDestroy {
 		showSubmitMessage.call(this, postData);
 		this.jira.generateQA(postData).subscribe(
 			response => {
-				// if still trying to get branches then cancel that
 				if(this.gitBranches$) this.gitBranches$.unsubscribe();
 
-				showQaSubmitSuccessMessage.call(this, response, postData);
+				this.showQaSubmitSuccessMessage(response.data, postData);
 
 				const isPcr = this.qaForm.controls.selections.controls.pcrNeeded.value;
-				checkForStateChange.call(this, postData, response.data, isPcr);
+				this.checkForStateChange(postData, response.data, isPcr);
+
 				this._resetForm();
 			},
 			error => {
