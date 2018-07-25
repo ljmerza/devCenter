@@ -35,5 +35,5 @@ class SQLTickets():
 			for key, val in jira_ticket.items():
 				setattr(row, key, val)
 
-		self.logout(session)
 		session.commit()
+		self.logout(session)

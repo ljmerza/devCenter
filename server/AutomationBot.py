@@ -14,11 +14,12 @@ from .SQL.DevCenterSQL import DevCenterSQL
 from .Chat.Chat import Chat
 from .reminders import reminders
 
+logging.basicConfig(level=logging.INFO)
+
 class AutomationBot(object):
 	def __init__(self, is_beta_week, beta_stat_ping_now, devbot, is_qa_pcr, merge_alerts, devdb, sql_echo, no_pings):
 		self.username = os.environ['USER']
 		self.password = os.environ['PASSWORD']
-
 		################################################################################
 		# create DB object and connect
 		self.sql_object = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
@@ -59,7 +60,7 @@ class AutomationBot(object):
 			jira_tickets = self.jira_obj.get_jira_tickets(
 				jql=self.jira_obj.jira_api.all_open_tickets, 
 				cred_hash=self.cred_hash
-			)			
+			)
 
 			# make sure we have Jira tickets
 			if not jira_tickets['status']:
@@ -68,10 +69,10 @@ class AutomationBot(object):
 				return {'status': False, 'data': message}
 
 			# print time to retrieve tickets
-			logging.info('Processing '+str(len(jira_tickets['data']))+' Jira tickets')
 			end_get = time.time()
-			logging.info('Retrieved Tickets: {:.4}'.format(end_get-start_get))
 			start_bot = time.time()
+			logging.info('Processing '+str(len(jira_tickets['data']))+' Jira tickets')
+			logging.info('Retrieved Tickets: {:.4}'.format(end_get-start_get))
 
 			# for each jira ticket update DB table
 			for jira_ticket  in jira_tickets['data']:
@@ -80,10 +81,10 @@ class AutomationBot(object):
 			# create thread for chatbot to check pings and print time to start thread
 			for jira_ticket in jira_tickets['data']:	
 				self.check_for_pings(jira_ticket=jira_ticket)
+
 			end_bot = time.time()
 			logging.info('Check for pings: {:.4}'.format(end_bot-start_bot))
 			start_update = time.time()
-
 
 			# print time to update tickets in DB
 			end_update = time.time()
