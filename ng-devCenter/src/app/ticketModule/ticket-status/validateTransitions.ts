@@ -111,7 +111,7 @@ export function verifyPcrComplete(statusResponse){
 	statusResponse.add_comment.forEach(pull => {
 		if(!pull.status){
 			const errors = _getPullErrors(pull);
-			this.toast.showToast(`Failed to add pcr complete to pull request: ${errors}`);
+			this.toastr.showToast(`Failed to add pcr complete to pull request: ${errors}`);
 			pullErrors = true;
 		}
 	});
@@ -122,7 +122,7 @@ export function verifyPcrComplete(statusResponse){
 	statusResponse.pass_response.forEach(pull => {
 		if(!pull.status){
 			const errors = _getPullErrors(pull);
-			this.toast.showToast(`Failed to approve pull request: ${errors}`);
+			this.toastr.showToast(`Failed to approve pull request: ${errors}`);
 			approveErrors = true;
 		}
 	});
