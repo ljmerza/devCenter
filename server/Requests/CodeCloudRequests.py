@@ -7,7 +7,6 @@ from ..Jira.Jira import Jira
 from ..Requests.JiraRequests import set_status
 
 def transition_to_pcr(data):
-	print('data', data)
 	'''creates a bit bucket review
 	'''
 	missing_params =missing_parameters(params=data, required=['cred_hash', 'msrp', 'key'])
@@ -83,11 +82,9 @@ def auto_pcr(data, pull_response):
 
 	response = {'status': False}
 	data['status_type'] = 'pcrNeeded'
-	data['status_type'] = 'inDev'
 	pcr_response = set_status(data=data)
 
 	data['status_type'] = 'cr'
-	data['status_type'] = 'inDev'
 	cr_response = set_status(data=data)
 
 	# add pull request info to dev changes tab

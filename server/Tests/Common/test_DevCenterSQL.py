@@ -17,11 +17,8 @@ divider = '-'*40
 
 # create object, login, and logout
 sql_object = DevCenterSQL.DevCenterSQL()
-sql_object.login()
-sql_object.logout()
-
-# log back in
-sql_object.login()
+session = sql_object.login()
+sql_object.logout(session)
 
 # create Jira rows with and without a MSRP
 print('create Jira rows with and without a MSRP')

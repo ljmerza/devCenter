@@ -272,17 +272,6 @@ def format_comment(comment, key):
 		'visibility': 'Developers' if 'visibility' in comment else ''
 	}
 
-def get_crucible_id(issue):
-	crucible_id = ''
-	comments = get_comments(issue)
-
-	for comment in comments:
-		match = re.search(r'CR-UD-[0-9]{4}', comment['comment'])
-		if match:
-			crucible_id = match.group(0)
-
-	return crucible_id
-
 def get_customer_details(issue):
 	return {
 		'username': issue.get('fields', {}).get('customfield_10102', ''),

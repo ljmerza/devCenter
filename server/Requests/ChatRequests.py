@@ -51,14 +51,11 @@ def set_user_pings(data, devdb, sql_echo):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	
 	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
-	session = sql_obj.login()
 	response = sql_obj.set_user_pings(
 		username=data['username'],
-		fields=data['fields'],
-		session=session
+		fields=data['fields']
 	)
 
-	sql_obj.logout(session=session)
 	return response
 
 def send_custom_ping(data, dev_chat, no_pings):
@@ -90,7 +87,6 @@ def send_custom_ping(data, dev_chat, no_pings):
 			msrp=response.get('data').get('msrp'), 
 			sprint=response.get('data').get('sprint'), 
 			label=response.get('data').get('label'), 
-			crucible_id=response.get('data').get('crucible_id'), 
 			pcr_estimate=response.get('data').get('pcr_estimate'),
 			override=True
 		)

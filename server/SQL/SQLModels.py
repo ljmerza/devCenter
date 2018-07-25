@@ -20,7 +20,6 @@ class Tickets(Modal):
 	sprint = Column(VARCHAR(30))
 	epic_link = Column(VARCHAR(20))
 	label = Column(VARCHAR(50))
-	crucible_id = Column(VARCHAR(15))
 	qa_steps = Column(TEXT(charset='utf8'))
 
 	customer_details = Column(TEXT(charset='utf8'))

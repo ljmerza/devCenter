@@ -2,131 +2,125 @@ import { Actions } from '@store';
 import { statuses } from '@models';
 
 /**
- * Processes toast message for QA generator success.
+ * Processes toast message for QA generator success/fail.
  * @param {APIResponse} response
+ * @param {Object} postData
  */
 export function showQaSubmitSuccessMessage(response, postData){
 	console.log({response, postData});
 	let successMessage = '';
-	let errorMessage = '';
 
 	// if repos were given check for pull requests links or diff links 
 	if(postData.autoPCR && postData.repos.length > 0){
-		const [pullSuccessMessage, pullErrorMessage] = checkPullRequestResponse(response);
-		successMessage += pullSuccessMessage;
-		errorMessage += pullErrorMessage;
+		let [error, success] = checkPullRequestResponse(response);
+		if(success) successMessage += success;
+		if (error) this.toastr.showToast(`The following pull requests failed:<br>${error}`, 'error', true);
 
 	} else if(postData.repos.length > 0){
-		const [diffSuccessMessage, diffErrorMessage] = checkDiffResponse(response);
-		successMessage += diffSuccessMessage;
-		errorMessage += diffErrorMessage;
+		let [error, success] = checkDiffResponse(response);
+		if(success) successMessage += success;
+		if (error) this.toastr.showToast(`The following diff links failed:<br>${error}`, 'error', true);
 	}
 
-	// check for auto pcr
 	if(postData.autoPCR){
-		const [pcrSuccessMessage, pcrErrorMessage] = checkAutoPcrResponse(postData, response);
-		successMessage += pcrSuccessMessage;
-		errorMessage += pcrErrorMessage;
+		let [error, success] = checkAutoPcrResponse(postData, response);
+		if(success) successMessage += success;
+		if (error) this.toastr.showToast(error, 'error', true);
 	}
 
-	// check for work log
 	if(postData.log_time){
-		const [pcrSuccessMessage, pcrErrorMessage] = checkWorklogResponse(postData, response);
-		successMessage += pcrSuccessMessage;
-		errorMessage += pcrErrorMessage;
+		let [error, success] = checkWorklogResponse(postData, response);
+		if(success) successMessage += success;
+		if (error) this.toastr.showToast(error, 'error', true);
 	}
 
-	// check for QA steps
 	if(postData.qa_steps){
-		const [qaSuccessMessage, qaErrorMessage] = checkQaStepResponse(postData, response);
-		successMessage += qaSuccessMessage;
-		errorMessage += qaErrorMessage;
+		let [error, success] = checkQaStepResponse(postData, response);
+		if(success) successMessage += success;
+		if (error) this.toastr.showToast(error, 'error', true);
 	}
 
-	console.log({successMessage, errorMessage});
-	// show any success or error messages found
+	console.log({successMessage});
 	if(successMessage) this.toastr.showToast(successMessage, 'success', true);
-	if(errorMessage) this.toastr.showToast(errorMessage, 'error', true);
 }
 
 /**
  * checks the work log response
  */
 export function checkWorklogResponse(postData, response){
-	let successMessage = '';
-	let errorMessage = '';
+	let success = '';
+	let error = '';
 
 	if(response.log_response.status){
-		successMessage = 'Work log added.<br>'
+		success = 'Work log added<br>'
 	} else {
-		errorMessage =  `Adding worklog failed: ${response.log_response.data}<br>`;
+		error = `Adding worklog failed: ${response.log_response.data}`;
 	}
 
-	return [successMessage, errorMessage];
+	return [error, success];
 }
 
-
+/**
+ *
+ */
 export function checkQaStepResponse(postData, response){
-	let successMessage = '';
-	let errorMessage = '';
+	let success = '';
+	let error = '';
 
 	if(response.comment_response.status){
-		successMessage = 'QA steps created.<br>'
+		success =  'QA steps created<br>'
 	} else {
-		errorMessage =  `Creating QA steps failed: ${response.comment_response.data}<br>`;
+		error = `Creating QA steps failed: ${response.comment_response.data}`;
 	}
 
-	return [successMessage, errorMessage];
+	return [error, success];
 }
 
 /**
  * check for CR/PCR transitions and pull request generation
  */
 export function checkAutoPcrResponse(postData, response){
-	let successMessage = '';
-	let errorMessage = '';
+	let success = '';
+	let error = '';
 
-	// add any errors for CR/PCR transitions
-	if(postData.autoPCR){
-		const crMessage = response.cr_response.status ? '' : `Code Review status change failed: ${response.cr_response.data}<br>`;
-		const pcrMessage = response.pcr_response.status ? '' : `PCR Needed component change failed: ${response.pcr_response.data}<br>`;
-		if(crMessage) errorMessage += crMessage;
-		if(pcrMessage) errorMessage += pcrMessage;
+	if(response.cr_response.status){
+		success += 'CR status changed<br>';
+	}else {
+		error +=  `Code Review status change failed<br>`;
 	}
 
-	return [successMessage, errorMessage];
+	if(response.pcr_response.status){
+		success += 'PCR component added<br>';
+	}else {
+		error += `PCR Needed component change failed<br>`;
+	}
+
+	if(response.dev_change_response.status){
+		success += 'Added pull requests to dev changes<br>';
+	}else {
+		error += `Adding pull requests to dev changes failed<br>`;
+	}
+
+	return [error, success];
 }
 
 /**
  * check response for creation of pull request links
  */
 export function checkPullRequestResponse(response){
-	let successMessage = '';
-	let errorMessage = '';
+	let success = '';
+	let error = '';
 
-	if(!response.pull_response.status){
-		errorMessage = `Error creating pull requests links: ${response.pull_response.data}<br>`;
+	response.pull_response.data.forEach(pull => {
+		if(pull.link){
+			success += `<a target="_blank" href='${pull.link}'>${pull.repo}</a><br>`;
+		} else {
+			error += `${pull.repo}: ${pull.error}<br>`;
+		}
+	});
 
-	} else {
-		let pullSuccess = '';
-		let pullErrors = '';
-		response.pull_response.data.forEach(pull => {
-			if(pull.status){
-				const link = pull.data.links.self[0].href;
-				const repo = pull.data.toRef.repository.name;
-				pullSuccess += `<a target="_blank" href='${link}'>${repo}</a><br>`;
-
-			} else {
-				const messages = pull.data.errors.map(err => err.message);
-				pullErrors += `${messages}<br>`;
-			}
-		});
-
-		if(pullSuccess) successMessage += `The following pull requests were made: ${pullSuccess}<br>`;
-		if(pullErrors) errorMessage += `The following pull requests failed: ${pullErrors}<br>`;
-	}
-
-	return [successMessage, errorMessage];
+	if(success) success = `The following pull requests were made:<br> ${success}<br>`;
+	return [error, success];
 }
 
 
@@ -135,21 +129,21 @@ export function checkPullRequestResponse(response){
  * check response for creation of pull request links
  */
 export function checkDiffResponse(response){
-	let successMessage = '';
-	let errorMessage = '';
+	let success = '';
+	let error = '';
 
 	if(!response.diff_response.status){
-		errorMessage = `Error creating diff links: ${response.diff_response.data}<br>`;
+		error = `Error creating diff links: ${response.diff_response.data}`;
 
 	} else {
-		const pullLinks = (response.diff_response.data || []).map(diff => {
-			return `<a target="_blank" href='${diff.link}'>${diff.repo}</a>`;
-		});
+		const pullLinks = (response.diff_response.data || [])
+			.map(diff => `<a target="_blank" href='${diff.link}'>${diff.repo}</a>`)
+			.join('<br>');
 
-		successMessage = `Diff links created for:<br>${pullLinks.join('<br>')}<br>`;
+		success = `Diff links created for:<br>${pullLinks}<br>`;
 	}
 
-	return [successMessage, errorMessage];
+	return [error, success];
 }
 
 
@@ -160,10 +154,11 @@ export function checkDiffResponse(response){
 export function showSubmitMessage(postData):void {
 	// create info message based on form selections
 	let message = [];
-	if(postData.repos.length > 0) message.push('creating Crucible');
-	if(postData.qa_steps) message.push('adding comment to Jira');
-	if(postData.autoPCR) message.push('transitioning to PCR Needed');
-	if(postData.log_time) message.push('logging work');
+	if(postData.repos.length > 0 && postData.autoPcr) message.push('Creating Pull Requests');
+	else if(postData.repos.length > 0 ) message.push('Creating Diff Links');
+	if(postData.qa_steps) message.push('Adding QA Steps to Jira');
+	if(postData.autoPCR) message.push('transitioning to PCR Needed/Code Review');
+	if(postData.log_time) message.push('Adding to Worklog');
 
 	// create info message and display
 	if(message.length > 1) message[message.length-1] = 'and ' + message[message.length-1];

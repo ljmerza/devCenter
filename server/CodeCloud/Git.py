@@ -91,7 +91,7 @@ class Git():
     def create_pull_requests(self, repos, key, msrp, summary, cred_hash, qa_title):
         '''submits pull requests for a list of branches
         '''
-        all_responses = []
+        response = {'status': True, 'data': []}
 
         for repo in repos:
             repo_name = repo['repositoryName']
@@ -130,17 +130,21 @@ class Git():
             }
 
             url = f'{self.code_cloud_api.branch_api}/{repo_name}/pull-requests'
-            response = self.code_cloud_api.post_json(
+            pull_response = self.code_cloud_api.post_json(
                 url=url, 
                 json_data=json_data, 
                 cred_hash=cred_hash
             )
-            
-            all_responses.append(response)
-        
-        response = {'status': True, 'data': all_responses}
-        for repo in all_responses:
-            if not repo.get('status'):
-                response['status'] = False
+
+            if not pull_response['status']:
+                response['data'].append({
+                    'error': pull_response['data']['errors'][0]['message'],
+                    'repo': repo_name
+                })
+            else:
+                response['data'].append({
+                    'link': pull_response['data']['links']['self'][0]['href'],
+                    'repo': repo_name
+                })
 
         return response

@@ -70,9 +70,10 @@ while True:
 		if not response['status']:
 			print('ERROR:', response['data'])
 		else:
-			session = requests.session()
-			session.trust_env=False
-			response = session.post(url=f"http://{host}:{port}/dev_center/socket_tickets", json=response)
+			pass
+			# session = requests.session()
+			# session.trust_env=False
+			# response = session.post(url=f"http://{host}:{port}/dev_center/socket_tickets", json=response)
 
 
 ########################################################################

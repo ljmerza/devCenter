@@ -54,7 +54,7 @@ class ChatMisc():
 		if(username not in self.chat_api.project_managers):
 			return self.chat_api.send_message(message=message, username=username)
 
-	def send_merge_alert(self, key, msrp, sprint, username, repos_merged, crucible_id, summary):
+	def send_merge_alert(self, key, msrp, sprint, username, repos_merged, summary):
 		message = ''
 		last_repo_index = len(repos_merged) -1
 		
@@ -71,7 +71,7 @@ class ChatMisc():
 
 		# format sprint and rest of message
 		sprint = sprint.replace(' ', '')
-		message += f" for '{summary}'  on sprint {sprint} has been updated by {username} - <a href='{self.chat_api.crucible_ticket_base}{crucible_id}'>Crucible</a> <a href='{self.chat_api.jira_ticket_base}{key}'>Jira</a>"
+		message += f" for '{summary}'  on sprint {sprint} has been updated by {username} - <a href='{self.chat_api.jira_ticket_base}{key}'>Jira</a>"
 		
 		chatroom = self.chat_api.jira_chat
 		if self.merge_alerts:

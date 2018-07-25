@@ -31,14 +31,7 @@ class PullRequests():
 
 	def create_qa_header(self, pull_response, diff_response):
 		'''generate the QA step table header'''
-		table_data = "|| Repo || Branch || Branched From ||"
-
-		if pull_response and pull_response['status']:
-			table_data += ' Pull Requests ||'
-		if diff_response and diff_response['status']:
-			table_data += ' Diff Links ||'
-
-		return table_data
+		return "|| Repo || Branch || Branched From || Pull Requests || Diff Links ||"
 
 	def create_qa_table_row(self, repo, pull_response, diff_response):
 		base_branch = repo['baseBranch']
@@ -50,35 +43,28 @@ class PullRequests():
 |"""+repository_name+'|'+reviewed_branch+'|'+base_branch+'|'
 		
 		# build diff/request table box
-		if diff_response and diff_response['status']:
-			table_data += self._create_diff_td(repository_name=repository_name, diff_response=diff_response)
-			
-		if pull_response and pull_response['status']:
-			table_data += self._create_pull_td(repository_name=repository_name, pull_response=pull_response)
+		if pull_response:
+			table_data += self._create_qa_td(repository_name=repository_name, links=pull_response)
+		else:
+			table_data += ' |'
+
+		if diff_response:
+			table_data += self._create_qa_td(repository_name=repository_name, links=diff_response)
+		else:
+			table_data += ' |'
 
 		return table_data
 
-	def _create_diff_td(self, repository_name, diff_response):
+	def _create_qa_td(self, repository_name, links):
 		'''creates table box for a diff'''
-		matching_diff = [x for x in diff_response['data'] if repository_name in x['repo']]
+		matching_link = [x for x in links['data'] if repository_name in x['repo']]
 
-		if len(matching_diff):
-			link = matching_diff[0]['link']
-			repo = matching_diff[0]['repo']
+		if len(matching_link) and matching_link[0].get('link', False):
+			link = matching_link[0]['link']
+			repo = matching_link[0]['repo']
 			return f'[{repo}|{link}]|'
-
-	def _create_pull_td(self, repository_name, pull_response):
-		'''creates table box for a pull request'''
-		print('pull_response', pull_response)
-		repo_pull_link = self.get_pull_request_link(pull_response=pull_response, repository_name=repository_name)
-		return f'[{repository_name}|{repo_pull_link}]|'
-		
-		# matching_diff = [x for x in pull_response['data'] if repository_name in x['repo']]
-
-		# if len(matching_diff):
-		# 	link = matching_diff[0]['link']
-		# 	repo = matching_diff[0]['repo']
-		# 	return f'| [{repo}|{link}] |'
+		else:
+			return 'ERROR|'
 
 	def get_pull_request_link(self, pull_response, repository_name):
 		'''gets pull request link from a pull request response object'''

@@ -18,7 +18,4 @@ jira_ticket['epic_link'] = 'test'
 jira_ticket['label'] = 'test'
 
 print(jira_ticket)
-
-
-d.login()
 d.update_ticket(jira_ticket=jira_ticket)

@@ -56,24 +56,23 @@ class JiraMisc():
 		return self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
 
 	def add_pr_to_dev_changes(self, pull_response, data):
-		'''
-		'''
-		dev_value = 'PULL REQUESTS:\n'
+		'''add pull requests to dev chagnes field'''
+		dev_changes = 'PULL REQUESTS:\n'
 		for request in pull_response['data']:
-			if request['status']:
-				repo = request['data']['fromRef']['repository']['name']
-				link = request['data']['links']['self'][0]['href']
-				dev_value += f'{repo}: {link}\n'
+			if request.get('link', False):
+				repo = request['repo']
+				link = request['link']
+				dev_changes += f'{repo}: {link}\n'
 
 		pcr_number = math.ceil(data['story_point']/2)
-		dev_value += f'\nPCR needed: {pcr_number}'
+		dev_changes += f'\nPCR needed: {pcr_number}'
 
-		return self.add_dev_changes(dev_value=dev_value, cred_hash=cred_hash, key=key)
+		return self.add_dev_changes(dev_changes=dev_changes, cred_hash=data['cred_hash'], key=data['key'])
 		
 	def add_dev_changes(self, dev_changes, cred_hash, key):
 		'''add text to dev changes field
 		'''
-		return self.set_dev_changes(dev_changes=dev_changes, cred_hash=data['cred_hash'], key=data['key'])
+		return self.set_dev_changes(dev_changes=dev_changes, cred_hash=cred_hash, key=key)
 
 	def build_qa_title(self, key, msrp, summary):
 		return f"[{key}] Ticket #{msrp} - {summary}"

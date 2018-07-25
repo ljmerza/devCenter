@@ -86,7 +86,6 @@ def define_routes(app, app_name, g):
 			'cred_hash': g.cred_hash,
 			'key': post_data.get('key', ''),
 			'status_type': post_data.get('statusType', ''),
-			'crucible_id': post_data.get('crucible_id', ''),
 			'username': post_data.get('username', ''),
 			'add_commits': post_data.get('add_commits', False),
 			'master_branch': post_data.get('master_branch', ''),

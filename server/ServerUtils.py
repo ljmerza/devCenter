@@ -39,7 +39,7 @@ def get_branch_name(username, msrp, summary):
 def build_commit_message(key, msrp, summary):
 	return f"[{key}] Ticket #{msrp} {summary}"
 
-def build_message(data, commit_message=False, jira_message=False, branch_message=False, crucible_message=False, sprint_message=False, msrp_message=False, summary_message=False, crucible_title_message=False, estimate_message=False):
+def build_message(data, commit_message=False, jira_message=False, branch_message=False, sprint_message=False, msrp_message=False, summary_message=False, crucible_title_message=False, estimate_message=False):
     	# keep track of odd table rows
 	color_bg = 0
 
@@ -80,22 +80,6 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 		<tr> \
 			<td style='{td_style} {color}'>Jira Link</td> \
 			<td style='{td_style} {color}'><a href='{jira_ticket_base}/{key}'>{jira_ticket_base}/{key}</a></td> \
-		</tr>"
-
-	# add crucible link
-	if crucible_message:
-		# increment color_bg and see if this row needs bg coloring
-		color_bg += 1
-		if color_bg % 2 == 1:
-			color = td_alt_style
-		else:
-			color = ''
-		# get data
-		crucible_id = data['crucible_id']
-		message += f"\
-		<tr> \
-			<td style='{td_style} {color}'>Crucible Link</td> \
-			<td style='{td_style} {color}'><a href='{crucible_ticket_base}/{crucible_id}'>{crucible_ticket_base}/{crucible_id}</a></td> \
 		</tr>"
 
 	# add branch name
