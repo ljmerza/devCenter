@@ -6,7 +6,7 @@ from ..ServerUtils import build_commit_message, get_branch_name
 from ..Jira.Jira import Jira
 from ..CodeCloud.CodeCloud import CodeCloud
 
-from .jira_status import pcr_complete_transition, pcr_pass_transition, pcr_working_transition
+from .jira_status import pcr_complete_transition, pcr_pass_transition, pcr_working_transition, qa_ready_transition, qa_pass_transition, uct_ready_transition
 
 def set_status(data):
 	'''sets a Jira ticket's status
@@ -14,68 +14,50 @@ def set_status(data):
 	missing_params = missing_parameters(params=data, required=['cred_hash','key','status_type'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-	
-	jira = Jira()
-	cc = CodeCloud()
 
 	if data['status_type'] == 'inDev':
-		return jira.set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
+		return Jira().set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
 
 	if data['status_type'] == 'pcrNeeded':
-		return jira.set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
-
+		return Jira().set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
 	if data['status_type'] == 'removePcrNeeded':
-		return jira.remove_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
-
+		return Jira().remove_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
 	if data['status_type'] == 'pcrWorking':
 		return pcr_working_transition(data=data)
-		
 	if data['status_type'] == 'pcrPass':
 		return pcr_pass_transition(data=data)
-
 	if data['status_type'] == 'pcrCompleted':
 		return pcr_complete_transition(data=data)
-
 	if data['status_type'] == 'removePcrCompleted':
-		return jira.remove_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
+		return Jira().remove_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
 
 	if data['status_type'] == 'cr':
-		return jira.set_code_review(key=data['key'], cred_hash=data['cred_hash'])
+		return Jira().set_code_review(key=data['key'], cred_hash=data['cred_hash'])
 
 	elif data['status_type'] == 'qaReady':
-		response = {'status': True, 'data': {}}
-		response['data']['qa_ready_response'] = jira.set_ready_for_qa(key=data['key'], cred_hash=data['cred_hash'])
-		response['data']['comment_response'] = jira.add_comment(key=data['key'], cred_hash=data['cred_hash'], comment='CR Pass')
-
+		return qa_ready_transition(data)
 	elif data['status_type'] == 'inQa':
-		return jira.set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
-
+		return Jira().set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'qaFail':
-		return jira.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
-
+		return Jira().set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'qaPass':
-		response = {'status': True, 'data': {}}
-		response['data']['qa_pass'] = jira.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
-		response['data']['merge_code'] = jira.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-		response['data']['comment_response'] = jira.add_comment(key=data['key'], cred_hash=data['cred_hash'], 
-																	comment='QA Pass')
-		return response
+		return qa_pass_transition(data)
 
 	elif data['status_type'] == 'mergeCode':
-		return jira.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
+		return Jira().set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'mergeConflict':
-		return jira.set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
+		return Jira().set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'removeMergeConflict':
-		return jira.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
+		return Jira().remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctReady':
-		return jira.remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
+		return Jira().remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 
 	elif data['status_type'] == 'inUct':
-		return jira.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
+		return Jira().set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctPass':
-		return jira.set_uct_pass(key=data['key'], cred_hash=data['cred_hash'])
+		return uct_ready_transition(data)
 	elif data['status_type'] == 'uctFail':
-		return jira.set_uct_fail(key=data['key'], cred_hash=data['cred_hash'])
+		return Jira().set_uct_fail(key=data['key'], cred_hash=data['cred_hash'])
 	else:
 		return {"status": False, "data": 'Invalid status type'}
 
@@ -92,30 +74,6 @@ def add_comment(data):
 		cred_hash=data['cred_hash']
 	)
 	return response
-
-def add_commit_comment(data):
-	'''add a Jira comment with the list of commited branches related to this ticket
-	'''
-	missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'master_branch'])
-	if missing_params:
-		return {"data": missing_params, "status": False}
-
-	commit_response = CodeCloud().get_commit_ids(key=data['key'], master_branch=data['master_branch'], cred_hash=data['cred_hash'])
-	if not commit_response['status']:
-		return {"data": commit_response['data'], "status": False}
-
-	comment = 'The following branches have been committed:\n || Repo || Branch || SHA-1 ||\n'
-	for commit in commit_response.get('data', []):
-		repo_name = commit.get('repo_name')
-		master_branch = commit.get('master_branch')
-		commit_id = commit.get('commit_id')
-		comment += f"| {repo_name} | {master_branch} | {commit_id} |\n"
-
-	return Jira().add_comment(
-		key=data["key"], 
-		comment=comment, 
-		cred_hash=data['cred_hash']
-	)
 
 def edit_comment(data):
 	'''Edits a Jira comment

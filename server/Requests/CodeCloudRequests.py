@@ -139,29 +139,6 @@ def add_qa_comment(data, pull_response=None, diff_response=None):
 		cred_hash=data['cred_hash'], 
 		comment=qa_step_comment
 	)
-	
-def pass_review_for_pull_requests(data):
-	missing_params = missing_parameters(params=data, required=['pull_requests', 'cred_hash'])
-	if missing_params:
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
-	comment = 'PCR Pass'
-	responses = {'status': True, 'data': []}
-
-	for pull_request in data['pull_requests']:
-		add_response = CodeCloud().add_comment_to_pull_request(
-			repo_name=pull_request['repo'], 
-			pull_request_id=pull_request['requestId'], 
-			comment=comment, 
-			cred_hash=data['cred_hash']
-		)
-
-		# add response from adding pass comment and check errors
-		responses['data'].append(add_response)
-		if not add_response['status']:
-			responses['status'] = False
-
-	return responses
 
 def add_reviewer_to_pull_request(data):
 	missing_params = missing_parameters(params=data, required=['pull_request_id', 'repo_name', 'username', 'cred_hash'])

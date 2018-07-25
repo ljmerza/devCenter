@@ -3,10 +3,7 @@
 from flask import request, Response
 from flask_cors import cross_origin
 
-from ..Requests.JiraRequests import get_jira_tickets, find_key_by_msrp, edit_comment, add_work_log, set_status, add_comment, set_status, add_commit_comment, modify_watchers as JiraRequests_modify_watchers, parse_comment as JiraRequests_parse_comment, delete_comment
-
-from ..Requests.CodeCloudRequests import pass_review_for_pull_requests
-
+from ..Requests.JiraRequests import get_jira_tickets, find_key_by_msrp, edit_comment, add_work_log, set_status, add_comment, set_status, modify_watchers as JiraRequests_modify_watchers, parse_comment as JiraRequests_parse_comment, delete_comment
 
 def define_routes(app, app_name, g):
 	@app.route(f'/{app_name}/jira/tickets')
@@ -89,29 +86,12 @@ def define_routes(app, app_name, g):
 			'username': post_data.get('username', ''),
 			'add_commits': post_data.get('add_commits', False),
 			'master_branch': post_data.get('master_branch', ''),
-			'pull_requests': post_data.get('pullRequests', []),
+			'pull_requests': post_data.get('pull_requests', []),
 			'repo_name': post_data.get('repo_name', ''),
 			'dev_changes': post_data.get('dev_changes', '')
 		}
 
-		status_response = {'status': False, 'data': 'status type not given'}
-
-		# change ticket status
-		if data['status_type'] != 'pcrAdd':
-			status_response = set_status(data=data)
-		
-		# if pcrAdd then add user to review
-		if data['status_type'] == 'pcrAdd':
-			status_response = add_reviewer_to_pull_request(data=data)
-
-		# if pcr pass/complete -> add pass comment to review
-		if data['status_type'] == 'pcrPass' or data['status_type'] == 'pcrCompleted':
-			status_response = pass_review_for_pull_requests(data=data)
-
-		# if uctReady then add commit hashes to Jira comment if specified
-		if data.get('add_commits', False):
-			status_response = add_commit_comment(data=data)
-
+		status_response = set_status(data=data)
 		return Response(status_response, mimetype='application/json')
 
 	@app.route(f'/{app_name}/jira/parse_comment', methods=['POST'])

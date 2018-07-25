@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgRedux, NgReduxModule, DevToolsExtension } from '@angular-redux/store';
-import { RootState, initialState, rootReducer } from './store/store';
+import { RootState, initialState, rootReducer } from '@store';
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';

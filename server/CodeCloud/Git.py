@@ -6,7 +6,8 @@ class Git():
             "sasha", "taskmaster", "teamdb", 
             "teamdbapi", "teamdb_ember", "templates", 
             "tqi", "ud", "ud_api", "ud_ember", "upm", 
-            "upm_api", "wam", "wam_api"
+            "upm_api", "wam", "wam_api", "template_tool_ember",
+            'template_api'
         ]
 
         self.code_cloud_api = code_cloud_api

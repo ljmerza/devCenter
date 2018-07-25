@@ -13,10 +13,7 @@ import { ModalComponent } from '@modal';
 import { RootState, Actions } from '@store';
 import { statuses, Ticket, APIResponse, allTransistions} from '@models';
 
-import { 
-	validateTransitions, verifyStatusChangeSuccess, 
-	qaPassVerify, verifyDiffGeneration
-} from './validateTransitions';
+import { validateTransitions, verifyStatusChangeSuccess,} from './validateTransitions';
 
 @Component({
 	selector: 'dc-ticket-status',
@@ -30,10 +27,8 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	ticketListType;
 
 	// imported functions to inherit
-	qaPassVerify;
 	validateTransitions;
 	verifyStatusChangeSuccess;
-	verifyDiffGeneration;
 
 	ticketDropdown;
 	qaComponentRef;
@@ -62,10 +57,8 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		public route:ActivatedRoute
 	) {
 		this.allTransistions = allTransistions;
-		this.qaPassVerify = qaPassVerify;
 		this.validateTransitions = validateTransitions;
 		this.verifyStatusChangeSuccess = verifyStatusChangeSuccess;
-		this.verifyDiffGeneration = verifyDiffGeneration;
 	}
 
 	/**
@@ -139,6 +132,11 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			ticketStateFilter = state => state.id == this.ticketDropdown.value;
 		}
 
+		// if pcr working status change then open all pull request links
+		if(!canceled && this.ticketDropdown.value === statuses.PCRWORK.backend){
+			this._openPullRequests();
+		}
+
 		// update store
 		const status = (this.ticketStates.find(ticketStateFilter) as any).name;
 		this.store.dispatch({ type: Actions.updateStatus, payload: {key:this.key, status} });
@@ -148,7 +146,17 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	
+	/**
+	 * open new windows for all pull requests for this ticket
+	 */
+	_openPullRequests(){
+		(this.pullRequests || []).map(pull => {
+			const newWindow = window.open(pull.link, '_blank');
+			if(!newWindow){
+				this.toastr.showToast(`Could not open new window. Maybe you blocked the new window?`, 'error');
+ 			}
+		});
+	}
 
 	/**
 	 * Opens the QA generator modal if transitioning to PCR needed.
@@ -217,7 +225,6 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			// data needed for different types of transitions - just always sent it to simplify
 			pull_requests: this.pullRequests,
 			dev_changes: this.dev_changes,
-			pullRequests: this.pullRequests,
 			repo_name: this.master_branch
 		};
 

@@ -74,15 +74,16 @@ export function validateTransitions() {
  * @param {string} statusType the status type string
  */
 export function verifyStatusChangeSuccess(statusResponse, statusType:string, postData){
-	console.log({statusResponse, statusType, postData});
+	console.log({statusResponse, statusType, postData, then:this});
 
 	// check QA pass
 	if(statusType === statuses.QAPASS.backend){
-		if( this.qaPassVerify(statusResponse.data) ) return;
+		if(qaPassVerify.call(this, statusResponse.data)) return;
 	}
 
-	if(statusType === statuses.QAPASS.backend){
-		if( this.verifyDiffGeneration(statusResponse.data) ) return;
+	// check pcr complete
+	if(statusType === statuses.PCRCOMP.backend){
+		verifyPcrComplete.call(this, statusResponse.data);
 	}
 
 	// add log if commit hash comment was success
@@ -97,6 +98,59 @@ export function verifyStatusChangeSuccess(statusResponse, statusType:string, pos
 
 export function verifyDiffGeneration(statusResponse, postData){
 	
+}
+
+/**
+ *
+ */
+export function verifyPcrComplete(statusResponse){
+	let success = '';
+
+	// check for pull comment errors
+	let pullErrors = false;
+	statusResponse.add_comment.forEach(pull => {
+		if(!pull.status){
+			const errors = _getPullErrors(pull);
+			this.toast.showToast(`Failed to add pcr complete to pull request: ${errors}`);
+			pullErrors = true;
+		}
+	});
+	if(!pullErrors) success = `PCR Complete comment added to all pull requests`;
+
+	// check for pull approve errors
+	let approveErrors = false;
+	statusResponse.pass_response.forEach(pull => {
+		if(!pull.status){
+			const errors = _getPullErrors(pull);
+			this.toast.showToast(`Failed to approve pull request: ${errors}`);
+			approveErrors = true;
+		}
+	});
+	if(!approveErrors) success = `Pull Request approved to all pull requests`;
+
+	if(!statusResponse.set_pcr_complete.status){
+		this.toastr.showToast(`Failed to transition status to PCR Complete: ${statusResponse.comment_response.data}`, 'error');
+	}
+}
+
+/**
+ * gets any errors involved with pull requests
+ * @param {Object} pull the pull request object from the server
+ */
+function _getPullErrors(pull){
+	let errors = '';
+
+	if(pull.data && pull.data.errors && Array.isArray(pull.data.errors)){
+		errors = pull.data.errors.map(error => error.message).join(', ');
+	} else if(pull.data && pull.data.errors){
+		errors = pull.data.errors;
+	} else if(pull.data){
+		errors = pull.data;
+	} else {
+		errors = 'Unknown Error';
+	}
+
+	return errors;
 }
 
 /**
