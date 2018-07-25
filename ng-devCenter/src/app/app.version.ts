@@ -1,4 +1,4 @@
-// This file was generated on Wed, Jul 25, 2018 11:28:27 AM
+// This file was generated on Wed, Jul 25, 2018 11:35:05 AM
 export const appVersion = {
   "name": "devCenter",
   "version": "9.0.0",
@@ -6,7 +6,7 @@ export const appVersion = {
   "scripts": {
     "ng": "ng",
     "start": "ng serve --aot",
-    "build": "ng build --base-href=./ --prod --aot --build-optimizer",
+    "build": "ng build --base-href=./ --environment=prod --aot --build-optimizer",
     "beta": "ng build --base-href=./ --environment=beta --aot --build-optimizer",
     "test": "ng test",
     "lint": "ng lint",
