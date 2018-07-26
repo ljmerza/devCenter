@@ -21,6 +21,13 @@ class CodeCloudAPI(DevCenterAPI):
 			response = super(CodeCloudAPI, self).post(url=url, data=data, cred_hash=cred_hash)
 		return self._process_response(response)
 
+	def put(self, url, cred_hash, data='', json_data=None):
+		if json_data:
+			response = super(CodeCloudAPI, self).put_json(url=url, json_data=json_data, cred_hash=cred_hash)
+		else:
+			response = super(CodeCloudAPI, self).put(url=url, data=data, cred_hash=cred_hash)
+		return self._process_response(response)
+
 	def delete(self, url, cred_hash, data=''):
 		response = super(CodeCloudAPI, self).delete(url=url, cred_hash=cred_hash)
 		return self._process_response(response)

@@ -6,12 +6,13 @@ from .SQLTickets import SQLTickets
 from .SQLUsers import SQLUsers
 from .SQLNavBar import SQLNavBar
 from .SQLModels import ErrorLogs
+from .Misc import Misc
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import inspect, create_engine
 
-class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar):
+class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc):
 
 	def __init__(self, devdb, sql_echo):
 		self.project_managers = os.environ['PM'].split(',')
@@ -19,6 +20,7 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar):
 		SQLTickets.__init__(self)
 		SQLUsers.__init__(self, self.project_managers)
 		SQLNavBar.__init__(self)
+		Misc.__init__(self)
 
 		drivername = 'mysql+pymysql'
 		username = os.environ['USER']
@@ -57,3 +59,9 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar):
 			print('ERROR: COuld not log error: ', message)
 			exit(1)
 		self.logout(session=session)
+
+	def row2dict(self, row):
+		d = {}
+		for column in row.__table__.columns:
+			d[column.name] = str(getattr(row, column.name))
+		return d

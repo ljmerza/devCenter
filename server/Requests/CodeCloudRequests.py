@@ -52,9 +52,9 @@ def transition_to_pcr(data):
 	response['data']['diff_response'] = diff_response
 	return response
 
-def get_repos(data):
+def get_repos(data, devdb, sql_echo):
 	'''get a list of all current repos'''
-	return CodeCloud().get_repos()
+	return CodeCloud().get_repos(devdb=devdb, sql_echo=sql_echo)
 
 def create_pull_requests(data):
 	'''generate pull requests

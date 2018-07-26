@@ -82,6 +82,11 @@ class NavbarItems(Modal):
 	link = Column(VARCHAR(100))
 	name = Column(VARCHAR(30))
 
+class Repos(Modal):
+	__tablename__ = 'repos'
+	id = Column(Integer, primary_key=True)
+	name = Column(VARCHAR(30))
+
 
 class OrderItems(Modal):
 	__tablename__ = 'TICKETTOOL_WORKLISTFIELDS_ODB'

@@ -11,16 +11,16 @@ export function validateTransitions() {
 		this.ticketStates = this.allTransistions.filter(state => [statuses.SPRINT.frontend,statuses.PCRNEED.frontend].includes(state.name));
 	
 	} else if(this.ticketStatus === statuses.PCRNEED.frontend){
-		this.ticketStates = this.allTransistions.filter(state => [statuses.INDEV.frontend,statuses.PCRWORK.frontend, statuses.PCRPASS.frontend].includes(state.name));
+		this.ticketStates = this.allTransistions.filter(state => [statuses.PCRWORK.frontend, statuses.PCRPASS.frontend,statuses.INDEV.frontend].includes(state.name));
 	} else if(this.ticketStatus === statuses.PCRWORK.frontend){
-		this.ticketStates = this.allTransistions.filter(state => [statuses.PCRPASS.frontend,statuses.PCRCOMP.frontend].includes(state.name));
+		this.ticketStates = this.allTransistions.filter(state => [statuses.PCRPASS.frontend,statuses.PCRCOMP.frontend,statuses.MERGECONF.frontend].includes(state.name));
 	} else if(this.ticketStatus === statuses.PCRPASS.frontend){
 		this.ticketStates = this.allTransistions.filter(state => [statuses.PCRCOMP.frontend].includes(state.name));
 	} else if(this.ticketStatus === statuses.PCRCOMP.frontend){
 		this.ticketStates = this.allTransistions.filter(state => [statuses.CRWORK.frontend].includes(state.name));
 	
 	} else if(this.ticketStatus === statuses.CRWORK.frontend){
-		this.ticketStates = this.allTransistions.filter(state => [statuses.PCRCOMP.frontend,statuses.QAREADY.frontend, statuses.CRFAIL.frontend].includes(state.name));
+		this.ticketStates = this.allTransistions.filter(state => [statuses.QAREADY.frontend, statuses.CRFAIL.frontend].includes(state.name));
 	} else if(this.ticketStatus === statuses.CRFAIL.frontend){
 		this.ticketStatus = statuses.INDEV.frontend;
 		this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend].includes(state.name));
@@ -28,7 +28,7 @@ export function validateTransitions() {
 		this.ticketStates = this.allTransistions.filter(state => [statuses.INQA.frontend].includes(state.name));
 	
 	} else if(this.ticketStatus === statuses.INQA.frontend){
-		this.ticketStates = this.allTransistions.filter(state => [statuses.QAREADY.frontend,statuses.QAFAIL.frontend,statuses.QAPASS.frontend,statuses.MERGECONF.frontend].includes(state.name));
+		this.ticketStates = this.allTransistions.filter(state => [statuses.QAFAIL.frontend,statuses.QAPASS.frontend,statuses.MERGECONF.frontend,statuses.QAREADY.frontend].includes(state.name));
 	} else if(this.ticketStatus === statuses.QAFAIL.frontend){
 		this.ticketStatus = statuses.INDEV.frontend;
 		this.ticketStates = this.allTransistions.filter(state => [statuses.PCRNEED.frontend].includes(state.name));
@@ -63,7 +63,7 @@ export function validateTransitions() {
 		this.ticketStates.unshift({name: this.ticketStatus, id: ''});
 	}
 
-	// always allow to generate crucible
+	// always allow to generate diff links
 	this.ticketStates.push(this.allTransistions.find(state => state.name === statuses.QAGEN.frontend));
 	this.cd.markForCheck();
 }

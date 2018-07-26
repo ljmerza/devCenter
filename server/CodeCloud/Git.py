@@ -1,22 +1,14 @@
 
+from ..SQL.DevCenterSQL import DevCenterSQL
+
 class Git():
     def __init__(self, code_cloud_api):
-        self.repos = [
-            "aqe", "external_modules", "modules", 
-            "sasha", "taskmaster", "teamdb", 
-            "teamdbapi", "teamdb_ember", "templates", 
-            "tqi", "ud", "ud_api", "ud_ember", "upm", 
-            "upm_api", "wam", "wam_api", "template_tool_ember",
-            'template_api'
-        ]
-
         self.code_cloud_api = code_cloud_api
 
-    def get_repos(self):
-        data = []
-        for repo in self.repos:
-            data.append({'name': repo})
-        return {'status': True, 'data': data}
+    def get_repos(self, devdb, sql_echo):
+        dcSql = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
+        repos = dcSql.get_repos()
+        return {'status': True, 'data': repos}
 
     def find_branch(self, repo_name, msrp, cred_hash):
         '''
