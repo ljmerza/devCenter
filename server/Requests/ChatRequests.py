@@ -6,14 +6,14 @@ from ..Chat.Chat import Chat
 from ..SQL.DevCenterSQL import DevCenterSQL
 
 
-def send_ping(data):
+def send_ping(data, dev_chat, no_pings):
 	'''sends a ping to the chatroom
 	'''
 	missing_params = missing_parameters(params=data, required=['username', 'ping_type','cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	
-	chat_obj = Chat()
+	chat_obj = Chat(debug=dev_chat, no_pings=no_pings)
 	jira_obj = Jira()
 
 	# we dont have enough ticket info so get that from Jira now

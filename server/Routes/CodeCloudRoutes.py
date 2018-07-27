@@ -7,12 +7,12 @@ from ..Requests.CodeCloudRequests import get_repos, create_pull_requests, get_br
 
 from ..Requests.JiraRequests import add_comment, edit_comment, delete_comment, add_work_log, get_jira_tickets, find_key_by_msrp, get_profile, parse_comment, modify_watchers
 
-def define_routes(app, app_name, g, devdb, sql_echo):
+def define_routes(app, app_name, g):
 
 	@app.route(f'/{app_name}/git/repos')
 	@cross_origin()
 	def repos():
-		data = get_repos(data={"cred_hash": g.cred_hash}, devdb=devdb, sql_echo=sql_echo)
+		data = get_repos(data={"cred_hash": g.cred_hash})
 		return Response(data, mimetype='application/json')
 
 	@app.route(f'/{app_name}/git/repo/<repo_name>')

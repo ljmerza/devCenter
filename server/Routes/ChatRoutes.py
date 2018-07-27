@@ -13,7 +13,7 @@ def define_routes(app, app_name, g, devdb, sql_echo, dev_chat, no_pings):
 		post_data = request.get_json()
 		post_data['cred_hash'] = g.cred_hash
 
-		response = ChatRequests_send_ping(data=post_data)
+		response = ChatRequests_send_ping(data=post_data, dev_chat=dev_chat, no_pings=no_pings)
 		return Response(response, mimetype='application/json')
 
 	@app.route(f'/{app_name}/chat/user_pings', methods=['POST'])

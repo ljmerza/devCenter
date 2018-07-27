@@ -15,7 +15,7 @@ from .Routes.CodeCloudRoutes import define_routes as CodeCloudRoutes_define_rout
 def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no_pings):
 
 	JiraRoutes_define_routes(app=app, app_name=app_name, g=g)
-	CodeCloudRoutes_define_routes(app=app, app_name=app_name, g=g, devdb=devdb, sql_echo=sql_echo)
+	CodeCloudRoutes_define_routes(app=app, app_name=app_name, g=g)
 	ChatRoutes_define_routes(app=app, app_name=app_name, g=g, devdb=devdb, sql_echo=sql_echo, dev_chat=dev_chat, no_pings=no_pings)
 	UserRoutes_define_routes(app=app, app_name=app_name, g=g, devdb=devdb, sql_echo=sql_echo)
 	ApiRoutes_define_routes(app=app, app_name=app_name)

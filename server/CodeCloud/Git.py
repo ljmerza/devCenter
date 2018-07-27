@@ -5,8 +5,8 @@ class Git():
     def __init__(self, code_cloud_api):
         self.code_cloud_api = code_cloud_api
 
-    def get_repos(self, devdb, sql_echo):
-        dcSql = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
+    def get_repos(self):
+        dcSql = DevCenterSQL(devdb=0, sql_echo=0)
         repos = dcSql.get_repos()
         return {'status': True, 'data': repos}
 
@@ -29,11 +29,14 @@ class Git():
 
     def ticket_branches(self, msrp, cred_hash):
         branches = []
+        repos = self.get_repos()
+        if not repos['status']:
+            return repos
 
-        for repo in self.repos:
-            response = self.find_branch(repo_name=repo, msrp=msrp, cred_hash=cred_hash)
+        for repo in repos['data']:
+            response = self.find_branch(repo_name=repo['name'], msrp=msrp, cred_hash=cred_hash)
             if response['status']:
-                branches.append({'repo': repo, 'branches': response['data'], 'all': response['all']})
+                branches.append({'repo': repo['name'], 'branches': response['data'], 'all': response['all']})
 
         if len(branches) > 0:
             return {'status': True, 'data': branches}
@@ -55,8 +58,11 @@ class Git():
 
     def get_commit_ids(self, key, master_branch, cred_hash):
         commit_ids = []
+        repos = self.get_repos()
+        if not repos['status']:
+            return repos
 
-        for repo_name in self.repos:
+        for repo in repos['data']:
             response = self._get_commit_id(
                 repo_name=repo_name, key=key, cred_hash=cred_hash, master_branch=master_branch)
             if response['status'] and response['data']:

@@ -60,6 +60,7 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 			this.store.dispatch({type: Actions.ticketType, payload: this.ticketListType });
 
+			this.filterTable();
 			this.getTickets();
 				
 			if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
@@ -146,25 +147,27 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 	}
 
 	/**
-	 *  hacky way to add tabel filtering
+	 *  hacky way to add table filtering
 	 */
 	public filterTable(){
-		let filterEl = $(this.filterInput.nativeElement);
-		let filterValue = ($(filterEl[0]).val() || '').toUpperCase();
+		setTimeout(() => {
+			let filterEl = $(this.filterInput.nativeElement);
+			let filterValue = ($(filterEl[0]).val() || '').toUpperCase();
 
-		let tr = $(this.tbody.nativeElement).children("tr");
-		
-		for (let i=0; i<tr.length; i++) {
-			let td = $(tr[i]).children("td");
-			let found = false;
-
-			for (let j=0; j<td.length; j++) {
-				const trText = ($(td[j]).text() || '').toUpperCase();
-				if (trText.indexOf(filterValue) > -1) found = true;
-			}
+			let tr = $(this.tbody.nativeElement).children("tr");
 			
-			if(found) $(tr[i]).css('display', '');
-			else $(tr[i]).css('display', 'none');
-		}
+			for (let i=0; i<tr.length; i++) {
+				let td = $(tr[i]).children("td");
+				let found = false;
+
+				for (let j=0; j<td.length; j++) {
+					const trText = ($(td[j]).text() || '').toUpperCase();
+					if (trText.indexOf(filterValue) > -1) found = true;
+				}
+				
+				if(found) $(tr[i]).css('display', '');
+				else $(tr[i]).css('display', 'none');
+			}
+		});
 	}
 }
