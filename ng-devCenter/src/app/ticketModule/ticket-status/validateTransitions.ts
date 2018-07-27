@@ -74,7 +74,6 @@ export function validateTransitions() {
  * @param {string} statusType the status type string
  */
 export function verifyStatusChangeSuccess(statusResponse, statusType:string, postData){
-	console.log({statusResponse, statusType, postData, then:this});
 
 	// check QA pass
 	if(statusType === statuses.QAPASS.backend){

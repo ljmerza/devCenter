@@ -72,7 +72,6 @@ function getPullRequests(devChangeLines){
 
 		const repo = /repos\/(\w+)(\/pull-requests)|(commit)/.exec(request);
 		let requestId = /pull-requests\/(\w+)\//.exec(request);
-		if(!requestId) console.log('request: ', request);
 		if(!requestId) requestId = /pull-requests\/(\w+)/.exec(request);
 
 		return {
