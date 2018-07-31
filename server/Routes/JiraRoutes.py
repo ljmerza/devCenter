@@ -84,11 +84,11 @@ def define_routes(app, app_name, g):
 			'key': post_data.get('key', ''),
 			'status_type': post_data.get('statusType', ''),
 			'username': post_data.get('username', ''),
-			'add_commits': post_data.get('add_commits', False),
-			'master_branch': post_data.get('master_branch', ''),
-			'pull_requests': post_data.get('pull_requests', []),
-			'repo_name': post_data.get('repo_name', ''),
-			'dev_changes': post_data.get('dev_changes', '')
+			'add_commits': post_data.get('addCommits', False),
+			'master_branch': post_data.get('masterBranch', ''),
+			'pull_requests': post_data.get('pullRequests', []),
+			'repo_name': post_data.get('repoName', ''),
+			'dev_changes': post_data.get('devChanges', '')
 		}
 
 		status_response = set_status(data=data)

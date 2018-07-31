@@ -39,7 +39,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 	ticketStatus;
 	msrp;
-	master_branch;
+	masterBranch;
 	dev_changes;
 
 	status$
@@ -75,7 +75,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 				
 				this.ticketStatus = ticket.status;
 				this.msrp = ticket.msrp;
-				this.master_branch = ticket.master_branch;
+				this.masterBranch = ticket.master_branch;
 				this.dev_changes = ticket.dev_changes;
 				this.validateTransitions();
 			});
@@ -223,15 +223,15 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 			statusType, 
 
 			// data needed for different types of transitions - just always sent it to simplify
-			pull_requests: this.pullRequests,
-			dev_changes: this.dev_changes,
-			repo_name: this.master_branch
+			pullRequests: this.pullRequests,
+			devChanges: this.dev_changes,
+			repoName: this.masterBranch
 		};
 
 		// if transitioning from merge code to uct ready then add commit hash Jira comment
 		if(statusType === statuses.UCTREADY.backend && this.ticketStatus === statuses.MERGECODE.frontend){
-			postData.add_commits = true;
-			postData.master_branch = this.master_branch;
+			postData.addCommits = true;
+			postData.masterBranch = this.masterBranch;
 			this.toastr.showToast(`Removing Merge Code component and adding commit hash Jira comment to ${this.key}`, 'info');
 		}
 		

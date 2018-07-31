@@ -1,7 +1,7 @@
-// This file was generated on Mon, Jul 30, 2018  2:02:54 PM
+// This file was generated on Tue, Jul 31, 2018 10:43:55 AM
 export const appVersion = {
   "name": "devCenter",
-  "version": "9.0.0",
+  "version": "9.0.2",
   "license": "",
   "scripts": {
     "ng": "ng",

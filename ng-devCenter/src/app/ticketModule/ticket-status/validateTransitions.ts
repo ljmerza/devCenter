@@ -75,28 +75,58 @@ export function validateTransitions() {
  */
 export function verifyStatusChangeSuccess(statusResponse, statusType:string, postData){
 
-	// check QA pass
 	if(statusType === statuses.QAPASS.backend){
 		if(qaPassVerify.call(this, statusResponse.data)) return;
 	}
 
-	// check pcr complete
 	if(statusType === statuses.PCRCOMP.backend){
 		verifyPcrComplete.call(this, statusResponse.data);
 	}
 
-	// add log if commit hash comment was success
-	if(postData.add_commits && statusResponse.status){
-		this.toastr.showToast(`Added commit hash comment to ${this.key}`, 'success');
-		this.store.dispatch({type: Actions.addComment, payload: statusResponse.data});
+
+	if(statusType === statuses.UCTREADY.backend){
+		verifyUctReady.call(this, statusResponse.data);
 	}
 
 	this.statusChange({canceled: false});
 	this.toastr.showToast(`Status successfully changed for ${this.key}`, 'success');
 }
 
-export function verifyDiffGeneration(statusResponse, postData){
-	
+export function verifyUctReady(statusResponse){
+
+	if(!statusResponse.uct_pass.status){
+		this.toastr.showToast(`Failed to remove merge code component: ${statusResponse.uct_pass.data}`);
+	}
+
+	// if we didnt do any commit comments then we are done here
+	if(!statusResponse.commit_ids) return;
+
+	// check for commit ids
+	if(!statusResponse.commit_ids.status){
+		let commitMessage = statusResponse.commit_ids.data;
+
+		if(Array.isArray(commitMessage)){
+			commitMessage = commitMessage
+				.map(commit => `${commit.repo_name}: ${commit.commit_id}`)
+				.join('<br>');
+		}
+
+		this.toastr.showToast(`Failed to add commit comment to Jira ticket: ${commitMessage}`);
+	}
+
+	// check for commit comment added
+	if(!statusResponse.commit_comment.status){
+		this.toastr.showToast(`Failed to add commit comment: ${statusResponse.data.commit_comment.data}`);
+	}
+
+	// if both passed then show success
+	if(statusResponse.commit_comment.status && statusResponse.commit_ids.status) {
+		let commitMessage = statusResponse.commit_ids.data
+			.map(commit => `${commit.repo_name}: ${commit.commit_id}`)
+			.join('<br>');
+
+		this.toastr.showToast(`Added commit comment for:<br>${commitMessage}`, 'success');
+	}
 }
 
 /**

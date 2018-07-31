@@ -94,32 +94,42 @@ def qa_pass_transition(data):
 def uct_ready_transition(data):
 	''''''
 	response = {'status': True, 'data': {}}
-	response['data']['uct_pass'] =  Jira().set_uct_pass(key=data['key'], cred_hash=data['cred_hash'])
+	response['data']['uct_pass'] = Jira().remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 
 	if data.get('add_commits', False):
-		response['data']['commit_comment'] = _add_commit_comment(data=data)
+		missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'pull_requests', 'master_branch'])
+		if missing_params:
+			return {"data": missing_params, "status": False}
+
+		commit_ids = CodeCloud().get_commit_ids(
+			key=data['key'], 
+			pull_requests=data['pull_requests'], 
+			cred_hash=data['cred_hash'],
+			master_branch=data['master_branch']
+		)
+		response['data']['commit_ids'] = commit_ids
+
+		if commit_ids['status']:
+			response['data']['commit_comment'] = _add_commit_comment(
+				commit_ids=commit_ids,
+				key=data['key'],
+				cred_hash=data['cred_hash']
+			)
+
 	return response
 
-def _add_commit_comment(data):
-	'''add a Jira comment with the list of commited branches related to this ticket
+def _add_commit_comment(commit_ids, key, cred_hash):
+	'''add a Jira comment with the list of committed branches related to this ticket
 	'''
-	missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'master_branch'])
-	if missing_params:
-		return {"data": missing_params, "status": False}
-
-	commit_response = CodeCloud().get_commit_ids(key=data['key'], master_branch=data['master_branch'], cred_hash=data['cred_hash'])
-	if not commit_response['status']:
-		return {"data": commit_response['data'], "status": False}
-
 	comment = 'The following branches have been committed:\n || Repo || Branch || SHA-1 ||\n'
-	for commit in commit_response.get('data', []):
+	for commit in commit_ids.get('data', []):
 		repo_name = commit.get('repo_name')
 		master_branch = commit.get('master_branch')
 		commit_id = commit.get('commit_id')
 		comment += f"| {repo_name} | {master_branch} | {commit_id} |\n"
 
 	return Jira().add_comment(
-		key=data["key"], 
+		key=key, 
 		comment=comment, 
-		cred_hash=data['cred_hash']
+		cred_hash=cred_hash
 	)

@@ -50,12 +50,12 @@ def set_status(data):
 	elif data['status_type'] == 'removeMergeConflict':
 		return Jira().remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctReady':
-		return Jira().remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
+		return uct_ready_transition(data)
 
 	elif data['status_type'] == 'inUct':
 		return Jira().set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctPass':
-		return uct_ready_transition(data)
+		return Jira().set_uct_pass(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctFail':
 		return Jira().set_uct_fail(key=data['key'], cred_hash=data['cred_hash'])
 	else:

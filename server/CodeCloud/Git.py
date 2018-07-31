@@ -56,25 +56,34 @@ class Git():
 
         return {'status': True, 'data': branch_names}
 
-    def get_commit_ids(self, key, master_branch, cred_hash):
+    def get_commit_ids(self, key, pull_requests, master_branch, cred_hash):
         commit_ids = []
-        repos = self.get_repos()
-        if not repos['status']:
-            return repos
+        status = True
 
-        for repo in repos['data']:
-            response = self._get_commit_id(
-                repo_name=repo_name, key=key, cred_hash=cred_hash, master_branch=master_branch)
-            if response['status'] and response['data']:
-                commit_ids.append({'master_branch': master_branch,
-                                  'repo_name': repo_name, 'commit_id': response['data']})
+        for request in pull_requests:
+            commit_response = self._get_commit_id(
+                repo_name=request['repo'], 
+                key=key, 
+                cred_hash=cred_hash, 
+                master_branch=master_branch
+            )
 
-        return {'status': len(commit_ids) > 0, 'data': commit_ids}
+            commit_ids.append({
+                'master_branch': master_branch,
+                'repo_name': request['repo'], 
+                'commit_id': commit_response['data'],
+                'status': commit_response['status'],
+            })
+
+            if not commit_response['status']:
+                status = False
+
+        return {'status': status, 'data': commit_ids}
 
     def _get_commit_id(self, repo_name, master_branch, key, cred_hash):
         commit_id = ''
 
-        url = f'{self.code_cloud_api.branch_api}/{repo_name}/commits?until=refs%2Fheads%2F{master_branch}'
+        url = f'{self.code_cloud_api.branch_api}/{repo_name}/commits?until=refs%2Fheads%2F{master_branch}&limit=50'
         response = self.code_cloud_api.get(url=url, cred_hash=cred_hash)
         
         if not response['status']:
@@ -85,7 +94,7 @@ class Git():
             if key in message:
                 commit_id = item.get('id')
         
-        return {'status': True, 'data': commit_id}
+        return {'status': bool(commit_id), 'data': commit_id}
 
     def create_pull_requests(self, repos, key, msrp, summary, cred_hash, qa_title):
         '''submits pull requests for a list of branches
