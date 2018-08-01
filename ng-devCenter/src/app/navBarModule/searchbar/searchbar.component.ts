@@ -25,6 +25,13 @@ export class SearchbarComponent implements OnInit {
 			url: 'order/ethernet' // url piece to use in ember
 		},
 		{
+			value: 'BMP',
+			name: 'Open BMP',
+			placeholder: 'Open BMP Ticket',
+			caller: 'openWorkitem',
+			url: 'ticket/bmp'
+		},
+		{
 			value: 'Ticket',
 			name: 'Open Ticket',
 			placeholder: 'Open WFA Ticket',
@@ -93,7 +100,7 @@ export class SearchbarComponent implements OnInit {
 			link: `/UD-ember/${this.user.emberLocal}${workType}/${workNumber}`
 		}).link;
 
-		window.open(`${this.user.emberUrl}:${this.user.emberPort}${urlPath}`);
+		window.open(`${this.user.emberUrlBase}:${this.user.emberPort}${urlPath}`);
 	}
 
 	/**

@@ -1,3 +1,5 @@
+import {getPullRequests} from '../add-tickets';
+
 /**
  * updates a ticket's status
  * @param {RootState} state the current state of the store
@@ -26,11 +28,12 @@ export function updateStatus(state, newStatus) {
  * @param {Object} newCrucible action item
  */
 export function updatePullRequests(state, newPullRequests) {
+	let requests = getPullRequests(newPullRequests.pullRequests.map(req => req.link));
 	const ticketType = `${state.ticketType}_codeCloud`;
 
 	// get ticket and create new one with new crucible id
 	const ticket = state[ticketType].find(ticket => ticket.key === newPullRequests.key);
-	const newTicket = { ...ticket, ...{pullRequests: newPullRequests.requests} };
+	const newTicket = {...ticket, ...{pullRequests: newPullRequests.pullRequests}};
 
 	// replace new ticket object with old one
 	const newTickets = state[ticketType].map(ticket => {

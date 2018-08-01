@@ -10,13 +10,14 @@ export function addTickets(state, tickets){
 	// extract pull requests
 	tickets = tickets.map(ticket => {
 		const devChangeLines = (ticket.dev_changes || '').split(/\n|(\n\r)| /g)
-		ticket.pullRequests = getPullRequests(devChangeLines);
+		ticket.pullRequests = getPullRequestsFromDevChanges(devChangeLines);
 
 		// if we didn't get pull requests from dev changes field try to get from comments
 		if(ticket.pullRequests.length == 0) {
 			ticket.comments.forEach(comment => {
 				const devChangeLines = (comment.raw_comment || '').split(/\n|(\n\r)| |\[|\]|\|/g);
-				if(ticket.pullRequests.length == 0) ticket.pullRequests = getPullRequests(devChangeLines);
+				if(ticket.pullRequests.length == 0) 
+					ticket.pullRequests = getPullRequestsFromDevChanges(devChangeLines);
 			});
 		}
 
@@ -44,10 +45,7 @@ export function addTickets(state, tickets){
 		});
 	});
 
-
-
-	const ticketType = state.ticketType || 'other'
-
+	const ticketType = state.ticketType || 'other';
 	const newState = {
 		[ticketType]: tickets,
 		[`${ticketType}_comments`]: comments,
@@ -60,13 +58,18 @@ export function addTickets(state, tickets){
 	return { ...state, ...newState };
 }
 
-function getPullRequests(devChangeLines){
+function getPullRequestsFromDevChanges(devChangeLines){
 	const pullRequests = devChangeLines
 		.filter(request => {
 			return request && request.startsWith('http') && request.includes('pull-request')
 		})
 		.map(request => request.trimStart());
 
+	return getPullRequests(pullRequests);
+}
+
+
+export function getPullRequests(pullRequests){
 	return pullRequests.map(request => {
 		request = request.split('\n')[0]; // make sure we only have the url
 

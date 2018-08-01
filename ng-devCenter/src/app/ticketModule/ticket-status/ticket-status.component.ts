@@ -40,7 +40,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	ticketStatus;
 	msrp;
 	masterBranch;
-	dev_changes;
+	devChanges;
 
 	status$
 	allTransistions;
@@ -67,26 +67,36 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.route.paramMap.subscribe((routeResponse:any) => {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
+			this.getTicketStatusData();
+			this.getTicketPullRequests();
+		});
+	}
 
-			// get ticket status
-			this.status$ = this.store.select(`${this.ticketListType}_statuses`)
+	/**
+	 *
+	 */
+	getTicketStatusData(){
+		this.status$ = this.store.select(`${this.ticketListType}_statuses`)
 			.subscribe((allTickets:Array<Ticket>=[]) => {
 				const ticket:any = allTickets.find(ticket => ticket.key === this.key) || {};
 				
 				this.ticketStatus = ticket.status;
 				this.msrp = ticket.msrp;
 				this.masterBranch = ticket.master_branch;
-				this.dev_changes = ticket.dev_changes;
+				this.devChanges = ticket.dev_changes;
 				this.validateTransitions();
 			});
+	}
 
-			// get ticket pull requests
-			this.pullRequests$ = this.store.select(`${this.ticketListType}_codeCloud`)
+	/**
+	 *
+	 */
+	getTicketPullRequests(){
+		this.pullRequests$ = this.store.select(`${this.ticketListType}_codeCloud`)
 			.subscribe((allTickets:any=[]) => {
 				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 				this.pullRequests = ticket.pullRequests || '';
 			});
-		});
 	}
 
 	/**
@@ -134,7 +144,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 		// if pcr working status change then open all pull request links
 		if(!canceled && this.ticketDropdown.value === statuses.PCRWORK.backend){
-			this._openPullRequests();
+			this.openPullRequests();
 		}
 
 		// update store
@@ -149,7 +159,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	/**
 	 * open new windows for all pull requests for this ticket
 	 */
-	_openPullRequests(){
+	openPullRequests(){
 		(this.pullRequests || []).map(pull => {
 			const newWindow = window.open(pull.link, '_blank');
 			if(!newWindow){
@@ -224,7 +234,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 
 			// data needed for different types of transitions - just always sent it to simplify
 			pullRequests: this.pullRequests,
-			devChanges: this.dev_changes,
+			devChanges: this.devChanges,
 			repoName: this.masterBranch
 		};
 
@@ -237,7 +247,14 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		
 		this.jira.changeStatus(postData)
 		.subscribe(
-			statusResponse => this.verifyStatusChangeSuccess(statusResponse, statusType, postData),
+			statusResponse => {
+				this.verifyStatusChangeSuccess(statusResponse, statusType, postData);
+				
+				// if we made a commit comment then add to ticket
+				if(statusResponse.data.commit_comment && statusResponse.data.commit_comment.status){
+					this.store.dispatch({type: Actions.addComment, payload:statusResponse.data.commit_comment.data});
+				}
+			},
 			error => {
 				this.jira.processErrorResponse(error);
 				this.statusChange({canceled:true});

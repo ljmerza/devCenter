@@ -52,7 +52,9 @@ def get_status(issue):
 		status = 'PCR - Needed'
 	elif 'PCR - Completed' in all_components and status == 'Code Review':
 		status = 'PCR - Completed'
-	elif 'Merge Conflict' in all_components:
+
+	# if merge conflict then overwrite everything
+	if 'Merge Conflict' in all_components:
 		status = 'Merge Conflict'
 
 

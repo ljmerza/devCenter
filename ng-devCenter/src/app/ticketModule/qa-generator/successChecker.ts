@@ -170,9 +170,9 @@ export function showSubmitMessage(postData):void {
  * checks for any state changes such as ticket status, crucible ids added, and added comments.
  * @param {Object} postData the data used in the POST call to QA generator endpoint.
  * @param {Object} responseData the data in the response from the QA generator endpoint.
- * @param {boolean} isPcr if true then don't show cancel message.
  */
-export function checkForStateChange(postData, responseData, isPcr):void {
+export function checkForStateChange(postData, responseData):void {
+	console.log({postData, responseData});
 
 	if(responseData.comment_response.status) {
 		this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});
@@ -198,6 +198,7 @@ export function checkForStateChange(postData, responseData, isPcr):void {
 
 	// add pull requests if given
 	if(responseData.pull_response.status) {
-		// this.store.dispatch({type: Actions.updatePullRequests, payload:{ key:this.key, cruid: responseData.cru_response.data}});
+		const payload = {key:this.key, pullRequests: responseData.pull_response.data};
+		this.store.dispatch({type: Actions.updatePullRequests, payload});
 	}
 }
