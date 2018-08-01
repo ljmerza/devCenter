@@ -251,7 +251,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 				this.verifyStatusChangeSuccess(statusResponse, statusType, postData);
 				
 				// if we made a commit comment then add to ticket
-				if(statusResponse.data.commit_comment && statusResponse.data.commit_comment.status){
+				if(statusResponse.data && statusResponse.data.commit_comment && statusResponse.data.commit_comment.status){
 					this.store.dispatch({type: Actions.addComment, payload:statusResponse.data.commit_comment.data});
 				}
 			},

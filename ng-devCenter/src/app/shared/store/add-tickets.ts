@@ -61,7 +61,9 @@ export function addTickets(state, tickets){
 function getPullRequestsFromDevChanges(devChangeLines){
 	const pullRequests = devChangeLines
 		.filter(request => {
-			return request && request.startsWith('http') && request.includes('pull-request')
+			return request && 
+			request.startsWith('http') 
+			&& (request.includes('pull-request') || request.includes('compare/commits'))
 		})
 		.map(request => request.trimStart());
 
@@ -73,12 +75,22 @@ export function getPullRequests(pullRequests){
 	return pullRequests.map(request => {
 		request = request.split('\n')[0]; // make sure we only have the url
 
-		const repo = /repos\/(\w+)(\/pull-requests)|(commit)/.exec(request);
-		let requestId = /pull-requests\/(\w+)\//.exec(request);
-		if(!requestId) requestId = /pull-requests\/(\w+)/.exec(request);
+		let repo = /repos\/(\w+)\/pull-requests/.exec(request);
+		let repoName = repo && repo[1];
+		let requestId;
+
+		// if we found a repo name then is a pull request 
+		// else we found a diff link
+		if(repoName){
+			requestId = /pull-requests\/(\w+)\/?/.exec(request);
+		} else {
+			repo = /repos\/(\w+)\/compare\/commits/.exec(request);
+		 	repoName = repo && repo[1];
+		 	if(repoName) repoName+= ' (Diff Link)';
+		}
 
 		return {
-			repo: (repo && repo[1]) || 'Unknown Repo', 
+			repo: repoName || 'Unknown Repo', 
 			link: request,
 			requestId: (requestId && requestId[1]) || ''
 		};
