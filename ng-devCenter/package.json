@@ -1,6 +1,6 @@
 {
   "name": "devCenter",
-  "version": "9.1.0",
+  "version": "9.2.0",
   "license": "",
   "scripts": {
     "ng": "ng",
