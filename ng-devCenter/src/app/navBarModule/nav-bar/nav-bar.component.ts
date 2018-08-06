@@ -18,7 +18,7 @@ import { UserService, ConfigService, ToastrService, ItemsService } from '@servic
 })
 export class NavBarComponent implements OnInit, OnDestroy {
 
-	isFriday:boolean; // boolean is Friday for log hours notification
+	showLogHours:boolean = false;
 	userProfile;
 	userProfile$;
 
@@ -44,8 +44,11 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(){
 		this.setFridayChecker();
-		this.getNavbarItems();
-		this.getUserProfile();
+
+		if(!this.user.needRequiredCredentials()){
+			this.getNavbarItems();
+			this.getUserProfile();
+		}
 	}
 
 	/**
@@ -67,16 +70,20 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * checks if it's Friday every hour to show log hours
+	 * checks if it's Friday every minute to show log hours
 	 */
 	setFridayChecker(){
 		const isFriday = () => (new Date()).getDay() == 5;
-		this.isFriday = isFriday();
+		this.showLogHours = isFriday();
+
 		setInterval(() => {
-			if( isFriday() ) {
+			const itIsFriday = isFriday();
+
+			if((itIsFriday && !this.showLogHours) || (!itIsFriday && this.showLogHours)) {
+				this.showLogHours = itIsFriday;
 				this.cd.markForCheck();
 			}
-		}, 60*60*1000);
+		}, 60*1000);
 	}
 
 	/**
