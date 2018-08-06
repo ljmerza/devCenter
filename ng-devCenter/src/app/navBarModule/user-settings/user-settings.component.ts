@@ -126,8 +126,7 @@ export class UserSettingsComponent implements OnInit {
 		// if form is invalid then do nothing
 		if(this.userSettingsForm.invalid) return;
 
-		// save data to local storage
-		this.toastr.showToast('info', 'Saving user profile settings and encrypting password');
+		this.toastr.showToast('Saving user profile settings and encrypting password', 'info');
 
 		const userData = this.userSettingsForm.controls;
 		this.user.setUserData('username', userData.username.value);
