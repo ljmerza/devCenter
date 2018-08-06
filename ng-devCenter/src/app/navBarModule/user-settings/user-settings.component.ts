@@ -126,7 +126,7 @@ export class UserSettingsComponent implements OnInit {
 		// if form is invalid then do nothing
 		if(this.userSettingsForm.invalid) return;
 
-		this.toastr.showToast('Saving user profile settings and encrypting password', 'info');
+		this.toastr.showToast('Saving user profile settings.', 'info');
 
 		const userData = this.userSettingsForm.controls;
 		this.user.setUserData('username', userData.username.value);
@@ -136,18 +136,30 @@ export class UserSettingsComponent implements OnInit {
 		this.user.setUserData('teamUrl', userData.teamUrl.value);
 		this.user.setUserData('cache', userData.cache.value);
 
-		this.user.encryptPassword(userData.password.value)
-			.subscribe(
-				response => {
-					this.user.setUserData('password', response.data);
-					this.toastr.showToast('Saved User Settings', 'success');
-					this.getProfile();
-					this.reloadPage();
-				},
-				error => this.toastr.showToast('error', error)
-			);
+		// if password hasn't changed then do nothing else encrypt password
+		if(userData.password.value === this.user.password){
+			this.reloadSettings();
+
+		} else {
+			this.toastr.showToast('Encrypting password', 'info');
+
+			this.user.encryptPassword(userData.password.value)
+				.subscribe(
+					response => {
+						this.user.setUserData('password', response.data);
+						this.reloadSettings();
+					},
+					error => this.toastr.showToast('error', error)
+				);
+		}
 
 		return false;
+	}
+
+	reloadSettings(){
+		this.toastr.showToast('Saved User Settings', 'success');
+		this.getProfile();
+		this.reloadPage();
 	}
 
 	/**
