@@ -45,8 +45,6 @@ def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no
 		except Error as err:
 			data = {'status': False, 'data': f'Could not encrypt password: {err}.'}
 
-		print({'data':data})
-
 		return Response(data, mimetype='application/json')
 
 	@app.before_request

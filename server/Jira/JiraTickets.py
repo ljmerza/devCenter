@@ -91,8 +91,6 @@ class JiraTickets():
 		if not fields or fields is None:
 			fields = self.jira_api.fields
 
-		print({'fields':fields})
-
 		response = self.get_raw_jira_tickets(filter_number=filter_number, cred_hash=cred_hash, fields=fields, jql=jql)
 		if not response['status']:
 			return response

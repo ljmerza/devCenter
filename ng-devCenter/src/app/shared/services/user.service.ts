@@ -25,12 +25,13 @@ export class UserService {
 	];
 
 	devServers: Array<Object>;
+	breakVersionValue = '10.0.0';
 
 	public get breakVersion(): string {
-		return this.ls.getItem('v9.0.0') || '';
+		return this.ls.getItem(this.breakVersionValue) || '';
 	}
 	public set breakVersion(breakVersion) {
-		this.ls.setItem('v9.0.0', breakVersion);
+		this.ls.setItem(this.breakVersionValue, breakVersion);
 	}
 
 	public get username():string{
