@@ -91,12 +91,14 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 		this.orders = response.data
 	 		.filter(link => link.type === 'order')
 	 		.map(this.addCacheParameter.bind(this))
-	 		.map(this.addUserNameToUrl.bind(this));
+	 		.map(this.addUserNameToUrl.bind(this))
+	 		.sort(this.sortByName.bind(this));
 
 	 		this.wfaTickets = response.data
 	 		.filter(link => link.type === 'wfa')
 	 		.map(this.addCacheParameter.bind(this))
-	 		.map(this.addUserNameToUrl.bind(this));
+	 		.map(this.addUserNameToUrl.bind(this))
+	 		.sort(this.sortByName.bind(this));
 
 	 		this.betaLinks = response.data
 	 		.filter(link => link.type === 'beta_links')
@@ -104,15 +106,18 @@ export class NavBarComponent implements OnInit, OnDestroy {
  			.map(link => {
  				if( !/^http/.test(link.link) ) link.link = `${this.config.betaUrl}/${link.link}`;
  				return link;
- 			});
+ 			})
+ 			.sort(this.sortByName.bind(this));
 
 	 		this.prodLinks = response.data
 	 		.filter(link => link.type === 'prod_links')
-	 		.map(this.addUserNameToUrl.bind(this));
+	 		.map(this.addUserNameToUrl.bind(this))
+	 		.sort(this.sortByName.bind(this));
 
  			this.devLinks = response.data
  			.filter(link => link.type === 'dev_links')
- 			.map(this.addUserNameToUrl.bind(this));
+ 			.map(this.addUserNameToUrl.bind(this))
+ 			.sort(this.sortByName.bind(this));
 
  			this.emberLinks = response.data
  			.filter(link => link.type === 'ember_links')
@@ -121,21 +126,25 @@ export class NavBarComponent implements OnInit, OnDestroy {
  				return link;
  			})
  			.map(this.addCacheParameter.bind(this))
- 			.map(this.addUserNameToUrl.bind(this));
+ 			.map(this.addUserNameToUrl.bind(this))
+ 			.sort(this.sortByName.bind(this));
 
  			this.teamdbEmberLinks = response.data
  			.filter(link => link.type === 'teamdb_ember')
  			.map(this.addCacheParameter.bind(this))
-			.map(this.addUserNameToUrl.bind(this));
+			.map(this.addUserNameToUrl.bind(this))
+			.sort(this.sortByName.bind(this));
 			 
 			this.rdsLinks = response.data
  			.filter(link => link.type === 'rds')
  			.map(this.addCacheParameter.bind(this))
+ 			.sort(this.sortByName.bind(this));
 			 
 			this.gpsLinks = response.data
  			.filter(link => link.type === 'gps')
  			.map(this.addCacheParameter.bind(this))
- 			.map(this.addGpsIdToUrl.bind(this));
+ 			.map(this.addGpsIdToUrl.bind(this))
+ 			.sort(this.sortByName.bind(this));
 
 	 	},
 	 	error => this.toastr.showToast(this.items.processErrorResponse(error), 'error'));
@@ -168,5 +177,11 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		const queryAddition = navbarItem.link.includes('?') ? '&' : '?';
 		navbarItem.link += `${queryAddition}cache=${this.user.cache}`;
 		return navbarItem;
+	}
+
+	sortByName(a, b){
+		if(a.name > b.name) return 1;
+		else if(a.name < b.name) return -1;
+		else return 0;
 	}
 }

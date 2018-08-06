@@ -42,7 +42,7 @@ class ChatAPI():
 		else:
 			url = f"{self.chat_api}/{username}"
 			auth = HTTPBasicAuth(self.bot_name, self.bot_password)
-			response = requests.post(url, data=message.encode('latin-1', "ignore"), auth=auth)
+			response = requests.post(url, data=message.encode('utf-8', "ignore"), auth=auth)
 			return self._process_response(response=response)
 
 	def send_meeting_message(self, message, chatroom):
@@ -54,7 +54,7 @@ class ChatAPI():
 		else:
 			url = f"{self.chat_api_chatroom}{chatroom}"
 			auth = HTTPBasicAuth(self.bot_name, self.bot_password)
-			response = requests.post(url, data=message.encode('latin-1', "ignore"), auth=auth)
+			response = requests.post(url, data=message.encode('utf-8', "ignore"), auth=auth)
 			return self._process_response(response=response)
 
 	def _process_response(self, response):
