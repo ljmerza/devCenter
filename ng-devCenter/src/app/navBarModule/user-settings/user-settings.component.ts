@@ -127,18 +127,26 @@ export class UserSettingsComponent implements OnInit {
 		if(this.userSettingsForm.invalid) return;
 
 		// save data to local storage
+		this.toastr.showToast('info', 'Saving user profile settings and encrypting password');
+
 		const userData = this.userSettingsForm.controls;
 		this.user.setUserData('username', userData.username.value);
-		this.user.setUserData('password', userData.password.value);
 		this.user.setUserData('port', userData.port.value);
 		this.user.setUserData('devServer', userData.devServer.value);
 		this.user.setUserData('emberUrl', userData.emberUrl.value);
 		this.user.setUserData('teamUrl', userData.teamUrl.value);
 		this.user.setUserData('cache', userData.cache.value);
 
-		this.getProfile();
-		this.toastr.showToast('Saved User Settings', 'success');
-		this.reloadPage();
+		this.user.encryptPassword(userData.password.value)
+			.subscribe(
+				response => {
+					this.user.setUserData('password', response.data);
+					this.toastr.showToast('Saved User Settings', 'success');
+					this.getProfile();
+					this.reloadPage();
+				},
+				error => this.toastr.showToast('error', error)
+			);
 
 		return false;
 	}

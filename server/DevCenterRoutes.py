@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import json
 import os
+from base64 import b64encode
 
 from flask import request, Response, g, abort
 from flask_cors import cross_origin
@@ -34,25 +35,37 @@ def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no
 	@app.route(f"/{app_name}/encrypt", methods=['POST'])
 	@cross_origin()
 	def encrypt_token():
-		data = {'status': True, 'data': cypher.encrypt(g.cred_hash)}
+		post_data = request.get_json()
+
+		if not post_data.get('password', False):
+			data = {'status': False, 'data': 'No password given.'}
+		try:
+			encrypted_password = cypher.encrypt(post_data['password'])
+			data = {'status': True, 'data': encrypted_password}
+		except Error as err:
+			data = {'status': False, 'data': f'Could not encrypt password: {err}.'}
+
+		print({'data':data})
+
 		return Response(data, mimetype='application/json')
 
 	@app.before_request
 	def get_cred_hash():
-		# print url if in dev mode
 		if devflk:
 			print(request.url)
 
-		# if web sockets then ignore
-		if 'socket_tickets' not in request.url:
-			cred_hash = request.headers.get('Authorization')
+		# if web sockets or encrypting password then ignore
+		if 'socket_tickets' not in request.url and 'encrypt' not in request.url:
+			cred_hash = request.headers.get('x-token')
 
-			# if POST request and we dont have creds then just abort request
-			# else decrypt password and save on global request
-			if not cred_hash:
+			try:
+				username, password = cred_hash.strip().split(':')
+				decrypted_pasword = cypher.decrypt(password)
+				header_value = f'{username}:{decrypted_pasword}'
+				encoded_header = b64encode( header_value.encode() ).decode('ascii')
+				g.cred_hash = f'Basic {encoded_header}'
+			except:
 				abort(401)
-			else:
-				g.cred_hash = cypher.decrypt(g.cred_hash)
 
 	@app.after_request
 	def check_status(response):

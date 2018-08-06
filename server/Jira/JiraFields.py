@@ -294,6 +294,16 @@ def get_dates(issue):
 		'started': issue.get('fields', {}).get('customfield_10109', '')
 	}
 
+def get_worklog(issue):
+	worklogs = []
+	worklog_field = issue.get('fields', {}).get('worklog', False)
+
+	if worklog_field:
+		worklogs = worklog_field.get('worklogs', [])
+
+	return worklogs
+
+
 def get_attachments(issue):
 	attachments = []
 

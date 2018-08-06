@@ -17,7 +17,7 @@ def start_server(devflk, host, port, app_name, devdb, sql_echo, dev_chat, no_pin
 
 	# set debug if we want it
 	if devflk:
-		app.config['DEBUG'] = True
+		# app.config['DEBUG'] = True
 		app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 	# define all routes

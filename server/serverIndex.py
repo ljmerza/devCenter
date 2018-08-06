@@ -24,7 +24,7 @@ if 'prod' in sys.argv:
 	dev_chat = False
 
 # use prod flask server
-if 'prodflk':
+if 'prodflk' in sys.argv:
 	devflk = False
 
 # allow echoing of SQL
@@ -32,7 +32,7 @@ if 'sql' in sys.argv:
 	sql_echo = True
 
 # allow prod chat messages
-if 'prodChat':
+if 'prodChat' in sys.argv:
 	dev_chat = False
 
 # start flask server

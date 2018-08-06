@@ -40,24 +40,14 @@ export class UserService {
 		this.ls.setItem('username', username);
 	}
 
-	public get password():string{
-		let password;
-		try {
-			password = atob(this.ls.getItem('password') || '');
-		} catch(err) {
-			password = '';
-		}
-		return password;
+	public get password():string {
+		return this.ls.getItem('password') || '';
 	}
 	public set password(password){
-		// hash password so it's at least not plain text...
-		try {
-			password = btoa(password);
-		} catch(err) {
-			password = '';
-		}
-
 		this.ls.setItem('password', password);
+	}
+	public encryptPassword(password){
+		return this.dataService.post(`${this.dataService.apiUrl}/encrypt`, {password});
 	}
 
 	public get port():string{

@@ -29,22 +29,16 @@ export class DataService extends HttpClient {
 
 	private _createHeaders() {
 		return new HttpHeaders()
-			.set('Authorization',  this._authorizationHeader() )
+			.set('X-token',  this.encryptionHeader() )
 			.set('Content-Type', 'application/json');
 	}
 
 	/**
 	*/
-	private _authorizationHeader(): string {
+	private encryptionHeader(): string {
 		const username = this.ls.getItem('username');
 		let password = this.ls.getItem('password');
-
-		try {
-			password = atob(password);
-			return "Basic " + btoa(`${username}:${password}`);
-		}catch(e){
-			return '';
-		}
+		return `${username}:${password}`;
 	}
 
 	get(url, options:any={}): Observable<any>{

@@ -45,6 +45,20 @@
 						</td>
 					</tr>
 
+					<tr>
+						<td>Work Log:</td>
+						<td colspan='4'>
+							<table class="table table-striped">
+								<tbody>
+									<tr *ngFor='let worklog of ticket?.worklog; trackBy:worklog?.id'>
+										<td>Time Spent: {{worklog.timeSpent}}</td>
+										<td>updated: {{worklog.updated | amDateFormat:'MMMM DD@h:mm:A'}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+
 					<tr *ngIf='links.length'>
 						<td>Links:</td>
 						<td colspan='4'>
@@ -84,6 +98,7 @@
 							</table>
 						</td>
 					</tr>
+
 					<tr>
 						<td>Status Changes:</td>
 						<td colspan='4'>

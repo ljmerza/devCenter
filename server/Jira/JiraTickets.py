@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import os
-from .JiraFields import get_key, get_msrp, get_user_details, get_customer_details, get_dates, get_summary, get_component, get_status, get_story_point, get_sprint, get_master_branch, get_epic_link, get_label, get_comments, get_attachments, get_watchers, get_priority, get_severity, get_code_reviewer, get_issue_type, get_environment, get_issue_links, get_description, get_history, get_dev_changes
+from .JiraFields import get_key, get_msrp, get_user_details, get_customer_details, get_dates, get_summary, get_component, get_status, get_story_point, get_sprint, get_master_branch, get_epic_link, get_label, get_comments, get_attachments, get_watchers, get_priority, get_severity, get_code_reviewer, get_issue_type, get_environment, get_issue_links, get_description, get_history, get_dev_changes, get_worklog
 
 class JiraTickets():
 	def __init__(self, jira_api):
@@ -54,6 +54,7 @@ class JiraTickets():
 		ticket['username'] = ticket['user_details']['username']
 		ticket['customer_details'] = get_customer_details(issue)
 		ticket['dates'] = get_dates(issue)
+		ticket['worklog'] = get_worklog(issue)
 
 		ticket['summary'] = get_summary(issue)
 		ticket['component'] = get_component(issue)
@@ -89,6 +90,8 @@ class JiraTickets():
 	def get_jira_tickets(self, cred_hash, fields='', jql='', filter_number=''):
 		if not fields or fields is None:
 			fields = self.jira_api.fields
+
+		print({'fields':fields})
 
 		response = self.get_raw_jira_tickets(filter_number=filter_number, cred_hash=cred_hash, fields=fields, jql=jql)
 		if not response['status']:
