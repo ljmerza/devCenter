@@ -18,7 +18,7 @@ export class OrderService {
 		// dont save this in local storage - too big
 		let params = new HttpParams();
  		params = params.append('isHardRefresh', `true`);
-		return this.dataService.get(`${this.dataService.apiUrl}/api/orders`, {params});
+		return this.dataService.get(`${this.dataService.apiUrl}/json_api/orders`, {params});
 	}
 
 	/**

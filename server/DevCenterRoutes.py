@@ -53,7 +53,11 @@ def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no
 			print(request.url)
 
 		# if web sockets or encrypting password then ignore
-		if 'socket_tickets' not in request.url and 'encrypt' not in request.url:
+		if(
+			'socket_tickets' not in request.url and 
+			'encrypt' not in request.url and
+			'json_api' not in request.url
+		):
 			cred_hash = request.headers.get('x-token')
 
 			try:
