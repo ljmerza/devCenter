@@ -24,6 +24,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 	teamdbEmberLinks;
 	orders;
+	atxOrders;
 	wfaTickets;
 	prodLinks;
 	betaLinks;
@@ -46,9 +47,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		this.setFridayChecker();
 
 		if(!this.user.needRequiredCredentials()){
-			this.getNavbarItems();
-			this.getUserProfile();
+			this.updateNavBar();
 		}
+	}
+
+	updateNavBar(){
+		this.getNavbarItems();
+		this.getUserProfile();
 	}
 
 	/**
@@ -81,7 +86,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 			if((itIsFriday && !this.showLogHours) || (!itIsFriday && this.showLogHours)) {
 				this.showLogHours = itIsFriday;
-				this.cd.markForCheck();
+				this.cd.detectChanges();
 			}
 		}, 60*1000);
 	}
@@ -98,7 +103,11 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 		this.orders = response.data
 	 		.filter(link => link.type === 'order')
 	 		.map(this.addCacheParameter.bind(this))
-	 		.map(this.addUserNameToUrl.bind(this))
+	 		.sort(this.sortByName.bind(this));
+
+	 		this.atxOrders = response.data
+	 		.filter(link => link.type === 'atx')
+	 		.map(this.addCacheParameter.bind(this))
 	 		.sort(this.sortByName.bind(this));
 
 	 		this.wfaTickets = response.data
@@ -161,7 +170,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 * adds username to any URLs that need it
 	 * @param {Object} navbarItem
 	 */
-	addUserNameToUrl(navbarItem){
+	addUserNameToUrl(navbarItem, alwaysAddUsername){
 		navbarItem.link = navbarItem.link.replace('##username##', this.user.username);
  		return navbarItem;
 	}

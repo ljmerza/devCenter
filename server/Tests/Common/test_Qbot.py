@@ -8,7 +8,7 @@ import os
 
 
 username = os.environ['USER']
-chat = Chat(debug=1, is_qa_pcr=1, merge_alerts=1)
+chat = Chat(debug=True, is_qa_pcr=True, merge_alerts=True)
 
 
 divider = '-'*40

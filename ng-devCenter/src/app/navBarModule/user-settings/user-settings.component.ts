@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { NgRedux } from '@angular-redux/store';
@@ -15,6 +15,7 @@ export class UserSettingsComponent implements OnInit {
 	userSettingsForm: FormGroup;
 	gotProfile = false;
 	@Input() isLogin:boolean = true;
+	@Output() userCredsChangedEvent = new EventEmitter();
 
 	constructor(
 		public user: UserService, private jira: JiraPingsService, private toastr: ToastrService, 
@@ -136,24 +137,38 @@ export class UserSettingsComponent implements OnInit {
 		this.user.setUserData('teamUrl', userData.teamUrl.value);
 		this.user.setUserData('cache', userData.cache.value);
 
-		// if password hasn't changed then do nothing else encrypt password
-		if(userData.password.value === this.user.password){
-			this.reloadSettings();
+		this.userCredsChanged(userData);
+		return false;
+	}
 
-		} else {
+	userCredsChanged(userData){
+
+		// if creds have not been changed then do nothing
+		if(userData.password.value === this.user.password && userData.username.value === this.user.username){
+			return false;
+		}
+
+		// if only username changed then reload everything right now
+		if(userData.password.value === this.user.password && userData.username.value !== this.user.username){
+			this.userCredsChangedEvent.emit();
+			this.reloadSettings();
+		}
+
+		// if user password changed then process it then reload
+		if(userData.password.value !== this.user.password){
 			this.toastr.showToast('Encrypting password', 'info');
 
 			this.user.encryptPassword(userData.password.value)
 				.subscribe(
 					response => {
 						this.user.setUserData('password', response.data);
+						this.userCredsChangedEvent.emit();
 						this.reloadSettings();
 					},
 					error => this.toastr.showToast('error', error)
 				);
 		}
 
-		return false;
 	}
 
 	reloadSettings(){

@@ -100,6 +100,19 @@
 								</ul>
 							</li>
 
+							<!-- atx list -->
+							<li class="dropdown-submenu" dropdownSubmenu>
+								<a class="dropdown-item" data-toggle="dropdown">ATX Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+								<ul class="dropdown-menu" dropdownSubmenuMenu>
+									<li>
+										<a *ngFor='let navLink of atxOrders' class="dropdown-item"  target="_blank" 
+										href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/atx/{{navLink.link}}">
+											<span>{{navLink.orderName}} {{navLink.name}}</span>
+										</a>
+									</li>
+								</ul>
+							</li>
+
 							<!-- rds list -->
 							<li class="dropdown-submenu" dropdownSubmenu>
 								<a class="dropdown-item" data-toggle="dropdown">RDS Packages <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
