@@ -23,7 +23,7 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 	getOrders$;
 	orders$;
 
-	baseEmber = `${this.user.emberUrl}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}`;
+	baseEmber = `${this.user.emberUrlBase}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}`;
 	baseUrl = `${this.baseEmber}order/ethernet`;
 	aseBaseUrl = `${this.baseEmber}order/asedb`;
 	circuitBaseUrl = `${this.baseEmber}asset/history?asset=`;
