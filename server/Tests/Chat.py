@@ -22,7 +22,6 @@ pullLinks = [
 	{'repo':'repo3', 'link':'link3'},
 ]
 response = ct.send_pcr_comments(
-						fromUsername=username, 
 						fromName=username, 
 						toUsername=username, 
 						pullLinks=pullLinks, 

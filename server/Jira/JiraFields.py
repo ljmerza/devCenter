@@ -87,6 +87,21 @@ def get_username(issue):
 	else:
 		return ''
 
+def get_display_name(issue):	
+	'''gets an issue's display name 
+
+	Args:
+		issue (dict) a Jira issue object
+
+	Returns:
+		the issue username or empty string
+	'''
+	# get username if exists
+	if ('assignee' in issue.get('fields')) and (issue['fields']['assignee'] is not None):
+		return issue['fields']['assignee'].get('displayName', '')
+	else:
+		return ''
+
 def get_user_details(issue):	
 	'''gets a user's details
 

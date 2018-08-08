@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import os
-from .JiraFields import get_key, get_msrp, get_user_details, get_customer_details, get_dates, get_summary, get_component, get_status, get_story_point, get_sprint, get_master_branch, get_epic_link, get_label, get_comments, get_attachments, get_watchers, get_priority, get_severity, get_code_reviewer, get_issue_type, get_environment, get_issue_links, get_description, get_history, get_dev_changes, get_worklog
+from .JiraFields import get_key, get_msrp, get_user_details, get_customer_details, get_dates, get_summary, get_component, get_status, get_story_point, get_sprint, get_master_branch, get_epic_link, get_label, get_comments, get_attachments, get_watchers, get_priority, get_severity, get_code_reviewer, get_issue_type, get_environment, get_issue_links, get_description, get_history, get_dev_changes, get_worklog, get_username, get_display_name
 
 class JiraTickets():
 	def __init__(self, jira_api):
@@ -51,7 +51,9 @@ class JiraTickets():
 		ticket['msrp'] = get_msrp(issue)
 
 		ticket['user_details'] = get_user_details(issue)
-		ticket['username'] = ticket['user_details']['username']
+		ticket['username'] = get_username(issue)
+		ticket['display_name'] = get_display_name(issue)
+
 		ticket['customer_details'] = get_customer_details(issue)
 		ticket['dates'] = get_dates(issue)
 		ticket['worklog'] = get_worklog(issue)

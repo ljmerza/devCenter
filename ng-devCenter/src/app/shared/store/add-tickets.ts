@@ -35,7 +35,8 @@ export function addTickets(state, tickets){
 			key: ticket.key,
 			msrp: ticket.msrp,
 			pullRequests: ticket.pullRequests,
-			userDetails: ticket.user_details,
+			username: ticket.username,
+			displayName: ticket.display_name
 		});
 
 		statuses.push({

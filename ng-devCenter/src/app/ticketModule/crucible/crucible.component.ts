@@ -21,18 +21,18 @@ import { CrucibleCommentsModalComponent } from '../../commentsModule/crucible-co
 export class CrucibleComponent implements OnDestroy, OnInit {
 
 	constructor(
-		public jira: JiraService, public config: ConfigService, public toastr: ToastrService, 
+		public config: ConfigService, public toastr: ToastrService, public chat: ChatService,
 		private cd: ChangeDetectorRef, public store: NgRedux<RootState>, public route: ActivatedRoute,
-		private user: UserService, public chat: ChatService,
 	) { }
 
 	@Input() key;
 	ticketListType: string;
 	pullRequests: Array<any>;
-	fromUsername: string;
-	fromName: string;
+	toUsername: string;
+	displayName: string;
 
-	codeCloud$
+	codeCloud$;
+	userProfile$;
 
 	/**
 	* Get crucible Id from store.
@@ -44,11 +44,14 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 			this.codeCloud$ = this.store.select(`${this.ticketListType}_codeCloud`)
 				.subscribe((allTickets: any = []) => {
 					const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
-					this.fromUsername = ticket.userDetails.username || '';
-					this.fromName = ticket.userDetails.display_name || '';
+					this.toUsername = ticket.username || '';
 					this.pullRequests = ticket.pullRequests || '';
 				});
-
+			
+			this.userProfile$ = this.store.select(`userProfile`)
+				.subscribe((profile:any) => {
+					this.displayName = profile.displayName || '';
+				});
 		});
 	}
 
@@ -57,6 +60,7 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 	 */
 	ngOnDestroy() {
 		if (this.codeCloud$) this.codeCloud$.unsubscribe();
+		if (this.userProfile$) this.userProfile$.unsubscribe();
 	}
 
 	/**
@@ -64,9 +68,8 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 	 */
 	pingPcrCommentsAddressing(){
 		const postData = {
-			fromUsername: this.fromUsername,
-			fromName: this.fromName,
-			toUsername: this.user.username,
+			fromName: this.displayName,
+			toUsername: this.toUsername,
 			pullLinks: this.pullRequests,
 			key: this.key,
 		};
