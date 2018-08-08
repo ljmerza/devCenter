@@ -165,7 +165,7 @@
 
 
 				<!-- ATX -->
-				<td><span *ngIf='orderItem.ATX'>{{orderItem.ATX[0].AsedbSiteId}}</span></td>
+				<td><span *ngIf='orderItem.ATX'>{{orderItem.ATX[0].atx?.AsedbSiteId}}</span></td>
 				<td><span *ngIf='orderItem.ATX'>{{orderItem.ATX[0].atx?.AtxUniPon}}</span></td>
 				<td><span *ngIf='orderItem.ATX'>{{orderItem.ATX[0].atx?.AtxUniUso}}</span></td>
 				<td><span *ngIf='orderItem.ATX'>{{orderItem.ATX[0].atx?.AtxUniUsoIcoreId}}</span></td>

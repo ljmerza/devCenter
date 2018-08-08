@@ -10,12 +10,33 @@ import { UserService, ToastrService, JiraService, ConfigService } from '@service
 })
 export class SearchbarComponent implements OnInit {
 	inputValue: string;
+	searchType;
+	secondSearchType;
+
 	validFormValues:Array<any> = [
 		{
 			value: 'Jira', // used to select which method to call
 			name: 'Search', // search button text
 			placeholder: 'Search Jira Ticket', // input placeholder text
 			caller: 'searchTicket' // method name to be called when searching
+		},
+		{
+			value: 'ATX',
+			name: 'Open ATX',
+			placeholder: 'Open ATX',
+			caller: 'openWorkitem',
+			url: 'order/atx', // url piece to use in ember
+			secondDropdown: [
+				{name: 'USO', value: 'usoNumber'},
+				{name: 'SR', value: 'svcRequestName'},
+				{name: 'PON', value: 'ponNumber'},
+				{name: 'Package Name', value: 'packageName'},
+				{name: 'OCX Order Number', value: 'ocxOrderNumber'},
+				{name: 'Circuit ID', value: 'attCircuitId'},
+				{name: 'iCore PVC ID', value: 'PVCId'},
+				{name: 'iCore Site ID', value: 'SiteId'},
+			],
+			secondValue: 'usoNumber'
 		},
 		{
 			value: 'Order',
@@ -47,9 +68,6 @@ export class SearchbarComponent implements OnInit {
 		}
 	];
 
-	placeHolderValue:string = '';
-	buttonValue:string = '';
-
 	constructor(public user: UserService, private toastr: ToastrService, public jira:JiraService, public config:ConfigService) { }
 
 	/**
@@ -57,8 +75,7 @@ export class SearchbarComponent implements OnInit {
 	 */
 	ngOnInit(){
 		// set default search values
-		this.buttonValue = this.validFormValues[0].name;
-		this.placeHolderValue = this.validFormValues[0].placeholder;
+		this.searchType = this.validFormValues[0];
 	}
 		
 
@@ -84,7 +101,6 @@ export class SearchbarComponent implements OnInit {
 		}
 	}
 
-
 	/**
 	 * Opens a workitem in dev Ember.
 	 * @param {string} orderValue the workitem number
@@ -94,6 +110,13 @@ export class SearchbarComponent implements OnInit {
 		if(!workNumber){
 			this.toastr.showToast(`${workType} number required.`, 'error');
 			return;
+		}
+
+		if(this.searchType.secondDropdown && !this.searchType.secondValue){
+			this.toastr.showToast(`Secondary value required for ${workType}.`, 'error');
+			return;
+		} else if(this.searchType.secondDropdown){
+			workType = `${workType}/${this.searchType.secondValue}`;
 		}
 
 		const urlPath = this.addCacheParameter({
@@ -111,14 +134,7 @@ export class SearchbarComponent implements OnInit {
 		const inputValue = (formObj.value.inputValue || '').trim();
 		formObj.resetForm();
 
-		const inputType = this.validFormValues.find(values => this.placeHolderValue === values.placeholder);
-		const searchParameters = this.validFormValues.find(forms => forms.value === inputType.value);
-
-		if(searchParameters){
-			this[searchParameters.caller](inputValue, searchParameters.url);
-		} else {
-			return this.toastr.showToast('Invalid input type.', 'error');
-		}
+		this[this.searchType.caller](inputValue, this.searchType.url);
 	}
 
 	/**
@@ -126,9 +142,16 @@ export class SearchbarComponent implements OnInit {
 	 * @param {string} inputType
 	 */
 	public changeInputType(inputType):void {
-		const newInputType = this.validFormValues.find(values => inputType === values.placeholder);
-		this.placeHolderValue = newInputType.placeholder;
-		this.buttonValue = newInputType.name;
+		this.searchType = this.validFormValues.find(values => inputType === values.placeholder);
+	}
+
+	/**
+	 * Changes the form input secondary type.
+	 * @param {string} inputType
+	 */
+	public changeSecondInputType(value):void {
+		const chosenValue = this.searchType.secondDropdown.find(values => value === values.name);
+		this.searchType.secondValue = chosenValue.value;
 	}
 
 	/**

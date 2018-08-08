@@ -124,7 +124,47 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 			return order;
 		});
 
+		this.getAtxIds(orders);
+
 		return new_orders;
+	}
+
+	/**
+	 *
+	 */
+	getAtxIds(orders){
+		let atxIds = [];
+
+		atxIds.push('AsedbSiteId:');
+		orders.forEach(order => {
+
+			if(order.ATX && order.ATX[0] && order.ATX[0].atx && order.ATX[0].atx.AsedbSiteId){
+				atxIds.push(order.ATX[0].atx.AsedbSiteId);
+			}
+		});
+
+		atxIds.push('AtxUniPon:');
+		orders.forEach(order => {
+			if(order.ATX && order.ATX[0] && order.ATX[0].atx && order.ATX[0].atx.AtxUniPon){
+				atxIds.push(order.ATX[0].atx.AtxUniPon);
+			}
+		});
+
+		atxIds.push('AtxUniUso:');
+		orders.forEach(order => {
+			if(order.ATX && order.ATX[0] && order.ATX[0].atx && order.ATX[0].atx.AtxUniUso){
+				atxIds.push(order.ATX[0].atx.AtxUniUso);
+			}
+		});
+
+		atxIds.push('AtxUniUsoIcoreId:');
+		orders.forEach(order => {
+			if(order.ATX && order.ATX[0] && order.ATX[0].atx && order.ATX[0].atx.AtxUniUsoIcoreId){
+				atxIds.push(order.ATX[0].atx.AtxUniUsoIcoreId);
+			}
+		});
+
+		console.log({atxIds});
 	}
 
 	/**
