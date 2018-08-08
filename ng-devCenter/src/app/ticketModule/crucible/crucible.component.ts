@@ -63,15 +63,13 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 	 *
 	 */
 	pingPcrCommentsAddressing(){
-		let postData = {
+		const postData = {
 			fromUsername: this.fromUsername,
 			fromName: this.fromName,
 			toUsername: this.user.username,
 			pullLinks: this.pullRequests,
 			key: this.key,
 		};
-
-		console.log({postData});
 
 		this.chat.sendPcrComments(postData).subscribe(
 			response => this.toastr.showToast(response.data, 'success'),
