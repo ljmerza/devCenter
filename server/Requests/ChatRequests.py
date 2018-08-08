@@ -113,3 +113,18 @@ def _get_jira_ticket_for_ping(data):
 	data['pcr_estimate'] = jira_obj.get_pcr_estimate(story_point=data['story_point'])
 
 	return {"data": data, "status": True}
+
+def send_pcr_comments(data, dev_chat, no_pings):
+	missing_params = missing_parameters(params=data, required=['fromUsername', 'fromName', 'toUsername', 'pullLinks', 'key'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+	chat_obj = Chat(debug=dev_chat, no_pings=no_pings)
+	
+	return chat_obj.send_pcr_comments(
+		fromUsername=data['fromUsername'], 
+		fromName=data['fromName'], 
+		toUsername=data['toUsername'], 
+		pullLinks=data['pullLinks'], 
+		key=data['key']
+	)

@@ -126,7 +126,35 @@ class ChatMisc():
 		if(username not in self.chat_api.project_managers):
 			self.chat_api.send_message(message=message, username=username)
 
-	
+
+	def send_pcr_comments(self, fromUsername, fromName, toUsername, pullLinks, key):
+		'''
+		'''
+		message = f"<br> \
+			You Have PCR comments to address from {fromName} ({fromUsername}) for <a href='{self.chat_api.jira_ticket_base}/{key}'>{key}</a>: <br> \
+				<table style='{table_style}'> \
+			"
+
+		idx = 0
+		for link in pullLinks:
+			coloredRow = ''
+
+			if idx % 2 == 1:
+				coloredRow = td_alt_style
+			idx = idx+1
+
+			repo = link['repo']
+			link = link['link']
+
+			message += f"<tr> \
+					<td style='{td_style} {coloredRow}'><a href='{link}'>{repo}</a></td> \
+				</tr>"
+
+		message += '</table>'
+
+
+		return self.chat_api.send_message(message=message, username=toUsername)
+
 
 
 	

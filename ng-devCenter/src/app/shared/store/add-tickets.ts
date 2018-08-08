@@ -34,7 +34,8 @@ export function addTickets(state, tickets){
 		codeClouds.push({
 			key: ticket.key,
 			msrp: ticket.msrp,
-			pullRequests: ticket.pullRequests
+			pullRequests: ticket.pullRequests,
+			userDetails: ticket.user_details,
 		});
 
 		statuses.push({
