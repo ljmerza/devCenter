@@ -46,9 +46,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(){
 		this.setFridayChecker();
+		this.updateNavBar();
 
 		if(!this.user.needRequiredCredentials()){
-			this.updateNavBar();
 
 			this.git.getRepos().subscribe(
 				repos => this.store.dispatch({type: Actions.repos, payload: repos.data}),
