@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
 	selector: 'dc-ticket-dates',
@@ -6,13 +6,9 @@ import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core
 	styleUrls: ['./dates.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DatesComponent implements OnInit {
+export class DatesComponent {
 
 	constructor() { }
-
 	@Input() datetime;
-
-	ngOnInit() {
-	}
 
 }
