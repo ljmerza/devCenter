@@ -1,8 +1,8 @@
 <dc-loading-table [loadingTable]=loadingTickets [loadingIcon]=loadingIcon [tableTitle]=tableTitle (refreshData)="getTickets()" (stopRefresh)="stopGetTickets()">
-	
+
 	<div class='form-inline float-right'>
 		<input class='form-control mr-sm-2 filterInput' type="text" placeholder='Filter tickets' #filterInput (keyup)="filterTable()">
-		<select class='form-control mr-sm-2 filterInput' name="searchSelection" (change)='filterByStatus($event.target.value)'>
+		<select class='form-control mr-sm-2 filterInput' #statusDropdown (change)='filterByStatus()'>
 			<option value=''>Filter by Status</option>
 			<option *ngFor='let status of allTicketStatuses' [ngValue]='status'>
 				{{status}}

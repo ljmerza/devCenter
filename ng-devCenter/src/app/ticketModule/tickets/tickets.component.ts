@@ -36,6 +36,7 @@ export class TicketsComponent implements OnInit {
 	@ViewChild('table') table:ElementRef
 	@ViewChild('tbody') tbody:ElementRef
 	@ViewChild('filterInput') filterInput:ElementRef
+	@ViewChild('statusDropdown') statusDropdown:ElementRef
 
 	get tableTitle(){
 		return `${this.jira.title} Tickets`;
@@ -63,7 +64,7 @@ export class TicketsComponent implements OnInit {
 				
 			if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
 			this.ticketsRedux$ = this.store.select(this.ticketListType)
-			.subscribe(tickets => this.processTickets(tickets || []));
+			.subscribe(tickets => this.processTickets({tickets: tickets || []}));
 		});
 	}
 
@@ -113,7 +114,7 @@ export class TicketsComponent implements OnInit {
 	 * If a list of tickets exist then process the end of ticket retrieval
 	 * @param {Array<Ticket>} tickets
 	 */
-	private processTickets(tickets) {
+	private processTickets({tickets}) {
 		if(tickets.length === 0) {
 			this.loadingTickets = true;
 			return;
@@ -121,9 +122,9 @@ export class TicketsComponent implements OnInit {
 
 		this.loadingTickets = false;
 		this.tickets = tickets;
-		this.filteredTickets = tickets;
 
-		this.getStatusList(tickets);
+		this.getStatusList({tickets});
+		this.filterByStatus({reset:true});
 
 		this.filterTable();
 		this.addSortTable();
@@ -132,18 +133,26 @@ export class TicketsComponent implements OnInit {
 	/**
 	 * get all uniquer ticket statuses from ticket list
 	 */
-	private getStatusList(tickets){
+	private getStatusList({tickets}){
 		this.allTicketStatuses = tickets
 			.map(ticket => ticket.status)
 			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), []);
 	}
 
 	/**
-	 *
+	 * filter the ticket list by chosen status from the dropdown
+	 * @param {boolean} reset do we want to reset the status selection?
 	 */
-	filterByStatus(status){
-		if(!status) this.filteredTickets = this.tickets;
-		else this.filteredTickets = this.tickets.filter(ticket => ticket.status === status);
+	filterByStatus({reset=false}={}){
+		let filterValue = '';
+
+		if(!reset){
+			let filterEl = $(this.statusDropdown.nativeElement);
+			filterValue = $(filterEl[0]).val();
+		}
+
+		if(!filterValue) this.filteredTickets = this.tickets;
+		else this.filteredTickets = this.tickets.filter(ticket => ticket.status === filterValue);
 	}
 
 	/**
