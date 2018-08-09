@@ -15,7 +15,7 @@ import { ItemsService, ToastrService } from '@services';
 })
 export class EditOrdersComponent implements OnInit {
 	loadingIndicator:boolean = true;
-	tableTitle:string = 'Edit Orders';
+	tableTitle:string = 'Edit Navbar Items';
 	navbarItems: Array<any>;
 	dropdownItems: Array<string> = [];
 

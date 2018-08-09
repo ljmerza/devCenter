@@ -8,7 +8,7 @@ import { ModalComponent } from '@modal';
 
 import { Actions, RootState } from '@store';
 import { APIResponse } from '@models';
-import { UserService, ConfigService, ToastrService, ItemsService } from '@services';
+import { UserService, ConfigService, ToastrService, ItemsService, GitService, JiraService } from '@services';
 
 @Component({
 	selector: 'dc-nav-bar',
@@ -37,7 +37,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 	constructor(
 		public config:ConfigService, public user: UserService, private cd: ChangeDetectorRef,
-		private store:NgRedux<RootState>, private toastr: ToastrService, private items: ItemsService
+		private store:NgRedux<RootState>, private toastr: ToastrService, private items: ItemsService, 
+		private git:GitService, private jira:JiraService
 	) {}
 
 	/**
@@ -48,6 +49,16 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 		if(!this.user.needRequiredCredentials()){
 			this.updateNavBar();
+
+			this.git.getRepos().subscribe(
+				repos => this.store.dispatch({type: Actions.repos, payload: repos.data}),
+				this.git.processErrorResponse.bind(this.git)
+			);
+
+			this.jira.getActiveStrints().subscribe(
+				sprint => this.store.dispatch({type: Actions.activeSprints, payload: sprint.data}),
+				this.jira.processErrorResponse.bind(this.jira)
+			);
 		}
 	}
 

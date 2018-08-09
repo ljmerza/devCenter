@@ -3,7 +3,7 @@
 from flask import request, Response
 from flask_cors import cross_origin
 
-from ..Requests.JiraRequests import get_jira_tickets, find_key_by_msrp, edit_comment, add_work_log, set_status, add_comment, set_status, modify_watchers as JiraRequests_modify_watchers, parse_comment as JiraRequests_parse_comment, delete_comment
+from ..Requests.JiraRequests import get_jira_tickets, find_key_by_msrp, edit_comment, add_work_log, set_status, add_comment, set_status, modify_watchers, parse_comment, delete_comment, get_active_sprints
 
 def define_routes(app, app_name, g):
 	@app.route(f'/{app_name}/jira/tickets')
@@ -96,21 +96,21 @@ def define_routes(app, app_name, g):
 
 	@app.route(f'/{app_name}/jira/parse_comment', methods=['POST'])
 	@cross_origin()
-	def parse_comment(key):
+	def parse_comment_route(key):
 		data=request.get_json()
 		data['cred_hash'] = g.cred_hash
 
-		data = JiraRequests_parse_comment(data=data)
+		data = parse_comment(data=data)
 		return Response(data, mimetype='application/text')
 
 	@app.route(f'/{app_name}/jira/watchers/<key>/<username>', methods=['POST', 'DELETE', 'GET'])
 	@cross_origin()
-	def modify_watchers(key, username):
+	def modify_watchers_route(key, username):
 		response = {'status': False, 'data': {}}
 
 		# get all watcher
 		if request.method == 'GET':
-			response = JiraRequests_modify_watchers(data={
+			response = modify_watchers(data={
 				'type_of_modify': 'get',
 				'cred_hash': g.cred_hash,
 				'key': key
@@ -137,3 +137,9 @@ def define_routes(app, app_name, g):
 			response = JiraRequests_modify_watchers(data=data)
 
 		return Response(response, mimetype='application/json')
+
+	@app.route(f'/{app_name}/jira/active_sprints', methods=['GET'])
+	@cross_origin()
+	def active_sprints_route():
+		response = get_active_sprints(data={'cred_hash': g.cred_hash})
+		return Response(response, mimetype='application/text')

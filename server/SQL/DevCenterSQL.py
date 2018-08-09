@@ -34,7 +34,8 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc):
 			database = 'dev_center'
 
 		charset = 'utf8'
-		self.engine = create_engine(f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}', echo=sql_echo)
+		url = f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}'
+		self.engine = create_engine(url, echo=sql_echo, pool_size=20)
 
 	def login(self):	
 		Session = sessionmaker(bind=self.engine, autoflush=False)

@@ -1,6 +1,6 @@
 import { 
 	addComment, deleteComment, editComment, addOrders,
-	updateStatus, updatePullRequests, updateWorklog
+	updateStatus, updatePullRequests, updateWorklog, addSprints
 } from './reducers';
 
 import { Actions } from './actions';
@@ -38,6 +38,9 @@ export function rootReducer(state, action){
 
 		case Actions.newOrders:
 			return addOrders(state, action.payload);
+
+		case Actions.activeSprints:
+			return addSprints(state, action.payload);
 
 		case Actions.ticketType:
 			return { ...state, ...{ticketType:action.payload} };

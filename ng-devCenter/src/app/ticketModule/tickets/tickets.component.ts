@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgProgress } from 'ngx-progressbar';
 
@@ -18,7 +18,7 @@ declare let $;
 	styleUrls: ['./tickets.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class TicketsComponent implements OnInit, AfterViewInit {
+export class TicketsComponent implements OnInit {
 	loadingTickets:boolean = false;
 	loadingIcon: boolean = false;
 	ticketListType:string; // type of tickets to get
@@ -40,7 +40,7 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 
 	constructor(
 		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>,
-		public jira:JiraService, public user:UserService, private git:GitService
+		public jira:JiraService, public user:UserService
 	) {}
 	
 	/**
@@ -51,11 +51,6 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 	ngOnInit():void {
 		if(this.user.needRequiredCredentials()) return;
 
-		this.git.getRepos().subscribe(
-			repos => this.store.dispatch({type: Actions.repos, payload: repos.data}),
-			this.git.processErrorResponse.bind(this.git)
-		);
-		
 		this.route.paramMap.subscribe((routeResponse:any) => {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 			this.store.dispatch({type: Actions.ticketType, payload: this.ticketListType });
@@ -67,13 +62,6 @@ export class TicketsComponent implements OnInit, AfterViewInit {
 			this.ticketsRedux$ = this.store.select(this.ticketListType)
 			.subscribe(tickets => this.processTickets(tickets || []));
 		});
-	}
-
-	/**
-	 * create data table on init of UI
-	 */
-	ngAfterViewInit(): void {
-		
 	}
 
 	/**

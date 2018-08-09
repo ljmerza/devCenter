@@ -10,4 +10,5 @@ export const Actions = {
 	updateWorklog: 'UPDATE_WORKLOG',
 	newOrders: 'NEW_ORDERS',
 	ticketType: 'TICKET_TYPE',
+	activeSprints: 'ACTIVE_SPRINTS',
 };

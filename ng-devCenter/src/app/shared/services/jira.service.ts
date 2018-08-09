@@ -112,6 +112,14 @@ export class JiraService {
 		return this.dataService.post(`${this.dataService.apiUrl}/jira/status`, postData);
 	}
 
+	/**
+	 * gets a list of active sprints
+	 * @return {Observable} 
+	 */
+	getActiveStrints(): Observable<any> {
+		return this.dataService.get(`${this.dataService.apiUrl}/jira/active_sprints`);
+	}
+
 	
 	/**
 	 * Processes an httpClient error response

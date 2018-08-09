@@ -17,6 +17,7 @@ class JiraAPI(DevCenterAPI):
 		self.crucible_url = os.environ['CRUCIBLE_URL']
 		self.crcible_review = f'{self.crucible_url}/cru/'
 		self.api_base = f'{self.jira_url}/rest/api/2'
+		self.api_agile_base = f'{self.jira_url}/rest/agile/1.0'
 
 		self.all_open_tickets = urllib.parse.quote(all_open_tickets)
 		self.fields = fields

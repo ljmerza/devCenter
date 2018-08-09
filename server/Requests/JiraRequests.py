@@ -174,7 +174,7 @@ def parse_comment(data):
 def modify_watchers(data):
 	'''add, remove, or get all Jira ticket watchers
 	'''
-	missing_params = missing_parameters(params=data, required=['type_of_modify', 'key'])
+	missing_params = missing_parameters(params=data, required=['type_of_modify', 'key', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -199,3 +199,10 @@ def modify_watchers(data):
 		'status': False,
 		'data': f'Invalid type of watcher modify: {type_of_modify}'
 	}
+
+def get_active_sprints(data):
+	missing_params = missing_parameters(params=data, required=['cred_hash'])
+	if missing_params:
+		return {"data": f"Missing required parameters: {missing_params}", "status": False}
+
+	return Jira().get_active_sprints(cred_hash=data['cred_hash'])

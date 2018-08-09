@@ -83,6 +83,21 @@ class JiraMisc():
 			pcr_estimate = int(math.ceil(story_point / 2))
 		return pcr_estimate	
 
+	def get_active_sprints(self, cred_hash):
+		url = f'{self.jira_api.api_agile_base}/board/179/sprint'
+		response = self.jira_api.get(url=url, cred_hash=cred_hash)
+		if not response['status']:
+			return response
+
+		active_sprints = []
+		for sprint in response['data']['values']:
+			if sprint['state'] == 'active':
+				active_sprints.append(sprint)
+
+		return {'status': True, 'data': active_sprints}
+
+		
+
 	
 	
 
