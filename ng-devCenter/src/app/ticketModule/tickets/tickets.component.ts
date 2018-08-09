@@ -115,7 +115,7 @@ export class TicketsComponent implements OnInit {
 	 * @param {Array<Ticket>} tickets
 	 */
 	private processTickets({tickets}) {
-		if(tickets.length === 0) {
+		if(tickets.length === 0 && !this.loadingIcon) {
 			this.loadingTickets = true;
 			return;
 		}
@@ -125,6 +125,9 @@ export class TicketsComponent implements OnInit {
 
 		this.getStatusList({tickets});
 		this.filterByStatus({reset:true});
+		
+		let filterEl = $(this.statusDropdown.nativeElement);
+		$(filterEl[0]).val('');
 
 		this.filterTable();
 		this.addSortTable();
