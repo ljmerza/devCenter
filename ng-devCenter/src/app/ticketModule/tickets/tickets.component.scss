@@ -1,5 +1,7 @@
-.filterInput {
-	background-color: #292b2c;
+$darkblk: #292b2c;
+
+.filterInput, .filterInput:focus {
+	background-color: $darkblk;
     border-radius: 0;
 	color: #fff;
 	padding: .375rem .75rem;
@@ -8,6 +10,11 @@
 	border: 1px solid #ced4da;
 	margin-bottom: 20px;
 	float: right;
+
+	option {
+		background-color: $darkblk;
+		color: #fff;
+	}
 }
 
 th:focus {
