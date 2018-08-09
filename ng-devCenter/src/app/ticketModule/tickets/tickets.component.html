@@ -1,6 +1,12 @@
 <dc-loading-table [loadingTable]=loadingTickets [loadingIcon]=loadingIcon [tableTitle]=tableTitle (refreshData)="getTickets()" (stopRefresh)="stopGetTickets()">
-	<div>
-		<input type="text" class='filterInput' placeholder='Filter tickets' #filterInput (keyup)="filterTable()">
+	<div class='form-inline float-right'>
+		<input class='form-control mr-sm-2 filterInput' type="text" placeholder='Filter tickets' #filterInput (keyup)="filterTable()">
+		<select class='form-control mr-sm-2 filterInput' name="searchSelection" (change)='filterByStatus($event.target.value)'>
+			<option value=""></option>
+			<option *ngFor='let status of allTicketStatuses' [ngValue]='status'>
+				{{status}}
+			</option>
+		</select>
 	</div>
 	
 	<table #table class='table table-striped tablesorter'>
@@ -24,7 +30,7 @@
 		</thead>
 
 		<tbody #tbody>
-			<tr *ngFor='let ticket of tickets' [ticket]=ticket id='{{ticket.key}}' class="appTicket"></tr>
+			<tr *ngFor='let ticket of filteredTickets' [ticket]=ticket id='{{ticket.key}}' class="appTicket"></tr>
 		</tbody>
 	</table>
 </dc-loading-table>

@@ -23,10 +23,13 @@ export class TicketsComponent implements OnInit {
 	loadingIcon: boolean = false;
 	ticketListType:string; // type of tickets to get
 	repos: Array<Repo>;
+	filteredTickets = [];
 	tickets = [];
 	getTickets$;
 	renderTimeoutId;
 	ticketsRedux$;
+
+	allTicketStatuses: Array<string>: [];
 
 	@select('repos') getRepos$: Observable<Array<Repo>>;
 
@@ -70,6 +73,8 @@ export class TicketsComponent implements OnInit {
 	ngOnDestroy(){
 		if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
 		if(this.getTickets$) this.getTickets$.unsubscribe();
+
+		if(this.table.nativeElement) $(this.table.nativeElement).trigger('destroy');
 	}
 
 	/**
@@ -116,9 +121,29 @@ export class TicketsComponent implements OnInit {
 
 		this.loadingTickets = false;
 		this.tickets = tickets;
+		this.filteredTickets = tickets;
+
+		this.getStatusList(tickets);
 
 		this.filterTable();
 		this.addSortTable();
+	}
+
+	/**
+	 * get all uniquer ticket statuses from ticket list
+	 */
+	private getStatusList(tickets){
+		this.allTicketStatuses = tickets
+			.map(ticket => ticket.status)
+			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), []);
+	}
+
+	/**
+	 *
+	 */
+	filterByStatus(status){
+		if(!status) this.filteredTickets = this.tickets;
+		else this.filteredTickets = this.tickets.filter(ticket => ticket.status === status);
 	}
 
 	/**
