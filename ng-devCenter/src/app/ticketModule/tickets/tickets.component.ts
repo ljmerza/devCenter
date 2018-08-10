@@ -122,40 +122,105 @@ export class TicketsComponent implements OnInit {
 
 		this.loadingTickets = false;
 		this.tickets = tickets;
+		this.filteredTickets = this.tickets;
 
 		this.getStatusList({tickets});
-		this.filterByStatus({reset:true});
-		
-		let filterEl = $(this.statusDropdown.nativeElement);
-		$(filterEl[0]).val('');
-
+		this.resetFilters()
 		this.filterTable();
 		this.addSortTable();
 	}
 
 	/**
-	 * get all uniquer ticket statuses from ticket list
+	 * resets all filters
 	 */
-	private getStatusList({tickets}){
-		this.allTicketStatuses = tickets
-			.map(ticket => ticket.status)
-			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), []);
+	private resetFilters(){
+		this.dropdownSearches.forEach(search => search.value = '');
+		$(this.filterInput.nativeElement).val('');
 	}
 
 	/**
-	 * filter the ticket list by chosen status from the dropdown
-	 * @param {boolean} reset do we want to reset the status selection?
+	 * get all uniquer ticket statuses from ticket list
 	 */
-	filterByStatus({reset=false}={}){
-		let filterValue = '';
+	dropdownSearches = [];
+	private getStatusList({tickets}){
+		const allStatuses = tickets
+			.map(ticket => ticket.status)
+			.filter(val => val)
+			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), [])
+			.sort();
 
-		if(!reset){
-			let filterEl = $(this.statusDropdown.nativeElement);
-			filterValue = $(filterEl[0]).val();
+		const allDisplayNames = tickets
+			.map(ticket => ticket.display_name)
+			.filter(val => val)
+			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), [])
+			.sort();
+
+		const allBranches = tickets
+			.map(ticket => ticket.master_branch)
+			.filter(val => val)
+			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), [])
+			.sort();
+
+		let allRepos = tickets.map(ticket => ticket.pullRequests.map(request => request.repo))
+		allRepos = [].concat.apply([], allRepos)
+			.filter(val => val)
+			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), [])
+			.sort();
+
+		this.dropdownSearches = [
+			{data: allStatuses, key: 'status', placeholder: 'Status', value: ''},
+			{data: allDisplayNames, key: 'display_name', placeholder: 'Display Name', value: ''},
+			{data: allBranches, key: 'master_branch', placeholder: 'Master Branch', value: ''},
+			{data: allRepos, key: ['pullRequests', 'repo'], placeholder: 'Repos', value: ''},
+		]
+	}
+
+	/**
+	 * filter the ticket list by chosen keys from the dropdown
+	 */
+	public filterByKey(){
+		// get all search keys/values that have been selected
+		let searchValues = this.dropdownSearches.map(search => search.value).filter(search => search);
+		let searchKeys = this.dropdownSearches.filter(search => search.value).map(search => search.key);
+
+		// if we have no search values then return entire list of tickets
+		if(searchValues.length === 0) this.filteredTickets = this.tickets;
+		else {
+
+			// create the full search string 
+			const searchString = searchValues.sort().join('');
+
+			this.filteredTickets = this.tickets.reduce((acc, curr) => {
+
+				// get the string of all values for a ticket we are looking to compare with
+				let keyValues = searchKeys.map(key => {
+					if(Array.isArray(key)){
+						let currentValue:any = curr;
+
+						key.forEach(prop => {
+							if(Array.isArray(currentValue)){
+								currentValue = currentValue
+									.map(arrItem => arrItem[prop])
+									.find(val => searchString.includes(val));
+
+							} else {
+								currentValue = currentValue[prop];
+							}
+						});
+
+						return currentValue;
+
+					} else {
+						return curr[key];
+					}
+
+				}).sort().join('');
+
+				if(keyValues === searchString) acc.push(curr);
+				return acc;
+			}, []);
+
 		}
-
-		if(!filterValue) this.filteredTickets = this.tickets;
-		else this.filteredTickets = this.tickets.filter(ticket => ticket.status === filterValue);
 	}
 
 	/**

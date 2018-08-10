@@ -2,12 +2,16 @@
 
 	<div class='form-inline float-right'>
 		<input class='form-control mr-sm-2 filterInput' type="text" placeholder='Filter tickets' #filterInput (keyup)="filterTable()">
-		<select class='form-control mr-sm-2 filterInput' #statusDropdown (change)='filterByStatus()'>
-			<option value=''>Filter by Status</option>
-			<option *ngFor='let status of allTicketStatuses' [ngValue]='status'>
-				{{status}}
-			</option>
-		</select>
+
+		<span *ngFor='let search of dropdownSearches'>
+			<select class='form-control mr-sm-2 filterInput' [(ngModel)]="search.value" (change)='filterByKey()'>
+				<option value=''>Filter by {{search.placeholder}}</option>
+				<option *ngFor='let status of search.data' [ngValue]='status'>
+					{{status}}
+				</option>
+			</select>
+		</span>
+		
 	</div>
 	
 	<table #table class='table table-striped tablesorter'>
