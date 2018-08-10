@@ -25,10 +25,13 @@ export class TicketsComponent implements OnInit {
 	repos: Array<Repo>;
 	filteredTickets = [];
 	tickets = [];
-	getTickets$;
 	renderTimeoutId;
+	
+	getTickets$;
 	ticketsRedux$;
+	activeSprints$
 
+	activeSprints;
 	allTicketStatuses: Array<string> = [];
 
 	@select('repos') getRepos$: Observable<Array<Repo>>;
@@ -54,6 +57,10 @@ export class TicketsComponent implements OnInit {
 	ngOnInit():void {
 		if(this.user.needRequiredCredentials()) return;
 
+		this.activeSprints$ = this.store.select('sprints')
+			.subscribe(sprints => this.activeSprints = sprints);
+
+
 		this.route.paramMap.subscribe((routeResponse:any) => {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 			this.store.dispatch({type: Actions.ticketType, payload: this.ticketListType });
@@ -73,6 +80,7 @@ export class TicketsComponent implements OnInit {
 	ngOnDestroy(){
 		if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
 		if(this.getTickets$) this.getTickets$.unsubscribe();
+		if(this.activeSprints$) this.activeSprints$.unsubscribe();
 
 		if(this.table.nativeElement) $(this.table.nativeElement).trigger('destroy');
 	}
@@ -89,7 +97,13 @@ export class TicketsComponent implements OnInit {
 		this.ngProgress.start();
 		this.loadingIcon = true;
 
-		this.getTickets$ = this.jira.getTickets(this.ticketListType, true)
+		let jql = ''
+		if(this.ticketListType === 'activesprint'){
+			const sprintIds = this.activeSprints.map(sprint => sprint.id).join(', ');
+			jql = `sprint in (${sprintIds})`;
+		}
+
+		this.getTickets$ = this.jira.getTickets(this.ticketListType, true, jql)
 		.subscribe((response:APIResponse) => {
 			this.ngProgress.done();
 			this.loadingIcon = false;
