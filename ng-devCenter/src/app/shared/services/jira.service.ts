@@ -46,10 +46,8 @@ export class JiraService {
 	 */
 	getTickets(filterName:string, isHardRefresh:Boolean=false, jql='', title=''): Observable<any> {
 		const filterData = this._getFilterTitleAndJql(filterName);
-		title = filterData.title;
+		this.title = filterData.title;
 		jql = jql || filterData.jql;
-		
-		this.title = title;
 
 		let params = new HttpParams();
 		params = params.append('jql', jql);
