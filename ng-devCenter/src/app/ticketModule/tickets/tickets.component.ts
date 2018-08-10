@@ -29,14 +29,13 @@ export class TicketsComponent implements OnInit {
 	renderTimeoutId;
 	ticketsRedux$;
 
-	allTicketStatuses: Array<string>: [];
+	allTicketStatuses: Array<string> = [];
 
 	@select('repos') getRepos$: Observable<Array<Repo>>;
 
 	@ViewChild('table') table:ElementRef
 	@ViewChild('tbody') tbody:ElementRef
 	@ViewChild('filterInput') filterInput:ElementRef
-	@ViewChild('statusDropdown') statusDropdown:ElementRef
 
 	get tableTitle(){
 		return `${this.jira.title} Tickets`;
@@ -155,12 +154,6 @@ export class TicketsComponent implements OnInit {
 			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), [])
 			.sort();
 
-		const allBranches = tickets
-			.map(ticket => ticket.master_branch)
-			.filter(val => val)
-			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), [])
-			.sort();
-
 		let allRepos = tickets.map(ticket => ticket.pullRequests.map(request => request.repo))
 		allRepos = [].concat.apply([], allRepos)
 			.filter(val => val)
@@ -170,7 +163,6 @@ export class TicketsComponent implements OnInit {
 		this.dropdownSearches = [
 			{data: allStatuses, key: 'status', placeholder: 'Status', value: ''},
 			{data: allDisplayNames, key: 'display_name', placeholder: 'Display Name', value: ''},
-			{data: allBranches, key: 'master_branch', placeholder: 'Master Branch', value: ''},
 			{data: allRepos, key: ['pullRequests', 'repo'], placeholder: 'Repos', value: ''},
 		]
 	}
