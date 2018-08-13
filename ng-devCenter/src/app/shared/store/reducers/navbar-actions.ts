@@ -7,22 +7,28 @@ export function addNavbarItems(state, navBarItems) {
 		if(linkPosition.length === 1){
 			fullNavbar = pushIntoNav(fullNavbar, item);
 
+		// } else {
+
+		// 	let temp:any = {};
+		// 	linkPosition.map((element, index) => {
+		// 		temp = syncChild(fullNavbar, linkPosition[index]);
+		// 		temp = temp.items;
+		// 		console.log({fullNavbar});
+		// 	});
+
+		// 	temp.items = pushIntoNav(temp.items, item);
+		// }
+
 		} else if(linkPosition.length === 2){
-			fullNavbar = syncChild(fullNavbar, linkPosition[0]);
-			let navDropdown = fullNavbar.find(nav => nav.name === linkPosition[0]);
+			let navDropdown = syncChild(fullNavbar, linkPosition[0]);
 			navDropdown.items = pushIntoNav(navDropdown.items, item);
 
 		} else if(linkPosition.length === 3){
-			fullNavbar = syncChild(fullNavbar, linkPosition[0]);
-			let navDropdown = fullNavbar.find(nav => nav.name === linkPosition[0]);
-
-			navDropdown.items = syncChild(navDropdown.items, linkPosition[1]);
-			let navDropdown2 = navDropdown.items.find(nav => nav.name === linkPosition[2]);
+			let navDropdown = syncChild(fullNavbar, linkPosition[0]);
+			let navDropdown2 = syncChild(navDropdown.items, linkPosition[1]);
 			navDropdown2.items = pushIntoNav(navDropdown2.items, item);
 		}
-	})
-
-	console.log({fullNavbar, navBarItems});
+	});
 
 	return { ...state, ...{fullNavbar} };
 }
@@ -34,7 +40,8 @@ function syncChild(fullNavbar, name){
 		fullNavbar.push({name, items: []});
 	}
 
-	return fullNavbar;
+	let navDropdown = fullNavbar.find(nav => nav.name === name);
+	return navDropdown;
 }
 
 function pushIntoNav(fullNavbar, item){
