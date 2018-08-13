@@ -36,12 +36,15 @@ export function addNavbarItems(state, navBarItems) {
 
 function syncChild(fullNavbar, name){
 	const hasChildNav = fullNavbar.find(nav => nav.name === name);
+
+	let curr = {name, items: []};
 	if(!hasChildNav){
-		fullNavbar.push({name, items: []});
+		fullNavbar.push(curr);
+	} else {
+		curr = hasChildNav;
 	}
 
-	let navDropdown = fullNavbar.find(nav => nav.name === name);
-	return navDropdown;
+	return curr;
 }
 
 function pushIntoNav(fullNavbar, item){
