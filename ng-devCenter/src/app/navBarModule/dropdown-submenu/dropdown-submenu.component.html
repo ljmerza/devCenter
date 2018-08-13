@@ -1,0 +1,17 @@
+<li class="dropdown-submenu" dropdownSubmenu>
+	<a class="dropdown-item" data-toggle="dropdown">{{title}}<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+
+	<ul class="dropdown-menu" dropdownSubmenuMenu>	
+		<li class="dropdown-submenu" dropdownSubmenu>
+			<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+			<ul class="dropdown-menu" dropdownSubmenuMenu>
+				<li>
+					<a *ngFor='let navLink of navLinks' class="dropdown-item"  target="_blank" 
+					href="{{navLink.link}}">
+						<span>{{navLink.name}}</span>
+					</a>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</li>

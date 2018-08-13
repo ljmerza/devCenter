@@ -11,4 +11,5 @@ export const Actions = {
 	newOrders: 'NEW_ORDERS',
 	ticketType: 'TICKET_TYPE',
 	activeSprints: 'ACTIVE_SPRINTS',
+	navBarItems: 'NAVBARITEMS',
 };

@@ -1,3 +1,4 @@
+
 /**
  * adds a list of ticket to the store. Adds them based on the type of list we are trying to retrieve
  */
@@ -60,6 +61,9 @@ export function addTickets(state, tickets){
 	return { ...state, ...newState };
 }
 
+/**
+ *
+ */
 function getPullRequestsFromDevChanges(devChangeLines){
 	const pullRequests = devChangeLines
 		.filter(request => {
@@ -72,7 +76,9 @@ function getPullRequestsFromDevChanges(devChangeLines){
 	return getPullRequests(pullRequests);
 }
 
-
+/**
+ *
+ */
 export function getPullRequests(pullRequests){
 	return pullRequests.map(request => {
 		request = request.split('\n')[0]; // make sure we only have the url

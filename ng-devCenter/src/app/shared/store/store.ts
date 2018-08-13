@@ -1,5 +1,5 @@
 import { 
-	addComment, deleteComment, editComment, addOrders,
+	addComment, deleteComment, editComment, addOrders, addNavbarItems,
 	updateStatus, updatePullRequests, updateWorklog, addSprints
 } from './reducers';
 
@@ -41,6 +41,9 @@ export function rootReducer(state, action){
 
 		case Actions.activeSprints:
 			return addSprints(state, action.payload);
+
+		case Actions.navBarItems:
+			return addNavbarItems(state, action.payload);
 
 		case Actions.ticketType:
 			return { ...state, ...{ticketType:action.payload} };

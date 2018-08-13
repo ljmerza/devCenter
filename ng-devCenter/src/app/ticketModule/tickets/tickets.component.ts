@@ -70,7 +70,7 @@ export class TicketsComponent implements OnInit {
 				
 			if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
 			this.ticketsRedux$ = this.store.select(this.ticketListType)
-			.subscribe(tickets => this.processTickets({tickets: tickets || []}));
+			.subscribe(tickets => this.processTickets({tickets}));
 		});
 	}
 
@@ -97,7 +97,7 @@ export class TicketsComponent implements OnInit {
 		this.ngProgress.start();
 		this.loadingIcon = true;
 
-		let jql = ''
+		let jql = '';
 		if(this.ticketListType === 'activesprint'){
 			const sprintIds = this.activeSprints.map(sprint => sprint.id).join(', ');
 			jql = `sprint in (${sprintIds})`;
@@ -128,7 +128,7 @@ export class TicketsComponent implements OnInit {
 	 * @param {Array<Ticket>} tickets
 	 */
 	private processTickets({tickets}) {
-		if(tickets.length === 0 && !this.loadingIcon) {
+		if(tickets.length == 0) {
 			this.loadingTickets = true;
 			return;
 		}

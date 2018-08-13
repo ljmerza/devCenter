@@ -1,0 +1,11 @@
+<li ngbDropdown class="d-inline-block" *ngIf='showDropdown'>
+	<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>{{title}}</a>
+
+	<ul ngbDropdownMenu aria-labelledby="devDropdown">
+		<li>
+			<a *ngFor='let navLink of navLinks' class="dropdown-item" target="_blank" href="{{navLink.link}}">
+				{{navLink.name}}
+			</a>
+		</li>
+	</ul>
+</li>

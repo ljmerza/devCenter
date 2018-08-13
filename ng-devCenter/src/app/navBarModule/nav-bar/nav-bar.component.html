@@ -181,25 +181,10 @@
 				</ul>
 			</li>
 
-			<!-- prod links -->
-			<li ngbDropdown class="d-inline-block">
-				<a class="nav-link dropdown-toggle" id="prodDropdown" ngbDropdownToggle>Prod Links</a>
-				<div ngbDropdownMenu aria-labelledby="prodDropdown">
-					<a *ngFor='let navLink of prodLinks' class="dropdown-item" target="_blank" href="{{navLink.link}}">
-						{{navLink.name}}
-					</a>
-				</div>
-			</li>
+			<dc-dropdown-menu [title]="'Dev Links'" [showDropdown]='!user.needRequiredCredentials()'></dc-dropdown-menu>
 
-			<!-- beta links -->
-			<li ngbDropdown class="d-inline-block">
-				<a class="nav-link dropdown-toggle" id="betaDropdown" ngbDropdownToggle>Beta Links</a>
-				<div ngbDropdownMenu aria-labelledby="betaDropdown">
-					<a *ngFor='let navLink of betaLinks' class="dropdown-item" target="_blank" href="{{navLink.link}}">
-						{{navLink.name}}
-					</a>
-				</div>
-			</li>
+			<dc-dropdown-menu [title]="'Prod Links'" [navLinks]=prodLinks></dc-dropdown-menu>
+			<dc-dropdown-menu [title]="'Beta Links'" [navLinks]=betaLinks></dc-dropdown-menu>
 
 			<!-- wiki links -->
 			<li ngbDropdown class="d-inline-block">

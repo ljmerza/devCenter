@@ -106,8 +106,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 * Gets all of the navbar items to populate the navbar dropdowns.
 	 */
 	 getNavbarItems(){
-	 	this.items.getItems()
-	 	.subscribe((response:any) => {
+	 	this.items.getItems().subscribe(
+	 		items => this.store.dispatch({type: Actions.navBarItems, payload: items.data}),
+			this.jira.processErrorResponse.bind(this.jira)
+		);
+	 }
+
+	processNavBarItems(response){
 
 	 		if(!response.data) return;
 
@@ -172,9 +177,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
  			.map(this.addCacheParameter.bind(this))
  			.map(this.addGpsIdToUrl.bind(this))
  			.sort(this.sortByName.bind(this));
-
-	 	},
-	 	error => this.toastr.showToast(this.items.processErrorResponse(error), 'error'));
 	}
 
 	/**
