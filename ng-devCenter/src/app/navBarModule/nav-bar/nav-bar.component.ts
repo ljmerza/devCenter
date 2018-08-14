@@ -13,8 +13,7 @@ import { UserService, ConfigService, ToastrService, ItemsService, GitService, Ji
 @Component({
 	selector: 'dc-nav-bar',
 	templateUrl: './nav-bar.component.html',
-	styleUrls: ['./nav-bar.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush
+	styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent implements OnInit, OnDestroy {
 
@@ -32,6 +31,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	emberLinks;
 	rdsLinks;
 	gpsLinks;
+
+	navBarItems;
+	navBarItems$;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
@@ -110,107 +112,65 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 		items => this.store.dispatch({type: Actions.navBarItems, payload: items.data}),
 			this.jira.processErrorResponse.bind(this.jira)
 		);
-	 }
+
+	 	this.navBarItems$ = this.store.select('navBarItems')
+		.subscribe((navBarItems:any) => {
+			this.navBarItems = navBarItems;
+			this.cd.markForCheck();
+		});
+	}
+
+	get emberUrlBase(){
+		return `${this.user.emberUrlBase}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}`;
+	}
+
+	get teamEmberUrlBase(){
+		return `${this.user.teamUrlBase}:${this.user.teamPort}/UD-ember/${this.user.teamLocal}`;
+	}
+
+	get devUrlBase(){
+		return `${this.user.devServerUrl}:${this.user.port}`;
+	}
 
 	processNavBarItems(response){
 
-	 		if(!response.data) return;
+	 	// 	if(!response.data) return;
 
-	 		this.orders = response.data
-	 		.filter(link => link.type === 'order')
-	 		.map(this.addCacheParameter.bind(this))
-	 		.sort(this.sortByName.bind(this));
+	 	// 	this.orders = response.data
+	 	// 	.filter(link => link.type === 'order')
+	 	// 	.map(this.addCacheParameter.bind(this))
+	 	// 	.sort(this.sortByName.bind(this));
 
-	 		this.atxOrders = response.data
-	 		.filter(link => link.type === 'atx')
-	 		.map(this.addCacheParameter.bind(this))
-	 		.sort(this.sortByName.bind(this));
+	 	// 	this.atxOrders = response.data
+	 	// 	.filter(link => link.type === 'atx')
+	 	// 	.map(this.addCacheParameter.bind(this))
+	 	// 	.sort(this.sortByName.bind(this));
 
-	 		this.wfaTickets = response.data
-	 		.filter(link => link.type === 'wfa')
-	 		.map(this.addCacheParameter.bind(this))
-	 		.map(this.addUserNameToUrl.bind(this))
-	 		.sort(this.sortByName.bind(this));
+	 	// 	this.wfaTickets = response.data
+	 	// 	.filter(link => link.type === 'wfa')
+	 	// 	.map(this.addCacheParameter.bind(this))
+	 	// 	.map(this.addUserNameToUrl.bind(this))
+	 	// 	.sort(this.sortByName.bind(this));
 
-	 		this.betaLinks = response.data
-	 		.filter(link => link.type === 'beta_links')
-	 		.map(this.addUserNameToUrl.bind(this))
- 			.map(link => {
- 				if( !/^http/.test(link.link) ) link.link = `${this.config.betaUrl}/${link.link}`;
- 				return link;
- 			})
- 			.sort(this.sortByName.bind(this));
+	 	// 	this.betaLinks = response.data
+	 	// 	.filter(link => link.type === 'beta_links')
+	 	// 	.map(this.addUserNameToUrl.bind(this))
+ 		// 	.map(link => {
+ 		// 		if( !/^http/.test(link.link) ) link.link = `${this.config.betaUrl}/${link.link}`;
+ 		// 		return link;
+ 		// 	})
+ 		// 	.sort(this.sortByName.bind(this));
 
-	 		this.prodLinks = response.data
-	 		.filter(link => link.type === 'prod_links')
-	 		.map(this.addUserNameToUrl.bind(this))
-	 		.sort(this.sortByName.bind(this));
-
- 			this.devLinks = response.data
- 			.filter(link => link.type === 'dev_links')
- 			.map(this.addUserNameToUrl.bind(this))
- 			.sort(this.sortByName.bind(this));
-
- 			this.emberLinks = response.data
- 			.filter(link => link.type === 'ember_links')
- 			.map(link => {
- 				link.orderName = link.link;
- 				return link;
- 			})
- 			.map(this.addCacheParameter.bind(this))
- 			.map(this.addUserNameToUrl.bind(this))
- 			.sort(this.sortByName.bind(this));
-
- 			this.teamdbEmberLinks = response.data
- 			.filter(link => link.type === 'teamdb_ember')
- 			.map(this.addCacheParameter.bind(this))
-			.map(this.addUserNameToUrl.bind(this))
-			.sort(this.sortByName.bind(this));
 			 
-			this.rdsLinks = response.data
- 			.filter(link => link.type === 'rds')
- 			.map(this.addCacheParameter.bind(this))
- 			.sort(this.sortByName.bind(this));
+			// this.rdsLinks = response.data
+ 		// 	.filter(link => link.type === 'rds')
+ 		// 	.map(this.addCacheParameter.bind(this))
+ 		// 	.sort(this.sortByName.bind(this));
 			 
-			this.gpsLinks = response.data
- 			.filter(link => link.type === 'gps')
- 			.map(this.addCacheParameter.bind(this))
- 			.map(this.addGpsIdToUrl.bind(this))
- 			.sort(this.sortByName.bind(this));
-	}
-
-	/**
-	 * adds username to any URLs that need it
-	 * @param {Object} navbarItem
-	 */
-	addUserNameToUrl(navbarItem, alwaysAddUsername){
-		navbarItem.link = navbarItem.link.replace('##username##', this.user.username);
- 		return navbarItem;
-	}
-
-	/**
-	 * adds GPS username to any URLs that need it
-	 * @param {Object} navbarItem
-	 */
-	addGpsIdToUrl(navbarItem){
-		const queryAddition = navbarItem.link.includes('?') ? '&' : '?';
-		navbarItem.link += `${queryAddition}gpsid=${this.user.username}`;
-		return navbarItem;
-	}
-
-	/**
-	 * adds cache query parameter to URLs
-	 * @param {Object} navbarItem
-	 */
-	addCacheParameter(navbarItem){
-		const queryAddition = navbarItem.link.includes('?') ? '&' : '?';
-		navbarItem.link += `${queryAddition}cache=${this.user.cache}`;
-		return navbarItem;
-	}
-
-	sortByName(a, b){
-		if(a.name > b.name) return 1;
-		else if(a.name < b.name) return -1;
-		else return 0;
+			// this.gpsLinks = response.data
+ 		// 	.filter(link => link.type === 'gps')
+ 		// 	.map(this.addCacheParameter.bind(this))
+ 		// 	.map(this.addGpsIdToUrl.bind(this))
+ 		// 	.sort(this.sortByName.bind(this));
 	}
 }

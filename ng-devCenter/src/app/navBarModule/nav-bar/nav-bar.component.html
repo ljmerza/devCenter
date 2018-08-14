@@ -86,7 +86,8 @@
 					<!-- ember links -->
 					<li class="dropdown-submenu" dropdownSubmenu>
 						<a class="dropdown-item" data-toggle="dropdown">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-						<ul class="dropdown-menu" dropdownSubmenuMenu>					
+						<ul class="dropdown-menu" dropdownSubmenuMenu>		
+
 							<!-- orders list -->
 							<li class="dropdown-submenu" dropdownSubmenu>
 								<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
@@ -181,10 +182,16 @@
 				</ul>
 			</li>
 
-			<dc-dropdown-menu [title]="'Dev Links'" [showDropdown]='!user.needRequiredCredentials()'></dc-dropdown-menu>
-
-			<dc-dropdown-menu [title]="'Prod Links'" [navLinks]=prodLinks></dc-dropdown-menu>
-			<dc-dropdown-menu [title]="'Beta Links'" [navLinks]=betaLinks></dc-dropdown-menu>
+			<span *ngFor='let navbar of navBarItems'>
+				<dc-dropdown-menu 
+					[navLinks]=navbar 
+					[showDropdown]='!user.needRequiredCredentials()'
+					[emberUrlBase]='emberUrlBase'
+					[teamEmberUrlBase]='teamEmberUrlBase'
+					[devUrlBase]='devUrlBase'
+				>
+				</dc-dropdown-menu>
+			</span>
 
 			<!-- wiki links -->
 			<li ngbDropdown class="d-inline-block">
