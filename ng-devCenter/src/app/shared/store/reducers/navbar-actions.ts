@@ -27,35 +27,43 @@ export function addNavbarItems(state, navBarItems) {
 		}
 	});
 
-	console.log({fullNavbar});
+	// convert array to object
+	const navItems = fullNavbar.reduce((acc, curr) => {
+		if(!acc[curr.name]) {
+			const propName = curr.name.replace(/\s/g, '');
+			acc[propName] = curr;
+		}
+		return acc;
+	}, {});
 
-	return { ...state, ...{navBarItems:fullNavbar} };
+	console.log({fullNavbar, navItems});
+	return { ...state, ...{navBarItems:navItems} };
 }
 
 
 function syncChild(fullNavbar, name){
 	const hasChildNav = fullNavbar.find(nav => nav.name === name);
-	let curr = {
+	let navBarItem = {
 		name, 
 		items: [], 
-		isEmber: /^ember$/i.test(name), 
-		isTeam: /^teamdb_ember$/i.test(name),
-		isDev: /^dev_links$/i.test(name),
-		isBeta: /^beta_links$/i.test(name),
-		isProd: /^prod_links$/i.test(name),
-		isRds: /^rds/i.test(name),
-		isGps: /^gps/i.test(name),
+		isEmber: /^Ember/i.test(name), 
+		isTeam: /^Teamdb Ember$/i.test(name),
+		isDev: /^Dev Links/i.test(name),
+		isBeta: /^Beta Links$/i.test(name),
+		isProd: /^Prod Links$/i.test(name),
+		isRds: /^RDS/i.test(name),
+		isGps: /^GPS/i.test(name),
 	};
 
 	if(!hasChildNav){
-		fullNavbar.push(curr);
+		fullNavbar.push(navBarItem);
 	} else {
-		curr = hasChildNav;
+		navBarItem = hasChildNav;
 	}
 
 
 
-	return curr;
+	return navBarItem;
 }
 
 /**
@@ -66,7 +74,7 @@ function processNavBarItem(fullNavbar, item, category){
 	let navBarItem:any = {link: item.link, name: item.name}
 
 	if(navBarItem.isProd || navBarItem.isDev || navBarItem.isBeta){
-		curr = addUserNameToUrl(curr);
+		navBarItem = addUserNameToUrl(navBarItem);
 	}
 	
 	if(navBarItem.isBeta){
@@ -75,12 +83,12 @@ function processNavBarItem(fullNavbar, item, category){
 	
 	if(navBarItem.isEmber || navBarItem.isTeam || navBarItem.isRds || navBarItem.isGps){
 		navBarItem.linkName = navBarItem.link;
-		curr = addCacheParameter(curr);
-		curr = addUserNameToUrl(curr);
+		navBarItem = addCacheParameter(navBarItem);
+		navBarItem = addUserNameToUrl(navBarItem);
 	}
 	
 	if(navBarItem.isGps){
-		curr = addGpsIdToUrl(curr);
+		navBarItem = addGpsIdToUrl(navBarItem);
 	}
 
 	fullNavbar.push(navBarItem);
@@ -91,9 +99,9 @@ function processNavBarItem(fullNavbar, item, category){
  * adds username to any URLs that need it
  * @param {Object} navbarItem
  */
-function addUserNameToUrl(navbarItem, alwaysAddUsername){
+function addUserNameToUrl(navbarItem, alwaysAddUsername=false){
 	navbarItem.link = navbarItem.link.replace('##username##', username);
-		return navbarItem;
+	return navbarItem;
 }
 
 /**

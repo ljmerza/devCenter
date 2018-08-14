@@ -2,21 +2,12 @@
 	<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>{{navLinks.name}}</a>
 
 	<ul ngbDropdownMenu aria-labelledby="devDropdown">
-		<li>
-			<span *ngFor='let navLink of navLinks.items' class="dropdown-item">
-				
-				<a *ngIf='navLinks.isTeam' target="_blank" href="{{teamUrlBase}}/{{navLink.link}}">
+		<span *ngFor='let navLink of navLinks.items'>
+			<li>
+				<a class="dropdown-item" target="_blank" href="{{baseUrl}}/{{navLink.link}}">
 					{{navLink.name}}
 				</a>
-
-				<a *ngIf='navLinks.isDev' target="_blank" href="{{devUrlBase}}/{{navLink.link}}">
-					{{navLink.name}}
-				</a>
-
-				<a *ngIf='navLinks.isEmber' target="_blank" href="{{navLink}}/{{navLink.link}}">
-					{{navLink.name}}
-				</a>
-			</span>			
-		</li>
+			</li>
+		</span>			
 	</ul>
 </li>

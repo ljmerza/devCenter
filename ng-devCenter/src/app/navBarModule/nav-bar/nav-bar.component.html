@@ -182,16 +182,9 @@
 				</ul>
 			</li>
 
-			<span *ngFor='let navbar of navBarItems'>
-				<dc-dropdown-menu 
-					[navLinks]=navbar 
-					[showDropdown]='!user.needRequiredCredentials()'
-					[emberUrlBase]='emberUrlBase'
-					[teamEmberUrlBase]='teamEmberUrlBase'
-					[devUrlBase]='devUrlBase'
-				>
-				</dc-dropdown-menu>
-			</span>
+			<dc-dropdown-menu [navLinks]=navBarItems.BetaLinks [baseUrl]='this.config.betaUrl'></dc-dropdown-menu>
+			<dc-dropdown-menu [navLinks]=navBarItems.ProdLinks></dc-dropdown-menu>
+			<dc-dropdown-menu [navLinks]=navBarItems.ProdLinks [baseUrl]=''></dc-dropdown-menu>
 
 			<!-- wiki links -->
 			<li ngbDropdown class="d-inline-block">
