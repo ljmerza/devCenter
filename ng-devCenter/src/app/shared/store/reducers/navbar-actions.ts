@@ -1,67 +1,72 @@
 let username = '';
 let cache = '';
 
+/**
+ *
+ */
 export function addNavbarItems(state, navBarItems) {
+	let fullNavbar = splitNavbarItems(navBarItems);
+	const navItems = converNavbarToObject(fullNavbar);
+	return { ...state, ...{navBarItems:navItems} };
+}
 
+/**
+ *
+ */
+function splitNavbarItems(navBarItems){
 	let fullNavbar:any = [];
+
 	navBarItems.forEach(item => {
 		const linkPosition = item.type.split('/');
+		let navDropdown:any;
 
-		if(linkPosition.length == 1){
-			let navDropdown = syncChild(fullNavbar, linkPosition[0]);
-			navDropdown.items = processNavBarItem(navDropdown.items, item, linkPosition[0]);
-			navDropdown.items.sort(sortByName);
+		linkPosition.forEach((linkName, index) => {
+			if(index){
+				navDropdown = getChildNavMenu(navDropdown.items, linkName);
+			} else {
+				navDropdown = getChildNavMenu(fullNavbar, linkName);
+			}
 
-		} else if(linkPosition.length == 2){
-			let navDropdown = syncChild(fullNavbar, linkPosition[0]);
-			let navDropdown2 = syncChild(navDropdown.items, linkPosition[1]);
-			navDropdown2.items = processNavBarItem(navDropdown2.items, item, linkPosition[1]);
-			navDropdown2.items.sort(sortByName);
+			if(index == linkPosition.length-1){
+				navDropdown.items = processNavBarItem(navDropdown.items, item, linkName);
+			}
+		})
 
-		} else if(linkPosition.length == 3){
-			let navDropdown = syncChild(fullNavbar, linkPosition[0]);
-			let navDropdown2 = syncChild(navDropdown.items, linkPosition[1]);
-			let navDropdown3 = syncChild(navDropdown2.items, linkPosition[3]);
-			navDropdown3.items = processNavBarItem(navDropdown3.items, item, linkPosition[3]);
-			navDropdown3.items.sort(sortByName);
-		}
+		navDropdown.items.sort(sortByName);
 	});
 
-	// convert array to object
-	const navItems = fullNavbar.reduce((acc, curr) => {
+	return fullNavbar;
+}
+
+/**
+ *
+ */
+function converNavbarToObject(fullNavbar){
+	return fullNavbar.reduce((acc, curr) => {
 		if(!acc[curr.name]) {
 			const propName = curr.name.replace(/\s/g, '');
 			acc[propName] = curr;
 		}
 		return acc;
 	}, {});
-
-	console.log({fullNavbar, navItems});
-	return { ...state, ...{navBarItems:navItems} };
 }
 
+/**
+ * find a child navmenu - if does't exist then create one and add it
+ * @param {Object} parentNavMenu the parent navmenu we want to find a child of
+ * @param {string} name the name of the navmenu we are trying to locate
+ * @return {Object}
+ */
+function getChildNavMenu(parentNavMenu, name){
+	const childNavMenu = parentNavMenu.find(nav => nav.name === name);
+	let navBarItem;
 
-function syncChild(fullNavbar, name){
-	const hasChildNav = fullNavbar.find(nav => nav.name === name);
-	let navBarItem = {
-		name, 
-		items: [], 
-		isEmber: /^Ember/i.test(name), 
-		isTeam: /^Teamdb Ember$/i.test(name),
-		isDev: /^Dev Links/i.test(name),
-		isBeta: /^Beta Links$/i.test(name),
-		isProd: /^Prod Links$/i.test(name),
-		isRds: /^RDS/i.test(name),
-		isGps: /^GPS/i.test(name),
-	};
-
-	if(!hasChildNav){
-		fullNavbar.push(navBarItem);
+	if(!childNavMenu){
+		navBarItem = {name, items: [], isEmber: /Ember/i.test(name)};
+		parentNavMenu.unshift(navBarItem);
 	} else {
-		navBarItem = hasChildNav;
+		navBarItem = childNavMenu;
 	}
-
-
 
 	return navBarItem;
 }
@@ -70,25 +75,18 @@ function syncChild(fullNavbar, name){
  *
  */
 function processNavBarItem(fullNavbar, item, category){
-	console.log({fullNavbar, item, category});
-	let navBarItem:any = {link: item.link, name: item.name}
-
-	if(navBarItem.isProd || navBarItem.isDev || navBarItem.isBeta){
-		navBarItem = addUserNameToUrl(navBarItem);
+	let navBarItem:any = {
+		link: item.link, 
+		name: item.name, 
+		hasFullUrl: /^http/.test(item.link)
+	};
+	
+	if(/Ember/i.test(item.name)){
+		navBarItem = addParam(navBarItem, 'gpsid');
 	}
 	
-	if(navBarItem.isBeta){
-		
-	}
-	
-	if(navBarItem.isEmber || navBarItem.isTeam || navBarItem.isRds || navBarItem.isGps){
-		navBarItem.linkName = navBarItem.link;
-		navBarItem = addCacheParameter(navBarItem);
-		navBarItem = addUserNameToUrl(navBarItem);
-	}
-	
-	if(navBarItem.isGps){
-		navBarItem = addGpsIdToUrl(navBarItem);
+	if(/GPS/i.test(item.name)){
+		navBarItem = addParam(navBarItem, 'cache');
 	}
 
 	fullNavbar.push(navBarItem);
@@ -96,31 +94,13 @@ function processNavBarItem(fullNavbar, item, category){
 }
 
 /**
- * adds username to any URLs that need it
+ * adds a parameter name to a URL
  * @param {Object} navbarItem
+ * @param {string} paramName
  */
-function addUserNameToUrl(navbarItem, alwaysAddUsername=false){
-	navbarItem.link = navbarItem.link.replace('##username##', username);
-	return navbarItem;
-}
-
-/**
- * adds GPS username to any URLs that need it
- * @param {Object} navbarItem
- */
-function addGpsIdToUrl(navbarItem){
+function addParam(navbarItem, paramName){
 	const queryAddition = navbarItem.link.includes('?') ? '&' : '?';
-	navbarItem.link += `${queryAddition}gpsid=${username}`;
-	return navbarItem;
-}
-
-/**
- * adds cache query parameter to URLs
- * @param {Object} navbarItem
- */
-function addCacheParameter(navbarItem){
-	const queryAddition = navbarItem.link.includes('?') ? '&' : '?';
-	navbarItem.link += `${queryAddition}cache=${cache}`;
+	navbarItem.link += `${queryAddition}${paramName}=`;
 	return navbarItem;
 }
 

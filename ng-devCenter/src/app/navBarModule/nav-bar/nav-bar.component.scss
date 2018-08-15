@@ -12,36 +12,6 @@ $success: #28a745;
 	z-index: 99;
 }
 
-.dropdown-submenu{
-	position: relative;
-
-	.show-submenu {
-		display: block;
-		position: absolute;
-		top: -10px;
-		left: 100%;
-	}
-
-	.dropdown-submenu-icon {
-		position: absolute;
-		top: 8px;
-		right: 0;
-		font-size: 17px;
-	}
-}
-
-.dropdown-menu {
-	border-radius: 0;
-
-	.dropdown-item:hover {
-		background-color: $linkhover;
-		color: $white;
-	}
-}
-
-.dropdown-submenu-icon {
-	color: $darkblk;
-}
 
 /* label underline focus color */
 .input-field input[type=text] {

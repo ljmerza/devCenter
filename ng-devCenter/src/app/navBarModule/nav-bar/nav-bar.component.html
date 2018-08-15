@@ -77,114 +77,14 @@
 				</ul>
 			</li>
 
-
-			<!-- dev links -->	
-			<li ngbDropdown class="d-inline-block" *ngIf="!user.needRequiredCredentials()">
-				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Dev Links</a>
-				<ul ngbDropdownMenu aria-labelledby="devDropdown">
-
-					<!-- ember links -->
-					<li class="dropdown-submenu" dropdownSubmenu>
-						<a class="dropdown-item" data-toggle="dropdown">Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-						<ul class="dropdown-menu" dropdownSubmenuMenu>		
-
-							<!-- orders list -->
-							<li class="dropdown-submenu" dropdownSubmenu>
-								<a class="dropdown-item" data-toggle="dropdown">Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-								<ul class="dropdown-menu" dropdownSubmenuMenu>
-									<li>
-										<a *ngFor='let navLink of orders' class="dropdown-item"  target="_blank" 
-										href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/ethernet/{{navLink.link}}">
-											<span>{{navLink.orderName}} {{navLink.name}}</span>
-										</a>
-									</li>
-								</ul>
-							</li>
-
-							<!-- atx list -->
-							<li class="dropdown-submenu" dropdownSubmenu>
-								<a class="dropdown-item" data-toggle="dropdown">ATX Orders <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-								<ul class="dropdown-menu" dropdownSubmenuMenu>
-									<li>
-										<a *ngFor='let navLink of atxOrders' class="dropdown-item"  target="_blank" 
-										href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/atx/{{navLink.link}}">
-											<span>{{navLink.orderName}} {{navLink.name}}</span>
-										</a>
-									</li>
-								</ul>
-							</li>
-
-							<!-- rds list -->
-							<li class="dropdown-submenu" dropdownSubmenu>
-								<a class="dropdown-item" data-toggle="dropdown">RDS Packages <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-								<ul class="dropdown-menu" dropdownSubmenuMenu>
-									<li>
-										<a *ngFor='let navLink of rdsLinks' class="dropdown-item"  target="_blank" 
-										href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}order/rds/{{navLink.link}}">
-											<span>{{navLink.orderName}} {{navLink.name}}</span>
-										</a>
-									</li>
-								</ul>
-							</li>
-
-							<!-- gps list -->
-							<li class="dropdown-submenu" dropdownSubmenu>
-								<a class="dropdown-item" data-toggle="dropdown">GPS <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-								<ul class="dropdown-menu" dropdownSubmenuMenu>
-									<li>
-										<a *ngFor='let navLink of gpsLinks' class="dropdown-item"  target="_blank" 
-										href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}/{{navLink.link}}">
-											<span>{{navLink.orderName}} {{navLink.name}}</span>
-										</a>
-									</li>
-								</ul>
-							</li>
-
-							<!-- WFA list -->
-							<li class="dropdown-submenu" dropdownSubmenu>
-								<a class="dropdown-item" data-toggle="dropdown">WFA Tickets <i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-								<ul class="dropdown-menu" dropdownSubmenuMenu>
-									<li><a *ngFor='let navLink of wfaTickets' class="dropdown-item" target="_blank" 
-										href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
-										>{{navLink.name}}
-									</a></li>
-								</ul>
-							</li>
-
-							<!-- ember list -->
-							<li><a *ngFor='let navLink of emberLinks' class="dropdown-item" target="_blank" 
-								href="{{user.emberUrlBase}}:{{user.emberPort}}/UD-ember/{{user.emberLocal}}{{navLink.link}}"
-								>{{navLink.name}}
-							</a></li>
-						</ul>
-					</li>
-					
-					<!-- team ember links -->
-					<li class="dropdown-submenu" dropdownSubmenu>
-						<a class="dropdown-item" data-toggle="dropdown">TeamDB Ember<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
-						<ul class="dropdown-menu" dropdownSubmenuMenu>
-							<li>
-								<a *ngFor='let navLink of teamdbEmberLinks' class="dropdown-item" target="_blank" 
-								href="{{user.teamUrlBase}}:{{user.teamPort}}/teamdb/{{user.teamLocal}}{{navLink.link}}">
-									{{navLink.name}}
-								</a>
-							</li>
-						</ul>
-					</li>
-
-					<!-- dev links -->
-					<li>
-						<a *ngFor='let navLink of devLinks' class="dropdown-item" target="_blank" 
-						href="{{this.user.devServerUrl}}:{{this.user.port}}/{{navLink.link}}">
-							{{navLink.name}}
-						</a>
-					</li>
-				</ul>
-			</li>
+			<dc-dropdown-menu 
+				[navLinks]=navBarItems.DevLinks
+				[baseUrl]='this.devUrlBase'
+				[emberUrl]='this.emberUrlBase'
+			></dc-dropdown-menu>
 
 			<dc-dropdown-menu [navLinks]=navBarItems.BetaLinks [baseUrl]='this.config.betaUrl'></dc-dropdown-menu>
 			<dc-dropdown-menu [navLinks]=navBarItems.ProdLinks></dc-dropdown-menu>
-			<dc-dropdown-menu [navLinks]=navBarItems.ProdLinks [baseUrl]=''></dc-dropdown-menu>
 
 			<!-- wiki links -->
 			<li ngbDropdown class="d-inline-block">

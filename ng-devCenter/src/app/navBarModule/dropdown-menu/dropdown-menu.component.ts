@@ -12,7 +12,9 @@ export class DropdownMenuComponent {
 	@Input() title:string = '';
 	@Input() showDropdown:boolean = true;
 	@Input() navLinks:Array<any> = [];
+	
 	@Input() baseUrl:string = '';
+	@Input() emberUrl:string = '';
 
 	constructor(public user:UserService) { }
 }

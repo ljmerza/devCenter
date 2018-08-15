@@ -3,11 +3,32 @@
 
 	<ul ngbDropdownMenu aria-labelledby="devDropdown">
 		<span *ngFor='let navLink of navLinks.items'>
-			<li>
-				<a class="dropdown-item" target="_blank" href="{{baseUrl}}/{{navLink.link}}">
-					{{navLink.name}}
-				</a>
-			</li>
+			
+			<!-- submenu -->
+			<dc-dropdown-submenu *ngIf='navLink.items; else linkItem'
+				[navLinks]=navLink
+				[baseUrl]=baseUrl
+				[emberUrl]=emberUrl
+			>
+			</dc-dropdown-submenu>
+			
+			<!-- single link -->
+			<ng-template #linkItem>
+				<li>
+					<!-- link with given base url -->
+					<a *ngIf='navLink.hasFullUrl; else fullLink' class="dropdown-item" target="_blank" href="{{navLink.link}}">
+						{{navLink.name}}
+					</a>
+
+					<!-- full link given -->
+					<ng-template #fullLink>
+						<a class="dropdown-item" target="_blank" href="{{baseUrl}}/{{navLink.link}}">
+							{{navLink.name}}
+						</a>
+					</ng-template>
+				</li>
+			</ng-template>
+			
 		</span>			
 	</ul>
 </li>

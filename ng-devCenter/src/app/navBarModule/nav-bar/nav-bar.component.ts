@@ -121,11 +121,11 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	}
 
 	get emberUrlBase(){
-		return `${this.user.emberUrlBase}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}`;
-	}
-
-	get teamEmberUrlBase(){
-		return `${this.user.teamUrlBase}:${this.user.teamPort}/UD-ember/${this.user.teamLocal}`;
+		if(this.user.emberLocal){
+			return `${this.user.emberUrlBase}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}`;
+		} else {
+			return `${this.user.emberUrlBase}:${this.user.emberPort}/UD-ember`;
+		}
 	}
 
 	get devUrlBase(){

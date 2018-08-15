@@ -1,0 +1,15 @@
+$darkblk: #292b2c;
+$linkhover: #0056b3;
+
+.dropdown-menu {
+	border-radius: 0;
+
+	.dropdown-item:hover {
+		background-color: $linkhover;
+		color: #fff;
+	}
+}
+
+.dropdown-submenu-icon {
+	color: $darkblk;
+}
