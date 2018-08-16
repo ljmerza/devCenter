@@ -81,7 +81,7 @@ def auto_pcr(data, pull_response):
 	jira = Jira()
 
 	response = {
-		'status': False
+		'status': False,
 		'pcr_response': {'status': False, 'data': ''},
 		'cr_response': {'status': False, 'data': ''},
 		'dev_change_response': {'status': False, 'data': ''}
