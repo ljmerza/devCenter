@@ -35,9 +35,13 @@ def transition_to_pcr(data):
 	# if transitioning to PCR then update Jira ticket statuses and add dev changes text
 	if data['autoPCR']:
 		auto_pcr_response = auto_pcr(data=data, pull_response=pull_response)
-		pcr_response = auto_pcr_response['pcr_response']
-		cr_response = auto_pcr_response['cr_response']
-		dev_change_response = auto_pcr_response['dev_change_response']
+		if not auto_pcr_response['status']:
+
+
+		else:
+			pcr_response = auto_pcr_response['pcr_response']
+			cr_response = auto_pcr_response['cr_response']
+			dev_change_response = auto_pcr_response['dev_change_response']
 
 	if data['log_time']:
 		log_response = Jira().add_work_log(time=data['log_time'], key=data['key'], cred_hash=data['cred_hash'])
@@ -80,26 +84,28 @@ def auto_pcr(data, pull_response):
 	'''
 	jira = Jira()
 
-	response = {'status': False}
+	response = {
+		'status': False
+		'pcr_response': {'status': False, 'data': ''},
+		'cr_response': {'status': False, 'data': ''},
+		'dev_change_response': {'status': False, 'data': ''}
+	}
+
 	data['status_type'] = 'pcrNeeded'
-	pcr_response = set_status(data=data)
+	response['pcr_response'] = set_status(data=data)
 
 	data['status_type'] = 'cr'
-	cr_response = set_status(data=data)
+	response['cr_response'] = set_status(data=data)
 
 	# add pull request info to dev changes tab
-	dev_change_response = {'status': False, 'data': ''}
 	if pull_response['status']:
 		missing_params = missing_parameters(params=data, required=['story_point'])
 		if missing_params:
-			return {"data": f"Missing required parameters: {missing_params}", "status": False}
-		dev_change_response = jira.add_pr_to_dev_changes(pull_response=pull_response, data=data)
+			response['dev_change_response'] = {"data": f"Missing required parameters: {missing_params}", "status": False}
+			return response
+		response['dev_change_response'] = jira.add_pr_to_dev_changes(pull_response=pull_response, data=data)
 
-	return {
-		'pcr_response': pcr_response,
-		'cr_response': cr_response,
-		'dev_change_response': dev_change_response
-	}
+	return response
 
 def get_branches(data):
 	'''gets all branches for a given repo
