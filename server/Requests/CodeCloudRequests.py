@@ -35,13 +35,9 @@ def transition_to_pcr(data):
 	# if transitioning to PCR then update Jira ticket statuses and add dev changes text
 	if data['autoPCR']:
 		auto_pcr_response = auto_pcr(data=data, pull_response=pull_response)
-		if not auto_pcr_response['status']:
-
-
-		else:
-			pcr_response = auto_pcr_response['pcr_response']
-			cr_response = auto_pcr_response['cr_response']
-			dev_change_response = auto_pcr_response['dev_change_response']
+		pcr_response = auto_pcr_response['pcr_response']
+		cr_response = auto_pcr_response['cr_response']
+		dev_change_response = auto_pcr_response['dev_change_response']
 
 	if data['log_time']:
 		log_response = Jira().add_work_log(time=data['log_time'], key=data['key'], cred_hash=data['cred_hash'])
