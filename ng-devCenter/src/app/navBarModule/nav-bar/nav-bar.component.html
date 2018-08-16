@@ -79,52 +79,16 @@
 
 			<dc-dropdown-menu 
 				[navLinks]=navBarItems.DevLinks
-				[baseUrl]='this.devUrlBase'
-				[emberUrl]='this.emberUrlBase'
+				[baseUrl]=devUrlBase
+				[emberUrl]=emberUrlBase
+				[teamUrl]=teamEmberUrlBase
 			></dc-dropdown-menu>
 
 			<dc-dropdown-menu [navLinks]=navBarItems.BetaLinks [baseUrl]='this.config.betaUrl'></dc-dropdown-menu>
 			<dc-dropdown-menu [navLinks]=navBarItems.ProdLinks></dc-dropdown-menu>
+			<dc-dropdown-menu [navLinks]=navBarItems.HelpfulLinks [baseUrl]=this.config.wikiUrl></dc-dropdown-menu>
 
-			<!-- wiki links -->
-			<li ngbDropdown class="d-inline-block">
-				<a class="nav-link dropdown-toggle" id="wikiDropdown" ngbDropdownToggle>Helpful Links</a>
-				<ul ngbDropdownMenu aria-labelledby="wikiDropdown">
-
-					<li *ngFor='let link of config.wikiLinks' [ngClass]="{'dropdown-submenu': link.links}" dropdownSubmenu>
-						
-						<!-- links -->
-						<a *ngIf='link.link && link.wiki' class="dropdown-item" target="_blank" href="{{config.wikiUrl}}{{link.link}}">
-							{{link.name}}
-						</a>
-						<a *ngIf='link.link && !link.wiki' class="dropdown-item" target="_blank" href="{{link.link}}">
-							{{link.name}}
-						</a>
-
-						<!-- divider -->
-						<div *ngIf='link.divider' class="dropdown-divider"></div>
-
-						<!-- dropdowns -->
-						<a class="dropdown-item" data-toggle="dropdown" *ngIf='link.links'>
-							{{link.name}}
-							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
-						</a>
-						<ul class="dropdown-menu" dropdownSubmenuMenu *ngIf='link.links'>
-							<li *ngFor='let sublink of link.links'>
-								<a *ngIf='sublink.link && sublink.wiki; else subNoWiki'
-								class="dropdown-item" target="_blank" href="{{config.wikiUrl}}{{sublink.link}}">
-									{{sublink.name}}
-								</a>
-								<ng-template #subNoWiki>
-									<a class="dropdown-item" target="_blank" href="{{sublink.link}}">
-										{{sublink.name}}
-									</a>
-								</ng-template>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</li>
+			
 
 			<!-- misc top level links -->
 			<li class="nav-item">

@@ -11,6 +11,7 @@ export class DropdownSubmenuComponent {
 
 	@Input() baseUrl:string = '';
 	@Input() emberUrl:string = '';
+	@Input() teamUrl:string = '';
 
 	constructor() { }
 }

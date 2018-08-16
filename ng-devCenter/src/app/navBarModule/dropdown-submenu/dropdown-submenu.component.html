@@ -14,24 +14,35 @@
 
 			<!-- single link -->
 			<ng-template #linkItem>
-				<!-- link with given base url -->
+				<!-- full link given -->
 				<a *ngIf='navLink.hasFullUrl; else fullLink' class="dropdown-item" target="_blank" href="{{navLink.link}}">
 					{{navLink.name}}
 				</a>
 
-				<!-- full link given -->
+				<!-- link with given emberUrl -->
 				<ng-template #fullLink>
 					<a 
-						*ngIf='navLinks.isEmber; else baseUrlLink' 
+						*ngIf='navLink.isEmber; else teamUrl' 
 						class="dropdown-item" target="_blank" 
 						href="{{emberUrl}}/{{navLink.link}}">
 						{{navLink.name}}
 					</a>
-
-					<ng-template #baseUrlLink>
-						<a class="dropdown-item" target="_blank" href="{{baseUrl}}/{{navLink.link}}">
+					
+					<!-- link given teamUrl -->
+					<ng-template #teamUrl>
+						<a 
+							*ngIf='navLink.isTeam; else baseUrl' 
+							class="dropdown-item" target="_blank" 
+							href="{{teamUrl}}/{{navLink.link}}">
 							{{navLink.name}}
 						</a>
+						
+						<!-- link given baseUrl -->
+						<ng-template #baseUrl>
+							<a class="dropdown-item" target="_blank" href="{{baseUrl}}/{{navLink.link}}">
+								{{navLink.name}}
+							</a>
+						</ng-template>
 					</ng-template>
 				</ng-template>
 			</ng-template>

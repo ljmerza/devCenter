@@ -15,6 +15,7 @@ export class DropdownMenuComponent {
 	
 	@Input() baseUrl:string = '';
 	@Input() emberUrl:string = '';
+	@Input() teamUrl:string = '';
 
 	constructor(public user:UserService) { }
 }

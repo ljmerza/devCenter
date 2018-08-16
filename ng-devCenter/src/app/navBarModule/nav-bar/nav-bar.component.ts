@@ -128,49 +128,15 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	get devUrlBase(){
-		return `${this.user.devServerUrl}:${this.user.port}`;
+	get teamEmberUrlBase(){
+		if(this.user.emberLocal){
+			return `${this.user.teamUrlBase}:${this.user.teamPort}/teamdb/${this.user.teamLocal}`;
+		} else {
+			return `${this.user.teamUrlBase}:${this.user.teamPort}/teamdb`;
+		}
 	}
 
-	processNavBarItems(response){
-
-	 	// 	if(!response.data) return;
-
-	 	// 	this.orders = response.data
-	 	// 	.filter(link => link.type === 'order')
-	 	// 	.map(this.addCacheParameter.bind(this))
-	 	// 	.sort(this.sortByName.bind(this));
-
-	 	// 	this.atxOrders = response.data
-	 	// 	.filter(link => link.type === 'atx')
-	 	// 	.map(this.addCacheParameter.bind(this))
-	 	// 	.sort(this.sortByName.bind(this));
-
-	 	// 	this.wfaTickets = response.data
-	 	// 	.filter(link => link.type === 'wfa')
-	 	// 	.map(this.addCacheParameter.bind(this))
-	 	// 	.map(this.addUserNameToUrl.bind(this))
-	 	// 	.sort(this.sortByName.bind(this));
-
-	 	// 	this.betaLinks = response.data
-	 	// 	.filter(link => link.type === 'beta_links')
-	 	// 	.map(this.addUserNameToUrl.bind(this))
- 		// 	.map(link => {
- 		// 		if( !/^http/.test(link.link) ) link.link = `${this.config.betaUrl}/${link.link}`;
- 		// 		return link;
- 		// 	})
- 		// 	.sort(this.sortByName.bind(this));
-
-			 
-			// this.rdsLinks = response.data
- 		// 	.filter(link => link.type === 'rds')
- 		// 	.map(this.addCacheParameter.bind(this))
- 		// 	.sort(this.sortByName.bind(this));
-			 
-			// this.gpsLinks = response.data
- 		// 	.filter(link => link.type === 'gps')
- 		// 	.map(this.addCacheParameter.bind(this))
- 		// 	.map(this.addGpsIdToUrl.bind(this))
- 		// 	.sort(this.sortByName.bind(this));
+	get devUrlBase(){
+		return `${this.user.devServerUrl}:${this.user.port}`;
 	}
 }
