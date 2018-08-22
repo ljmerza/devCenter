@@ -81,6 +81,17 @@ class NavbarItems(Modal):
 	type = Column(VARCHAR(30))
 	link = Column(VARCHAR(100))
 	name = Column(VARCHAR(30))
+	isWiki = Column(SMALLINT)
+
+class JqlLinks(Modal):
+	__tablename__ = 'jqls'
+	id = Column(Integer, primary_key=True)
+	name = Column(VARCHAR(50))
+	display_name = Column(VARCHAR(50))
+	query = Column(TEXT(charset='utf8'))
+	add_projects = Column(SMALLINT)
+	order_on_list = Column(SMALLINT)
+	submenu = Column(VARCHAR(50))
 
 class Repos(Modal):
 	__tablename__ = 'repos'

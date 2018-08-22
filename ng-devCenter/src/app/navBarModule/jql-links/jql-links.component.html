@@ -1,0 +1,23 @@
+<span *ngFor='let navItem of jqlNavbar'>
+	<li *ngIf='!navItem.items; else jqlSubmenu'>
+		<a class="dropdown-item" [routerLink]="['/jira', navItem.name]" routerLinkActive="active">
+			{{navItem.display_name}}
+		</a>
+	</li>
+
+	<ng-template #jqlSubmenu>
+		<li class="dropdown-submenu" dropdownSubmenu>
+			<a class="dropdown-item" data-toggle="dropdown">
+				{{navItem.name}}
+				<i class="material-icons dropdown-submenu-icon">play_arrow</i>
+			</a>
+			<ul class="dropdown-menu" dropdownSubmenuMenu>
+				<li *ngFor='let subItem of navItem.items'>
+					<a class="dropdown-item" [routerLink]="['/jira', subItem.name]">
+						{{subItem.display_name}}
+					</a>
+				</li>
+			</ul>
+		</li>
+	</ng-template>
+</span>

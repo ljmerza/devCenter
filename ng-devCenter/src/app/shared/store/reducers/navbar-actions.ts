@@ -7,7 +7,6 @@ let cache = '';
 export function addNavbarItems(state, navBarItems) {
 	let fullNavbar = splitNavbarItems(navBarItems);
 	const navItems = converNavbarToObject(fullNavbar);
-	console.log({navItems});
 	return { ...state, ...{navBarItems:navItems} };
 }
 
@@ -30,10 +29,9 @@ function splitNavbarItems(navBarItems){
 
 			if(index == linkPosition.length-1){
 				navDropdown.items = processNavBarItem(navDropdown.items, item, linkName);
-			}
-		})
 
-		navDropdown.items.sort(sortByName);
+			}
+		});
 	});
 
 	return fullNavbar;
@@ -66,7 +64,6 @@ function getChildNavMenu(parentNavMenu, name, itemType){
 	if(!childNavMenu){
 		navBarItem = {name, items: []};
 		parentNavMenu.unshift(navBarItem);
-
 	} else {
 		navBarItem = childNavMenu;
 	}
@@ -80,6 +77,7 @@ function getChildNavMenu(parentNavMenu, name, itemType){
 function processNavBarItem(fullNavbar, item, category){
 	let navBarItem:any = {
 		link: item.link, 
+		isWiki: item.isWiki, 
 		name: item.name, 
 		hasFullUrl: /^http/.test(item.link),
 		isEmber: /Ember/i.test(item.type),
@@ -115,5 +113,46 @@ function addParam(navbarItem, paramName){
 function sortByName(a, b){
 	if(a.name > b.name) return 1;
 	else if(a.name < b.name) return -1;
+	else return 0;
+}
+
+/**
+ *
+ */
+ export function addJqlLinks(state, jqlLinks){
+ 	const projectIndex = jqlLinks.findIndex(link => link.name === 'PROJECT');
+ 	const projectJql = (jqlLinks.splice(projectIndex, 1)[0] || {}).query || '';
+
+ 	const fullJqls = jqlLinks.map(link => {
+ 		if(link.add_projects == 1) link.query = `${projectJql} ${link.query }`;
+ 		return link;
+ 	});
+
+ 	const jqlNavbar = _formatNavBarJqlLinks(jqlLinks);
+
+	return {...state, fullJqls, jqlNavbar};
+}
+
+function _formatNavBarJqlLinks(jqlLinks){
+	let jqlNavbar = jqlLinks.reduce((acc, curr) => {
+ 		if(curr.submenu){
+ 			const submenuIndex = acc.findIndex(item => item.name === curr.submenu);
+ 			if(submenuIndex !== -1) acc[submenuIndex].items.push(curr);
+ 			else acc.push({name: curr.submenu, items: [curr]})
+
+ 		} else {
+ 			acc.push(curr);
+ 		}
+
+ 		return acc;
+ 	}, []);
+
+ 	jqlNavbar.sort(_sortByOrder);
+ 	return jqlNavbar;
+}
+
+function _sortByOrder(a, b){
+	if(a.order_on_list > b.order_on_list) return 1;
+	else if(a.order_on_list < b.order_on_list) return -1;
 	else return 0;
 }

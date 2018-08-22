@@ -19,6 +19,7 @@ import { SearchbarComponent } from './searchbar/searchbar.component';
 import { NavbarUserComponent } from './navbar-user/navbar-user.component';
 import { DropdownMenuComponent } from './dropdown-menu/dropdown-menu.component';
 import { DropdownSubmenuComponent } from './dropdown-submenu/dropdown-submenu.component';
+import { JqlLinksComponent } from './jql-links/jql-links.component';
 
 
 @NgModule({
@@ -29,7 +30,7 @@ import { DropdownSubmenuComponent } from './dropdown-submenu/dropdown-submenu.co
 	declarations: [
 		NavBarComponent, LogoutComponent, UserSettingsComponent,
 		DropdownSubmenuDirective, DropdownSubmenuMenuDirective,
-		NavbarModalComponent, SearchbarComponent, NavbarUserComponent, DropdownMenuComponent, DropdownSubmenuComponent
+		NavbarModalComponent, SearchbarComponent, NavbarUserComponent, DropdownMenuComponent, DropdownSubmenuComponent, JqlLinksComponent
 	],
 	exports: [NavBarComponent, UserSettingsComponent]
 })

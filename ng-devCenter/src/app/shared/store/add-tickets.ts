@@ -10,8 +10,12 @@ export function addTickets(state, tickets){
 
 	// extract pull requests
 	tickets = tickets.map(ticket => {
-		const devChangeLines = (ticket.dev_changes || '').split(/\n|(\n\r)| /g)
-		ticket.pullRequests = getPullRequestsFromDevChanges(devChangeLines);
+		const devChangeWords = (ticket.dev_changes || '').split(/\n|(\n\r)| /g);
+		ticket.pullRequests = getPullRequestsFromDevChanges(devChangeWords);
+
+		const devChangeLines = (ticket.dev_changes || '').split(/\n|(\n\r)/g);
+		ticket.pcrCountLeft = getPcrCountLeft(devChangeLines, ticket.story_point);
+		if(ticket.pcrCountLeft) console.log(ticket.pcrCountLeft, ticket.key);
 
 		// if we didn't get pull requests from dev changes field try to get from comments
 		if(ticket.pullRequests.length == 0) {
@@ -49,6 +53,7 @@ export function addTickets(state, tickets){
 	});
 
 	const ticketType = state.ticketType || 'other';
+	
 	const newState = {
 		[ticketType]: tickets,
 		[`${ticketType}_comments`]: comments,
@@ -59,6 +64,26 @@ export function addTickets(state, tickets){
 
 
 	return { ...state, ...newState };
+}
+
+/**
+ *
+ */
+function getPcrCountLeft(devChangeLines, storyPoint){
+
+	// get any lines that might have pcr needed
+	const pcrRemaining = devChangeLines.find(line => line && /PCR/i.test(line) && !/Pull Request/i.test(line));
+	if(!pcrRemaining) return;
+
+	// get only the numbers
+	const potentialPcrs = pcrRemaining.replace(/^[0-9]/g, '');
+	if(!potentialPcrs) return;
+
+	// get the PCR needed for the ticket - if smaller  
+	// then most likely PCR remaining else definitely not
+	const pcrNeeded = Math.ceil(storyPoint/2);
+	if(pcrNeeded < potentialPcrs) return;
+	else return potentialPcrs;
 }
 
 /**

@@ -12,6 +12,15 @@ def get_navbar_items(devdb, sql_echo):
 		'data': sql_obj.get_navbar_items()
 	}
 
+def get_jql_links(devdb, sql_echo):
+	'''gets all navbar items
+	'''
+	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
+	return {
+		'status': True,
+		'data': sql_obj.get_jql_links()
+	}
+
 def set_navbar_item(data):
 	'''sets a new navbar item or edits a current one
 	'''

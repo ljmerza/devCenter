@@ -1,6 +1,6 @@
 import { 
 	addComment, deleteComment, editComment, addOrders, addNavbarItems,
-	updateStatus, updatePullRequests, updateWorklog, addSprints
+	updateStatus, updatePullRequests, updateWorklog, addSprints, addJqlLinks
 } from './reducers';
 
 import { Actions } from './actions';
@@ -12,8 +12,11 @@ import { addTickets } from './add-tickets';
 export function rootReducer(state, action){
 	// add type of list so we can filter out actions in app based on list type
 	if(action.payload && typeof action.payload !== 'string') action.payload.listType = action.type;
-
+	
 	switch(action.type){
+		case Actions.ticketType:
+			return { ...state, ...{ticketType:action.payload} };
+			
 		case Actions.newTickets:
 			return addTickets(state, action.payload);
 		case Actions.repos:
@@ -44,9 +47,10 @@ export function rootReducer(state, action){
 
 		case Actions.navBarItems:
 			return addNavbarItems(state, action.payload);
+		case Actions.jqlLinks:
+			return addJqlLinks(state, action.payload);
 
-		case Actions.ticketType:
-			return { ...state, ...{ticketType:action.payload} };
+		
 
 		default:
 			return state;

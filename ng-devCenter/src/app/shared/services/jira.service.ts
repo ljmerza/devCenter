@@ -12,43 +12,18 @@ import { APIResponse } from '@models';
 
 @Injectable()
 export class JiraService {
-	title:string = '';
 
-	constructor(public dataService:DataService, public config:ConfigService, public user:UserService, public store:NgRedux<RootState>) {}
-
-	/**
-	 * gets a selected ticket filter's title and JQL.
-	 * @param {string} filterName the ticket filter name
-	 * @return {Object} returns an object with jql and title string properties
-	 */
-	_getFilterTitleAndJql(filterName:string): any{
-		// try to get ticket list data
-		const allProjectNames = this.config.allProjectNames.filter(ticketData=>ticketData.link===filterName);
-		const teamTicketListNames = this.config.teamTicketListNames.filter(ticketData=>ticketData.link===filterName);
-		const otherTicketListNames = this.config.otherTicketListNames.filter(ticketData=>ticketData.link===filterName);
-		const podNames = this.config.podNames.filter(ticketData=>ticketData.link===filterName);
-
-		// see which array came back with data
-		const ticketListData = allProjectNames[0] || teamTicketListNames[0] || otherTicketListNames[0] || podNames[0];
-
-		// set JQL and title if found match or default to my ticket
-		const jql = ticketListData ? this.config[ticketListData.link] : this.config.mytickets;
-		const title = ticketListData ? ticketListData.displayName : this.config.teamTicketListNames[0].displayName;
-
-		return {jql, title};
-	}
+	constructor(
+		public dataService:DataService, public config:ConfigService, 
+		public user:UserService, public store:NgRedux<RootState>
+	) {}
 
 	/**
-	 * gets a ticket filter's list of tickets and dispatches the 
-	 * http response to the Redux store on success.
+	 * gets a ticket filter's list of tickets.
 	 * @param {string} filterName the name of the filter to get tickets from.
 	 * @param {Boolean=false} isHardRefresh a hard refresh skips the cache and only gets from the API.
 	 */
-	getTickets(filterName:string, isHardRefresh:Boolean=false, jql='', title=''): Observable<any> {
-		const filterData = this._getFilterTitleAndJql(filterName);
-		this.title = filterData.title;
-		jql = jql || filterData.jql;
-
+	getTickets(filterName:string, isHardRefresh:Boolean=false, jql): Observable<any> {
 		let params = new HttpParams();
 		params = params.append('jql', jql);
 		params = params.append('fields', this.config.fields);

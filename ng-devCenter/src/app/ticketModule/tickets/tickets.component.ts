@@ -23,16 +23,17 @@ export class TicketsComponent implements OnInit {
 	loadingIcon: boolean = false;
 	ticketListType:string; // type of tickets to get
 	repos: Array<Repo>;
-	filteredTickets = [];
+	filteredTickets = []
 	tickets = [];
 	renderTimeoutId;
 	
 	getTickets$;
 	ticketsRedux$;
-	activeSprints$
-
-	activeSprints;
 	allTicketStatuses: Array<string> = [];
+
+	jqlLinks$;
+	jqlLinks;
+	title;
 
 	@select('repos') getRepos$: Observable<Array<Repo>>;
 
@@ -41,7 +42,7 @@ export class TicketsComponent implements OnInit {
 	@ViewChild('filterInput') filterInput:ElementRef
 
 	get tableTitle(){
-		return `${this.jira.title} Tickets`;
+		return `${this.title} Tickets`;
 	}
 
 	constructor(
@@ -56,10 +57,6 @@ export class TicketsComponent implements OnInit {
 	 */
 	ngOnInit():void {
 		if(this.user.needRequiredCredentials()) return;
-
-		this.activeSprints$ = this.store.select('sprints')
-			.subscribe(sprints => this.activeSprints = sprints);
-
 
 		this.route.paramMap.subscribe((routeResponse:any) => {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
@@ -80,9 +77,14 @@ export class TicketsComponent implements OnInit {
 	ngOnDestroy(){
 		if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
 		if(this.getTickets$) this.getTickets$.unsubscribe();
-		if(this.activeSprints$) this.activeSprints$.unsubscribe();
-
+		if(this.jqlLinks$) this.jqlLinks$.unsubscribe();
 		if(this.table.nativeElement) $(this.table.nativeElement).trigger('destroy');
+	}
+
+	public getJqlLinks(){
+		this.jqlLinks$ = this.store.select('jqlLinks').subscribe((jqlLinks:any) => {
+			this.jqlLinks = jqlLinks;
+		});
 	}
 
 	/**
@@ -91,26 +93,28 @@ export class TicketsComponent implements OnInit {
 	 * @param {Boolean} isHardRefresh if hard refresh skip localStorage retrieval and loading animations
 	 */
 	public getTickets() {
-
 		if(this.getTickets$) this.getTickets$.unsubscribe();
 		if(this.ngProgress) this.ngProgress.done();
 		this.ngProgress.start();
 		this.loadingIcon = true;
 
-		let jql = '';
-		if(this.ticketListType === 'activesprint'){
-			const sprintIds = this.activeSprints.map(sprint => sprint.id).join(', ');
-			jql = `sprint in (${sprintIds})`;
-		}
 
-		this.getTickets$ = this.jira.getTickets(this.ticketListType, true, jql)
-		.subscribe((response:APIResponse) => {
-			this.ngProgress.done();
-			this.loadingIcon = false;
-			this.store.dispatch({type: Actions.newTickets, payload: response.data});
-		},
-			this.jira.processErrorResponse.bind(this.jira)
-		);
+		this.jqlLinks$ = this.store.select('fullJqls').subscribe((jqlLinks:any) => {
+			if(!jqlLinks || jqlLinks.length === 0) return;
+
+			this.jqlLinks = jqlLinks;
+			const matchingJql = this.jqlLinks.find(link => link.name === this.ticketListType);
+			const jql = matchingJql && matchingJql.query || 'assignee = currentUser() AND resolution = Unresolved ORDER BY due DESC';
+			this.title = matchingJql && matchingJql.display_name || 'My';
+
+			this.getTickets$ = this.jira.getTickets(this.ticketListType, true, jql).subscribe((response:APIResponse) => {
+				this.ngProgress.done();
+				this.loadingIcon = false;
+				this.store.dispatch({type: Actions.newTickets, payload: response.data});
+			},
+				this.jira.processErrorResponse.bind(this.jira)
+			);
+		});
 	}
 
 	/**
@@ -128,7 +132,7 @@ export class TicketsComponent implements OnInit {
 	 * @param {Array<Ticket>} tickets
 	 */
 	private processTickets({tickets}) {
-		if(tickets.length == 0) {
+		if(!tickets || tickets.length == 0) {
 			this.loadingTickets = true;
 			return;
 		}

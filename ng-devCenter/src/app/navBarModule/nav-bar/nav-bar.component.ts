@@ -34,6 +34,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 	navBarItems;
 	navBarItems$;
+	jqlNavbar;
+	jqlNavbar$;
 
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
@@ -48,9 +50,11 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(){
 		this.setFridayChecker();
-		this.updateNavBar();
+		this.getNavbarItems();
 
 		if(!this.user.needRequiredCredentials()){
+			this.getJqls();
+			this.getUserProfile();
 
 			this.git.getRepos().subscribe(
 				repos => this.store.dispatch({type: Actions.repos, payload: repos.data}),
@@ -64,16 +68,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	updateNavBar(){
-		this.getNavbarItems();
-		this.getUserProfile();
-	}
-
 	/**
 	 * destroys any left overt subscriptions.
 	 */
 	ngOnDestroy(){
 		if(this.userProfile$) this.userProfile$.unsubscribe();
+		if(this.navBarItems$) this.navBarItems$.unsubscribe();
+		if(this.jqlNavbar$) this.jqlNavbar$.unsubscribe();
 	}
 
 	/**
@@ -116,6 +117,24 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	 	this.navBarItems$ = this.store.select('navBarItems')
 		.subscribe((navBarItems:any) => {
 			this.navBarItems = navBarItems;
+			this.cd.markForCheck();
+		});
+	}
+
+	/**
+	 * Gets all of the JQL links
+	 */
+	 getJqls(){
+	 	this.items.getJqlLinks().subscribe(
+	 		items => {
+	 			this.store.dispatch({type: Actions.jqlLinks, payload: items.data});
+	 		},
+			this.items.processErrorResponse.bind(this.items)
+		);
+
+	 	this.jqlNavbar$ = this.store.select('jqlNavbar')
+		.subscribe((jqlNavbar:any) => {
+			this.jqlNavbar = jqlNavbar;
 			this.cd.markForCheck();
 		});
 	}

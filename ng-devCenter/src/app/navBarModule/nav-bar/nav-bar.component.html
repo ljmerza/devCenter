@@ -6,71 +6,13 @@
 
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
-
-			<!-- itrack2 links -->
 			<li ngbDropdown class="d-inline-block" *ngIf="!user.needRequiredCredentials()">
 				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Ticket Lists</a>
 
 				<ul ngbDropdownMenu aria-labelledby="devDropdown">
-
-					<!-- ticket lists -->
-					<li *ngFor='let link of config.teamTicketListNames'>
-						<a class="dropdown-item" *ngIf='link.link; else dividerTickets' [routerLink]="['/jira', link.link]" routerLinkActive="active">
-							{{link.name}}
-						</a>
-						<ng-template #dividerTickets><div class="dropdown-divider"></div></ng-template>
-					</li>
-					<li>
-						<a class="dropdown-item" [routerLink]="['/orders']">Orders</a>
-						<a class="dropdown-item" [routerLink]="['/editorders']">Edit Navbar Items</a>
-					</li>
-					
-					<!-- pods -->
-					<li class="dropdown-submenu" dropdownSubmenu>
-						<a class="dropdown-item" data-toggle="dropdown">
-							Pod Tickets
-							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
-						</a>
-						<ul class="dropdown-menu" dropdownSubmenuMenu dropdownSubmenuMenu>
-							<li *ngFor='let project of config.podNames'>
-								<a class="dropdown-item" [routerLink]="['/jira', project.link]">
-									{{project.name}}
-								</a>
-							</li>
-						</ul>
-					</li>
-
-					<!-- projects -->
-					<li class="dropdown-submenu" dropdownSubmenu>
-						<a class="dropdown-item" data-toggle="dropdown">
-							Projects
-							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
-						</a>
-						<ul class="dropdown-menu" dropdownSubmenuMenu dropdownSubmenuMenu>
-							<li *ngFor='let project of config.allProjectNames'>
-								<a class="dropdown-item" [routerLink]="['/jira', project.link]">
-									{{project.name}}
-								</a>
-							</li>
-						</ul>
-					</li>
-
-					<!-- other project links -->
-					<li class="dropdown-submenu" dropdownSubmenu>
-						<a class="dropdown-item" data-toggle="dropdown">
-							Other Lists
-							<i class="material-icons dropdown-submenu-icon">play_arrow</i>
-						</a>
-						<ul class="dropdown-menu" dropdownSubmenuMenu>
-							<li *ngFor='let project of config.otherTicketListNames'>
-								<a class="dropdown-item" [routerLink]="['/jira', project.link]">
-									{{project.name}}
-								</a>
-							</li>
-						</ul>
-					</li>
-
+					<dc-jql-links [jqlNavbar]=jqlNavbar></dc-jql-links>
 					<li><div class="dropdown-divider"></div></li>
+					
 					<li><a class="dropdown-item" target="_blank" href="{{config.crucibleUrl}}{{config.cruciblePath}}">Crucible</a></li>
 					<li><a class="dropdown-item" target="_blank" href="{{config.codeCloudUrl}}{{config.codeCloudPath}}">Code Cloud</a></li>
 					<li><a class="dropdown-item" target="_blank" href="{{config.jiraUrl}}{{config.scrumBoardPath}}">Scrum Board</a></li>
@@ -78,17 +20,29 @@
 			</li>
 
 			<dc-dropdown-menu 
+				*ngIf='navBarItems?.DevLinks'
 				[navLinks]=navBarItems.DevLinks
 				[baseUrl]=devUrlBase
 				[emberUrl]=emberUrlBase
 				[teamUrl]=teamEmberUrlBase
 			></dc-dropdown-menu>
 
-			<dc-dropdown-menu [navLinks]=navBarItems.BetaLinks [baseUrl]='this.config.betaUrl'></dc-dropdown-menu>
-			<dc-dropdown-menu [navLinks]=navBarItems.ProdLinks></dc-dropdown-menu>
-			<dc-dropdown-menu [navLinks]=navBarItems.HelpfulLinks [baseUrl]=this.config.wikiUrl></dc-dropdown-menu>
-
+			<dc-dropdown-menu 
+					*ngIf='navBarItems?.BetaLinks' 
+					[navLinks]=navBarItems.BetaLinks 
+					[baseUrl]='this.config.betaUrl'
+			></dc-dropdown-menu>
 			
+			<dc-dropdown-menu 
+				*ngIf='navBarItems?.ProdLinks' 
+				[navLinks]=navBarItems.ProdLinks
+			></dc-dropdown-menu>
+
+			<dc-dropdown-menu 
+				*ngIf='navBarItems?.HelpfulLinks' 
+				[navLinks]=navBarItems.HelpfulLinks 
+				[baseUrl]=this.config.wikiUrl
+			></dc-dropdown-menu>
 
 			<!-- misc top level links -->
 			<li class="nav-item">

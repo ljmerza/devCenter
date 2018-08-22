@@ -12,4 +12,5 @@ export const Actions = {
 	ticketType: 'TICKET_TYPE',
 	activeSprints: 'ACTIVE_SPRINTS',
 	navBarItems: 'NAVBARITEMS',
+	jqlLinks: 'JQLLINKS',
 };

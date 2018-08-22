@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from .SQLModels import NavbarItems
+from .SQLModels import JqlLinks
 
 class SQLNavBar():
 
@@ -10,6 +11,17 @@ class SQLNavBar():
 
 		for item in items:
 			response.append( self.row2dict(item) )
+
+		self.logout(session)
+		return response
+
+	def get_jql_links(self):
+		session = self.login()
+		items = session.query(JqlLinks)
+		response = []
+
+		for item in items:
+			response.append(self.row2dict(item))
 
 		self.logout(session)
 		return response
