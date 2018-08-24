@@ -10,6 +10,12 @@
 				<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>Ticket Lists</a>
 
 				<ul ngbDropdownMenu aria-labelledby="devDropdown">
+					<li>
+						<a class="dropdown-item" [routerLink]="['/jira', 'mytickets']">
+							My Open Tickets
+						</a>
+					</li>
+
 					<dc-jql-links [jqlNavbar]=jqlNavbar></dc-jql-links>
 					<li><div class="dropdown-divider"></div></li>
 					
@@ -20,8 +26,8 @@
 			</li>
 
 			<dc-dropdown-menu 
-				*ngIf='navBarItems?.DevLinks'
-				[navLinks]=navBarItems.DevLinks
+				*ngIf='!user.needRequiredCredentials()'
+				[navLinks]=navBarItems?.DevLinks
 				[baseUrl]=devUrlBase
 				[emberUrl]=emberUrlBase
 				[teamUrl]=teamEmberUrlBase
@@ -29,19 +35,19 @@
 
 			<dc-dropdown-menu 
 					*ngIf='navBarItems?.BetaLinks' 
-					[navLinks]=navBarItems.BetaLinks 
-					[baseUrl]='this.config.betaUrl'
+					[navLinks]=navBarItems?.BetaLinks 
+					[baseUrl]='config.betaUrl'
 			></dc-dropdown-menu>
 			
 			<dc-dropdown-menu 
 				*ngIf='navBarItems?.ProdLinks' 
-				[navLinks]=navBarItems.ProdLinks
+				[navLinks]=navBarItems?.ProdLinks
 			></dc-dropdown-menu>
 
 			<dc-dropdown-menu 
 				*ngIf='navBarItems?.HelpfulLinks' 
-				[navLinks]=navBarItems.HelpfulLinks 
-				[baseUrl]=this.config.wikiUrl
+				[navLinks]=navBarItems?.HelpfulLinks 
+				[baseUrl]=config.wikiUrl
 			></dc-dropdown-menu>
 
 			<!-- misc top level links -->
@@ -64,10 +70,7 @@
 		</ul>
 
 		<dc-searchbar></dc-searchbar>
-
-		<span *ngIf='userProfile'>
-			<dc-navbar-user [userProfile]=userProfile></dc-navbar-user>
-		</span>
+		<dc-navbar-user></dc-navbar-user>
 		
 	</div>
 </nav>

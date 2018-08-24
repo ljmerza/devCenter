@@ -92,10 +92,13 @@ export class JiraService {
 	 * gets a list of active sprints
 	 * @return {Observable} 
 	 */
-	getActiveStrints(): Observable<any> {
-		return this.dataService.get(`${this.dataService.apiUrl}/jira/active_sprints`);
+	getActiveSprints() {
+		this.dataService.get(`${this.dataService.apiUrl}/jira/active_sprints`)
+		.subscribe(
+			sprint => this.store.dispatch({type: Actions.activeSprints, payload: sprint.data}),
+			this.dataService.processErrorResponse
+		);
 	}
-
 	
 	/**
 	 * Processes an httpClient error response

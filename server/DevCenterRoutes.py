@@ -32,7 +32,7 @@ def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no
 		socketio.emit('update_tickets', request.get_json())
 		return Response(status=200)
 
-	@app.route(f"/{app_name}/encrypt", methods=['POST'])
+	@app.route(f"/{app_name}/skipcreds/encrypt", methods=['POST'])
 	@cross_origin()
 	def encrypt_token():
 		post_data = request.get_json()
@@ -55,8 +55,7 @@ def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no
 		# if web sockets or encrypting password then ignore
 		if(
 			'socket_tickets' not in request.url and 
-			'encrypt' not in request.url and
-			'json_api' not in request.url
+			'skipcreds' not in request.url 
 		):
 			cred_hash = request.headers.get('x-token')
 

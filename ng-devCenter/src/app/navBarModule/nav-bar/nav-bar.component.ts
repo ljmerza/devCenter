@@ -16,21 +16,7 @@ import { UserService, ConfigService, ToastrService, ItemsService, GitService, Ji
 	styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent implements OnInit, OnDestroy {
-
 	showLogHours:boolean = false;
-	userProfile;
-	userProfile$;
-
-	teamdbEmberLinks;
-	orders;
-	atxOrders;
-	wfaTickets;
-	prodLinks;
-	betaLinks;
-	devLinks;
-	emberLinks;
-	rdsLinks;
-	gpsLinks;
 
 	navBarItems;
 	navBarItems$;
@@ -40,8 +26,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	constructor(
-		public config:ConfigService, public user: UserService, private cd: ChangeDetectorRef,
-		private store:NgRedux<RootState>, private toastr: ToastrService, private items: ItemsService, 
+		public config:ConfigService, public user: UserService, private store:NgRedux<RootState>, 
 		private git:GitService, private jira:JiraService
 	) {}
 
@@ -51,41 +36,20 @@ export class NavBarComponent implements OnInit, OnDestroy {
 	ngOnInit(){
 		this.setFridayChecker();
 		this.getNavbarItems();
+		this.getJqls();
 
 		if(!this.user.needRequiredCredentials()){
-			this.getJqls();
-			this.getUserProfile();
-
-			this.git.getRepos().subscribe(
-				repos => this.store.dispatch({type: Actions.repos, payload: repos.data}),
-				this.git.processErrorResponse.bind(this.git)
-			);
-
-			this.jira.getActiveStrints().subscribe(
-				sprint => this.store.dispatch({type: Actions.activeSprints, payload: sprint.data}),
-				this.jira.processErrorResponse.bind(this.jira)
-			);
+			this.git.getRepos();
+			this.jira.getActiveSprints();
 		}
 	}
 
 	/**
-	 * destroys any left overt subscriptions.
+	 * destroys any left over subscriptions.
 	 */
 	ngOnDestroy(){
-		if(this.userProfile$) this.userProfile$.unsubscribe();
 		if(this.navBarItems$) this.navBarItems$.unsubscribe();
 		if(this.jqlNavbar$) this.jqlNavbar$.unsubscribe();
-	}
-
-	/**
-	 * Gets a user's Jira profile
-	 */
-	getUserProfile(){
-		this.userProfile$ = this.store.select('userProfile')
-		.subscribe((profile:any) => {
-			this.userProfile = profile;
-			this.cd.markForCheck();
-		});
 	}
 
 	/**
@@ -100,59 +64,30 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
 			if((itIsFriday && !this.showLogHours) || (!itIsFriday && this.showLogHours)) {
 				this.showLogHours = itIsFriday;
-				this.cd.detectChanges();
 			}
 		}, 60*1000);
 	}
 
-	/**
-	 * Gets all of the navbar items to populate the navbar dropdowns.
-	 */
-	 getNavbarItems(){
-	 	this.items.getItems().subscribe(
-	 		items => this.store.dispatch({type: Actions.navBarItems, payload: items.data}),
-			this.jira.processErrorResponse.bind(this.jira)
-		);
-
+	getNavbarItems(){
 	 	this.navBarItems$ = this.store.select('navBarItems')
-		.subscribe((navBarItems:any) => {
-			this.navBarItems = navBarItems;
-			this.cd.markForCheck();
-		});
+		.subscribe(navBarItems => this.navBarItems = navBarItems);
 	}
 
-	/**
-	 * Gets all of the JQL links
-	 */
 	 getJqls(){
-	 	this.items.getJqlLinks().subscribe(
-	 		items => {
-	 			this.store.dispatch({type: Actions.jqlLinks, payload: items.data});
-	 		},
-			this.items.processErrorResponse.bind(this.items)
-		);
-
 	 	this.jqlNavbar$ = this.store.select('jqlNavbar')
-		.subscribe((jqlNavbar:any) => {
-			this.jqlNavbar = jqlNavbar;
-			this.cd.markForCheck();
-		});
+		.subscribe(jqlNavbar => this.jqlNavbar = jqlNavbar);
 	}
 
 	get emberUrlBase(){
-		if(this.user.emberLocal){
-			return `${this.user.emberUrlBase}:${this.user.emberPort}/UD-ember/${this.user.emberLocal}`;
-		} else {
-			return `${this.user.emberUrlBase}:${this.user.emberPort}/UD-ember`;
-		}
+		let baseUrl = `${this.user.emberUrlBase}:${this.user.emberPort}/UD-ember`;
+		if(this.user.emberLocal) baseUrl += `/${this.user.emberLocal}`;
+		return baseUrl;
 	}
 
 	get teamEmberUrlBase(){
-		if(this.user.emberLocal){
-			return `${this.user.teamUrlBase}:${this.user.teamPort}/teamdb/${this.user.teamLocal}`;
-		} else {
-			return `${this.user.teamUrlBase}:${this.user.teamPort}/teamdb`;
-		}
+		let baseUrl = `${this.user.teamUrlBase}:${this.user.teamPort}/UD-ember`;
+		if(this.user.emberLocal) baseUrl += `/${this.user.teamLocal}`;
+		return baseUrl;
 	}
 
 	get devUrlBase(){

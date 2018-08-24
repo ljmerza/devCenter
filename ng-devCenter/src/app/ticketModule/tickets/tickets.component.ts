@@ -35,6 +35,9 @@ export class TicketsComponent implements OnInit {
 	jqlLinks;
 	title;
 
+	defaultTitle = 'My Open';
+	defaultJql = 'assignee = currentUser() AND resolution = Unresolved ORDER BY due DESC';
+
 	@select('repos') getRepos$: Observable<Array<Repo>>;
 
 	@ViewChild('table') table:ElementRef
@@ -104,8 +107,8 @@ export class TicketsComponent implements OnInit {
 
 			this.jqlLinks = jqlLinks;
 			const matchingJql = this.jqlLinks.find(link => link.name === this.ticketListType);
-			const jql = matchingJql && matchingJql.query || 'assignee = currentUser() AND resolution = Unresolved ORDER BY due DESC';
-			this.title = matchingJql && matchingJql.display_name || 'My';
+			const jql = matchingJql && matchingJql.query || this.defaultJql;
+			this.title = matchingJql && matchingJql.display_name || this.defaultTitle;
 
 			this.getTickets$ = this.jira.getTickets(this.ticketListType, true, jql).subscribe((response:APIResponse) => {
 				this.ngProgress.done();

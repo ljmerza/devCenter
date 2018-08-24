@@ -12,7 +12,7 @@ export class CacheInterceptor implements HttpInterceptor {
  
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-		// skip any requests that arent GET and if manually requested
+		// skip any requests that arent GET or if manually requested
 		if(req.method !== 'GET' || req.params.get('isHardRefresh')) {
 			return next.handle(req);
 		}

@@ -13,7 +13,7 @@ export function addNavbarItems(state, navBarItems) {
 /**
  *
  */
-function splitNavbarItems(navBarItems){
+function splitNavbarItems(navBarItems=[]){
 	let fullNavbar:any = [];
 
 	navBarItems.forEach(item => {
@@ -77,13 +77,12 @@ function getChildNavMenu(parentNavMenu, name, itemType){
 function processNavBarItem(fullNavbar, item, category){
 	let navBarItem:any = {
 		link: item.link, 
-		isWiki: item.isWiki, 
 		name: item.name, 
 		hasFullUrl: /^http/.test(item.link),
 		isEmber: /Ember/i.test(item.type),
 		isTeam: /TeamDB/i.test(item.type) || /TeamDB/i.test(item.name),
 	};
-	
+
 	if(/Ember/i.test(item.name)){
 		navBarItem = addParam(navBarItem, 'cache');
 	}
@@ -129,7 +128,6 @@ function sortByName(a, b){
  	});
 
  	const jqlNavbar = _formatNavBarJqlLinks(jqlLinks);
-
 	return {...state, fullJqls, jqlNavbar};
 }
 
@@ -151,6 +149,9 @@ function _formatNavBarJqlLinks(jqlLinks){
  	return jqlNavbar;
 }
 
+/**
+ * sorts the jql navbar links by order wanted on list
+ */
 function _sortByOrder(a, b){
 	if(a.order_on_list > b.order_on_list) return 1;
 	else if(a.order_on_list < b.order_on_list) return -1;

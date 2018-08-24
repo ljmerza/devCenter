@@ -5,7 +5,9 @@
 		</a>
 	</div>
 	
-	<div>
+	<span>
 		<i (click)="pingPcrCommentsAddressing()" class="material-icons text-primary" title='Ping {{fromName}} that PCR comments need addressing'>chat</i>
-	</div>
+	</span>
+
+	<span *ngIf='pcrCountLeft'>PCR: {{pcrCountLeft}}</span>
 </div>

@@ -19,25 +19,6 @@ export class ConfigService {
 	scrumBoardPath = '';
 	myApex = '';
 
-	projectsJql = '';
-	
-	roccathonTickets = encodeURIComponent('');
-	mytickets = encodeURIComponent('');
-	project = encodeURIComponent('');
-
-	allProjectNames = [
-		// var name to get JQL, name on navbar dropdown, display name on table header 
-		{link: 'project', name: 'Project', displayName: 'Project'} 
-	];
-
-	teamTicketListNames = [
-		{link: 'mytickets', name: 'My Tickets', displayName: 'My Open'}
-	];
-
-	otherTicketListNames = [
-		{link: 'otherList', name: 'otherList', displayName: 'otherList'}
-	];
-	
 	
 	// jira fields to get
 	fields = 'attachment,fixVersions,timeoriginalestimate,status,summary,assignee,components,timetracking,duedate,comment,updated,created';

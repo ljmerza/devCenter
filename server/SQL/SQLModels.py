@@ -81,7 +81,6 @@ class NavbarItems(Modal):
 	type = Column(VARCHAR(30))
 	link = Column(VARCHAR(100))
 	name = Column(VARCHAR(30))
-	isWiki = Column(SMALLINT)
 
 class JqlLinks(Modal):
 	__tablename__ = 'jqls'

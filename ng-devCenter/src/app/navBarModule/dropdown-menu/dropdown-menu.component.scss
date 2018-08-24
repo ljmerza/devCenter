@@ -8,13 +8,9 @@ $linkhover: #0056b3;
 		background-color: $linkhover;
 		color: #fff;
 	}
+
+	.dropdown-submenu-icon {
+		color: $darkblk;
+	}
 }
 
-.dropdown-item:hover {
-	background-color: $linkhover;
-	color: #fff;
-}
-
-.dropdown-submenu-icon {
-	color: $darkblk;
-}

@@ -12,6 +12,7 @@
 				<i class="material-icons dropdown-submenu-icon">play_arrow</i>
 			</a>
 			<ul class="dropdown-menu" dropdownSubmenuMenu>
+				
 				<li *ngFor='let subItem of navItem.items'>
 					<a class="dropdown-item" [routerLink]="['/jira', subItem.name]">
 						{{subItem.display_name}}

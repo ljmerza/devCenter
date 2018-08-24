@@ -4,6 +4,12 @@ $linkhover: #0056b3;
 $white: #fff;
 $success: #28a745;
 
+
+.dropdown-item:hover {
+	background-color: $linkhover;
+	color: #fff;
+}
+
 .navbar{
 	background-color: $darkblk;
 }

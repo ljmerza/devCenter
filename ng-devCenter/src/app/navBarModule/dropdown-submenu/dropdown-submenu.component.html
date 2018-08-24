@@ -1,11 +1,11 @@
 <li class="dropdown-submenu" dropdownSubmenu>
-	<a class="dropdown-item" data-toggle="dropdown">{{navLinks.name}}<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
+	<a class="dropdown-item" data-toggle="dropdown">{{navLinks?.name}}<i class="material-icons dropdown-submenu-icon">play_arrow</i></a>
 
 	<ul class="dropdown-menu" dropdownSubmenuMenu>
-		<li *ngFor='let navLink of navLinks.items'>
+		<li *ngFor='let navLink of navLinks?.items'>
 
 			<!-- submenu's submenu -->
-			<dc-dropdown-submenu *ngIf='navLink.items; else linkItem'
+			<dc-dropdown-submenu *ngIf='navLink?.items; else linkItem'
 					[navLinks]=navLink
 					[baseUrl]=baseUrl
 					[emberUrl]=emberUrl
@@ -22,23 +22,23 @@
 				<!-- link with given emberUrl -->
 				<ng-template #fullLink>
 					<a 
-						*ngIf='navLink.isEmber; else teamUrl' 
+						*ngIf='navLink.isEmber; else teamUrlLink' 
 						class="dropdown-item" target="_blank" 
 						href="{{emberUrl}}/{{navLink.link}}">
 						{{navLink.name}}
 					</a>
 					
 					<!-- link given teamUrl -->
-					<ng-template #teamUrl>
+					<ng-template #teamUrlLink>
 						<a 
-							*ngIf='navLink.isTeam; else baseUrl' 
+							*ngIf='navLink.isTeam; else baseUrlLink' 
 							class="dropdown-item" target="_blank" 
 							href="{{teamUrl}}/{{navLink.link}}">
 							{{navLink.name}}
 						</a>
 						
 						<!-- link given baseUrl -->
-						<ng-template #baseUrl>
+						<ng-template #baseUrlLink>
 							<a class="dropdown-item" target="_blank" href="{{baseUrl}}/{{navLink.link}}">
 								{{navLink.name}}
 							</a>

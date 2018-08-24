@@ -30,6 +30,7 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 	pullRequests: Array<any>;
 	toUsername: string;
 	displayName: string;
+	pcrCountLeft: string;
 
 	codeCloud$;
 	userProfile$;
@@ -46,6 +47,7 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 					const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
 					this.toUsername = ticket.username || '';
 					this.pullRequests = ticket.pullRequests || '';
+					this.pcrCountLeft = ticket.pcrCountLeft || '';
 				});
 			
 			this.userProfile$ = this.store.select(`userProfile`)

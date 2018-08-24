@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
+import { Observable } from 'rxjs';
+import { NgRedux } from '@angular-redux/store';
+
+import { RootState, Actions } from '@store';
 import { DataService } from './data.service';
 
 @Injectable()
 export class GitService {
 	title:string = '';
 
-	constructor(private dataService:DataService) {}
+	constructor(private dataService:DataService, private store:NgRedux<RootState>) {}
 
 	/**
 	 * gets a Jira ticket's related Git branches.
@@ -23,8 +26,12 @@ export class GitService {
 	/**
 	 * gets all valid Repos from Crucible.
 	 */
-	getRepos(): Observable<any>  {
-		return this.dataService.get(`${this.dataService.apiUrl}/git/repos`);
+	getRepos() {
+		this.dataService.get(`${this.dataService.apiUrl}/git/repos`)
+		.subscribe(
+			repos => this.store.dispatch({type: Actions.repos, payload: repos.data}),
+			this.dataService.processErrorResponse
+		);
 	}
 
 	/**

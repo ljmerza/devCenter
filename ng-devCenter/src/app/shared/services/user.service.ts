@@ -48,7 +48,7 @@ export class UserService {
 		this.ls.setItem('password', password);
 	}
 	public encryptPassword(password){
-		return this.dataService.post(`${this.dataService.apiUrl}/encrypt`, {password});
+		return this.dataService.post(`${this.dataService.apiUrl}/skipcreds/encrypt`, {password});
 	}
 
 	public get port():string{

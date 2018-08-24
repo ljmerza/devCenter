@@ -1,11 +1,11 @@
 <li ngbDropdown class="d-inline-block" *ngIf='showDropdown'>
-	<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>{{navLinks.name}}</a>
+	<a class="nav-link dropdown-toggle" id="devDropdown" ngbDropdownToggle>{{navLinks?.name}}</a>
 
 	<ul ngbDropdownMenu aria-labelledby="devDropdown">
-		<span *ngFor='let navLink of navLinks.items'>
+		<span *ngFor='let navLink of navLinks?.items'>
 			
 			<!-- submenu -->
-			<dc-dropdown-submenu *ngIf='navLink.items; else linkItem'
+			<dc-dropdown-submenu *ngIf='navLink?.items; else linkItem'
 				[navLinks]=navLink
 				[baseUrl]=baseUrl
 				[emberUrl]=emberUrl
@@ -17,7 +17,7 @@
 			<ng-template #linkItem>
 				<li>
 					<!-- link with given base url -->
-					<a *ngIf='navLink.hasFullUrl; else fullLink' class="dropdown-item" target="_blank" href="{{navLink.link}}">
+					<a *ngIf='navLink.hasFullUrl && !navLink.isEmber; else fullLink' class="dropdown-item" target="_blank" href="{{navLink.link}}">
 						{{navLink.name}}
 					</a>
 

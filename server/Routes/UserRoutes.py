@@ -15,7 +15,7 @@ def define_routes(app, app_name, g, devdb, sql_echo):
 		data = get_profile(data=data)
 		return Response(data, mimetype='application/json')
 
-	@app.route(f'/{app_name}/navbar', methods=['GET', 'POST'])
+	@app.route(f'/{app_name}/skipcreds/navbar', methods=['GET', 'POST'])
 	@cross_origin()
 	def get_navbar():
 		response = {'status': False, 'data': ''}
@@ -28,7 +28,7 @@ def define_routes(app, app_name, g, devdb, sql_echo):
 
 		return Response(response, mimetype='application/json')
 
-	@app.route(f'/{app_name}/jql_links', methods=['GET'])
+	@app.route(f'/{app_name}/skipcreds/jql_links', methods=['GET'])
 	@cross_origin()
 	def get_jql_links_route():
 		response = get_jql_links(devdb=devdb, sql_echo=sql_echo)

@@ -42,6 +42,7 @@ export function addTickets(state, tickets){
 			pullRequests: ticket.pullRequests,
 			username: ticket.username,
 			displayName: ticket.display_name
+			pcrCountLeft: ticket.pcrCountLeft
 		});
 
 		statuses.push({
@@ -76,8 +77,8 @@ function getPcrCountLeft(devChangeLines, storyPoint){
 	if(!pcrRemaining) return;
 
 	// get only the numbers
-	const potentialPcrs = pcrRemaining.replace(/^[0-9]/g, '');
-	if(!potentialPcrs) return;
+	const potentialPcrs = pcrRemaining.replace(/\D/g, '');
+	if((potentialPcrs !==0 && !potentialPcrs) || isNaN(potentialPcrs)) return;
 
 	// get the PCR needed for the ticket - if smaller  
 	// then most likely PCR remaining else definitely not

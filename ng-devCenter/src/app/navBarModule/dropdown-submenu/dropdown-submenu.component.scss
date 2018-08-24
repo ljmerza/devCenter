@@ -1,19 +1,13 @@
 $darkblk: #292b2c;
 $linkhover: #0056b3;
 
-.dropdown-item:hover {
-	background-color: $linkhover;
-	a {
-		color: #fff;
-	}
-}
-
-.dropdown-submenu-icon {
-	color: $darkblk;
-}
-
 .dropdown-submenu{
 	position: relative;
+
+	.dropdown-item:hover{
+		color: #fff;
+		background-color: $linkhover;
+	}
 
 	.show-submenu {
 		display: block;
@@ -24,6 +18,7 @@ $linkhover: #0056b3;
 
 	.dropdown-submenu-icon {
 		position: absolute;
+		color: $darkblk;
 		top: 8px;
 		right: 0;
 		font-size: 17px;

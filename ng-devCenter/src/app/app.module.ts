@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER  } from '@angular/core';
 import { HashLocationStrategy, Location, LocationStrategy } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -20,6 +20,13 @@ import { AppComponent } from './app.component';
 import { FooterComponent } from './footer/footer.component';
 
 import { environment } from '@environment';
+import { InitService } from './init.service';
+import { Actions } from '@store';
+
+
+export function startupServiceFactory(initService: InitService): Function {
+    return () => initService.getStartupData();
+}
 
 @NgModule({
 	declarations: [AppComponent, FooterComponent],
@@ -30,7 +37,14 @@ import { environment } from '@environment';
 	],
 	providers: [
 		appRoutingProviders, Location, 
-		{provide: LocationStrategy, useClass: HashLocationStrategy}
+		{provide: LocationStrategy, useClass: HashLocationStrategy},
+		InitService,
+		{
+            provide: APP_INITIALIZER,
+            useFactory: startupServiceFactory,
+            deps: [InitService],
+            multi: true
+        }
 	],
 	bootstrap: [AppComponent]
 })
