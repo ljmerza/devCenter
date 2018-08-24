@@ -1,9 +1,11 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { DataTableDirective } from 'angular-datatables';
 import { Subject, Observable, Subscription } from 'rxjs';
+import { NgRedux } from '@angular-redux/store';
 
+import { Actions, RootState } from '@store';
 import { ModalComponent } from '@modal';
 import { ItemsService, ToastrService } from '@services';
 
@@ -13,7 +15,7 @@ import { ItemsService, ToastrService } from '@services';
 	styleUrls: ['./edit-orders.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EditOrdersComponent implements OnInit {
+export class EditOrdersComponent implements OnInit, OnDestroy {
 	loadingIndicator:boolean = true;
 	tableTitle:string = 'Edit Navbar Items';
 	navbarItems: Array<any>;
@@ -26,6 +28,8 @@ export class EditOrdersComponent implements OnInit {
 	linkType;
 	emberRoute;
 	displayName;
+
+	navBarItems$;
 
 	dtOptions = {
 		dom: `
@@ -45,20 +49,22 @@ export class EditOrdersComponent implements OnInit {
         }
 	};
 
-	constructor(public items: ItemsService, private toastr: ToastrService) { }
+	constructor(public items: ItemsService, private toastr: ToastrService, private store:NgRedux<RootState>) { }
 
 	ngOnInit() {
 		this.getEditableItems();
+	}
+
+	ngOnDestroy(){
+		if(this.navBarItems$) this.navBarItems$.unsubscribe();
 	}
 
 	/**
 	 *
 	 */
 	getEditableItems(){
-		this.items.getItems().subscribe(
-			this.formatTableData.bind(this),
-			this.items.processErrorResponse.bind(this.items)
-		);
+	 	this.navBarItems$ = this.store.select('navBarItems')
+		.subscribe(this.formatTableData.bind(this));
 	}
 
 	/**

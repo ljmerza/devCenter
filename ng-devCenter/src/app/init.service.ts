@@ -13,8 +13,7 @@ export class InitService {
 	getStartupData(){
 		let params = new HttpParams();
 		params = params.append('isHardRefresh', `true`);
-		
-		return Promise.all(this.getJql(params), this.getNavItems(params));
+		return Promise.all([this.getJql(params), this.getNavItems(params)]);
 	}
 
 	getJql(params){

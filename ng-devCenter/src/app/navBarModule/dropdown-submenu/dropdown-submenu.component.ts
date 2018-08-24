@@ -7,7 +7,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DropdownSubmenuComponent {
-	@Input() navLinks:Array<any> = [];
+	@Input() navLinks;
 
 	@Input() baseUrl:string = '';
 	@Input() emberUrl:string = '';

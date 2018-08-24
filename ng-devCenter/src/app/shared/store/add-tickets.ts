@@ -41,7 +41,7 @@ export function addTickets(state, tickets){
 			msrp: ticket.msrp,
 			pullRequests: ticket.pullRequests,
 			username: ticket.username,
-			displayName: ticket.display_name
+			displayName: ticket.display_name,
 			pcrCountLeft: ticket.pcrCountLeft
 		});
 

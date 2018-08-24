@@ -43,10 +43,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 			this.jira.getActiveSprints();
 		}
 	}
-
-	/**
-	 * destroys any left over subscriptions.
-	 */
+	
 	ngOnDestroy(){
 		if(this.navBarItems$) this.navBarItems$.unsubscribe();
 		if(this.jqlNavbar$) this.jqlNavbar$.unsubscribe();
