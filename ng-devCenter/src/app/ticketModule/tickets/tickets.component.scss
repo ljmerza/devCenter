@@ -1,4 +1,5 @@
 $darkblk: #292b2c;
+$offdark: #333;
 
 .filterInput, .filterInput:focus {
 	background-color: $darkblk;
@@ -17,20 +18,43 @@ $darkblk: #292b2c;
 	}
 }
 
-th:focus {
-    outline: none;
+
+.ngx-datatable {
+	.datatable-body-cell {
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+
+	.datatable-row-wrapper {
+		padding-top: 10px;
+
+		&:nth-child(odd) {
+			background-color: $offdark;
+		}
+	}
+
+	.summary-td {
+		word-break: break-all;
+		min-width: 300px;
+		max-width: 400px;
+	}
+
+	.actions-td {
+		max-width: 120px;
+	}
+
+	.dates-td {
+		max-width: 100px;
+	}
+
+	.key-copy {
+		position: absolute;
+		right: 10000px;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
 }
 
-.table {
-	thead th {
-		border-bottom: 1px solid #dee2e63b;
-	}
 
-	td, th {
-		border-top: 1px solid #dee2e63b;
-	}
-
-	tbody tr:nth-of-type(even), thead tr {
-		background-color: rgba(0, 0, 0, 0.23) !important;
-	}
-}

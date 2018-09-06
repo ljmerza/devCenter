@@ -13,4 +13,8 @@ export class TicketCommentsModalComponent {
 	@Input() key;
 	@Input() ticketListType;
 	@ViewChild(ModalComponent) modal: ModalComponent;
+
+	openModal(){
+		this.modal && this.modal.openModal();
+	}
 }

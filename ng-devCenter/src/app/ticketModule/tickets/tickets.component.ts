@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, ElementRef } from '@angular/core';
+import { 
+	Component, OnInit, ViewChild, ViewEncapsulation,
+	ElementRef, TemplateRef, ComponentFactoryResolver, ViewContainerRef 
+} from '@angular/core';
+
+import { DomSanitizer } from '@angular/platform-browser';
+
 import { ActivatedRoute } from '@angular/router';
 import { NgProgress } from 'ngx-progressbar';
 
@@ -6,9 +12,16 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/observable/interval';
 import { select, NgRedux } from '@angular-redux/store';
 
-import { UserService, JiraService, GitService } from '@services';
+import { UserService, JiraService, GitService, MiscService, ConfigService } from '@services';
 import { RootState, Actions } from '@store';
 import { Repo, APIResponse } from '@models';
+
+import { TicketCommentsModalComponent } from './../../commentsModule/ticket-comments-modal/ticket-comments-modal.component';
+import { WorkLogComponent } from './../work-log/work-log.component';
+import { SetPingsComponent } from './../set-pings/set-pings.component';
+import { TicketDetailsComponent } from './../ticket-details/ticket-details.component';
+import { TicketStatusComponent } from './../ticket-status/ticket-status.component';
+import { WatchersComponent } from './../watchers/watchers.component';
 
 declare let $;
 
@@ -16,16 +29,18 @@ declare let $;
 	selector: 'dc-tickets',
 	templateUrl: './tickets.component.html',
 	styleUrls: ['./tickets.component.scss'],
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
+	entryComponents: [
+		SetPingsComponent, TicketDetailsComponent,
+		TicketCommentsModalComponent, WorkLogComponent
+	]
 })
 export class TicketsComponent implements OnInit {
 	loadingTickets:boolean = false;
 	loadingIcon: boolean = false;
 	ticketListType:string; // type of tickets to get
 	repos: Array<Repo>;
-	filteredTickets = []
 	tickets = [];
-	renderTimeoutId;
 	
 	getTickets$;
 	ticketsRedux$;
@@ -35,23 +50,25 @@ export class TicketsComponent implements OnInit {
 	jqlLinks;
 	title;
 
+	detailsComponentRef = [];
+	pingComponentRef = [];
+	commentComponentRef = [];
+	worklogComponentRef = [];
+
 	defaultTitle = 'My Open';
 	defaultJql = 'assignee = currentUser() AND resolution = Unresolved ORDER BY due DESC';
-
 	@select('repos') getRepos$: Observable<Array<Repo>>;
+	@ViewChild('myTable') table: any;
 
-	@ViewChild('table') table:ElementRef
-	@ViewChild('tbody') tbody:ElementRef
-	@ViewChild('filterInput') filterInput:ElementRef
+	constructor(
+		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>,
+		public jira:JiraService, public user:UserService, public config: ConfigService, public misc: MiscService,
+		private factoryResolver: ComponentFactoryResolver, private viewContRef: ViewContainerRef, private sanitizer: DomSanitizer
+	) {}
 
 	get tableTitle(){
 		return `${this.title} Tickets`;
 	}
-
-	constructor(
-		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>,
-		public jira:JiraService, public user:UserService
-	) {}
 	
 	/**
 	 * On initialization of component, if user credentials exist get repository list.
@@ -65,10 +82,9 @@ export class TicketsComponent implements OnInit {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
 			this.store.dispatch({type: Actions.ticketType, payload: this.ticketListType });
 
-			this.filterTable();
 			this.getTickets();
 				
-			if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
+			this.ticketsRedux$ && this.ticketsRedux$.unsubscribe();
 			this.ticketsRedux$ = this.store.select(this.ticketListType)
 			.subscribe(tickets => this.processTickets({tickets}));
 		});
@@ -78,10 +94,9 @@ export class TicketsComponent implements OnInit {
 	 *	destroy any subscribers
 	 */
 	ngOnDestroy(){
-		if(this.ticketsRedux$) this.ticketsRedux$.unsubscribe();
-		if(this.getTickets$) this.getTickets$.unsubscribe();
-		if(this.jqlLinks$) this.jqlLinks$.unsubscribe();
-		if(this.table.nativeElement) $(this.table.nativeElement).trigger('destroy');
+		this.ticketsRedux$ && this.ticketsRedux$.unsubscribe();
+		this.getTickets$ && this.getTickets$.unsubscribe();
+		this.jqlLinks$ && this.jqlLinks$.unsubscribe();
 	}
 
 	public getJqlLinks(){
@@ -142,135 +157,89 @@ export class TicketsComponent implements OnInit {
 
 		this.loadingTickets = false;
 		this.tickets = tickets;
-		this.filteredTickets = this.tickets;
+	}
 
-		this.getStatusList({tickets});
-		this.resetFilters()
-		this.filterTable();
-		this.addSortTable();
+	toggleExpandRow(row) {
+		console.log({row});
+		this.table.rowDetail.toggleExpandRow(row);
 	}
 
 	/**
-	 * resets all filters
+	 * creates a ticket additional details modal if one doesn't exist then opens it
 	 */
-	private resetFilters(){
-		this.dropdownSearches.forEach(search => search.value = '');
-		$(this.filterInput.nativeElement).val('');
-	}
+	openAdditionalDataModal(ticket){
+		let matchingRef = this.detailsComponentRef.find(ref => ref.key === ticket.key);
+		
+		if(!matchingRef){
+			const factory = this.factoryResolver.resolveComponentFactory(TicketDetailsComponent);
+		    matchingRef = {component: this.viewContRef.createComponent(factory), key: ticket.key};
 
-	/**
-	 * get all uniquer ticket statuses from ticket list
-	 */
-	dropdownSearches = [];
-	private getStatusList({tickets}){
-		const allStatuses = tickets
-			.map(ticket => ticket.status)
-			.filter(val => val)
-			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), [])
-			.sort();
+		    (<TicketDetailsComponent>matchingRef.component.instance).key = ticket.key;
 
-		const allDisplayNames = tickets
-			.map(ticket => ticket.display_name)
-			.filter(val => val)
-			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), [])
-			.sort();
-
-		let allRepos = tickets.map(ticket => ticket.pullRequests.map(request => request.repo))
-		allRepos = [].concat.apply([], allRepos)
-			.filter(val => val)
-			.reduce((acc, d) => acc.includes(d) ? acc : acc.concat(d), [])
-			.sort();
-
-		this.dropdownSearches = [
-			{data: allStatuses, key: 'status', placeholder: 'Status', value: ''},
-			{data: allDisplayNames, key: 'display_name', placeholder: 'Display Name', value: ''},
-			{data: allRepos, key: ['pullRequests', 'repo'], placeholder: 'Repos', value: ''},
-		]
-	}
-
-	/**
-	 * filter the ticket list by chosen keys from the dropdown
-	 */
-	public filterByKey(){
-		// get all search keys/values that have been selected
-		let searchValues = this.dropdownSearches.map(search => search.value).filter(search => search);
-		let searchKeys = this.dropdownSearches.filter(search => search.value).map(search => search.key);
-
-		// if we have no search values then return entire list of tickets
-		if(searchValues.length === 0) this.filteredTickets = this.tickets;
-		else {
-
-			// create the full search string 
-			const searchString = searchValues.sort().join('');
-
-			this.filteredTickets = this.tickets.reduce((acc, curr) => {
-
-				// get the string of all values for a ticket we are looking to compare with
-				let keyValues = searchKeys.map(key => {
-					if(Array.isArray(key)){
-						let currentValue:any = curr;
-
-						key.forEach(prop => {
-							if(Array.isArray(currentValue)){
-								currentValue = currentValue
-									.map(arrItem => arrItem[prop])
-									.find(val => searchString.includes(val));
-
-							} else {
-								currentValue = currentValue[prop];
-							}
-						});
-
-						return currentValue;
-
-					} else {
-						return curr[key];
-					}
-
-				}).sort().join('');
-
-				if(keyValues === searchString) acc.push(curr);
-				return acc;
-			}, []);
-
+		    this.detailsComponentRef.push(matchingRef);
 		}
+
+	    (<TicketDetailsComponent>matchingRef.component.instance).openModal();
 	}
 
 	/**
-	 * 
+	 * creates a ticket ping modal if one doesn't exist then opens it
 	 */
-	addSortTable(){
-		$(this.table.nativeElement).trigger('destroy');
+	openPingModal(ticket) {
+		let matchingRef = this.pingComponentRef.find(ref => ref.key === ticket.key);
 
-		setTimeout(() => {
-			$(this.table.nativeElement).tablesorter({
-				sortList: [[5,1]] 
-			});
-		});
+		if(!matchingRef){
+			const factory = this.factoryResolver.resolveComponentFactory(SetPingsComponent);
+	    	matchingRef = {component: this.viewContRef.createComponent(factory), key: ticket.key};
+
+	    	(<SetPingsComponent>matchingRef.component.instance).key = ticket.key;
+	    	(<SetPingsComponent>matchingRef.component.instance).masterBranch = ticket.master_branch;
+	    	(<SetPingsComponent>matchingRef.component.instance).branch = ticket.branch;
+	    	(<SetPingsComponent>matchingRef.component.instance).commit = ticket.commit;
+
+	    	this.pingComponentRef.push(matchingRef);
+	    }
+
+    	(<SetPingsComponent>matchingRef.component.instance).openModal();
+    }
+
+
+	/**
+	 * creates a ticket comments modal if one doesn't exist then opens it
+	 */
+	openCommentsModal(ticket) {
+		let matchingRef = this.commentComponentRef.find(ref => ref.key === ticket.key);
+
+		if(!matchingRef){
+			const factory = this.factoryResolver.resolveComponentFactory(TicketCommentsModalComponent);
+    		matchingRef = {component: this.viewContRef.createComponent(factory), key: ticket.key};
+
+    		(<TicketCommentsModalComponent>matchingRef.component.instance).key = ticket.key;
+
+    		this.commentComponentRef.push(matchingRef);
+    	}
+
+    	(<TicketCommentsModalComponent>matchingRef.component.instance).openModal();
 	}
 
 	/**
-	 *  hacky way to add table filtering
+	 * creates a ticket log modal if one doesn't exist then opens it
 	 */
-	public filterTable(){
-		setTimeout(() => {
-			let filterEl = $(this.filterInput.nativeElement);
-			let filterValue = ($(filterEl[0]).val() || '').toUpperCase();
+	openLogModal(ticket) {
+		let matchingRef = this.worklogComponentRef.find(ref => ref.key === ticket.key);
 
-			let tr = $(this.tbody.nativeElement).children("tr");
-			
-			for (let i=0; i<tr.length; i++) {
-				let td = $(tr[i]).children("td");
-				let found = false;
+		if(!matchingRef){
+			const factory = this.factoryResolver.resolveComponentFactory(WorkLogComponent);
+	    	matchingRef = {component: this.viewContRef.createComponent(factory), key: ticket.key};
 
-				for (let j=0; j<td.length; j++) {
-					const trText = ($(td[j]).text() || '').toUpperCase();
-					if (trText.indexOf(filterValue) > -1) found = true;
-				}
-				
-				if(found) $(tr[i]).css('display', '');
-				else $(tr[i]).css('display', 'none');
-			}
-		});
+	    	(<WorkLogComponent>matchingRef.component.instance).key = ticket.key;
+	    	(<WorkLogComponent>matchingRef.component.instance).branch = ticket.branch;
+	    	(<WorkLogComponent>matchingRef.component.instance).masterBranch = ticket.master_branch;
+	    	(<WorkLogComponent>matchingRef.component.instance).commit = ticket.commit;
+
+	    	this.worklogComponentRef.push(matchingRef);
+		}
+
+    	(<WorkLogComponent>matchingRef.component.instance).openModal();
 	}
 }

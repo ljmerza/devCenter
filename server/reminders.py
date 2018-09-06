@@ -6,9 +6,9 @@ class reminders(object):
 
 	def __init__(self, chat_obj):
 		self.chat_obj = chat_obj
-		self.log_hours_four = False
+		self.bluejeans_nine = False
+		self.log_timesheet_four = False
 		self.log_timesheet_nine = False
-		self.log_message = 'Log yo dang time!'
 		self.timesheet_message = "TIMESHEETS!"
 		
 	def get_now(self):
@@ -38,6 +38,12 @@ class reminders(object):
 		else: 
 			return False
 
+	def is_midnight(self):
+		if self._is_hour(hour=00, minute=00):
+			return True
+		else: 
+			return False
+			
 	def _is_hour(self, hour, minute):
 		minute_min = minute
 		minute_max = minute + 2
@@ -46,39 +52,40 @@ class reminders(object):
 		else:
 			return False
 
-	def is_midnight(self):
-		if self._is_hour(hour=00, minute=00):
-			self.log_hours_four = False
-			self.log_hours_five = False
-			self.log_hours_six = False
-
-			self.log_time_nine = False
-			self.log_time_four = False
-			self.log_time_five = False
-			self.log_time_six = False
-
-	def is_timesheet_nine(self):
-		if( self.is_friday() and self.is_nine() and not self.log_timesheet_nine):
-			self.log_timesheet_nine = True
-			return self.timesheet_message
+	def is_timesheet_four(self):
+		if( self.is_friday() and self.is_four() and not self.log_timesheet_four):
+			return True
 		else:
 			return False
 
-	def is_log_hours_four(self):
-		if( self.is_weekday() and self.is_four() and not self.log_hours_four):
-			self.log_hours_four = True
-			return self.log_message
+	def is_timesheet_nine(self):
+		if( self.is_friday() and self.is_nine() and not self.log_timesheet_nine):
+			return True
+		else:
+			return False
+
+	def is_bluejeans_nine(self):
+		if( self.is_friday() and self.is_nine() and not self.bluejeans_nine):
+			return True
 		else:
 			return False
 
 	def calc_messages(self):
 		self.get_now()
-		self.is_midnight()
 
-		message = self.is_timesheet_nine()
-		if(message):
-			self.chat_obj.send_meeting_message(message=message, chatroom=self.chat_obj.chat_api.apex_chat)
+		if self.is_midnight():
+			self.log_timesheet_four = False
+			self.log_timesheet_nine = False
 
-		message = self.is_log_hours_four()
-		if(message):
+		if self.is_timesheet_four():
+			self.log_timesheet_four = True
+			self.chat_obj.send_meeting_message(message=self.timesheet_message, chatroom=self.chat_obj.chat_api.apex_chat)
+
+		if self.is_timesheet_nine():
+			self.log_timesheet_nine = True
+			self.chat_obj.send_meeting_message(message=self.timesheet_message, chatroom=self.chat_obj.chat_api.apex_chat)
+
+		if self.is_bluejeans_nine():
+			self.bluejeans_nine = True
+			message = """<a href='https://bluejeans.com/9196665226'>Bluejeans</a>"""
 			self.chat_obj.send_meeting_message(message=message, chatroom=self.chat_obj.chat_api.apex_chat)

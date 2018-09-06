@@ -124,7 +124,7 @@ def define_routes(app, app_name, g):
 				'key': key,
 				'username': username
 			}
-			response = JiraRequests_modify_watchers(data=data)
+			response = modify_watchers(data=data)
 
 		# else remove watcher
 		else:
@@ -134,7 +134,7 @@ def define_routes(app, app_name, g):
 				'cred_hash': g.cred_hash,
 				'type_of_modify': 'remove'
 			}
-			response = JiraRequests_modify_watchers(data=data)
+			response = modify_watchers(data=data)
 
 		return Response(response, mimetype='application/json')
 

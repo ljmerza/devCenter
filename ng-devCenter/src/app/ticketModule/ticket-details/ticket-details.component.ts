@@ -39,7 +39,7 @@ export class TicketDetailsComponent {
 	/**
 	 * Always get ticket details when opening modal
 	 */
-	openModel(){
+	openModal(){
 		this.getDetails();
 		this.cd.detectChanges();
 		this.modal.openModal();

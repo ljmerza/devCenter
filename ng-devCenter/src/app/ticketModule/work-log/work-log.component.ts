@@ -40,6 +40,10 @@ export class WorkLogComponent {
 		private store:NgRedux<RootState>, public misc: MiscService
 		) {}
 
+	openModal(){
+		this.modal && this.modal.openModal();
+	}
+
 	/**
 	 * Submits a work log form to add/remove components, log time, and add a comment.
 	 * @param {NgForm} formObj the reactive form object with all the inputs' values 

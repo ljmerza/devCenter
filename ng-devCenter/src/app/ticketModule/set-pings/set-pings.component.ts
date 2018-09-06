@@ -19,6 +19,10 @@ export class SetPingsComponent {
 
 	constructor(private toastr: ToastrService, private jira: JiraPingsService, private cd: ChangeDetectorRef, public misc: MiscService){}
 
+	openModal(){
+		this.modal && this.modal.openModal();
+	}
+	
 	/**
 	 * Closes the modal and if user wants a ping then send it to them.
 	 * @param {string} pingType the type of ping to send (new or merge)

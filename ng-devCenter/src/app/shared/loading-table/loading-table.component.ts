@@ -1,10 +1,11 @@
-import { Component, Output, Input, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, Output, Input, EventEmitter, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
 	selector: 'dc-loading-table',
 	templateUrl: './loading-table.component.html',
 	styleUrls: ['./loading-table.component.scss'],
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoadingTableComponent {
 	@Output() refreshData = new EventEmitter();
