@@ -13,7 +13,7 @@ import { SharedModule } from '../shared/shared.module';
 // components
 import { 
 	SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent, WorkLogComponent, 
-	TicketStatusComponent, TicketComponent, TicketsComponent, CrucibleComponent 
+	TicketStatusComponent, TicketsComponent, CrucibleComponent 
 } from './';
 
 // pipes
@@ -21,6 +21,7 @@ import { WorkTimePipe } from './work-time.pipe';
 import { DatesComponent } from './dates/dates.component';
 import { WatchersComponent } from './watchers/watchers.component';
 import { BranchInfoComponent } from './branch-info/branch-info.component';
+import { ActionsComponent } from './actions/actions.component';
 
 @NgModule({
 	imports: [
@@ -30,7 +31,7 @@ import { BranchInfoComponent } from './branch-info/branch-info.component';
 	declarations: [
 		SetPingsComponent, TicketDetailsComponent, QaGeneratorComponent, CrucibleComponent,
 		WorkLogComponent, TicketStatusComponent, DatesComponent,
-		TicketsComponent, TicketComponent, WorkTimePipe, WatchersComponent, BranchInfoComponent
+		TicketsComponent, WorkTimePipe, WatchersComponent, BranchInfoComponent, ActionsComponent
 	],
 	exports: [TicketsComponent]
 })

@@ -1,5 +1,4 @@
 $darkblk: #292b2c;
-$offdark: #333;
 
 .filterInput, .filterInput:focus {
 	background-color: $darkblk;
@@ -20,32 +19,6 @@ $offdark: #333;
 
 
 .ngx-datatable {
-	.datatable-body-cell {
-		padding-left: 5px;
-		padding-right: 5px;
-	}
-
-	.datatable-row-wrapper {
-		padding-top: 10px;
-
-		&:nth-child(odd) {
-			background-color: $offdark;
-		}
-	}
-
-	.summary-td {
-		word-break: break-all;
-		min-width: 300px;
-		max-width: 400px;
-	}
-
-	.actions-td {
-		max-width: 120px;
-	}
-
-	.dates-td {
-		max-width: 100px;
-	}
 
 	.key-copy {
 		position: absolute;
@@ -54,6 +27,41 @@ $offdark: #333;
 
 	a:hover {
 		text-decoration: none;
+	}
+
+	.datatable-header-cell, .datatable-body-cell {
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+
+	.datatable-header, .datatable-body-row {
+		padding-top: 10px;
+		border-top: solid black 1px;
+	}
+
+	.datatable-row-wrapper:nth-child(odd) {
+		background-color: rgba(0, 0, 0, 0.23) !important;
+	}
+
+	.datatable-body .datatable-row-detail {
+		overflow-y: scroll !important;
+		overflow-x: hidden !important;
+	}
+
+	.summary-td {
+		word-break: break-all;
+	}
+
+	.datatable-footer  {
+
+		.page-count, .datatable-pager .pager li a {
+			font-size: 25px;
+		}
+
+		.datatable-pager .pager li a {
+			padding-right: 5px;
+			padding-left: 5px;
+		}
 	}
 }
 

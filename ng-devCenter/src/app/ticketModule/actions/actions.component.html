@@ -1,0 +1,14 @@
+<i (click)="openPingModal(ticket)" class="material-icons text-primary" title='Branch information'>record_voice_over</i>
+<i (click)="openLogModal(ticket)" class="material-icons text-warning" title='Add comment/work log'>add_circle_outline</i>
+<i (click)="openCommentsModal(ticket)" class="material-icons text-success"title='View comments'>storage</i>
+<a
+	href="javascript:void(0)"
+	[class.datatable-icon-right]="!expanded"
+	[class.datatable-icon-down]="expanded"
+	title="Expand/Collapse Row"
+	(click)="toggleExpandRow(ticket)">
+	<i class="material-icons text-info" title='View additional ticket data'>live_help</i>
+</a>
+
+<!-- watchers -->
+<dc-watchers [watchers]=ticket?.watchers [key]=ticket?.key></dc-watchers>

@@ -6,21 +6,21 @@ import { ModalComponent } from '@modal';
 	selector: 'dc-ticket-details',
 	templateUrl: './ticket-details.component.html',
 	styleUrls: ['./ticket-details.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	encapsulation: ViewEncapsulation.None
 })
 export class TicketDetailsComponent {
 	loading:boolean = true;
-	modalSize = {width: '800px', height: '700px'};
-
-	@ViewChild(ModalComponent) modal: ModalComponent;
 	@Input() key;
 
 	links = [];
 	ticket;
+
+	ngOnInit(){
+		this.getDetails();
+	}
 	
 
-	constructor(private toastr: ToastrService, public jira: JiraService, public config: ConfigService, private cd: ChangeDetectorRef) { }
+	constructor(private toastr: ToastrService, public jira: JiraService, public config: ConfigService) { }
 
 	/**
 	 * adds ticket details including any dependency links
@@ -32,19 +32,7 @@ export class TicketDetailsComponent {
 
 		// sort by inward issues first
 		this.links = ticket.links.sort(a => a.inwardIssue ? 1: 0);
-		this.cd.detectChanges();
-		
 	}
-
-	/**
-	 * Always get ticket details when opening modal
-	 */
-	openModal(){
-		this.getDetails();
-		this.cd.detectChanges();
-		this.modal.openModal();
-	}
-
 
 	/**
 	 * gets a ticket's details.

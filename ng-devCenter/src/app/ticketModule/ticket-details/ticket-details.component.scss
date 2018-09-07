@@ -3,23 +3,15 @@ $black: rgb(0,0,0);
 $off-black: rgba($black, 0.2);
 $pulse-duration: 750ms;
 
+.split-tables {
+	margin-top: 20px;
+}
 
 .ticket-details {
-	&.table, .table {
-		background-color: transparent !important;
-	}
-
 	tbody tr:nth-of-type(odd) {
     	background-color: #333 !important;
 	}
-	
-	// sub table
-	table tbody tr:nth-of-type(odd) {
-    	background-color: #1b1b1b !important;
-	}
 }
-
-
 
 @keyframes pulse {
 	50% { 

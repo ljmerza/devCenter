@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 
 import { ActivatedRoute } from '@angular/router';
 import { NgProgress } from 'ngx-progressbar';
@@ -41,6 +42,7 @@ export class TicketsComponent implements OnInit {
 	ticketListType:string; // type of tickets to get
 	repos: Array<Repo>;
 	tickets = [];
+	filteredTickets = [];
 	
 	getTickets$;
 	ticketsRedux$;
@@ -156,90 +158,54 @@ export class TicketsComponent implements OnInit {
 		}
 
 		this.loadingTickets = false;
+		this.filteredTickets = tickets;
 		this.tickets = tickets;
 	}
 
-	toggleExpandRow(row) {
-		console.log({row});
-		this.table.rowDetail.toggleExpandRow(row);
+	toggleExpandRow(ticket) {
+		this.table.rowDetail.toggleExpandRow(ticket);
 	}
 
-	/**
-	 * creates a ticket additional details modal if one doesn't exist then opens it
-	 */
-	openAdditionalDataModal(ticket){
-		let matchingRef = this.detailsComponentRef.find(ref => ref.key === ticket.key);
-		
-		if(!matchingRef){
-			const factory = this.factoryResolver.resolveComponentFactory(TicketDetailsComponent);
-		    matchingRef = {component: this.viewContRef.createComponent(factory), key: ticket.key};
+	updateFilter(event) {
+	    const val = event.target.value.toLowerCase();
 
-		    (<TicketDetailsComponent>matchingRef.component.instance).key = ticket.key;
+	    // filter our data
+	    const tickets = this.tickets.filter(ticket => {
+			if((ticket.key || '').toLowerCase().indexOf(val) !== -1) return 1;
+			else if((ticket.msrp || '').toLowerCase().indexOf(val) !== -1) return 1;
+			else if((ticket.summary || '').toLowerCase().indexOf(val) !== -1) return 1;
+			else return 0;
+	    });
 
-		    this.detailsComponentRef.push(matchingRef);
-		}
-
-	    (<TicketDetailsComponent>matchingRef.component.instance).openModal();
+	    // update the rows
+	    this.filteredTickets = tickets;
+	    this.table.offset = 0;
 	}
 
-	/**
-	 * creates a ticket ping modal if one doesn't exist then opens it
-	 */
-	openPingModal(ticket) {
-		let matchingRef = this.pingComponentRef.find(ref => ref.key === ticket.key);
+	dueDateComparator(valueA, valueB, rowA, rowB){
+		let dueDateA = moment(rowA.dates.duedate, 'YYYY-MM-DD');
+		let dueDateB = moment(rowB.dates.duedate, 'YYYY-MM-DD');
 
-		if(!matchingRef){
-			const factory = this.factoryResolver.resolveComponentFactory(SetPingsComponent);
-	    	matchingRef = {component: this.viewContRef.createComponent(factory), key: ticket.key};
-
-	    	(<SetPingsComponent>matchingRef.component.instance).key = ticket.key;
-	    	(<SetPingsComponent>matchingRef.component.instance).masterBranch = ticket.master_branch;
-	    	(<SetPingsComponent>matchingRef.component.instance).branch = ticket.branch;
-	    	(<SetPingsComponent>matchingRef.component.instance).commit = ticket.commit;
-
-	    	this.pingComponentRef.push(matchingRef);
-	    }
-
-    	(<SetPingsComponent>matchingRef.component.instance).openModal();
-    }
-
-
-	/**
-	 * creates a ticket comments modal if one doesn't exist then opens it
-	 */
-	openCommentsModal(ticket) {
-		let matchingRef = this.commentComponentRef.find(ref => ref.key === ticket.key);
-
-		if(!matchingRef){
-			const factory = this.factoryResolver.resolveComponentFactory(TicketCommentsModalComponent);
-    		matchingRef = {component: this.viewContRef.createComponent(factory), key: ticket.key};
-
-    		(<TicketCommentsModalComponent>matchingRef.component.instance).key = ticket.key;
-
-    		this.commentComponentRef.push(matchingRef);
-    	}
-
-    	(<TicketCommentsModalComponent>matchingRef.component.instance).openModal();
+		if(dueDateA.isAfter(dueDateB)) return -1;
+		else if(dueDateB.isAfter(dueDateA)) return 1;
+		else return 0;
 	}
 
-	/**
-	 * creates a ticket log modal if one doesn't exist then opens it
-	 */
-	openLogModal(ticket) {
-		let matchingRef = this.worklogComponentRef.find(ref => ref.key === ticket.key);
+	createdDateComparator(valueA, valueB, rowA, rowB){
+		let startedA = moment(rowA.dates.started, 'YYYY-MM-DD');
+		let startedB = moment(rowB.dates.started, 'YYYY-MM-DD');
 
-		if(!matchingRef){
-			const factory = this.factoryResolver.resolveComponentFactory(WorkLogComponent);
-	    	matchingRef = {component: this.viewContRef.createComponent(factory), key: ticket.key};
+		if(startedA.isAfter(startedB)) return -1;
+		else if(startedB.isAfter(startedA)) return 1;
+		else return 0;
+	}
 
-	    	(<WorkLogComponent>matchingRef.component.instance).key = ticket.key;
-	    	(<WorkLogComponent>matchingRef.component.instance).branch = ticket.branch;
-	    	(<WorkLogComponent>matchingRef.component.instance).masterBranch = ticket.master_branch;
-	    	(<WorkLogComponent>matchingRef.component.instance).commit = ticket.commit;
+	lastUpdateComparator(valueA, valueB, rowA, rowB){
+		let updatedA = moment(rowA.dates.started, 'YYYY-MM-DD');
+		let updatedB = moment(rowB.dates.started, 'YYYY-MM-DD');
 
-	    	this.worklogComponentRef.push(matchingRef);
-		}
-
-    	(<WorkLogComponent>matchingRef.component.instance).openModal();
+		if(updatedA.isAfter(updatedB)) return -1;
+		else if(updatedB.isAfter(updatedA)) return 1;
+		else return 0;
 	}
 }

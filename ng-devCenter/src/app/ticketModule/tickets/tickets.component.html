@@ -1,22 +1,36 @@
 <dc-loading-table [loadingTable]=loadingTickets [loadingIcon]=loadingIcon [tableTitle]=tableTitle (refreshData)="getTickets()" (stopRefresh)="stopGetTickets()">
+
+	<div class="row">
+		<div class=" offset-md-10 col-md-2">
+			<input
+		        type='text'
+		        class="form-control mr-sm-2 filterInput"
+		        placeholder='Filter tickets...'
+		        (keyup)='updateFilter($event)'
+		    />
+		</div>
+	</div>
 	
 	<ngx-datatable
 		#myTable
+		[columnMode]="'flex'"
 		class="bootstrap"
-		[rows]="tickets"
+		[rows]="filteredTickets"
 		[headerHeight]="50"
 		[footerHeight]="50"
 		[rowHeight]="'auto'"
+		[limit]="20"
+		[sorts]="[{prop: 'dates.duedate', dir: 'desc'}]"
 	>
 
-		<ngx-datatable-row-detail [rowHeight]="500" #myDetailRow>
+		<ngx-datatable-row-detail [rowHeight]="1000" #myDetailRow>
 			<ng-template let-ticket="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-				{{ticket | json}}
+				<dc-ticket-details [key]=ticket.key></dc-ticket-details>
 			</ng-template>
 		</ngx-datatable-row-detail>
 
 
-		<ngx-datatable-column name="Key" [sortable]="true" [width]="100">
+		<ngx-datatable-column name="Key" [sortable]="true" [flexGrow]='1'>
 		  	<ng-template let-ticket="row" let-expanded="expanded" ngx-datatable-cell-template>
 				<span class="material-icons text-success" title="Copy Jira key to clipboard" (click)='misc.copyText(keyInput)'>note</span>
 				<span class="material-icons text-warning" title="Copy Jira link to clipboard" (click)='misc.copyText(linkInput)'>note</span>
@@ -30,7 +44,7 @@
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="MSRP" [sortable]="true" [width]="100">
+		<ngx-datatable-column name="MSRP" [sortable]="true" [flexGrow]='1'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				<span class="material-icons text-success" title="Copy MSRP to clipboard" (click)='misc.copyText(msrpInput)'>note</span>
 					{{ticket?.msrp}}
@@ -38,87 +52,73 @@
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Actions" [sortable]="true" [width]="100">
+		<ngx-datatable-column name="Actions" [sortable]="true" [flexGrow]='1'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
-				<i (click)="openPingModal(ticket)" class="material-icons text-primary" title='Branch information'>record_voice_over</i>
-				<i (click)="openLogModal(ticket)" class="material-icons text-warning" title='Add comment/work log'>add_circle_outline</i>
-				<i (click)="openCommentsModal(ticket)" class="material-icons text-success"title='View comments'>storage</i>
-				<i (click)="openAdditionalDataModal(ticket)" class="material-icons text-info" title='View additional ticket data'>live_help</i>
-				<a
-              		href="javascript:void(0)"
-              		[class.datatable-icon-right]="!expanded"
-              		[class.datatable-icon-down]="expanded"
-              		title="Expand/Collapse Row"
-              		(click)="toggleExpandRow(ticket)">
-              		<i class="material-icons text-info" title='View additional ticket data'>build</i>
-            	</a>
-
-				<!-- watchers -->
-				<dc-watchers [watchers]=ticket?.watchers [key]=ticket?.key></dc-watchers>
+				<dc-actions [ticket]=ticket (expandRow)='toggleExpandRow(ticket)'></dc-actions>
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Summary" [sortable]="true" [width]="300">
+		<ngx-datatable-column name="Summary" [sortable]="true" [flexGrow]='5'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				{{ticket?.summary}}
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Status" [sortable]="true" [width]="200">
+		<ngx-datatable-column name="Status" [sortable]="true" [flexGrow]='3'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				<dc-ticket-status [key]=ticket.key></dc-ticket-status>
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Start Date" [sortable]="true">
+		<ngx-datatable-column name="Start Date" [sortable]="true" [flexGrow]='1' [comparator]='createdDateComparator'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				{{ticket?.dates?.started | amDateFormat:'LL'}}
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Due Date" [sortable]="true">
+		<ngx-datatable-column name="Due Date" [sortable]="true" [flexGrow]='1' [comparator]='dueDateComparator'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				{{ticket?.dates?.duedate | amDateFormat:'LL'}}
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Estimate" [width]="70" [sortable]="true">
+		<ngx-datatable-column name="Estimate" [sortable]="true" [flexGrow]='1'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				<dc-ticket-dates [datetime]=ticket?.dates?.estimate_seconds></dc-ticket-dates>
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Logged" [width]="70" [sortable]="true">
+		<ngx-datatable-column name="Logged" [sortable]="true" [flexGrow]='1'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				<dc-ticket-dates [datetime]=ticket?.dates?.logged_seconds></dc-ticket-dates>
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Last Update" [sortable]="true" [width]="100">
+		<ngx-datatable-column name="Last Update" [sortable]="true" [flexGrow]='1' [comparator]='lastUpdateComparator'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				{{ticket?.dates?.updated | amDateFormat:'LL'}}
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Created" [sortable]="true" [width]="100">
+		<ngx-datatable-column name="Created" [sortable]="true" [flexGrow]='1'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				{{ticket?.dates?.created | amDateFormat:'LL'}}
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Pull Requests" [sortable]="true" [width]="100">
+		<ngx-datatable-column name="Pull Requests" [sortable]="true" [flexGrow]='2'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				<dc-crucible [key]=ticket?.key></dc-crucible>
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Asignee" [sortable]="true" [width]="100">
+		<ngx-datatable-column name="Assignee" [sortable]="true" [flexGrow]='1'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				<dc-user-details [msrp]=ticket?.msrp [user]=ticket?.user_details></dc-user-details>
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Customer" [sortable]="true" [width]="100">
+		<ngx-datatable-column name="Customer" [sortable]="true" [flexGrow]='1'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				<dc-user-details [msrp]=ticket?.msrp [user]=ticket?.customer_details></dc-user-details>
 		  	</ng-template>
