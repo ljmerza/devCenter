@@ -15,7 +15,6 @@ export function addTickets(state, tickets){
 
 		const devChangeLines = (ticket.dev_changes || '').split(/\n|(\n\r)/g);
 		ticket.pcrCountLeft = getPcrCountLeft(devChangeLines, ticket.story_point);
-		if(ticket.pcrCountLeft) console.log(ticket.pcrCountLeft, ticket.key);
 
 		// if we didn't get pull requests from dev changes field try to get from comments
 		if(ticket.pullRequests.length == 0) {

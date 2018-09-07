@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MomentModule } from 'angular2-moment';
-import { DataTablesModule } from 'angular-datatables';
 
 // custom modules
 import { CommonModule } from '@angular/common';
@@ -25,7 +24,7 @@ import { ActionsComponent } from './actions/actions.component';
 
 @NgModule({
 	imports: [
-		CommonModule, SharedModule, NgbModule, DataTablesModule, NgxDatatableModule,
+		CommonModule, SharedModule, NgbModule, NgxDatatableModule,
 		RouterModule, FormsModule, ReactiveFormsModule, MomentModule,
 	],
 	declarations: [

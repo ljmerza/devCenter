@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { NgRedux } from '@angular-redux/store';
 import { NgProgress } from 'ngx-progressbar';
 
-import { DataTableDirective } from 'angular-datatables';
 import { Subscription, Subject } from 'rxjs';
 import { JiraService, ToastrService, UserService, ConfigService } from '@services';
 
@@ -31,27 +30,6 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	userProfiles:Array<any> = [];
 	tickets$:Subscription;
 
-	dtOptions = {
-		dom: `
-			<'row'<'col-sm-12'Bfl>>
-			<'row'<'col-sm-12'tr>>
-			<'row'<'col-sm-12'ip>>
-		`,
-		pageLength: 15,
-		lengthMenu: [5, 10, 15, 20, 100],
-		buttons: ['colvis'],
-		stateSave: true,
-		pagingType: 'full',
-		language: {
-			search: "",
-        	searchPlaceholder: "Search User",
-        	zeroRecords: 'No matching users found'
-        }
-	};
-
-	dtTrigger:Subject<any> = new Subject();
-	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
-
 	constructor(
 		public ngProgress: NgProgress, private jira:JiraService, private store:NgRedux<RootState>, 
 		public user:UserService, public route:ActivatedRoute, public config:ConfigService
@@ -70,10 +48,6 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 
 		this.tickets$ = this.store.select(this.ticketType).subscribe(this.processTickets.bind(this));
 		this.getMetrics();
-	}
-
-	ngAfterViewInit(): void {
-    	this.dtTrigger.next();
 	}
 
 	/**
@@ -184,12 +158,6 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 			}
 
 			this.userProfilesFilter = this.userProfiles;
-
-			this.dtElement && this.dtElement.dtInstance && this.dtElement.dtInstance.then((dtInstance:DataTables.Api) => {
-				dtInstance.destroy();
-				this.dtTrigger.next();
-			});
-
 			this.loadingIndicator = false;
 			this.resetLoading();
 		});

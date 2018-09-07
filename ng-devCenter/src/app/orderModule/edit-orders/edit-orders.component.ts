@@ -31,23 +31,6 @@ export class EditOrdersComponent implements OnInit, OnDestroy {
 
 	navBarItems$;
 
-	dtOptions = {
-		dom: `
-			<'row'<'col-sm-12'Bfl>>
-			<'row'<'col-sm-12'tr>>
-			<'row'<'col-sm-12'ip>>
-		`,
-		pageLength: 15,
-		lengthMenu: [5, 10, 15, 20, 100],
-		buttons: ['colvis', 'excel'],
-		stateSave: true,
-		pagingType: 'full',
-		language: {
-			search: "",
-        	searchPlaceholder: "Search Order",
-        	zeroRecords: 'No matching orders found'
-        }
-	};
 
 	constructor(public items: ItemsService, private toastr: ToastrService, private store:NgRedux<RootState>) { }
 
@@ -91,7 +74,6 @@ export class EditOrdersComponent implements OnInit, OnDestroy {
 		});
 
 		this.loadingIndicator = false;
-		this.rerender();
 	}
 
 	/**
@@ -134,21 +116,6 @@ export class EditOrdersComponent implements OnInit, OnDestroy {
 				item.type = item.typeOld;
 			}
 		);
-	}
-
-	/**
-	 * render the data-table. If instance of data-table already exists then
-	 * destroy it first then render it
-	 */
-	private rerender():void {
-		if(this.dtElement && this.dtElement.dtInstance){
-			this.dtElement.dtInstance.then( (dtInstance:DataTables.Api) => {
-				dtInstance.destroy();
-				this.dtTrigger.next();
-			});
-		} else {
-			this.dtTrigger.next();
-		}
 	}
 
 	/**

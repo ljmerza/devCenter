@@ -7,7 +7,6 @@ import { statuses } from '@models';
  * @param {Object} postData
  */
 export function showQaSubmitSuccessMessage(response, postData){
-	console.log({response, postData});
 	let successMessage = '';
 
 	// if repos were given check for pull requests links or diff links 
@@ -40,7 +39,6 @@ export function showQaSubmitSuccessMessage(response, postData){
 		if (error) this.toastr.showToast(error, 'error', true);
 	}
 
-	console.log({successMessage});
 	if(successMessage) this.toastr.showToast(successMessage, 'success', true);
 }
 
@@ -172,7 +170,6 @@ export function showSubmitMessage(postData):void {
  * @param {Object} responseData the data in the response from the QA generator endpoint.
  */
 export function checkForStateChange(postData, responseData):void {
-	console.log({postData, responseData});
 
 	if(responseData.comment_response.status) {
 		this.store.dispatch({type: Actions.addComment, payload:responseData.comment_response.data});

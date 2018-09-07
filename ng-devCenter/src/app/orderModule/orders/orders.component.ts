@@ -1,5 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, AfterViewInit } from '@angular/core';
-import { DataTableDirective } from 'angular-datatables';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgProgress } from 'ngx-progressbar';
 import { Subject } from 'rxjs';
 
@@ -13,7 +12,7 @@ import { OrderService, UserService, MiscService } from '@services';
 	styleUrls: ['./orders.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class OrdersComponent implements OnInit, AfterViewInit {
+export class OrdersComponent implements OnInit {
 	orders:Array<any> = [];
 	displayNames = [];
 	loadingIndicator = true;
@@ -28,28 +27,6 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 	aseBaseUrl = `${this.baseEmber}order/asedb`;
 	circuitBaseUrl = `${this.baseEmber}asset/history?asset=`;
 
-	dtTrigger:Subject<any> = new Subject();
-	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
-
-	dtOptions = {
-		dom: `
-			<'row'<'col-sm-12'Bfl>>
-			<'row'<'col-sm-12'tr>>
-			<'row'<'col-sm-12'ip>>
-		`,
-		pageLength: 15,
-		order: [[0, 'desc']],
-		lengthMenu: [5, 10, 15, 20, 100],
-		buttons: ['colvis', 'excel'],
-		stateSave: true,
-		pagingType: 'full',
-		language: {
-			search: "",
-        	searchPlaceholder: "Search Order",
-        	zeroRecords: 'No matching orders found'
-        }
-	};
-
 	constructor(
 		public order:OrderService, public user:UserService, public misc:MiscService, 
 		private store:NgRedux<RootState>, public ngProgress: NgProgress) { }
@@ -63,10 +40,6 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 
 		this.orders$ = this.store.select(this.ticketType)
 		.subscribe(orders => this.processOrders(orders));
-	}
-
-	ngAfterViewInit(): void {
-    	this.dtTrigger.next();
 	}
 
 	ngOnDestroy(): void {
@@ -103,12 +76,6 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 		this.orders = this._format_orders(orders);
 		this.loadingIndicator = false;
 		this.resetLoading();
-
-		let dtInstance = await this.dtElement.dtInstance
-		if(dtInstance) {
-			dtInstance.destroy();
-			this.dtTrigger.next();
-		}
 	}
 
 	/**
@@ -163,8 +130,6 @@ export class OrdersComponent implements OnInit, AfterViewInit {
 				atxIds.push(order.ATX[0].atx.AtxUniUsoIcoreId);
 			}
 		});
-
-		console.log({atxIds});
 	}
 
 	/**
