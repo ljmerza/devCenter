@@ -13,12 +13,10 @@ password = os.environ['PASSWORD']
 header_value = f'{username}:{password}'
 encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
 cred_hash = f'Basic {encoded_header}'
-print(username,password)
 
 # get jira data
 jql = 'project in (AQE, "Auto QM", "Customer DB", "Manager DB", "Taskmaster Dashboard", TeamDB, TQI, "Unified Desktop", UPM, WAM) AND status != closed AND labels = BETA'
 jira_tickets = jira_obj.get_jira_tickets(jql=jql, cred_hash=cred_hash)
-print(jira_tickets)
 
 
 date_now = datetime.datetime.now().strftime('%m/%d %H:%M')
