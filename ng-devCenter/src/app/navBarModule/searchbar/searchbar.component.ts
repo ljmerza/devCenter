@@ -93,6 +93,8 @@ export class SearchbarComponent implements OnInit {
 		if( isNaN(parseInt(orderValue)) ){
 			window.open(`${this.config.jiraUrl}/browse/${orderValue}`);
 		} else {
+			this.toastr.showToast(`Looking up Jira ticket key from MSRP`, 'info');
+
 			this.jira.searchTicket(orderValue)
 			.subscribe(
 				data => window.open(`${this.config.jiraUrl}/browse/${data.data}`),

@@ -337,7 +337,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	verifyUctReady(statusResponse){
 
 		if(!statusResponse.uct_pass.status){
-			this.toastr.showToast('error', `Failed to remove merge code component: ${statusResponse.uct_pass.data}`);
+			this.toastr.showToast(`Failed to remove merge code component: ${statusResponse.uct_pass.data}`, 'error');
 		}
 
 		// if we didnt do any commit comments then we are done here
@@ -353,12 +353,12 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 					.join('<br>');
 			}
 
-			this.toastr.showToast('error', `Failed to add commit comment to Jira ticket: ${commitMessage}`);
+			this.toastr.showToast(`Failed to add commit comment to Jira ticket: ${commitMessage}`, 'error');
 		}
 
 		// check for commit comment added
 		if(!statusResponse.commit_comment.status){
-			this.toastr.showToast('error', `Failed to add commit comment: ${statusResponse.data.commit_comment.data}`);
+			this.toastr.showToast(`Failed to add commit comment: ${statusResponse.data.commit_comment.data}`, 'error');
 		}
 
 		// if both passed then show success
@@ -382,7 +382,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		statusResponse.add_comment.forEach(pull => {
 			if(!pull.status){
 				const errors = this._getPullErrors(pull);
-				this.toastr.showToast('error', `Failed to add pcr complete to pull request: ${errors}`);
+				this.toastr.showToast(`Failed to add pcr complete to pull request: ${errors}`, 'error');
 				pullErrors = true;
 			}
 		});
@@ -393,7 +393,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 		statusResponse.pass_response.forEach(pull => {
 			if(!pull.status){
 				const errors = this._getPullErrors(pull);
-				this.toastr.showToast('error', `Failed to approve pull request: ${errors}`);
+				this.toastr.showToast(`Failed to approve pull request: ${errors}`, 'error');
 				approveErrors = true;
 			}
 		});

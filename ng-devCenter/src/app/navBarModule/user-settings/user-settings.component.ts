@@ -165,7 +165,7 @@ export class UserSettingsComponent implements OnInit {
 						this.userCredsChangedEvent.emit();
 						this.reloadSettings();
 					},
-					error => this.toastr.showToast('error', error)
+					error => this.toastr.showToast(error, 'error')
 				);
 		}
 
