@@ -153,14 +153,22 @@ export class TicketsComponent implements OnInit {
 	 * @param {Array<Ticket>} tickets
 	 */
 	private processTickets({tickets}) {
+
+		// if we didn't get any ticket then we are loading for this first time
 		if(!tickets || tickets.length == 0) {
 			this.loadingTickets = true;
+			this.tickets = [];
+			this.filteredTickets = [];
 			return;
 		}
 
 		this.loadingTickets = false;
-		this.filteredTickets = tickets;
-		this.tickets = tickets;
+
+		// wait for table to load before adding data for ngx-datatable to not freak out
+		setTimeout(() => {
+			this.tickets = tickets;
+			this.filteredTickets = tickets;
+		}, 100);
 	}
 
 	toggleExpandRow(ticket) {
