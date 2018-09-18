@@ -1,7 +1,4 @@
-import { 
-	Component, Output, Input, ViewEncapsulation, ViewChild, 
-	EventEmitter, ChangeDetectionStrategy, OnDestroy
-} from '@angular/core';
+import { Component, Output, Input, ViewEncapsulation, ViewChild, EventEmitter, OnDestroy} from '@angular/core';
 
 declare const jsPanel;
 declare const $;
@@ -10,7 +7,6 @@ declare const $;
 	selector: 'dev-center-modal',
 	templateUrl: './modal.component.html',
 	styleUrls: ['./modal.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 	encapsulation: ViewEncapsulation.None
 })
 export class ModalComponent implements OnDestroy {

@@ -7,7 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
 
 import { ActivatedRoute } from '@angular/router';
-import { NgProgress } from 'ngx-progressbar';
+import { ProgressBarComponent } from './../../shared/progress-bar/progress-bar.component';
 
 import { Observable } from 'rxjs';
 import 'rxjs/add/observable/interval';
@@ -61,9 +61,10 @@ export class TicketsComponent implements OnInit {
 	defaultJql = 'assignee = currentUser() AND resolution = Unresolved ORDER BY due DESC';
 	@select('repos') getRepos$: Observable<Array<Repo>>;
 	@ViewChild('myTable') table: any;
+	@ViewChild(ProgressBarComponent) progressBar: ProgressBarComponent;
 
 	constructor(
-		public ngProgress: NgProgress, public route:ActivatedRoute, private store:NgRedux<RootState>,
+		public route:ActivatedRoute, private store:NgRedux<RootState>,
 		public jira:JiraService, public user:UserService, public config: ConfigService, public misc: MiscService,
 		private factoryResolver: ComponentFactoryResolver, private viewContRef: ViewContainerRef, private sanitizer: DomSanitizer
 	) {}
@@ -114,8 +115,8 @@ export class TicketsComponent implements OnInit {
 	 */
 	public getTickets() {
 		if(this.getTickets$) this.getTickets$.unsubscribe();
-		if(this.ngProgress) this.ngProgress.done();
-		this.ngProgress.start();
+		this.progressBar.end();
+		this.progressBar.start();
 		this.loadingIcon = true;
 
 
@@ -128,7 +129,7 @@ export class TicketsComponent implements OnInit {
 			this.title = matchingJql && matchingJql.display_name || this.defaultTitle;
 
 			this.getTickets$ = this.jira.getTickets(this.ticketListType, true, jql).subscribe((response:APIResponse) => {
-				this.ngProgress.done();
+				this.progressBar.end();
 				this.loadingIcon = false;
 				this.store.dispatch({type: Actions.newTickets, payload: response.data});
 			},
@@ -144,7 +145,7 @@ export class TicketsComponent implements OnInit {
 		if(this.getTickets$) this.getTickets$.unsubscribe();
 		this.loadingIcon = false;
 		this.loadingTickets = false;
-		this.ngProgress.done();
+		this.progressBar.end();
 	}
 
 	/**
@@ -173,7 +174,15 @@ export class TicketsComponent implements OnInit {
 	    const tickets = this.tickets.filter(ticket => {
 			if((ticket.key || '').toLowerCase().indexOf(val) !== -1) return 1;
 			else if((ticket.msrp || '').toLowerCase().indexOf(val) !== -1) return 1;
+			
 			else if((ticket.summary || '').toLowerCase().indexOf(val) !== -1) return 1;
+			else if((ticket.status || '').toLowerCase().indexOf(val) !== -1) return 1;
+
+			else if((ticket.customer_details.username || '').toLowerCase().indexOf(val) !== -1) return 1;
+			else if((ticket.customer_details.display_name || '').toLowerCase().indexOf(val) !== -1) return 1;
+			else if((ticket.user_details.username || '').toLowerCase().indexOf(val) !== -1) return 1;
+			else if((ticket.user_details.display_name || '').toLowerCase().indexOf(val) !== -1) return 1;
+
 			else return 0;
 	    });
 

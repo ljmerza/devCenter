@@ -13,8 +13,7 @@
     "curly": true,
     "forin": true,
     "import-blacklist": [
-      true,
-      "rxjs"
+      true
     ],
     "interface-over-type-literal": true,
     "label-position": true,

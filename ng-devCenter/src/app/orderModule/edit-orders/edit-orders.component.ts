@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { DataTableDirective } from 'angular-datatables';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { NgRedux } from '@angular-redux/store';
 
@@ -22,7 +21,6 @@ export class EditOrdersComponent implements OnInit, OnDestroy {
 	dropdownItems: Array<string> = [];
 
 	dtTrigger:Subject<any> = new Subject();
-	@ViewChild(DataTableDirective) dtElement: DataTableDirective;
 	@ViewChild(ModalComponent) modal: ModalComponent;
 
 	linkType;

@@ -1,5 +1,5 @@
 import { Component, ViewContainerRef, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
-import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { ToastrService as ToastrServiceRoot } from 'ngx-toastr';
 import { ToastrService } from '@services';
 
 @Component({
@@ -11,8 +11,7 @@ import { ToastrService } from '@services';
 })
 export class ToastrComponent {
 
-	constructor(public toastr: ToastsManager, public toastrService: ToastrService, private vcr: ViewContainerRef) {
-		toastr.setRootViewContainerRef(vcr);
+	constructor(public toastr: ToastrServiceRoot, public toastrService: ToastrService, private vcr: ViewContainerRef) {
 		toastrService.toastObject = toastr;
 	}
 }

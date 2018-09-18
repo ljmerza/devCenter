@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import 'rxjs/add/observable/of';
+
 import { DataService } from './data.service';
 
 @Injectable()

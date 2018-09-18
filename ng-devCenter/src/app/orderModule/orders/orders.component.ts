@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgProgress } from 'ngx-progressbar';
+import { ProgressBarComponent } from './../../shared/progress-bar/progress-bar.component';
 import { Subject } from 'rxjs';
 
 import { select, NgRedux } from '@angular-redux/store';
@@ -27,9 +27,9 @@ export class OrdersComponent implements OnInit {
 	aseBaseUrl = `${this.baseEmber}order/asedb`;
 	circuitBaseUrl = `${this.baseEmber}asset/history?asset=`;
 
-	constructor(
-		public order:OrderService, public user:UserService, public misc:MiscService, 
-		private store:NgRedux<RootState>, public ngProgress: NgProgress) { }
+	@ViewChild(ProgressBarComponent) progressBar: ProgressBarComponent;
+
+	constructor(public order:OrderService, public user:UserService, public misc:MiscService, private store:NgRedux<RootState>) { }
 
 	/**
 	 * on component init get all orders
@@ -51,7 +51,7 @@ export class OrdersComponent implements OnInit {
 	 */
 	getOrders(hardRefresh=false){
 		this.resetLoading();
-		this.ngProgress.start();
+		this.progressBar.start();
 
 		this.getOrders$ = this.order.getOrders(hardRefresh)
 		.subscribe(
@@ -167,7 +167,7 @@ export class OrdersComponent implements OnInit {
 	 *
 	 */
 	private resetLoading(){
-		if(this.ngProgress) this.ngProgress.done();
+		this.progressBar.end();
 		if(this.getOrders$) this.getOrders$.unsubscribe();
 	}
 }

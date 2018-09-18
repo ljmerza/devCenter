@@ -30,6 +30,8 @@ export class TicketDetailsComponent {
 		this.loading = false;
 		this.ticket = ticket
 
+		console.log({ticket});
+
 		// sort by inward issues first
 		this.links = ticket.links.sort(a => a.inwardIssue ? 1: 0);
 	}

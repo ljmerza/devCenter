@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import 'rxjs/add/operator/do';
+
+import { Observable, EMPTY, of } from 'rxjs';
+import { concat } from 'rxjs/operators';
 
 import { LocalStorageService } from '@services';
 
@@ -18,7 +19,7 @@ export class CacheInterceptor implements HttpInterceptor {
 		}
 	 
 		// create empty cached observable
-		let maybeCachedResponse: Observable<HttpEvent<any>> = Observable.empty();
+		let maybeCachedResponse: Observable<HttpEvent<any>> = EMPTY;
 	 
 		// check the cache - set status as cached (304)
 		const body = this.lStore.getItem(req.urlWithParams) || {};
@@ -26,7 +27,7 @@ export class CacheInterceptor implements HttpInterceptor {
 		cachedResponse.body.hardRequest = true;
 
 		if(cachedResponse) {
-			maybeCachedResponse = Observable.of(cachedResponse);
+			maybeCachedResponse = of(cachedResponse);
 		}
 
 		// save network response
@@ -36,7 +37,7 @@ export class CacheInterceptor implements HttpInterceptor {
 			}
 		});
 
-		return Observable.concat(maybeCachedResponse, networkResponse);
+		return maybeCachedResponse.pipe(concat(networkResponse));
 
 	}
 }

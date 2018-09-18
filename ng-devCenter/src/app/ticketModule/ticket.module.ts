@@ -1,9 +1,11 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MomentModule } from 'angular2-moment';
+import { NgProgressModule } from '@ngx-progressbar/core';
 
 // custom modules
 import { CommonModule } from '@angular/common';
@@ -24,7 +26,7 @@ import { ActionsComponent } from './actions/actions.component';
 
 @NgModule({
 	imports: [
-		CommonModule, SharedModule, NgbModule, NgxDatatableModule,
+		CommonModule, SharedModule, NgbModule, NgxDatatableModule, NgProgressModule,
 		RouterModule, FormsModule, ReactiveFormsModule, MomentModule,
 	],
 	declarations: [

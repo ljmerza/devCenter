@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgRedux } from '@angular-redux/store';
-import { NgProgress } from 'ngx-progressbar';
+import { ProgressBarComponent } from './../../shared/progress-bar/progress-bar.component';
 
 import { Subscription, Subject } from 'rxjs';
 import { JiraService, ToastrService, UserService, ConfigService } from '@services';
@@ -30,8 +30,10 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	userProfiles:Array<any> = [];
 	tickets$:Subscription;
 
+	@ViewChild(ProgressBarComponent) progressBar: ProgressBarComponent;
+
 	constructor(
-		public ngProgress: NgProgress, private jira:JiraService, private store:NgRedux<RootState>, 
+		private jira:JiraService, private store:NgRedux<RootState>, 
 		public user:UserService, public route:ActivatedRoute, public config:ConfigService
 	) { }
 
@@ -66,7 +68,7 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	 */
 	public getMetrics() {
 		this.resetLoading();
-		this.ngProgress.start();
+		this.progressBar.start();
 
 		this.getTickets$ = this.jira.getSprint(this.selectedSprint, true)
 		.subscribe((response:APIResponse) => {
@@ -80,7 +82,7 @@ export class DevStatsComponent implements OnInit, OnDestroy {
 	 * resets loading variables
 	 */
 	private resetLoading(){
-		if(this.ngProgress) this.ngProgress.done();
+		this.progressBar.end();
 		if(this.getTickets$) this.getTickets$.unsubscribe();
 	}
 	

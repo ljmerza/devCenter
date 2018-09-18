@@ -10,7 +10,7 @@
 
 			<!-- top left side -->
 			<div class="row">
-				<div class="col-md-6" *ngIf='ticket?.worklog?.length'>
+				<div class="col-md-6">
 					<h1>Time Logs</h1>
 					<table class="table ticket-details">
 						<tbody>
@@ -22,7 +22,7 @@
 					</table>
 				</div>
 
-				<div class="col-md-6" *ngIf='links?.length'>
+				<div class="col-md-6">
 					<h1>Ticket Links</h1>
 					<table class="table ticket-details">
 						<tbody>
@@ -69,28 +69,28 @@
 						<tbody>
 							<tr>
 								<td class="text-right">Environment:</td>
-								<td colspan='2'>{{ticket?.environment}}</td>
+								<td>{{ticket?.environment}}</td>
 								<td class="text-right">Issue Type:</td>
 								<td>{{ticket?.issue_type}}</td>
 							</tr>
 
 							<tr>
 								<td class="text-right">Sprint:</td>
-								<td colspan='2'>{{ticket?.sprint}}</td>
+								<td>{{ticket?.sprint}}</td>
 								<td class="text-right">Priority:</td>
 								<td>{{ticket?.priority}}</td>
 							</tr>
 
 							<tr>
 								<td class="text-right">Severity:</td>
-								<td colspan='2'>{{ticket?.severity}}</td>
+								<td>{{ticket?.severity}}</td>
 								<td class="text-right">Description:</td>
 								<td>{{ticket?.description}}</td>
 							</tr>
 
 							<tr>
 								<td class="text-right">Label:</td>
-								<td colspan='2'>{{ticket?.label}}</td>
+								<td>{{ticket?.label}}</td>
 								<td class="text-right">Code Reviewer:</td>
 								<td>
 									{{ticket?.code_reviewer.username}}
@@ -132,7 +132,7 @@
 		</div>
 		
 		<!-- right side -->
-		<div class="col-md-4 *ngIf='ticket?.history?.status?.length">
+		<div class="col-md-4">
 			<h1>Status History</h1>
 			<table class="table ticket-details">
 				<tbody>
@@ -140,7 +140,7 @@
 						<td>{{status.author.displayName}}</td>
 						<td>
 							<span *ngIf='status.items[0].fromString'>from {{status.items[0].fromString}} </span>
-							<span *ngIf='status.items[0].toString'>to {{status.items[0].toString}}</span>
+							<span *ngIf='status.items[0].toString'>to {{status.items[0].toString}} </span>
 							<span>on {{status.created | amDateFormat:'MMMM DD@h:mm:A'}}</span>
 						</td>
 					</tr>

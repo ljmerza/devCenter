@@ -18,11 +18,22 @@
     ],
     "baseUrl": "src",
     "paths": {
-      "@services": ["app/shared/services/index"],
-      "@modal": ["app/shared/modal/modal.component"],
-      "@models": ["app/shared/store/models/index"],
-      "@store": ["app/shared/store/index"],
-      "@environment": ["environments/environment"]
-    }
+      "@services": [
+        "app/shared/services/index"
+      ],
+      "@modal": [
+        "app/shared/modal/modal.component"
+      ],
+      "@models": [
+        "app/shared/store/models/index"
+      ],
+      "@store": [
+        "app/shared/store/index"
+      ],
+      "@environment": [
+        "environments/environment"
+      ]
+    },
+    "module": "es2015"
   }
 }
