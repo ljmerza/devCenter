@@ -152,7 +152,7 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(toastr: ToastsManager, toastrService: <a href="../injectables/ToastrService.html">ToastrService</a>, vcr: <a href="https://angular.io/api/core/ViewContainerRef" target="_blank">ViewContainerRef</a>)</code>
+<code>constructor(toastr: <a href="../injectables/ToastrService.html">ToastrServiceRoot</a>, toastrService: <a href="../injectables/ToastrService.html">ToastrService</a>, vcr: <a href="https://angular.io/api/core/ViewContainerRef" target="_blank">ViewContainerRef</a>)</code>
                     </td>
                 </tr>
                         <tr>
@@ -178,7 +178,7 @@
                                                         <td>toastr</td>
                                                   
                                                         <td>
-                                                                    <code>ToastsManager</code>
+                                                                    <code><a href="../injectables/ToastrService.html" target="_self" >ToastrServiceRoot</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -245,13 +245,13 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span><code>toastr:     <code>ToastsManager</code>
+                        <span class="modifier-icon icon ion-ios-reset"></span><code>toastr:     <code><a href="../injectables/ToastrService.html" target="_self" >ToastrServiceRoot</a></code>
 </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>Type : </i>    <code>ToastsManager</code>
+                            <i>Type : </i>    <code><a href="../injectables/ToastrService.html" target="_self" >ToastrServiceRoot</a></code>
 
                         </td>
                     </tr>
@@ -306,7 +306,7 @@
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, ViewContainerRef, ViewEncapsulation, ChangeDetectionStrategy } from &#x27;@angular/core&#x27;;
-import { ToastsManager } from &#x27;ng2-toastr/ng2-toastr&#x27;;
+import { ToastrService as ToastrServiceRoot } from &#x27;ngx-toastr&#x27;;
 import { ToastrService } from &#x27;@services&#x27;;
 
 @Component({
@@ -318,8 +318,7 @@ import { ToastrService } from &#x27;@services&#x27;;
 })
 export class ToastrComponent {
 
-	constructor(public toastr: ToastsManager, public toastrService: ToastrService, private vcr: ViewContainerRef) {
-		toastr.setRootViewContainerRef(vcr);
+	constructor(public toastr: ToastrServiceRoot, public toastrService: ToastrService, private vcr: ViewContainerRef) {
 		toastrService.toastObject &#x3D; toastr;
 	}
 }
@@ -357,7 +356,7 @@ export class ToastrComponent {
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
         var COMPONENT_TEMPLATE = '<div><span></span></div>'
-    var COMPONENTS = [{'name': 'ActionsComponent', 'selector': 'dc-actions'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'BranchInfoComponent', 'selector': 'dc-branch-info'},{'name': 'CrucibleCommentsComponent', 'selector': 'dc-crucible-comments'},{'name': 'CrucibleCommentsModalComponent', 'selector': 'crucible-comments-modal'},{'name': 'CrucibleComponent', 'selector': 'dc-crucible'},{'name': 'DatesComponent', 'selector': 'dc-ticket-dates'},{'name': 'DevStatsComponent', 'selector': 'dc-dev-stats'},{'name': 'DropdownMenuComponent', 'selector': 'dc-dropdown-menu'},{'name': 'DropdownSubmenuComponent', 'selector': 'dc-dropdown-submenu'},{'name': 'EditOrdersComponent', 'selector': 'dev-center-edit-orders'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'JqlLinksComponent', 'selector': 'dc-jql-links'},{'name': 'LoadingTableComponent', 'selector': 'dc-loading-table'},{'name': 'LogoutComponent', 'selector': 'dc-logout'},{'name': 'ModalComponent', 'selector': 'dev-center-modal'},{'name': 'NavBarComponent', 'selector': 'dc-nav-bar'},{'name': 'NavbarModalComponent', 'selector': 'dc-user-settings-modal'},{'name': 'NavbarUserComponent', 'selector': 'dc-navbar-user'},{'name': 'OrdersComponent', 'selector': 'dev-center-orders'},{'name': 'QaGeneratorComponent', 'selector': 'dc-qa-generator'},{'name': 'SearchbarComponent', 'selector': 'dc-searchbar'},{'name': 'SetPingsComponent', 'selector': 'dc-set-pings'},{'name': 'TicketCommentsComponent', 'selector': 'dc-ticket-comments'},{'name': 'TicketCommentsModalComponent', 'selector': 'ticket-comments-modal'},{'name': 'TicketDetailsComponent', 'selector': 'dc-ticket-details'},{'name': 'TicketStatusComponent', 'selector': 'dc-ticket-status'},{'name': 'TicketsComponent', 'selector': 'dc-tickets'},{'name': 'ToastrComponent', 'selector': 'dc-toastr'},{'name': 'UserDetailsComponent', 'selector': 'dc-user-details'},{'name': 'UserSettingsComponent', 'selector': 'dc-user-settings'},{'name': 'WatchersComponent', 'selector': 'dc-watchers'},{'name': 'WorkLogComponent', 'selector': 'dc-work-log'}];
+    var COMPONENTS = [{'name': 'ActionsComponent', 'selector': 'dc-actions'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'BranchInfoComponent', 'selector': 'dc-branch-info'},{'name': 'CrucibleCommentsComponent', 'selector': 'dc-crucible-comments'},{'name': 'CrucibleCommentsModalComponent', 'selector': 'crucible-comments-modal'},{'name': 'CrucibleComponent', 'selector': 'dc-crucible'},{'name': 'DatesComponent', 'selector': 'dc-ticket-dates'},{'name': 'DevStatsComponent', 'selector': 'dc-dev-stats'},{'name': 'DropdownMenuComponent', 'selector': 'dc-dropdown-menu'},{'name': 'DropdownSubmenuComponent', 'selector': 'dc-dropdown-submenu'},{'name': 'EditOrdersComponent', 'selector': 'dev-center-edit-orders'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'JqlLinksComponent', 'selector': 'dc-jql-links'},{'name': 'LoadingTableComponent', 'selector': 'dc-loading-table'},{'name': 'LogoutComponent', 'selector': 'dc-logout'},{'name': 'ModalComponent', 'selector': 'dev-center-modal'},{'name': 'NavBarComponent', 'selector': 'dc-nav-bar'},{'name': 'NavbarModalComponent', 'selector': 'dc-user-settings-modal'},{'name': 'NavbarUserComponent', 'selector': 'dc-navbar-user'},{'name': 'OrdersComponent', 'selector': 'dev-center-orders'},{'name': 'ProgressBarComponent', 'selector': 'dc-progress-bar'},{'name': 'QaGeneratorComponent', 'selector': 'dc-qa-generator'},{'name': 'SearchbarComponent', 'selector': 'dc-searchbar'},{'name': 'SetPingsComponent', 'selector': 'dc-set-pings'},{'name': 'TicketCommentsComponent', 'selector': 'dc-ticket-comments'},{'name': 'TicketCommentsModalComponent', 'selector': 'ticket-comments-modal'},{'name': 'TicketDetailsComponent', 'selector': 'dc-ticket-details'},{'name': 'TicketStatusComponent', 'selector': 'dc-ticket-status'},{'name': 'TicketsComponent', 'selector': 'dc-tickets'},{'name': 'ToastrComponent', 'selector': 'dc-toastr'},{'name': 'UserDetailsComponent', 'selector': 'dc-user-details'},{'name': 'UserSettingsComponent', 'selector': 'dc-user-settings'},{'name': 'WatchersComponent', 'selector': 'dc-watchers'},{'name': 'WorkLogComponent', 'selector': 'dc-work-log'}];
     var DIRECTIVES = [{'name': 'DraggableDirective', 'selector': '[dcDraggable]'},{'name': 'DropdownSubmenuDirective', 'selector': '[dropdownSubmenu]'},{'name': 'DropdownSubmenuMenuDirective', 'selector': '[dropdownSubmenuMenu]'}];
     var ACTUAL_COMPONENT = {'name': 'ToastrComponent'};
 </script>

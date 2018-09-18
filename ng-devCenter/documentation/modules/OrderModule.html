@@ -184,8 +184,6 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NgModule } from &#x27;@angular/core&#x27;;
 import { FormsModule } from &#x27;@angular/forms&#x27;;
 import { CommonModule } from &#x27;@angular/common&#x27;;
-import { DataTablesModule } from &#x27;angular-datatables&#x27;;
-import { NgProgressModule } from &#x27;ngx-progressbar&#x27;;
 
 import { OrdersComponent } from &#x27;./orders/orders.component&#x27;;
 import { EditOrdersComponent } from &#x27;./edit-orders/edit-orders.component&#x27;;
@@ -193,7 +191,7 @@ import { EditOrdersComponent } from &#x27;./edit-orders/edit-orders.component&#x
 import { SharedModule } from &#x27;../shared/shared.module&#x27;;
 
 @NgModule({
-	imports: [CommonModule, DataTablesModule, NgProgressModule, SharedModule, FormsModule],
+	imports: [CommonModule, SharedModule, FormsModule],
 	declarations: [OrdersComponent, EditOrdersComponent]
 })
 export class OrderModule { }

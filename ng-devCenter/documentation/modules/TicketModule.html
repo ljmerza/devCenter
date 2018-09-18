@@ -358,10 +358,11 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NgModule, ModuleWithProviders } from &#x27;@angular/core&#x27;;
 import { RouterModule } from &#x27;@angular/router&#x27;;
 import { FormsModule, ReactiveFormsModule } from &#x27;@angular/forms&#x27;;
+
 import { NgbModule } from &#x27;@ng-bootstrap/ng-bootstrap&#x27;;
 import { NgxDatatableModule } from &#x27;@swimlane/ngx-datatable&#x27;;
 import { MomentModule } from &#x27;angular2-moment&#x27;;
-import { DataTablesModule } from &#x27;angular-datatables&#x27;;
+import { NgProgressModule } from &#x27;@ngx-progressbar/core&#x27;;
 
 // custom modules
 import { CommonModule } from &#x27;@angular/common&#x27;;
@@ -382,7 +383,7 @@ import { ActionsComponent } from &#x27;./actions/actions.component&#x27;;
 
 @NgModule({
 	imports: [
-		CommonModule, SharedModule, NgbModule, DataTablesModule, NgxDatatableModule,
+		CommonModule, SharedModule, NgbModule, NgxDatatableModule, NgProgressModule,
 		RouterModule, FormsModule, ReactiveFormsModule, MomentModule,
 	],
 	declarations: [

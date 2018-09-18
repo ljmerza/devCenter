@@ -308,7 +308,7 @@
 
                         <tr>
                             <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/ticketModule/ticket-details/ticket-details.component.ts:40</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/ticketModule/ticket-details/ticket-details.component.ts:42</a></div>
                             </td>
                         </tr>
 
@@ -652,6 +652,8 @@ export class TicketDetailsComponent {
 		this.loading &#x3D; false;
 		this.ticket &#x3D; ticket
 
+		console.log({ticket});
+
 		// sort by inward issues first
 		this.links &#x3D; ticket.links.sort(a &#x3D;&gt; a.inwardIssue ? 1: 0);
 	}
@@ -688,7 +690,7 @@ export class TicketDetailsComponent {
 
 			&lt;!-- top left side --&gt;
 			&lt;div class&#x3D;&quot;row&quot;&gt;
-				&lt;div class&#x3D;&quot;col-md-6&quot; *ngIf&#x3D;&#x27;ticket?.worklog?.length&#x27;&gt;
+				&lt;div class&#x3D;&quot;col-md-6&quot;&gt;
 					&lt;h1&gt;Time Logs&lt;/h1&gt;
 					&lt;table class&#x3D;&quot;table ticket-details&quot;&gt;
 						&lt;tbody&gt;
@@ -700,7 +702,7 @@ export class TicketDetailsComponent {
 					&lt;/table&gt;
 				&lt;/div&gt;
 
-				&lt;div class&#x3D;&quot;col-md-6&quot; *ngIf&#x3D;&#x27;links?.length&#x27;&gt;
+				&lt;div class&#x3D;&quot;col-md-6&quot;&gt;
 					&lt;h1&gt;Ticket Links&lt;/h1&gt;
 					&lt;table class&#x3D;&quot;table ticket-details&quot;&gt;
 						&lt;tbody&gt;
@@ -747,28 +749,28 @@ export class TicketDetailsComponent {
 						&lt;tbody&gt;
 							&lt;tr&gt;
 								&lt;td class&#x3D;&quot;text-right&quot;&gt;Environment:&lt;/td&gt;
-								&lt;td colspan&#x3D;&#x27;2&#x27;&gt;{{ticket?.environment}}&lt;/td&gt;
+								&lt;td&gt;{{ticket?.environment}}&lt;/td&gt;
 								&lt;td class&#x3D;&quot;text-right&quot;&gt;Issue Type:&lt;/td&gt;
 								&lt;td&gt;{{ticket?.issue_type}}&lt;/td&gt;
 							&lt;/tr&gt;
 
 							&lt;tr&gt;
 								&lt;td class&#x3D;&quot;text-right&quot;&gt;Sprint:&lt;/td&gt;
-								&lt;td colspan&#x3D;&#x27;2&#x27;&gt;{{ticket?.sprint}}&lt;/td&gt;
+								&lt;td&gt;{{ticket?.sprint}}&lt;/td&gt;
 								&lt;td class&#x3D;&quot;text-right&quot;&gt;Priority:&lt;/td&gt;
 								&lt;td&gt;{{ticket?.priority}}&lt;/td&gt;
 							&lt;/tr&gt;
 
 							&lt;tr&gt;
 								&lt;td class&#x3D;&quot;text-right&quot;&gt;Severity:&lt;/td&gt;
-								&lt;td colspan&#x3D;&#x27;2&#x27;&gt;{{ticket?.severity}}&lt;/td&gt;
+								&lt;td&gt;{{ticket?.severity}}&lt;/td&gt;
 								&lt;td class&#x3D;&quot;text-right&quot;&gt;Description:&lt;/td&gt;
 								&lt;td&gt;{{ticket?.description}}&lt;/td&gt;
 							&lt;/tr&gt;
 
 							&lt;tr&gt;
 								&lt;td class&#x3D;&quot;text-right&quot;&gt;Label:&lt;/td&gt;
-								&lt;td colspan&#x3D;&#x27;2&#x27;&gt;{{ticket?.label}}&lt;/td&gt;
+								&lt;td&gt;{{ticket?.label}}&lt;/td&gt;
 								&lt;td class&#x3D;&quot;text-right&quot;&gt;Code Reviewer:&lt;/td&gt;
 								&lt;td&gt;
 									{{ticket?.code_reviewer.username}}
@@ -777,30 +779,9 @@ export class TicketDetailsComponent {
 							&lt;/tr&gt;
 
 							&lt;tr&gt;
-								&lt;td&gt;Dev Changes:&lt;/td&gt;
-								&lt;td colspan&#x3D;&#x27;4&#x27;&gt;
+								&lt;td class&#x3D;&quot;text-right&quot;&gt;Dev Changes:&lt;/td&gt;
+								&lt;td colspan&#x3D;&#x27;3&#x27;&gt;
 									{{ticket?.dev_changes}}
-								&lt;/td&gt;
-							&lt;/tr&gt;
-
-							&lt;tr&gt;
-								&lt;td&gt;Work Log:&lt;/td&gt;
-								&lt;td colspan&#x3D;&#x27;4&#x27;&gt;
-									
-								&lt;/td&gt;
-							&lt;/tr&gt;
-
-							&lt;tr *ngIf&#x3D;&#x27;links.length&#x27;&gt;
-								&lt;td&gt;Links:&lt;/td&gt;
-								&lt;td colspan&#x3D;&#x27;4&#x27;&gt;
-									
-								&lt;/td&gt;
-							&lt;/tr&gt;
-
-							&lt;tr&gt;
-								&lt;td&gt;Status Changes:&lt;/td&gt;
-								&lt;td colspan&#x3D;&#x27;4&#x27;&gt;
-									
 								&lt;/td&gt;
 							&lt;/tr&gt;
 						&lt;/tbody&gt;
@@ -810,7 +791,7 @@ export class TicketDetailsComponent {
 		&lt;/div&gt;
 		
 		&lt;!-- right side --&gt;
-		&lt;div class&#x3D;&quot;col-md-4 *ngIf&#x3D;&#x27;ticket?.history?.status?.length&quot;&gt;
+		&lt;div class&#x3D;&quot;col-md-4&quot;&gt;
 			&lt;h1&gt;Status History&lt;/h1&gt;
 			&lt;table class&#x3D;&quot;table ticket-details&quot;&gt;
 				&lt;tbody&gt;
@@ -818,7 +799,7 @@ export class TicketDetailsComponent {
 						&lt;td&gt;{{status.author.displayName}}&lt;/td&gt;
 						&lt;td&gt;
 							&lt;span *ngIf&#x3D;&#x27;status.items[0].fromString&#x27;&gt;from {{status.items[0].fromString}} &lt;/span&gt;
-							&lt;span *ngIf&#x3D;&#x27;status.items[0].toString&#x27;&gt;to {{status.items[0].toString}}&lt;/span&gt;
+							&lt;span *ngIf&#x3D;&#x27;status.items[0].toString&#x27;&gt;to {{status.items[0].toString}} &lt;/span&gt;
 							&lt;span&gt;on {{status.created | amDateFormat:&#x27;MMMM DD@h:mm:A&#x27;}}&lt;/span&gt;
 						&lt;/td&gt;
 					&lt;/tr&gt;
@@ -855,8 +836,8 @@ export class TicketDetailsComponent {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="loading-pulse" *ngIf=\'loading; else detailsTable\'></div><ng-template #detailsTable>	<div class="row">		<!-- left side -->		<div class="col-md-7">			<!-- top left side -->			<div class="row">				<div class="col-md-6" *ngIf=\'ticket?.worklog?.length\'>					<h1>Time Logs</h1>					<table class="table ticket-details">						<tbody>							<tr *ngFor=\'let worklog of ticket?.worklog\'>								<td>Time Spent: {{worklog.timeSpent}}</td>								<td>updated: {{worklog.updated | amDateFormat:\'MMMM DD@h:mm:A\'}}</td>							</tr>						</tbody>					</table>				</div>				<div class="col-md-6" *ngIf=\'links?.length\'>					<h1>Ticket Links</h1>					<table class="table ticket-details">						<tbody>							<tr *ngFor=\'let link of links\'>								<td>									<span *ngIf=\'link.inwardIssue\'>Blocked By:</span>									<span *ngIf=\'link.outwardIssue\'>Blocks:</span>								</td>								<td>									<a 										*ngIf=\'link.inwardIssue\'										target="_blank" 										href="{{config.jiraUrl}}/browse/{{link.inwardIssue?.key}}" 										title=\'Open in Jira\'>										{{link.inwardIssue?.key}}									</a>									<a 										*ngIf=\'link.outwardIssue\'										target="_blank" 										href="{{config.jiraUrl}}/browse/{{link.outwardIssue?.key}}" 										title=\'Open in Jira\'>										{{link.outwardIssue?.key}}									</a>								</td>								<td>									{{link.outwardIssue?.fields.summary}}									{{link.inwardIssue?.fields.summary}}								</td>								<td>									{{link.outwardIssue?.fields.status.name}}									{{link.inwardIssue?.fields.status.name}}								</td>							</tr>						</tbody>					</table>				</div>			</div>						<!-- bottom left side -->			<div class="row split-tables">				<div class="col-md-12">					<h1>Ticket Details</h1>					<table class="table ticket-details">						<tbody>							<tr>								<td class="text-right">Environment:</td>								<td colspan=\'2\'>{{ticket?.environment}}</td>								<td class="text-right">Issue Type:</td>								<td>{{ticket?.issue_type}}</td>							</tr>							<tr>								<td class="text-right">Sprint:</td>								<td colspan=\'2\'>{{ticket?.sprint}}</td>								<td class="text-right">Priority:</td>								<td>{{ticket?.priority}}</td>							</tr>							<tr>								<td class="text-right">Severity:</td>								<td colspan=\'2\'>{{ticket?.severity}}</td>								<td class="text-right">Description:</td>								<td>{{ticket?.description}}</td>							</tr>							<tr>								<td class="text-right">Label:</td>								<td colspan=\'2\'>{{ticket?.label}}</td>								<td class="text-right">Code Reviewer:</td>								<td>									{{ticket?.code_reviewer.username}}									{{ticket?.code_reviewer.displayName}}								</td>							</tr>							<tr>								<td>Dev Changes:</td>								<td colspan=\'4\'>									{{ticket?.dev_changes}}								</td>							</tr>							<tr>								<td>Work Log:</td>								<td colspan=\'4\'>																	</td>							</tr>							<tr *ngIf=\'links.length\'>								<td>Links:</td>								<td colspan=\'4\'>																	</td>							</tr>							<tr>								<td>Status Changes:</td>								<td colspan=\'4\'>																	</td>							</tr>						</tbody>					</table>				</div>			</div>		</div>				<!-- right side -->		<div class="col-md-4 *ngIf=\'ticket?.history?.status?.length">			<h1>Status History</h1>			<table class="table ticket-details">				<tbody>					<tr *ngFor=\'let status of ticket?.history?.status\'>						<td>{{status.author.displayName}}</td>						<td>							<span *ngIf=\'status.items[0].fromString\'>from {{status.items[0].fromString}} </span>							<span *ngIf=\'status.items[0].toString\'>to {{status.items[0].toString}}</span>							<span>on {{status.created | amDateFormat:\'MMMM DD@h:mm:A\'}}</span>						</td>					</tr>				</tbody>			</table>		</div>			</div></ng-template></div>'
-    var COMPONENTS = [{'name': 'ActionsComponent', 'selector': 'dc-actions'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'BranchInfoComponent', 'selector': 'dc-branch-info'},{'name': 'CrucibleCommentsComponent', 'selector': 'dc-crucible-comments'},{'name': 'CrucibleCommentsModalComponent', 'selector': 'crucible-comments-modal'},{'name': 'CrucibleComponent', 'selector': 'dc-crucible'},{'name': 'DatesComponent', 'selector': 'dc-ticket-dates'},{'name': 'DevStatsComponent', 'selector': 'dc-dev-stats'},{'name': 'DropdownMenuComponent', 'selector': 'dc-dropdown-menu'},{'name': 'DropdownSubmenuComponent', 'selector': 'dc-dropdown-submenu'},{'name': 'EditOrdersComponent', 'selector': 'dev-center-edit-orders'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'JqlLinksComponent', 'selector': 'dc-jql-links'},{'name': 'LoadingTableComponent', 'selector': 'dc-loading-table'},{'name': 'LogoutComponent', 'selector': 'dc-logout'},{'name': 'ModalComponent', 'selector': 'dev-center-modal'},{'name': 'NavBarComponent', 'selector': 'dc-nav-bar'},{'name': 'NavbarModalComponent', 'selector': 'dc-user-settings-modal'},{'name': 'NavbarUserComponent', 'selector': 'dc-navbar-user'},{'name': 'OrdersComponent', 'selector': 'dev-center-orders'},{'name': 'QaGeneratorComponent', 'selector': 'dc-qa-generator'},{'name': 'SearchbarComponent', 'selector': 'dc-searchbar'},{'name': 'SetPingsComponent', 'selector': 'dc-set-pings'},{'name': 'TicketCommentsComponent', 'selector': 'dc-ticket-comments'},{'name': 'TicketCommentsModalComponent', 'selector': 'ticket-comments-modal'},{'name': 'TicketDetailsComponent', 'selector': 'dc-ticket-details'},{'name': 'TicketStatusComponent', 'selector': 'dc-ticket-status'},{'name': 'TicketsComponent', 'selector': 'dc-tickets'},{'name': 'ToastrComponent', 'selector': 'dc-toastr'},{'name': 'UserDetailsComponent', 'selector': 'dc-user-details'},{'name': 'UserSettingsComponent', 'selector': 'dc-user-settings'},{'name': 'WatchersComponent', 'selector': 'dc-watchers'},{'name': 'WorkLogComponent', 'selector': 'dc-work-log'}];
+        var COMPONENT_TEMPLATE = '<div><div class="loading-pulse" *ngIf=\'loading; else detailsTable\'></div><ng-template #detailsTable>	<div class="row">		<!-- left side -->		<div class="col-md-7">			<!-- top left side -->			<div class="row">				<div class="col-md-6">					<h1>Time Logs</h1>					<table class="table ticket-details">						<tbody>							<tr *ngFor=\'let worklog of ticket?.worklog\'>								<td>Time Spent: {{worklog.timeSpent}}</td>								<td>updated: {{worklog.updated | amDateFormat:\'MMMM DD@h:mm:A\'}}</td>							</tr>						</tbody>					</table>				</div>				<div class="col-md-6">					<h1>Ticket Links</h1>					<table class="table ticket-details">						<tbody>							<tr *ngFor=\'let link of links\'>								<td>									<span *ngIf=\'link.inwardIssue\'>Blocked By:</span>									<span *ngIf=\'link.outwardIssue\'>Blocks:</span>								</td>								<td>									<a 										*ngIf=\'link.inwardIssue\'										target="_blank" 										href="{{config.jiraUrl}}/browse/{{link.inwardIssue?.key}}" 										title=\'Open in Jira\'>										{{link.inwardIssue?.key}}									</a>									<a 										*ngIf=\'link.outwardIssue\'										target="_blank" 										href="{{config.jiraUrl}}/browse/{{link.outwardIssue?.key}}" 										title=\'Open in Jira\'>										{{link.outwardIssue?.key}}									</a>								</td>								<td>									{{link.outwardIssue?.fields.summary}}									{{link.inwardIssue?.fields.summary}}								</td>								<td>									{{link.outwardIssue?.fields.status.name}}									{{link.inwardIssue?.fields.status.name}}								</td>							</tr>						</tbody>					</table>				</div>			</div>						<!-- bottom left side -->			<div class="row split-tables">				<div class="col-md-12">					<h1>Ticket Details</h1>					<table class="table ticket-details">						<tbody>							<tr>								<td class="text-right">Environment:</td>								<td>{{ticket?.environment}}</td>								<td class="text-right">Issue Type:</td>								<td>{{ticket?.issue_type}}</td>							</tr>							<tr>								<td class="text-right">Sprint:</td>								<td>{{ticket?.sprint}}</td>								<td class="text-right">Priority:</td>								<td>{{ticket?.priority}}</td>							</tr>							<tr>								<td class="text-right">Severity:</td>								<td>{{ticket?.severity}}</td>								<td class="text-right">Description:</td>								<td>{{ticket?.description}}</td>							</tr>							<tr>								<td class="text-right">Label:</td>								<td>{{ticket?.label}}</td>								<td class="text-right">Code Reviewer:</td>								<td>									{{ticket?.code_reviewer.username}}									{{ticket?.code_reviewer.displayName}}								</td>							</tr>							<tr>								<td class="text-right">Dev Changes:</td>								<td colspan=\'3\'>									{{ticket?.dev_changes}}								</td>							</tr>						</tbody>					</table>				</div>			</div>		</div>				<!-- right side -->		<div class="col-md-4">			<h1>Status History</h1>			<table class="table ticket-details">				<tbody>					<tr *ngFor=\'let status of ticket?.history?.status\'>						<td>{{status.author.displayName}}</td>						<td>							<span *ngIf=\'status.items[0].fromString\'>from {{status.items[0].fromString}} </span>							<span *ngIf=\'status.items[0].toString\'>to {{status.items[0].toString}} </span>							<span>on {{status.created | amDateFormat:\'MMMM DD@h:mm:A\'}}</span>						</td>					</tr>				</tbody>			</table>		</div>			</div></ng-template></div>'
+    var COMPONENTS = [{'name': 'ActionsComponent', 'selector': 'dc-actions'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'BranchInfoComponent', 'selector': 'dc-branch-info'},{'name': 'CrucibleCommentsComponent', 'selector': 'dc-crucible-comments'},{'name': 'CrucibleCommentsModalComponent', 'selector': 'crucible-comments-modal'},{'name': 'CrucibleComponent', 'selector': 'dc-crucible'},{'name': 'DatesComponent', 'selector': 'dc-ticket-dates'},{'name': 'DevStatsComponent', 'selector': 'dc-dev-stats'},{'name': 'DropdownMenuComponent', 'selector': 'dc-dropdown-menu'},{'name': 'DropdownSubmenuComponent', 'selector': 'dc-dropdown-submenu'},{'name': 'EditOrdersComponent', 'selector': 'dev-center-edit-orders'},{'name': 'FooterComponent', 'selector': 'app-footer'},{'name': 'JqlLinksComponent', 'selector': 'dc-jql-links'},{'name': 'LoadingTableComponent', 'selector': 'dc-loading-table'},{'name': 'LogoutComponent', 'selector': 'dc-logout'},{'name': 'ModalComponent', 'selector': 'dev-center-modal'},{'name': 'NavBarComponent', 'selector': 'dc-nav-bar'},{'name': 'NavbarModalComponent', 'selector': 'dc-user-settings-modal'},{'name': 'NavbarUserComponent', 'selector': 'dc-navbar-user'},{'name': 'OrdersComponent', 'selector': 'dev-center-orders'},{'name': 'ProgressBarComponent', 'selector': 'dc-progress-bar'},{'name': 'QaGeneratorComponent', 'selector': 'dc-qa-generator'},{'name': 'SearchbarComponent', 'selector': 'dc-searchbar'},{'name': 'SetPingsComponent', 'selector': 'dc-set-pings'},{'name': 'TicketCommentsComponent', 'selector': 'dc-ticket-comments'},{'name': 'TicketCommentsModalComponent', 'selector': 'ticket-comments-modal'},{'name': 'TicketDetailsComponent', 'selector': 'dc-ticket-details'},{'name': 'TicketStatusComponent', 'selector': 'dc-ticket-status'},{'name': 'TicketsComponent', 'selector': 'dc-tickets'},{'name': 'ToastrComponent', 'selector': 'dc-toastr'},{'name': 'UserDetailsComponent', 'selector': 'dc-user-details'},{'name': 'UserSettingsComponent', 'selector': 'dc-user-settings'},{'name': 'WatchersComponent', 'selector': 'dc-watchers'},{'name': 'WorkLogComponent', 'selector': 'dc-work-log'}];
     var DIRECTIVES = [{'name': 'DraggableDirective', 'selector': '[dcDraggable]'},{'name': 'DropdownSubmenuDirective', 'selector': '[dropdownSubmenu]'},{'name': 'DropdownSubmenuMenuDirective', 'selector': '[dropdownSubmenuMenu]'}];
     var ACTUAL_COMPONENT = {'name': 'TicketDetailsComponent'};
 </script>

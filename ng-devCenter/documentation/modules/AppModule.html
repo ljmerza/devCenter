@@ -309,9 +309,6 @@ import { NgModule, APP_INITIALIZER  } from &#x27;@angular/core&#x27;;
 import { HashLocationStrategy, Location, LocationStrategy } from &#x27;@angular/common&#x27;;
 import { NgbModule } from &#x27;@ng-bootstrap/ng-bootstrap&#x27;;
 
-import { BrowserAnimationsModule } from &#x27;@angular/platform-browser/animations&#x27;;
-import { NgProgressModule } from &#x27;ngx-progressbar&#x27;;
-
 // custom modules
 import { routing, appRoutingProviders } from &#x27;./app-routing.module&#x27;;
 import { SharedModule } from &#x27;./shared/shared.module&#x27;;
@@ -337,9 +334,8 @@ export function startupServiceFactory(initService: InitService): Function {
 @NgModule({
 	declarations: [AppComponent, FooterComponent],
 	imports: [
-		BrowserModule, routing, SharedModule.forRoot(), OrderModule, BrowserAnimationsModule, 
-		TicketModule, NavbarModule, CommentsModule, NgbModule.forRoot(), NgProgressModule,
-		MetricsModule
+		BrowserModule, routing, SharedModule.forRoot(), OrderModule, 
+		TicketModule, NavbarModule, CommentsModule, NgbModule.forRoot(), MetricsModule
 	],
 	providers: [
 		appRoutingProviders, Location, 
