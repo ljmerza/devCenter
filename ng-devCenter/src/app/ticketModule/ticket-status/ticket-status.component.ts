@@ -1,5 +1,5 @@
 import { 
-	Component, Input, ViewContainerRef, ViewChild, OnDestroy,
+	Component, Input, ViewContainerRef, ViewChild, OnDestroy, OnChanges,
 	ComponentFactoryResolver, OnInit, ChangeDetectionStrategy
 } from '@angular/core';
 
@@ -18,7 +18,7 @@ import { statuses, Ticket, APIResponse, allTransistions} from '@models';
 	styleUrls: ['./ticket-status.component.scss'],
 	entryComponents: [QaGeneratorComponent]
 })
-export class TicketStatusComponent implements OnInit, OnDestroy {
+export class TicketStatusComponent implements OnInit, OnDestroy, OnChanges {
 	ticketStates:Array<any> = [];
 
 	ticketDropdown;
@@ -52,6 +52,12 @@ export class TicketStatusComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit() {
 		this.getStoreData();
+	}
+
+	ngOnChanges(changes){
+		if(!changes.firstChange && changes.key.currentValue !== changes.key.previousValue){
+			this.getStoreData();
+		}
 	}
 
 	/**

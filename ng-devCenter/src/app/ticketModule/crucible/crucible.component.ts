@@ -1,5 +1,5 @@
 import {
-	Component, Input, ChangeDetectionStrategy, ChangeDetectorRef,
+	Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges,
 	OnDestroy, OnInit, ViewContainerRef, ComponentFactoryResolver
 } from '@angular/core';
 
@@ -18,7 +18,7 @@ import { CrucibleCommentsModalComponent } from '../../commentsModule/crucible-co
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	entryComponents: [CrucibleCommentsModalComponent]
 })
-export class CrucibleComponent implements OnDestroy, OnInit {
+export class CrucibleComponent implements OnDestroy, OnInit, OnChanges {
 
 	constructor(
 		public config: ConfigService, public toastr: ToastrService, public chat: ChatService,
@@ -41,20 +41,29 @@ export class CrucibleComponent implements OnDestroy, OnInit {
 	ngOnInit() {
 		this.route.paramMap.subscribe((routeResponse: any) => {
 			this.ticketListType = routeResponse.params.filter || 'mytickets';
-
-			this.codeCloud$ = this.store.select(`${this.ticketListType}_codeCloud`)
-				.subscribe((allTickets: any = []) => {
-					const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
-					this.toUsername = ticket.username || '';
-					this.pullRequests = ticket.pullRequests || '';
-					this.pcrCountLeft = ticket.pcrCountLeft || '';
-				});
-			
-			this.userProfile$ = this.store.select(`userProfile`)
-				.subscribe((profile:any) => {
-					this.displayName = profile.displayName || '';
-				});
+			this.getStoreData();
 		});
+	}
+
+	ngOnChanges(changes){
+		if(!changes.firstChange && changes.key.currentValue !== changes.key.previousValue){
+			this.getStoreData();
+		}
+	}
+
+	getStoreData(){
+		this.codeCloud$ = this.store.select(`${this.ticketListType}_codeCloud`)
+			.subscribe((allTickets: any = []) => {
+				const ticket = allTickets.find(ticket => ticket.key === this.key) || {};
+				this.toUsername = ticket.username || '';
+				this.pullRequests = ticket.pullRequests || '';
+				this.pcrCountLeft = ticket.pcrCountLeft || '';
+			});
+		
+		this.userProfile$ = this.store.select(`userProfile`)
+			.subscribe((profile:any) => {
+				this.displayName = profile.displayName || '';
+			});
 	}
 
 	/**

@@ -66,7 +66,7 @@
 		  	</ng-template>
 		</ngx-datatable-column>
 
-		<ngx-datatable-column name="Status" [sortable]="true" [flexGrow]='3'>
+		<ngx-datatable-column name="Status" [flexGrow]='3'>
 		  	<ng-template let-ticket="row" ngx-datatable-cell-template>
 				<dc-ticket-status [key]=ticket.key></dc-ticket-status>
 		  	</ng-template>
