@@ -383,7 +383,7 @@ def get_issue_links(issue):
 	return issue['fields'].get('issuelinks',[])
 
 def get_description(issue):
-	return issue['fields'].get('description','')
+	return issue['fields'].get('description', '')
 
 def get_history(issue):
 	histories = issue.get('changelog', {}).get('histories', [])

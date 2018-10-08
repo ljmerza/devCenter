@@ -10,7 +10,7 @@ export function addTickets(state, tickets){
 
 	// extract pull requests
 	tickets = tickets.map(ticket => {
-		const devChangeWords = (ticket.dev_changes || '').split(/\n|(\n\r)| /g);
+		const devChangeWords = (ticket.dev_changes || ticket.description || '').split(/\n|(\n\r)| /g);
 		ticket.pullRequests = getPullRequestsFromDevChanges(devChangeWords);
 
 		const devChangeLines = (ticket.dev_changes || '').split(/\n|(\n\r)/g);

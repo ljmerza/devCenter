@@ -5,23 +5,29 @@ from ..Jira.Jira import Jira
 from ..CodeCloud.CodeCloud import CodeCloud
 
 def pcr_complete_transition(data):
-	missing_params = missing_parameters(params=data, required=['pull_requests','cred_hash','username'])
+	missing_params = missing_parameters(params=data, required=['cred_hash','username'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	response = {'status': True, 'data': {}}
 	response['data']['set_pcr_complete'] =  Jira().set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
-	response = _pass_pull_requests(data=data, response=response, comment='PCR Complete')
+	
+	if(data.get('pull_requests', False)):
+		response = _pass_pull_requests(data=data, response=response, comment='PCR Complete')
+
 	return response
 
 def pcr_pass_transition(data):
-	missing_params = missing_parameters(params=data, required=['pull_requests','cred_hash', 'username'])
+	missing_params = missing_parameters(params=data, required=['cred_hash', 'username'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	response = {'status': True, 'data': {'add_comment': []}}
 	response['data']['set_pcr_needed'] = Jira().set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
-	response = _pass_pull_requests(data=data, response=response, comment='PCR Pass')
+
+	if(data.get('pull_requests', False)):
+		response = _pass_pull_requests(data=data, response=response, comment='PCR Pass')
+
 	return response
 
 def _pass_pull_requests(data, response, comment):
@@ -51,7 +57,7 @@ def _pass_pull_requests(data, response, comment):
 	return response
 
 def pcr_working_transition(data):
-	missing_params = missing_parameters(params=data, required=['pull_requests','username'])
+	missing_params = missing_parameters(params=data, required=['username'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -59,7 +65,7 @@ def pcr_working_transition(data):
 	response['data']['set_pcr_working'] = Jira().set_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
 
 	cc = CodeCloud()
-	for request in data['pull_requests']:
+	for request in data.get('pull_requests', []):
 		pull_response = cc.add_reviewer_to_pull_request(
 			username=data['username'], 
 			repo_name=request['repo'], 

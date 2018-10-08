@@ -172,7 +172,6 @@ class AutomationBot(object):
 		story_point = jira_ticket['story_point']
 		key = jira_ticket['key']
 		msrp = jira_ticket['msrp']
-		key = jira_ticket['key']
 		summary = jira_ticket['summary']
 
 		# see if user wants ping
