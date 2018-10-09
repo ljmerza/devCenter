@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-from ..FlaskUtils import missing_parameters
-from ..CodeCloud.CodeCloud import CodeCloud
-from ..Jira.Jira import Jira
+from FlaskUtils import missing_parameters
+from CodeCloud.CodeCloud import CodeCloud
+from Jira.Jira import Jira
 
-from ..Requests.JiraRequests import set_status
+from Requests.JiraRequests import set_status
 
 def transition_to_pcr(data):
 	'''creates a bit bucket review

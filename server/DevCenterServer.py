@@ -4,7 +4,7 @@ from flask import Flask
 from flask_socketio import SocketIO
 from flask_cors import CORS
 
-from .DevCenterRoutes import define_routes
+from DevCenterRoutes import define_routes
 
 
 def start_server(devflk, host, port, app_name, devdb, sql_echo, dev_chat, no_pings):

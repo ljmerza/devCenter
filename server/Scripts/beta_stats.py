@@ -4,7 +4,7 @@ import base64
 import os
 import datetime
 
-from ..Jira.Jira import Jira
+from Jira.Jira import Jira
 jira_obj = Jira()
 
 # create auth header

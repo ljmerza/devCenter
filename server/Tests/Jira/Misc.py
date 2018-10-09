@@ -3,8 +3,8 @@
 import os
 import base64
 
-from ...Jira.JiraMisc import JiraMisc
-from ...Jira.JiraAPI import JiraAPI
+from Jira.JiraMisc import JiraMisc
+from Jira.JiraAPI import JiraAPI
 
 username = os.environ['USER']
 password = os.environ['PASSWORD']

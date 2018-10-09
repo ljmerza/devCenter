@@ -2,7 +2,7 @@
 
 import os
 import requests
-from ..Common.DevCenterAPI import DevCenterAPI
+from Common.DevCenterAPI import DevCenterAPI
 
 class CrucibleAPI(DevCenterAPI):
 

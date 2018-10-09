@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from ..FlaskUtils import missing_parameters
-from ..Crucible.Crucible import Crucible
+from FlaskUtils import missing_parameters
+from Crucible.Crucible import Crucible
 
 
 def crucible_create_review(data, pull_response):

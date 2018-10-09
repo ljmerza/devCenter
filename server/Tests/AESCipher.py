@@ -1,4 +1,4 @@
-from ..AESCipher import AESCipher
+from AESCipher import AESCipher
 
 key = 'wqer3456rtehg'
 aes = AESCipher(key)

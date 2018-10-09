@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-from .CruciblePCR import CruciblePCR
-from .CrucibleRepoBranch import CrucibleRepoBranch
-from .CrucibleReviewId import CrucibleReviewId
-from .CrucibleComments import CrucibleComments
-from .CrucibleAPI import CrucibleAPI
+from Crucible.CruciblePCR import CruciblePCR
+from Crucible.CrucibleRepoBranch import CrucibleRepoBranch
+from Crucible.CrucibleReviewId import CrucibleReviewId
+from Crucible.CrucibleComments import CrucibleComments
+from Crucible.CrucibleAPI import CrucibleAPI
 
 class Crucible(CruciblePCR, CrucibleRepoBranch, CrucibleReviewId, CrucibleComments):
 

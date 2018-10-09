@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import os
-from ..ServerUtils import get_branch_name, get_estimate_string, build_message, td_alt_style, table_style, td_style
+from ServerUtils import get_branch_name, get_estimate_string, build_message, td_alt_style, table_style, td_style
 
 class ChatMisc():
 	def __init__(self, chat_api, merge_alerts):

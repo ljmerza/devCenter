@@ -7,12 +7,12 @@ from flask import request, Response, g, abort
 from flask_cors import cross_origin
 import requests
 
-from .AESCipher import AESCipher
-from .Routes.JiraRoutes import define_routes as JiraRoutes_define_routes
-from .Routes.ChatRoutes import define_routes as ChatRoutes_define_routes
-from .Routes.UserRoutes import define_routes as UserRoutes_define_routes
-from .Routes.ApiRoutes import define_routes as ApiRoutes_define_routes
-from .Routes.CodeCloudRoutes import define_routes as CodeCloudRoutes_define_routes
+from AESCipher import AESCipher
+from Routes.JiraRoutes import define_routes as JiraRoutes_define_routes
+from Routes.ChatRoutes import define_routes as ChatRoutes_define_routes
+from Routes.UserRoutes import define_routes as UserRoutes_define_routes
+from Routes.ApiRoutes import define_routes as ApiRoutes_define_routes
+from Routes.CodeCloudRoutes import define_routes as CodeCloudRoutes_define_routes
 
 
 def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no_pings):

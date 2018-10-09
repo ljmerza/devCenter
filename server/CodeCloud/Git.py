@@ -1,5 +1,6 @@
+#!/usr/bin/python3
 
-from ..SQL.DevCenterSQL import DevCenterSQL
+from SQL.DevCenterSQL import DevCenterSQL
 
 class Git():
     def __init__(self, code_cloud_api):

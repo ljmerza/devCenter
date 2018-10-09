@@ -1,9 +1,10 @@
 #!/usr/bin/python3
+
 import urllib.parse
 import os
 import re
-from ..Common.DevCenterAPI import DevCenterAPI
-from .JiraConfig import *
+from Common.DevCenterAPI import DevCenterAPI
+from Jira.JiraConfig import *
 
 class JiraAPI(DevCenterAPI):
 

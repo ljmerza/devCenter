@@ -1,7 +1,7 @@
 import os
 import base64
 
-from ..CodeCloud.CodeCloud import CodeCloud 
+from CodeCloud.CodeCloud import CodeCloud 
 
 cc = CodeCloud()
 

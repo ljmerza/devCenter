@@ -8,11 +8,11 @@ import logging
 import time
 import threading
 
-from .Jira.JiraFields import *
-from .Jira.Jira import Jira
-from .SQL.DevCenterSQL import DevCenterSQL
-from .Chat.Chat import Chat
-from .reminders import reminders
+from Jira.JiraFields import *
+from Jira.Jira import Jira
+from SQL.DevCenterSQL import DevCenterSQL
+from Chat.Chat import Chat
+from reminders import reminders
 
 logging.basicConfig(level=logging.INFO)
 

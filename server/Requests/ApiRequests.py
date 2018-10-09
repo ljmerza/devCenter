@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from ..APIs.Order import Order
+from APIs.Order import Order
 
 def get_orders():
 	'''gets all order data scrapped from the database

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import sys
 
-from ..Chat.ChatAPI import ChatAPI
+from Chat.ChatAPI import ChatAPI
 chat = ChatAPI(0, 0)
 
 message = ''

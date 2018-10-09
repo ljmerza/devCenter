@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-from ..FlaskUtils import missing_parameters
-from ..Jira.Jira import Jira
-from ..Chat.Chat import Chat
-from ..SQL.DevCenterSQL import DevCenterSQL
+from FlaskUtils import missing_parameters
+from Jira.Jira import Jira
+from Chat.Chat import Chat
+from SQL.DevCenterSQL import DevCenterSQL
 
 
 def send_ping(data, dev_chat, no_pings):

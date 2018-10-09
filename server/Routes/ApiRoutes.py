@@ -3,7 +3,7 @@
 from flask import Response
 from flask_cors import cross_origin
 
-from ..Requests.ApiRequests import get_orders, get_atx
+from Requests.ApiRequests import get_orders, get_atx
 
 def define_routes(app, app_name):
 	

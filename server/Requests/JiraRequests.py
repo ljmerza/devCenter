@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 import os
 
-from ..FlaskUtils import missing_parameters
-from ..ServerUtils import build_commit_message, get_branch_name
-from ..Jira.Jira import Jira
-from ..CodeCloud.CodeCloud import CodeCloud
+from FlaskUtils import missing_parameters
+from ServerUtils import build_commit_message, get_branch_name
+from Jira.Jira import Jira
+from CodeCloud.CodeCloud import CodeCloud
 
-from .jira_status import pcr_complete_transition, pcr_pass_transition, pcr_working_transition, qa_ready_transition, qa_pass_transition, uct_ready_transition
+from Requests.jira_status import pcr_complete_transition, pcr_pass_transition, pcr_working_transition, qa_ready_transition, qa_pass_transition, uct_ready_transition
 
 def set_status(data):
 	'''sets a Jira ticket's status

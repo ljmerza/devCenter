@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-from ..FlaskUtils import missing_parameters
-from ..SQL.DevCenterSQL import DevCenterSQL
+from FlaskUtils import missing_parameters
+from SQL.DevCenterSQL import DevCenterSQL
 
 def get_navbar_items(devdb, sql_echo):
 	'''gets all navbar items

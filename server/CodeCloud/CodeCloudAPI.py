@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import os
-from ..Common.DevCenterAPI import DevCenterAPI
+from Common.DevCenterAPI import DevCenterAPI
 
 class CodeCloudAPI(DevCenterAPI):
 

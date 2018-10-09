@@ -3,8 +3,8 @@
 from flask import Response, request
 from flask_cors import cross_origin
 
-from ..Requests.UserRequests import set_navbar_item, get_navbar_items, get_jql_links
-from ..Requests.JiraRequests import get_profile
+from Requests.UserRequests import set_navbar_item, get_navbar_items, get_jql_links
+from Requests.JiraRequests import get_profile
 
 def define_routes(app, app_name, g, devdb, sql_echo):
 

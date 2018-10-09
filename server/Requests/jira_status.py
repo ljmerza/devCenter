@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
-from ..FlaskUtils import missing_parameters
-from ..Jira.Jira import Jira
-from ..CodeCloud.CodeCloud import CodeCloud
+from FlaskUtils import missing_parameters
+from Jira.Jira import Jira
+from CodeCloud.CodeCloud import CodeCloud
 
 def pcr_complete_transition(data):
 	missing_params = missing_parameters(params=data, required=['cred_hash','username'])
