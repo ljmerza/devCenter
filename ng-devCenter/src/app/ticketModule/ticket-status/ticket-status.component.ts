@@ -32,6 +32,7 @@ export class TicketStatusComponent implements OnInit, OnDestroy, OnChanges {
 	msrp;
 	masterBranch;
 	devChanges;
+	allStatuses;
 
 	status$
 	ticketType$;
@@ -45,7 +46,9 @@ export class TicketStatusComponent implements OnInit, OnDestroy, OnChanges {
 	constructor(
 		private factoryResolver: ComponentFactoryResolver, private store:NgRedux<RootState>,
 		private viewContRef: ViewContainerRef, private toastr: ToastrService, private jira: JiraService, 
-	) { }
+	) { 
+		this.allStatuses = statuses;
+	}
 
 	/**
 	 * watch for changes to comments in store

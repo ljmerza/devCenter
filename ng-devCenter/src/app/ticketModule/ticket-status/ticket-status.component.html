@@ -1,4 +1,14 @@
-<select (change)="stateChange(ticketState)" #ticketState>
+<select (change)="stateChange(ticketState)" #ticketState
+	[ngClass]="{
+		'uct-ready': ticketStatus === allStatuses.UCTREADY.frontend,
+		'ready-for-release': ticketStatus === allStatuses.RELEASE.frontend,
+		'pcr-working': ticketStatus === allStatuses.PCRWORK.frontend,
+		'in-uct': ticketStatus === allStatuses.INUCT.frontend,
+		'merge-code': ticketStatus === allStatuses.MERGECODE.frontend,
+		'merge-conflict': ticketStatus === allStatuses.MERGECONF.frontend,
+		'in-qa': ticketStatus === allStatuses.INQA.frontend
+	}"
+>
 	<option 
 		*ngFor='let state of ticketStates' [value]="state.id"
 		[attr.selected]="state.name==ticketStatus ? 'true': null">

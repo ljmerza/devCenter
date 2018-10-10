@@ -8,3 +8,31 @@ select {
 option {
 	color: #fff;
 }
+
+.uct-ready {
+	border: 1px solid yellow;
+}
+
+.ready-for-release {
+	border: 1px solid green;
+}
+
+.pcr-working {
+	border: 1px solid purple;
+}
+
+.in-uct {
+	border: 1px solid blue;
+}
+
+.merge-code {
+	border: 1px solid orange;
+}
+
+.merge-conflict {
+	border: 1px solid red;
+}
+
+.in-qa {
+	border: 1px solid aqua;
+}
