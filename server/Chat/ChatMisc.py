@@ -73,7 +73,7 @@ class ChatMisc():
 		sprint = sprint.replace(' ', '')
 		message += f" for '{summary}'  on sprint {sprint} has been updated by {username} - <a href='{self.chat_api.jira_ticket_base}{key}'>Jira</a>"
 		
-		chatroom = self.chat_api.jira_chat
+		chatroom = self.chat_api.username
 		if self.merge_alerts:
 			chatroom = self.chat_api.apex_chat
 

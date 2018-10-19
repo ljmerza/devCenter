@@ -205,18 +205,49 @@ def get_epic_link(issue):
 	epic_link = ''
 	# get epic link
 	epic_link = issue.get('fields', {}).get('customfield_10002', '')
+
 	if epic_link == 'UD-2421':
 		epic_link = 'Apollo'
+
 	elif epic_link == 'UD-1':
 		epic_link = 'Gamma'
+
 	elif epic_link == 'UD-3532':
 		epic_link = 'Ember Upgrades'
+
 	elif epic_link == 'UD-3':
 		epic_link = 'Magellan'
+
 	elif epic_link == 'UD-4714':
 		epic_link = 'UTM'
+
 	elif epic_link == 'UD-656':
 		epic_link = 'US GCSC'
+
+	elif epic_link == 'UD-9387':
+		epic_link = 'TRNS-5001'
+
+	elif epic_link == 'UD-9183':
+		epic_link = 'GD&A'
+
+	elif epic_link == 'UD-9175':
+		epic_link = 'Technical Debt'
+
+	elif epic_link == 'UD-8426':
+		epic_link = 'TIO-5357'
+
+	elif epic_link == 'UD-9174':
+		epic_link = 'Break/Fix'
+
+	elif epic_link == 'UD-10275':
+		epic_link = 'ROCC-5693'
+
+	elif epic_link == 'UD-10274':
+		epic_link = 'ROCC-5692'
+
+	elif epic_link == 'BPO-3066':
+		epic_link = 'Starship'
+
 	# return epic link found
 	return epic_link
 

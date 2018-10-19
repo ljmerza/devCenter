@@ -41,8 +41,8 @@ chat.send_qa_needed(key='1000', msrp='fake_key', sprint='UDtest', label='LABEL',
 chat.send_qa_needed(key='1000', msrp='fake_key', sprint='UDtest', label='BETA', crucible_id='CRU_123')
 print(divider)
 
-print('send_me_ticket_info')
-chat.send_me_ticket_info(key='1000', summary='UDtest summary', username='test_user', ping_message='send_me_ticket_info')
+print('send_dev_center_ticket_info')
+chat.send_dev_center_ticket_info(key='1000', summary='UDtest summary', username='test_user', ping_message='send_dev_center_ticket_info')
 print(divider)
 
 print('send_merge_needed')

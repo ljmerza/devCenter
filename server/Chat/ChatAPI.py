@@ -17,11 +17,11 @@ class ChatAPI():
 		self.no_pings = no_pings
 		##########################################################
 		self.bot_name = os.environ['BOT_NAME']
+		self.dev_center_chat = os.environ['CHAT_DEV_CENTER']
 		self.bot_password = os.environ['BOT_PASSWORD']
 		##########################################################
 		self.apex_chat = os.environ['CHAT_APEX']
 		self.dti_chat = os.environ['CHAT_DTI']
-		self.jira_chat = os.environ['CHAT_JIRA']
 		##########################################################
 		self.chat_url = os.environ['CHAT_URL']
 		self.chat_api = f'{self.chat_url}/push'

@@ -36,8 +36,14 @@ def get_branch_name(username, msrp, summary):
 	return branch_name
 
 
-def build_commit_message(key, msrp, summary):
-	return f"[{key}] Ticket #{msrp} {summary}"
+def build_commit_message(key, msrp, summary, epic_link):
+	commit = f"[{key}] Ticket #{msrp}" 
+
+	if epic_link:
+		commit +=f" - {epic_link} -"
+
+	commit += f" {summary}"
+	return commit
 
 def build_message(data, commit_message=False, jira_message=False, branch_message=False, sprint_message=False, msrp_message=False, summary_message=False, crucible_title_message=False, estimate_message=False):
     	# keep track of odd table rows
@@ -56,9 +62,15 @@ def build_message(data, commit_message=False, jira_message=False, branch_message
 			color = td_alt_style
 		else:
 			color = ''
+
 		# build commit message
 		commit_message = build_commit_message(
-			data['key'], data['msrp'], data['summary'])
+			key=data['key'],
+			msrp=data['msrp'],
+			summary=data['summary'],
+			epic_link=data['epic_link']
+		)
+		
 		# create message piece
 		message += f"\
 		<tr> \

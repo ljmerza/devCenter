@@ -12,6 +12,6 @@ class Chat(ChatMisc, ChatPcrQa, ChatAPI):
 		ChatMisc.__init__(self, chat_api=self.chat_api, merge_alerts=merge_alerts)
 		ChatPcrQa.__init__(self, chat_api=self.chat_api, is_qa_pcr=is_qa_pcr)
 
-	def send_me_ticket_info(self, key:str, summary:str, username:str, ping_message:str):
+	def send_dev_center_ticket_info(self, key:str, summary:str, username:str, ping_message:str):
 		message = f"{ping_message} <a href='{self.chat_api.jira_ticket_base}/{key}'>{key}</a> {summary} {username}"
-		self.chat_api.send_message(message=message, username=self.chat_api.username)
+		self.chat_api.send_message(message=message, username=self.chat_api.dev_center_chat)

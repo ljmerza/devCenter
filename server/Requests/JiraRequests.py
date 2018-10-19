@@ -134,8 +134,8 @@ def get_jira_tickets(data):
 		return {'status': False, 'data': f'Could not get Jira tickets for filter number {filter_number}: '+jira_data['data'] }
 
 	for ticket in jira_data['data']:
-		ticket['commit'] = build_commit_message(ticket['key'], ticket['msrp'], ticket['summary']) 
-		ticket['branch'] = get_branch_name(ticket['username'], ticket['msrp'], ticket['summary'])
+		ticket['commit'] = build_commit_message(key=ticket['key'], msrp=ticket['msrp'], summary=ticket['summary'], epic_link=ticket['epic_link']) 
+		ticket['branch'] = get_branch_name(username=ticket['username'], msrp=ticket['msrp'], summary=ticket['summary'])
 
 	return jira_data
 
