@@ -17,8 +17,8 @@ export class JiraPingsService {
   	 * @param {string} pingType the type of ping to send (new or merge)
 	 * @return {Observable} the http observable
 	 */
-	setPing({key, pingType}): Observable<any> {
-		const postData = { key, ping_type:pingType, username: this.user.username };
+	setPing({key, pingType, epic_link}): Observable<any> {
+		const postData = { key, ping_type:pingType, username: this.user.username, epic_link };
 		return this.dataService.post(`${this.dataService.apiUrl}/chat/send_ping`, postData);
 	}
 

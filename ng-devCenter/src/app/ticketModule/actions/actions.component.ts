@@ -41,6 +41,7 @@ export class ActionsComponent {
 	    	(<SetPingsComponent>matchingRef.component.instance).masterBranch = ticket.master_branch;
 	    	(<SetPingsComponent>matchingRef.component.instance).branch = ticket.branch;
 	    	(<SetPingsComponent>matchingRef.component.instance).commit = ticket.commit;
+	    	(<SetPingsComponent>matchingRef.component.instance).epic_link = ticket.epic_link || '';
 	    	this.pingComponentRef.push(matchingRef);
 	    }
 

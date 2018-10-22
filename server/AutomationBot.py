@@ -168,6 +168,7 @@ class AutomationBot(object):
 		key = jira_ticket['key']
 		msrp = jira_ticket['msrp']
 		summary = jira_ticket['summary']
+		epic_link = jira_ticket['epic_link']
 
 		# see if user wants ping
 		wants_ping = self.sql_object.get_user_ping_value(username=username, field='new_ping')
@@ -184,13 +185,15 @@ class AutomationBot(object):
 			thr = threading.Thread(
 				target=self.chat_obj.send_new_ticket, 
 				kwargs={
-				'key':key, 
-				'msrp':msrp, 
-				'summary':summary, 
-				'story_point':story_point, 
-				'pcr_estimate':pcr_estimate, 
-				'username': username
-			})
+					'key':key, 
+					'msrp':msrp, 
+					'summary':summary, 
+					'story_point':story_point, 
+					'pcr_estimate':pcr_estimate, 
+					'username': username,
+					'epic_link': epic_link
+				}
+			)
 			thr.start()
 
 			# send dev center new ticket ping
@@ -211,12 +214,15 @@ class AutomationBot(object):
 			self.sql_object.update_ping(key=key, field='new_ping', value=1)
 			self.ping_dev_center(key=key, summary=summary, username=username, pingType='New Ticket')
 
-	def ping_dev_center(self, key, summary, username, pingType):
-		'''pings the admin about a ticket
+	def ping_dev_center(self, key:str, summary:str, username:str, pingType):
+		'''pings the dev center chat about a ticket
 		'''
+
+		print(key, username)
+
 		thr = threading.Thread(
 			target=self.chat_obj.send_dev_center_ticket_info, 
-			kwargs={'key':key, 'summary':summary, 'username':username, 'ping_dev_centerssage':pingType}
+			kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':pingType}
 		)
 		thr.start()
 
@@ -241,6 +247,7 @@ class AutomationBot(object):
 		summary = jira_ticket['summary']
 		component = jira_ticket['component']
 		status = jira_ticket['status']
+		epic_link = jira_ticket['epic_link']
 
 		# get jira ticket's ping settings
 		pings = self.sql_object.get_pings(key=key)
@@ -283,19 +290,19 @@ class AutomationBot(object):
 		
 		# if merge needed and has not been pinged - update db and send ping
 		elif("Merge Code" in component and not pings.merge_ping):
-			self.ping_jira_status(msrp=msrp, ping_type='merge_ping', username=username, key=key, summary=summary, ping_dev_centerssage='Merge Code', sprint=sprint)
+			self.ping_jira_status(msrp=msrp, ping_type='merge_ping', username=username, key=key, summary=summary, ping_message='Merge Code', sprint=sprint, epic_link=epic_link)
 			
 		# if merge conflict and has not been pinged - update db and send ping
 		elif("Merge Conflict" in component and not pings.conflict_ping):
-			self.ping_jira_status(msrp=msrp, ping_type='conflict_ping', username=username, key=key, summary=summary, ping_dev_centerssage='Merge Conflict')
+			self.ping_jira_status(msrp=msrp, ping_type='conflict_ping', username=username, key=key, summary=summary, ping_message='Merge Conflict', epic_link=epic_link)
 		
 		# if uct fail and has not been pinged - update db and send ping	
 		elif("UCT - Failed" in component and not pings.uct_fail_ping):
-			self.ping_jira_status(msrp=msrp, ping_type='uct_fail_ping', username=username, key=key, summary=summary, ping_dev_centerssage='UCT - Failed')
+			self.ping_jira_status(msrp=msrp, ping_type='uct_fail_ping', username=username, key=key, summary=summary, ping_message='UCT - Failed', epic_link=epic_link)
 		
 		# if cr fail and has not been pinged - update db and send ping
 		elif("Code Review - Failed" in component and not pings.cr_fail_ping):
-			self.ping_jira_status(msrp=msrp, ping_type='cr_fail_ping', username=username, key=key, summary=summary, ping_dev_centerssage='Code Review - Failed')
+			self.ping_jira_status(msrp=msrp, ping_type='cr_fail_ping', username=username, key=key, summary=summary, ping_message='Code Review - Failed', epic_link=epic_link)
 		
 		# if ready in uct, has no merge code component, ticket has already been pinged for merge code and hasnt been pinged for code merged then ping
 		elif("Ready for UCT" in status and "Merge Code" not in component and pings.merge_ping and not pings.uct_ping):
@@ -314,14 +321,14 @@ class AutomationBot(object):
 
 		# if in dev and already uct pinged then it's a uct fail
 		elif( "In Development" in status and pings.uct_ping):
-			self.ping_jira_status(msrp=msrp, ping_type='uct_fail_ping', username=username, key=key, summary=summary, ping_dev_centerssage='UCT - Failed')
+			self.ping_jira_status(msrp=msrp, ping_type='uct_fail_ping', username=username, key=key, summary=summary, ping_message='UCT - Failed', epic_link=epic_link)
 
 		# if in dev but QA pinged then then it's a QA fail
 		elif( "In Development" in status and pings.qa_ping):
-			self.ping_jira_status(msrp=msrp, ping_type='qa_fail_ping', username=username, key=key, summary=summary, ping_dev_centerssage='QA - Failed')
+			self.ping_jira_status(msrp=msrp, ping_type='qa_fail_ping', username=username, key=key, summary=summary, ping_message='QA - Failed', epic_link=epic_link)
 
 
-	def ping_jira_status(self, msrp, ping_type, username, key, summary, ping_dev_centerssage, sprint=''):
+	def ping_jira_status(self, msrp, ping_type, username, key, summary, ping_message, sprint='', epic_link=''):
 		'''pings a Jira ticket status to a user if they are setup to get pings
 
 		Args:
@@ -330,8 +337,9 @@ class AutomationBot(object):
 			username (str)  the username of the user who is getting pinged
 			key (str)  the key of the Jira ticket
 			summary (str)  the sumary of the Jira ticket
-			ping_dev_centerssage (str) the type of ping (New Ticket, QA Fail, etc)
+			ping_message (str) the type of ping (New Ticket, QA Fail, etc)
 			sprint (str)  the sprint of the Jira ticket
+			epic_link (str)
 
 		Returns:
 			None
@@ -343,13 +351,18 @@ class AutomationBot(object):
 		if(wants_ping == 1):
 			thr = threading.Thread(
 				target=self.chat_obj.send_jira_update, 
-				kwargs={'key':key, 'msrp':msrp, 'summary':summary, 'username':username, 'ping_dev_centerssage':ping_dev_centerssage, 'sprint':sprint}
+				kwargs={
+					'key':key, 
+					'msrp':msrp, 
+					'summary':summary, 
+					'username':username, 
+					'ping_message':ping_message, 
+					'sprint':sprint,
+					'epic_link':epic_link
+				}
 			)
 			thr.start()
 		
-		# ping admin of status change
-		if(username != self.username):
-			self.ping_dev_center(key=key, summary=summary, username=username, pingType=ping_dev_centerssage)
-
+		self.ping_dev_center(key=key, summary=summary, username=username, pingType=ping_message)
 		self.sql_object.reset_pings(ping_type=ping_type, key=key)
 		self.sql_object.update_ping(key=key, field=ping_type, value=1)

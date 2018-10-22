@@ -35,7 +35,7 @@ class ChatAPI():
 	def send_message(self, message, username):
 		if self.debug:
 			username = self.username
-			message = '--DEBUG--'+message
+			message = f"--DEBUG--{message}"
 
 		if self.no_pings:
 			return {'status': True, 'data': 'OKAY'}
@@ -47,7 +47,7 @@ class ChatAPI():
 
 	def send_meeting_message(self, message, chatroom):
 		if self.debug:
-			message = '--DEBUG--'+message
+			message = f"--DEBUG--{message}"
 
 		if self.no_pings:
 			return {'status': True, 'data': 'OKAY'}
@@ -59,5 +59,3 @@ class ChatAPI():
 
 	def _process_response(self, response):
 		return {'status': response.status_code == 200, 'data': response.text}
-
-

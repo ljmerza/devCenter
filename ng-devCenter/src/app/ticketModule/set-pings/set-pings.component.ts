@@ -13,6 +13,7 @@ export class SetPingsComponent {
 	@Input() commit;
 	@Input() branch;
 	@Input() masterBranch;
+	@Input() epic_link;
 
 	modalSize = {width: '700px', height: '350px'};
 	@ViewChild(ModalComponent) modal: ModalComponent;
@@ -32,7 +33,7 @@ export class SetPingsComponent {
 		if(!pingType) return;
 
 		this.toastr.showToast(`Sending a ${pingType} ping`, 'info');
-		this.jira.setPing({key: this.key, pingType}).subscribe(
+		this.jira.setPing({key: this.key, pingType, epic_link: this.epic_link}).subscribe(
 			response => {
 				pingType = pingType.replace('_', ' ');
 				this.toastr.showToast(`${pingType} ping reset: ${response.data}`, 'success');

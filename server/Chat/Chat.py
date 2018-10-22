@@ -14,4 +14,4 @@ class Chat(ChatMisc, ChatPcrQa, ChatAPI):
 
 	def send_dev_center_ticket_info(self, key:str, summary:str, username:str, ping_message:str):
 		message = f"{ping_message} <a href='{self.chat_api.jira_ticket_base}/{key}'>{key}</a> {summary} {username}"
-		self.chat_api.send_message(message=message, username=self.chat_api.dev_center_chat)
+		self.chat_api.send_meeting_message(message=message, chatroom=self.chat_api.dev_center_chat)

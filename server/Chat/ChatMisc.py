@@ -8,7 +8,7 @@ class ChatMisc():
 		self.chat_api = chat_api
 		self.merge_alerts = merge_alerts
 
-	def send_new_ticket(self, key, msrp, summary, username, story_point, pcr_estimate):
+	def send_new_ticket(self, key, msrp, summary, username, story_point, pcr_estimate, epic_link):
 		branch = get_branch_name(username=username, msrp=msrp, summary=summary)
 		estimate = get_estimate_string(story_point=story_point)
 
@@ -18,6 +18,7 @@ class ChatMisc():
 			"branch": branch,
 			"pcr_estimate": pcr_estimate,
 			"estimate": estimate,
+			"epic_link": epic_link,
 			"key": key,
 			"type_message": 'New Ticket'
 		}
@@ -32,7 +33,7 @@ class ChatMisc():
 		if(username not in self.chat_api.project_managers):
 			return self.chat_api.send_message(message=message, username=username)
 			
-	def send_merge_needed(self, key, msrp, summary, username, sprint):
+	def send_merge_needed(self, key, msrp, summary, username, sprint, epic_link):
 		branch = get_branch_name(username=username, msrp=msrp, summary=summary)
 		sprint = sprint.replace(" ", "")
 
@@ -40,6 +41,7 @@ class ChatMisc():
 			"summary": summary,
 			"msrp": msrp,
 			"key": key,
+			"epic_link": epic_link,
 			"sprint": sprint,
 			"branch": branch,
 			"type_message": 'Merge needed'
@@ -107,11 +109,11 @@ class ChatMisc():
 
 		self.chat_api.send_meeting_message(message=message, chatroom=self.chat_api.apex_chat)
 
-	def send_jira_update(self, key, msrp, summary, username, ping_message, sprint):
+	def send_jira_update(self, key, msrp, summary, username, ping_message, sprint, epic_link):
 		if ping_message in ['Merge Conflict','Code Review - Failed','UCT - Failed','UCT - Failed','QA - Failed']:
 			self._send_fail(key=key, msrp=msrp, summary=summary, username=username, type_comp=ping_message)
 		elif ping_message == 'Merge Code':
-			self.send_merge_needed(key=key, msrp=msrp, summary=summary, username=username, sprint=sprint)
+			self.send_merge_needed(key=key, msrp=msrp, summary=summary, username=username, sprint=sprint, epic_link=epic_link)
 
 	def _send_fail(self, key, msrp, summary, username, type_comp):
 		branch = get_branch_name(username=username, msrp=msrp, summary=summary)
