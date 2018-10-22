@@ -217,9 +217,6 @@ class AutomationBot(object):
 	def ping_dev_center(self, key:str, summary:str, username:str, pingType):
 		'''pings the dev center chat about a ticket
 		'''
-
-		print(key, username)
-
 		thr = threading.Thread(
 			target=self.chat_obj.send_dev_center_ticket_info, 
 			kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':pingType}
