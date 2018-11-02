@@ -1,0 +1,28 @@
+<button mat-menu-item [matMenuTriggerFor]="menu" *ngIf='isSubMenu; else mainButton'>{{navLinks?.name}}</button>
+<ng-template #mainButton>
+	<button mat-button [matMenuTriggerFor]="menu">{{navLinks?.name}}</button>
+</ng-template>
+
+<mat-menu #menu="matMenu">
+	<ng-container *ngFor="let navLink of navLinks?.items">
+	 	<!-- submenu -->
+		<dc-dropdown-menu *ngIf='navLink?.items; else menuItem'
+			[navLinks]=navLink
+			[baseUrl]=baseUrl
+			[emberUrl]=emberUrl
+			[teamUrl]=teamUrl
+			[isSubMenu]=true
+		>
+		</dc-dropdown-menu>
+		
+		<ng-template #menuItem>
+			<dc-dropdown-item
+				[navLink]=navLink
+				[baseUrl]=baseUrl
+				[emberUrl]=emberUrl
+				[teamUrl]=teamUrl
+			>
+			</dc-dropdown-item>
+		</ng-template>
+	</ng-container>
+</mat-menu>

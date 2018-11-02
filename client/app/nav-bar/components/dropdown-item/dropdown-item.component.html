@@ -1,0 +1,33 @@
+<button mat-menu-item>
+	<!-- full link given -->
+	<a *ngIf='navLink.hasFullUrl; else fullLink' class="dropdown-item" target="_blank" href="{{navLink.link}}">
+		{{navLink.name}}
+	</a>
+
+	<!-- link with given emberUrl -->
+	<ng-template #fullLink>
+		<a 
+			*ngIf='navLink.isEmber; else teamUrlLink' 
+			class="dropdown-item" target="_blank" 
+			href="{{emberUrl}}/{{navLink.link}}">
+			{{navLink.name}}
+		</a>
+	</ng-template>
+
+	<!-- link given teamUrl -->
+	<ng-template #teamUrlLink>
+		<a 
+			*ngIf='navLink.isTeam; else baseUrlLink' 
+			class="dropdown-item" target="_blank" 
+			href="{{teamUrl}}/{{navLink.link}}">
+			{{navLink.name}}
+		</a>
+	</ng-template>
+
+	<!-- link given baseUrl -->
+	<ng-template #baseUrlLink>
+		<a class="dropdown-item" target="_blank" href="{{baseUrl}}/{{navLink.link}}">
+			{{navLink.name}}
+		</a>
+	</ng-template>
+</button>
