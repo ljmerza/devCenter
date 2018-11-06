@@ -14,9 +14,7 @@
     ],
     "paths": {
       "@app/*": ["app/*"],
-      "@env/*": [
-        "environments/*"
-      ],
+      "@env/*": ["environments/*"],
       "@testing/*": [
         "testing/*"
       ]

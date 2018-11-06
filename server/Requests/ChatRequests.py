@@ -29,15 +29,23 @@ def send_ping(data, dev_chat, no_pings):
 		pcr_estimate = jira_obj.get_pcr_estimate(story_point=data['story_point'])
 
 		return chat_obj.send_new_ticket( 
-			key=data['key'], msrp=data['msrp'], summary=data['summary'], 
-			username=username, story_point=data['story_point'], 
-			pcr_estimate=pcr_estimate, epic_link=data['epic_link']
+			key=data['key'], 
+			msrp=data['msrp'], 
+			summary=data['summary'], 
+			username=username, 
+			story_point=data['story_point'], 
+			pcr_estimate=pcr_estimate, 
+			epic_link=data['epic_link']
 		)
 
 	elif data['ping_type'] == 'merge':
 		return chat_obj.send_merge_needed( 
-			key=data['key'], msrp=data['msrp'], summary=data['summary'], 
-			username=username, sprint=data['sprint']
+			key=data['key'], 
+			msrp=data['msrp'], 
+			summary=data['summary'], 
+			username=username, 
+			sprint=data['sprint'],
+			epic_link=data['epic_link']
 		)
 
 	else:
