@@ -11,13 +11,14 @@ import { ActionNavBarRetrieve } from '../../nav-bar.actions';
 @Component({
   selector: 'dc-nav-bar',
   templateUrl: './nav-bar.component.html',
-  styleUrls: ['./nav-bar.component.css']
+  styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent implements OnInit, OnDestroy {
   private settings$: Subscription;
   private navBarItems$: Subscription;
   navBarItems;
   settings;
+  env = env;
   logo = require('@app/../assets/logo.png');
 
   constructor(public store: Store<{}>) {}

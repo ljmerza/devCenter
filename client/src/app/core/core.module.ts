@@ -17,10 +17,7 @@ import { reducers, metaReducers } from './core.state';
 import { AppErrorHandler } from './error-handler/app-error-handler.service';
 import { httpInterceptorProviders } from '@app/core/http-interceptors';
 
-import {
-  StoreRouterConnectingModule,
-  RouterStateSerializer
-} from '@ngrx/router-store';
+import { StoreRouterConnectingModule, RouterStateSerializer } from '@ngrx/router-store';
 import { CustomSerializer } from './router/custom-serializer';
 import { NotificationService } from './notifications/notification.service';
 
@@ -34,9 +31,7 @@ import { NotificationService } from './notifications/notification.service';
     StoreModule.forRoot(reducers, { metaReducers }),
     StoreRouterConnectingModule.forRoot(),
     EffectsModule.forRoot([AuthEffects]),
-    environment.production
-      ? []
-      : StoreDevtoolsModule.instrument({ name: 'Dev Center' })
+    environment.production ? [] : StoreDevtoolsModule.instrument({ name: 'Dev Center' })
   ],
   declarations: [],
   providers: [
@@ -45,7 +40,7 @@ import { NotificationService } from './notifications/notification.service';
     AuthGuardService,
     AnimationsService,
     ConfigService,
-    httpInterceptorProviders,
+    ...httpInterceptorProviders,
     TitleService,
     { provide: ErrorHandler, useClass: AppErrorHandler },
     { provide: RouterStateSerializer, useClass: CustomSerializer }

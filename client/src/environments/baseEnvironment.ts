@@ -24,7 +24,6 @@ export const baseEnv = {
   crucibleUrl: 'https://icode3.web.att.com',
   codeCloudUrl: 'https://codecloud.web.att.com',
   betaUrl: 'http://chrapud16b.gcsc.att.com',
-  wikiUrl: 'https://wiki.web.att.com',
   msrpLink: 'http://ix.web.att.com',
 
   jiraPath: '/secure/Dashboard.jspa',

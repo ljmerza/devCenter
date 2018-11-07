@@ -2,7 +2,7 @@
 
 @import '../node_modules/bootstrap/scss/bootstrap-reboot';
 @import '../node_modules/bootstrap/scss/bootstrap-grid';
-@import 'styles-reset';
+@import 'themes/styles-reset';
 
 @import '../node_modules/@angular/material/theming';
 
@@ -13,36 +13,34 @@
 @import 'themes/black-theme.scss';
 @import 'themes/nature-theme.scss';
 
-@import 'styles-reset.scss-theme';
-@import 'notifications.component.scss-theme';
+@import 'themes/styles-reset.scss-theme';
+@import 'themes/notifications.component.scss-theme';
 @import 'app/app.component.scss-theme';
-@import 'app/shared/big-input/big-input.component.scss-theme';
 @import 'app/static/about/about.component.scss-theme';
 
 @mixin custom-components-theme($theme) {
-  @include anms-styles-reset-theme($theme);
-  @include anms-app-component-theme($theme);
-  @include anms-about-component-theme($theme);
-  @include anms-big-input-component-theme($theme);
-  @include anms-notifications-component-theme($theme);
+  @include dc-styles-reset-theme($theme);
+  @include dc-app-component-theme($theme);
+  @include dc-about-component-theme($theme);
+  @include dc-notifications-component-theme($theme);
 }
 
 .default-theme {
-  @include angular-material-theme($anms-theme);
-  @include custom-components-theme($anms-theme);
+  @include angular-material-theme($dc-theme);
+  @include custom-components-theme($dc-theme);
 }
 
 .light-theme {
-  @include angular-material-theme($anms-light-theme);
-  @include custom-components-theme($anms-light-theme);
+  @include angular-material-theme($dc-light-theme);
+  @include custom-components-theme($dc-light-theme);
 }
 
 .black-theme {
-  @include angular-material-theme($anms-black-theme);
-  @include custom-components-theme($anms-black-theme);
+  @include angular-material-theme($dc-black-theme);
+  @include custom-components-theme($dc-black-theme);
 }
 
 .nature-theme {
-  @include angular-material-theme($anms-nature-theme);
-  @include custom-components-theme($anms-nature-theme);
+  @include angular-material-theme($dc-nature-theme);
+  @include custom-components-theme($dc-nature-theme);
 }

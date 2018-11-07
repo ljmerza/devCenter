@@ -1,0 +1,28 @@
+<form class='search-bar' (ngSubmit)="onSubmit()" #heroForm="ngForm">
+
+  <mat-form-field>
+    <mat-select [(ngModel)]="formValues.searchType" name="searchType" (selectionChange)='changeInputType($event)'>
+      <mat-option *ngFor="let select of validFormValues" [value]="select.name">
+        {{select.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf='selectedSearchOption?.secondDropdown'>
+    <mat-select [(ngModel)]="formValues.secondSearchType" name="secondSearchType">
+      <mat-option *ngFor="let select of selectedSearchOption?.secondDropdown" [value]="select.value">
+        {{select.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class='full-width'>
+    <mat-label>{{selectedSearchOption?.placeholder}}</mat-label>
+    <input matInput [(ngModel)]="formValues.inputValue" name="inputValue">
+  </mat-form-field>
+
+  <button mat-raised-button class='float-right' color="primary">
+    {{selectedSearchOption?.buttonName}}
+  </button>
+
+</form>

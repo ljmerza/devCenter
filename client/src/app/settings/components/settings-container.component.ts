@@ -15,7 +15,7 @@ import { SettingsState } from '../settings.model';
 import { selectSettings } from '../settings.selectors';
 
 @Component({
-  selector: 'anms-settings',
+  selector: 'dc-settings',
   templateUrl: './settings-container.component.html',
   styleUrls: ['./settings-container.component.scss']
 })
@@ -28,17 +28,19 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
   constructor(private store: Store<{}>, private formBuilder: FormBuilder) {
     store.pipe(select(selectSettings),takeUntil(this.unsubscribe$)).subscribe(settings => {
       this.settings = settings;
+      console.log({settings,t:this.settingsForm});
 
       // if password was changed from encryption then update UI
       if(this.settingsForm && this.settingsForm.value.password !== settings.password)
-        this.settingsForm.setValue({password: settings.password });
+        this.settingsForm.setValue({ ...this.settingsForm.value, password: settings.password });
     });
   }
 
   ngOnInit() {
     this.settingsForm = this.formBuilder.group({
       username: [this.settings.username, Validators.compose([Validators.required,SettingsContainerComponent.usernameValidator])],
-      password: [this.settings.password, Validators.compose([Validators.required,SettingsContainerComponent.portValidator])],
+      password: [this.settings.password, [Validators.required]],
+      port: [this.settings.port, Validators.compose([Validators.required,SettingsContainerComponent.portValidator])],
       devServer: [this.settings.devServer, [Validators.required]],
       emberUrl: [this.settings.emberUrl, [Validators.required]],
       teamUrl: [this.settings.teamUrl, [Validators.required]],

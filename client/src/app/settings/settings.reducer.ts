@@ -13,10 +13,7 @@ export const initialState: SettingsState = {
   theme: 'DEFAULT-THEME'
 };
 
-export function settingsReducer(
-  state: SettingsState = initialState,
-  action: SettingsActions
-): SettingsState {
+export function settingsReducer(state: SettingsState = initialState, action: SettingsActions): SettingsState {
   switch (action.type) {
     case SettingsActionTypes.CHANGE_THEME:
     case SettingsActionTypes.PERSIST:

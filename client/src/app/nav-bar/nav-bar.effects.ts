@@ -4,22 +4,39 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, tap, map, switchMap } from 'rxjs/operators';
+import { environment as env } from '@env/environment';
 
 import {
-  ActionNavBarRetrieve,
-  ActionNavBarRetrieveError,
-  ActionNavBarRetrieveSuccess,
-  NavBarActionTypes
+  ActionNavBarRetrieve, ActionNavBarRetrieveError,
+  ActionNavBarRetrieveSuccess, NavBarActionTypes,
+  ActionSearch, ActionSearchSuccess, ActionSearchError, 
+  ActionOpenTicket
 } from './nav-bar.actions';
+
 import { NavBarService } from './nav-bar.service';
 import { NavBarItem } from './nav-bar.model';
 
 @Injectable()
 export class NavBarEffects {
-  constructor(
-    private actions$: Actions<Action>,
-    private service: NavBarService
-  ) {}
+  constructor(private actions$: Actions<Action>, private service: NavBarService) {}
+
+  @Effect()
+  searchJiraTicket = () =>
+    this.actions$.pipe(
+      ofType<ActionSearch>(NavBarActionTypes.SEARCH),
+      switchMap((action: ActionSearch) =>
+        this.service.findJiraTicket(action.payload).pipe(
+          map((response: any) => new ActionOpenTicket(response.data)),
+          catchError(error => of(new ActionSearchError({ error })))
+        )
+      )
+    );
+
+  @Effect({ dispatch: false })
+  persistSettings = this.actions$.pipe(
+    ofType<ActionOpenTicket>(NavBarActionTypes.OPEN_TICKET),
+    tap(action => window.open(`${env.jiraUrl}/browse/${action.payload}`))
+  );
 
   @Effect()
   retrieveNavBar = () =>
@@ -27,12 +44,7 @@ export class NavBarEffects {
       ofType<ActionNavBarRetrieve>(NavBarActionTypes.RETRIEVE),
       switchMap((action: ActionNavBarRetrieve) =>
         this.service.retrieveNavBar().pipe(
-          map(
-            (response: any) =>
-              new ActionNavBarRetrieveSuccess({
-                navBarItems: this.processNavBarItems(response.data)
-              })
-          ),
+          map((response: any) => new ActionNavBarRetrieveSuccess({navBarItems: this.processNavBarItems(response.data)})),
           catchError(error => of(new ActionNavBarRetrieveError({ error })))
         )
       )
@@ -116,7 +128,7 @@ export class NavBarEffects {
       link: item.link,
       name: item.name,
       hasFullUrl: /^http/.test(item.link),
-      isEmber: /Ember/i.test(item.type),
+      isEmber: /\/Ember\//i.test(item.type),
       isTeam: /TeamDB/i.test(item.type) || /TeamDB/i.test(item.name)
     };
 

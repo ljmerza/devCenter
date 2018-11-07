@@ -1,0 +1,12 @@
+
+#log-hours {
+	color:red;
+    animation: glow 0.5s infinite alternate;
+    font-weight: bold;
+}
+
+@keyframes glow {
+    to {
+        text-shadow: 0 0 30px rgba(255,255,255,0.4);
+    }
+}

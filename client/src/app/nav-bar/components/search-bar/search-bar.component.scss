@@ -1,0 +1,13 @@
+
+.search-bar {
+	float: right;
+
+	.mat-select-panel {
+		max-height: 4000px !important;
+	}
+
+	.mat-form-field {
+		margin-right: 10px;
+		font-size: 14px;
+	}
+}

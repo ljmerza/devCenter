@@ -14,12 +14,11 @@ import { tap } from 'rxjs/operators';
 export class HttpErrorInterceptor implements HttpInterceptor {
   constructor(private injector: Injector) {}
 
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
       tap(null, (err: any) => {
+        console.log({err});
+        
         if (err instanceof HttpErrorResponse) {
           const appErrorHandler = this.injector.get(ErrorHandler);
           appErrorHandler.handleError(err);

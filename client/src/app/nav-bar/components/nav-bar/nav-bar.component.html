@@ -6,15 +6,14 @@
 	<dc-dropdown-menu 
 		*ngIf='this.settings.username && this.settings.port'
 		[navLinks]=navBarItems?.DevLinks
-		[baseUrl]=this.devBaseUrl
-		[emberUrl]=this.emberBaseUrl
-		[teamUrl]=this.teamBaseUrl
+		[baseUrl]=devBaseUrl
+		[emberUrl]=emberBaseUrl
+		[teamUrl]=teamBaseUrl
 	></dc-dropdown-menu>
 
 	<dc-dropdown-menu 
-			*ngIf='navBarItems?.BetaLinks' 
-			[navLinks]=navBarItems?.BetaLinks 
-			[baseUrl]='"test"'
+		*ngIf='navBarItems?.BetaLinks' 
+		[navLinks]=navBarItems?.BetaLinks 
 	></dc-dropdown-menu>
 
 	<dc-dropdown-menu 
@@ -25,7 +24,15 @@
 	<dc-dropdown-menu 
 		*ngIf='navBarItems?.HelpfulLinks' 
 		[navLinks]=navBarItems?.HelpfulLinks 
-		[baseUrl]='"configwikiUrl"'
 	></dc-dropdown-menu>
+	
+	<span class="nav-link">
+		<button mat-button><a target="_blank" href="{{env.msrpLink}}">MSRP</a></button>
+		<button mat-button><a target="_blank" href="{{env.myApex}}">My APEX</a></button>
+		<button mat-button><a target="_blank" href="{{env.jiraUrl}}">JIRA</a></button>
+		<button mat-button><a id="log-hours" target="_blank" href="{{env.myApex}}">Log Your Hours</a></button>
+	</span>
+
+	<dc-search-bar [emberBaseUrl]=emberBaseUrl></dc-search-bar>
   
 </mat-toolbar>

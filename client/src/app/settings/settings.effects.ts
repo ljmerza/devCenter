@@ -7,10 +7,8 @@ import { of } from 'rxjs';
 import { LocalStorageService } from '@app/core';
 
 import {
-  ActionSettingsPersist,
-  ActionSettingsEncryptPassword,
-  SettingsActionTypes,
-  ActionSettingsRetrieveError
+  ActionSettingsPersist, ActionSettingsEncryptPassword,
+  SettingsActionTypes, ActionSettingsRetrieveError
 } from './settings.actions';
 
 import { SettingsService } from './settings.service';
@@ -20,11 +18,7 @@ export const SETTINGS_KEY = 'SETTINGS';
 
 @Injectable()
 export class SettingsEffects {
-  constructor(
-    private actions$: Actions<Action>,
-    private ls: LocalStorageService,
-    private service: SettingsService
-  ) {}
+  constructor(private actions$: Actions<Action>, private ls: LocalStorageService, private service: SettingsService) {}
 
   @Effect()
   encryptPassword = this.actions$.pipe(
@@ -40,8 +34,6 @@ export class SettingsEffects {
   @Effect({ dispatch: false })
   persistSettings = this.actions$.pipe(
     ofType<ActionSettingsPersist>(SettingsActionTypes.PERSIST),
-    tap(action => {
-      this.ls.setItem(SETTINGS_KEY, action.payload);
-    })
+    tap(action => this.ls.setItem(SETTINGS_KEY, action.payload))
   );
 }

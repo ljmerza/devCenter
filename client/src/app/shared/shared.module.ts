@@ -113,9 +113,6 @@ library.add(
   faBook
 );
 
-import { BigInputComponent } from './big-input/big-input.component';
-import { BigInputActionComponent } from './big-input/big-input-action.component';
-
 @NgModule({
   imports: [
     CommonModule,
@@ -165,7 +162,7 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
 
     FontAwesomeModule
   ],
-  declarations: [BigInputComponent, BigInputActionComponent],
+  declarations: [],
   exports: [
     CommonModule,
     FormsModule,
@@ -214,9 +211,6 @@ import { BigInputActionComponent } from './big-input/big-input-action.component'
     ScrollingModule,
 
     FontAwesomeModule,
-
-    BigInputComponent,
-    BigInputActionComponent
   ]
 })
 export class SharedModule {}
