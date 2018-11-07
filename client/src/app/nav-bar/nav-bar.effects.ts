@@ -6,6 +6,8 @@ import { of } from 'rxjs';
 import { catchError, tap, map, switchMap } from 'rxjs/operators';
 import { environment as env } from '@env/environment';
 
+import { NotificationService } from '@app/core/notifications/notification.service';
+
 import {
   ActionNavBarRetrieve, ActionNavBarRetrieveError,
   ActionNavBarRetrieveSuccess, NavBarActionTypes,
@@ -18,31 +20,36 @@ import { NavBarItem } from './nav-bar.model';
 
 @Injectable()
 export class NavBarEffects {
-  constructor(private actions$: Actions<Action>, private service: NavBarService) {}
+  constructor(private actions$: Actions<Action>, private service: NavBarService, private notificationsService: NotificationService) {}
 
   @Effect()
   searchJiraTicket = () =>
     this.actions$.pipe(
       ofType<ActionSearch>(NavBarActionTypes.SEARCH),
-      switchMap((action: ActionSearch) =>
-        this.service.findJiraTicket(action.payload).pipe(
+      switchMap((action: ActionSearch) => {
+        this.notificationsService.info(`Looking up key for ticket MSRP ${action.payload}`);
+
+        return this.service.findJiraTicket(action.payload).pipe(
           map((response: any) => new ActionOpenTicket(response.data)),
           catchError(error => of(new ActionSearchError({ error })))
         )
-      )
+      })
     );
 
   @Effect({ dispatch: false })
   persistSettings = this.actions$.pipe(
     ofType<ActionOpenTicket>(NavBarActionTypes.OPEN_TICKET),
-    tap(action => window.open(`${env.jiraUrl}/browse/${action.payload}`))
+    tap(action => {
+      this.notificationsService.success(`Opening ticket key ${action.payload}`);
+      window.open(`${env.jiraUrl}/browse/${action.payload}`)
+    })
   );
 
   @Effect()
   retrieveNavBar = () =>
     this.actions$.pipe(
       ofType<ActionNavBarRetrieve>(NavBarActionTypes.RETRIEVE),
-      switchMap((action: ActionNavBarRetrieve) =>
+      switchMap((action: ActionNavBarRetrieve) => 
         this.service.retrieveNavBar().pipe(
           map((response: any) => new ActionNavBarRetrieveSuccess({navBarItems: this.processNavBarItems(response.data)})),
           catchError(error => of(new ActionNavBarRetrieveError({ error })))

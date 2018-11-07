@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">
-	<div class="branding"><img [src]="logo" />
-  		<span data-testid="title">Dev Center</span>
-	</div>
+
+	<!-- <img [src]="logo" /> -->
+  	<span>Dev Center</span>
 
 	<dc-dropdown-menu 
 		*ngIf='this.settings.username && this.settings.port'
@@ -30,9 +30,12 @@
 		<button mat-button><a target="_blank" href="{{env.msrpLink}}">MSRP</a></button>
 		<button mat-button><a target="_blank" href="{{env.myApex}}">My APEX</a></button>
 		<button mat-button><a target="_blank" href="{{env.jiraUrl}}">JIRA</a></button>
-		<button mat-button><a id="log-hours" target="_blank" href="{{env.myApex}}">Log Your Hours</a></button>
+		<dc-log-time></dc-log-time>
 	</span>
+	
 
-	<dc-search-bar [emberBaseUrl]=emberBaseUrl></dc-search-bar>
+	<div class="nav-bar-actions">
+		<dc-search-bar [emberBaseUrl]=emberBaseUrl></dc-search-bar>
+	</div>
   
 </mat-toolbar>

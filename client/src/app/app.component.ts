@@ -7,14 +7,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import {
-  ActionAuthLogin,
-  ActionAuthLogout,
-  AnimationsService,
-  TitleService,
-  selectAuth,
-  routeAnimations,
-  AppState,
-  LocalStorageService
+  AnimationsService, routeAnimations,
+  TitleService, AppState, LocalStorageService
 } from '@app/core';
 import { environment as env } from '@env/environment';
 
@@ -37,22 +31,8 @@ export class AppComponent implements OnInit, OnDestroy {
   envName = env.envName;
   version = env.versions.app;
   year = new Date().getFullYear();
-  languages = ['en', 'de', 'sk', 'fr', 'es', 'pt-br'];
-
-  navigation = [
-    { link: 'about', label: 'about' },
-    { link: 'features', label: 'features' },
-    { link: 'examples', label: 'examples' }
-  ];
-
-  navigationSideMenu = [
-    ...this.navigation,
-    { link: 'settings', label: 'settings' }
-  ];
 
   settings: SettingsState;
-  isAuthenticated: boolean;
-  isHeaderSticky: boolean;
 
   constructor(
     public overlayContainer: OverlayContainer,
@@ -62,13 +42,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private storageService: LocalStorageService
   ) {}
 
-  private static isIEorEdgeOrSafari() {
-    return ['ie', 'edge', 'safari'].includes(browser().name);
-  }
-
   ngOnInit(): void {
     this.subscribeToSettings();
-    this.subscribeToIsAuthenticated();
     this.subscribeToRouterEvents();
     this.storageService.testLocalStorage();
   }
@@ -78,29 +53,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  onLoginClick() {
-    this.store.dispatch(new ActionAuthLogin());
-  }
-
-  onLogoutClick() {
-    this.store.dispatch(new ActionAuthLogout());
-  }
-
-  private subscribeToIsAuthenticated() {
-    this.store
-      .pipe(
-        select(selectAuth),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe(auth => (this.isAuthenticated = auth.isAuthenticated));
-  }
-
   private subscribeToSettings() {
-    this.store
-      .pipe(
-        select(selectSettings),
-        takeUntil(this.unsubscribe$)
-      )
+    this.store.pipe(select(selectSettings), takeUntil(this.unsubscribe$))
       .subscribe(settings => {
         this.settings = settings;
         this.setTheme(settings);
@@ -114,9 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.componentCssClass = effectiveTheme;
 
     const classList = this.overlayContainer.getContainerElement().classList;
-    const toRemove = Array.from(classList).filter((item: string) =>
-      item.includes('-theme')
-    );
+    const toRemove = Array.from(classList).filter((item: string) => item.includes('-theme'));
 
     if (toRemove.length) {
       classList.remove(...toRemove);

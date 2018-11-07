@@ -24,17 +24,12 @@ export class NavBarComponent implements OnInit, OnDestroy {
   constructor(public store: Store<{}>) {}
 
   ngOnInit() {
-    // get navbar
-    this.navBarItems$ = this.store
-      .pipe(select(selectNavBarItems))
+    this.navBarItems$ = this.store.pipe(select(selectNavBarItems))
       .subscribe(navBarItems => (this.navBarItems = navBarItems));
 
-    // get settings
-    this.settings$ = this.store
-      .pipe(select(selectSettings))
+    this.settings$ = this.store.pipe(select(selectSettings))
       .subscribe(settings => (this.settings = settings));
 
-    // retrieve navbar from server
     this.store.dispatch(new ActionNavBarRetrieve());
   }
 

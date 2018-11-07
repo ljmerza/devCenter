@@ -1,17 +1,13 @@
-import { Injectable, Injector, ErrorHandler } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpHeaders, HttpRequest, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, Injector } from '@angular/core';
+import { HttpEvent, HttpInterceptor, HttpHandler, HttpHeaders, HttpRequest } from '@angular/common/http';
 
 import { Observable, Subject } from 'rxjs';
-import { tap, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 
-import {
-  ActionSettingsChangeTheme,
-  ActionSettingsPersist,
-  ActionSettingsEncryptPassword
-} from '@app/settings/settings.actions';
 import { SettingsState } from '@app/settings/settings.model';
 import { selectSettings } from '@app/settings/settings.selectors';
+
 @Injectable()
 export class HttpAuthenticationInterceptor implements HttpInterceptor {
   private unsubscribe$: Subject<void> = new Subject<void>();

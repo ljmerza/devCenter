@@ -3,14 +3,9 @@ import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { environment as env } from '@env/environment';
 
 import { Store, select } from '@ngrx/store';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
-import {
-  ActionSettingsChangeTheme,
-  ActionSettingsPersist,
-  ActionSettingsEncryptPassword
-} from '../settings.actions';
+import { ActionSettingsChangeTheme, ActionSettingsPersist, ActionSettingsEncryptPassword } from '../settings.actions';
 import { SettingsState } from '../settings.model';
 import { selectSettings } from '../settings.selectors';
 
@@ -20,15 +15,14 @@ import { selectSettings } from '../settings.selectors';
   styleUrls: ['./settings-container.component.scss']
 })
 export class SettingsContainerComponent implements OnInit, OnDestroy {
-  private unsubscribe$: Subject<void> = new Subject<void>();
   settings: SettingsState;
+  private settings$: Subscription;
   settingsForm;
   env = env;
 
   constructor(private store: Store<{}>, private formBuilder: FormBuilder) {
-    store.pipe(select(selectSettings),takeUntil(this.unsubscribe$)).subscribe(settings => {
+    this.settings$ = store.pipe(select(selectSettings)).subscribe(settings => {
       this.settings = settings;
-      console.log({settings,t:this.settingsForm});
 
       // if password was changed from encryption then update UI
       if(this.settingsForm && this.settingsForm.value.password !== settings.password)
@@ -55,58 +49,22 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngOnDestroy(): void {
+    this.settings$.unsubscribe();
+  }
+
   /**
    * getters for ngform objects
    */
-  get username() {
-    return this.settingsForm.get('username');
-  }
-  get password() {
-    return this.settingsForm.get('password');
-  }
-  get port() {
-    return this.settingsForm.get('port');
-  }
-  get devServer() {
-    return this.settingsForm.get('devServer');
-  }
-  get emberUrl() {
-    return this.settingsForm.get('emberUrl');
-  }
-  get teamUrl() {
-    return this.settingsForm.get('teamUrl');
-  }
-  get tempUrl() {
-    return this.settingsForm.get('tempUrl');
-  }
-  get cache() {
-    return this.settingsForm.get('cache');
-  }
-  get theme() {
-    return this.settingsForm.get('theme');
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
-  }
-
-  /**
-   * Resets the user form to default settings. Checks for ping setting resets.
-   */
-  resetForm() {
-    this.settingsForm.reset({
-      username: this.settings.username,
-      password: this.settings.password,
-      port: this.settings.port,
-      devServer: this.settings.devServer,
-      emberUrl: this.settings.emberUrl,
-      teamUrl: this.settings.teamUrl,
-      // templateUrl: this.settings.templateUrl,
-      cache: this.settings.cache,
-      theme: this.settings.theme
-    });
-  }
+  get username() { return this.settingsForm.get('username'); }
+  get password() { return this.settingsForm.get('password'); }
+  get port() { return this.settingsForm.get('port'); }
+  get devServer() { return this.settingsForm.get('devServer'); }
+  get emberUrl() { return this.settingsForm.get('emberUrl'); }
+  get teamUrl() { return this.settingsForm.get('teamUrl'); }
+  get tempUrl() { return this.settingsForm.get('tempUrl'); }
+  get cache() { return this.settingsForm.get('cache'); }
+  get theme() { return this.settingsForm.get('theme'); }
 
   /**
    * submits changes to a user's profile
@@ -118,13 +76,11 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 
     const settings = {
       ...this.settingsForm.value,
-      encryptPassword:
-        this.settingsForm.value.password !== this.settings.password
+      encryptPassword: this.settingsForm.value.password !== this.settings.password
     };
 
     // if password has changed then encrypt it first else save settings only
-    if (settings.encryptPassword)
-      this.store.dispatch(new ActionSettingsEncryptPassword(settings));
+    if(settings.encryptPassword) this.store.dispatch(new ActionSettingsEncryptPassword(settings));
     else this.store.dispatch(new ActionSettingsPersist(settings));
   }
 
@@ -135,11 +91,8 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
    * @return {boolean} is the username valid?
    */
   static usernameValidator(control: AbstractControl): { [key: string]: any } {
-    const invalidUsername =
-      control.value && /^[A-Za-z]{2}[0-9]{3}[A-Za-z0-9]$/.test(control.value);
-    return invalidUsername
-      ? null
-      : { usernameValidator: { value: control.value } };
+    const invalidUsername = control.value && /^[A-Za-z]{2}[0-9]{3}[A-Za-z0-9]$/.test(control.value);
+    return invalidUsername ? null : { usernameValidator: { value: control.value } };
   }
 
   /**

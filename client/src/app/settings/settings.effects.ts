@@ -5,6 +5,7 @@ import { tap, map, catchError, exhaustMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { LocalStorageService } from '@app/core';
+import { NotificationService } from '@app/core/notifications/notification.service';
 
 import {
   ActionSettingsPersist, ActionSettingsEncryptPassword,
@@ -18,22 +19,27 @@ export const SETTINGS_KEY = 'SETTINGS';
 
 @Injectable()
 export class SettingsEffects {
-  constructor(private actions$: Actions<Action>, private ls: LocalStorageService, private service: SettingsService) {}
+  constructor(private actions$: Actions<Action>, private ls: LocalStorageService, private service: SettingsService, private notificationsService: NotificationService) {}
 
   @Effect()
   encryptPassword = this.actions$.pipe(
     ofType<ActionSettingsEncryptPassword>(SettingsActionTypes.ENCRYPT),
-    exhaustMap(action =>
-      this.service.encryptPassword(action.payload.password).pipe(
+    exhaustMap(action => {
+      this.notificationsService.info('Encrypting password');
+
+      return this.service.encryptPassword(action.payload.password).pipe(
         map((response: any) => new ActionSettingsPersist({...action.payload, password: response.data})),
         catchError(error => of(new ActionSettingsRetrieveError({ error })))
-      )
-    )
+      );
+    })
   );
 
   @Effect({ dispatch: false })
   persistSettings = this.actions$.pipe(
     ofType<ActionSettingsPersist>(SettingsActionTypes.PERSIST),
-    tap(action => this.ls.setItem(SETTINGS_KEY, action.payload))
+    tap(action => {
+      this.notificationsService.info('Saving Settings');
+      this.ls.setItem(SETTINGS_KEY, action.payload);
+    })
   );
 }

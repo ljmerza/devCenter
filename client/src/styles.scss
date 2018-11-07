@@ -16,12 +16,10 @@
 @import 'themes/styles-reset.scss-theme';
 @import 'themes/notifications.component.scss-theme';
 @import 'app/app.component.scss-theme';
-@import 'app/static/about/about.component.scss-theme';
 
 @mixin custom-components-theme($theme) {
   @include dc-styles-reset-theme($theme);
   @include dc-app-component-theme($theme);
-  @include dc-about-component-theme($theme);
   @include dc-notifications-component-theme($theme);
 }
 

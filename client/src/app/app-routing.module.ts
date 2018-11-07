@@ -6,7 +6,7 @@ import { SettingsContainerComponent } from './settings';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'settings',
+    redirectTo: 'jira',
     pathMatch: 'full'
   },
   {
@@ -20,17 +20,13 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'settings'
+    redirectTo: 'jira'
   }
 ];
 
 @NgModule({
-  // useHash supports github.io demo page, remove in your app
   imports: [
-    RouterModule.forRoot(routes, {
-      useHash: true,
-      scrollPositionRestoration: 'enabled'
-    })
+    RouterModule.forRoot(routes, {useHash: true, scrollPositionRestoration: 'enabled'})
   ],
   exports: [RouterModule]
 })

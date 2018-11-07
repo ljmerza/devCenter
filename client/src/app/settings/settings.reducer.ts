@@ -2,13 +2,13 @@ import { SettingsState } from './settings.model';
 import { SettingsActions, SettingsActionTypes } from './settings.actions';
 
 export const initialState: SettingsState = {
-  username: 'lm240n',
+  username: '',
   password: '',
-  port: '8173',
-  devServer: 'rldv0211',
-  emberUrl: 'dev',
-  tempUrl: 'dev',
-  teamUrl: 'dev',
+  port: '',
+  devServer: '',
+  emberUrl: '',
+  tempUrl: '',
+  teamUrl: '',
   cache: false,
   theme: 'DEFAULT-THEME'
 };

@@ -13,13 +13,8 @@ export class AppErrorHandler extends ErrorHandler {
     super();
   }
 
-  handleError(error: Error | HttpErrorResponse) {
-    let displayMessage = 'An error occurred.';
-
-    if (!environment.production) {
-      displayMessage += ' See console for details.';
-    }
-
+  handleError(error: any) {
+    const displayMessage = (error.error && error.error.data) || error.statusText;
     this.notificationsService.error(displayMessage);
 
     super.handleError(error);

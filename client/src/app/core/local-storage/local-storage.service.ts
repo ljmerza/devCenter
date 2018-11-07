@@ -7,40 +7,29 @@ export class LocalStorageService {
 
   static loadInitialState() {
     return Object.keys(localStorage).reduce((state: any, storageKey) => {
-      if (storageKey.includes(APP_PREFIX)) {
-        const stateKeys = storageKey
-          .replace(APP_PREFIX, '')
-          .toLowerCase()
-          .split('.')
-          .map(key =>
-            key
-              .split('-')
-              .map(
-                (token, index) =>
-                  index === 0
-                    ? token
-                    : token.charAt(0).toUpperCase() + token.slice(1)
-              )
-              .join('')
-          );
+      if (!storageKey.includes(APP_PREFIX)) return state;
 
-        let currentStateRef = state;
+      const stateKeys = storageKey.replace(APP_PREFIX, '').toLowerCase().split('.')
+        .map(key => key.split('-')
+          .map((token, index) => index === 0 ? token : token.charAt(0).toUpperCase() + token.slice(1)).join('')
+        );
 
-        stateKeys.forEach((key, index) => {
-          if (index === stateKeys.length - 1) {
-            try {
-              currentStateRef[key] = JSON.parse(
-                localStorage.getItem(storageKey)
-              );
-            } catch (e) {
-              currentStateRef[key] = '';
-            }
-            return;
+      let currentStateRef = state;
+
+      stateKeys.forEach((key, index) => {
+        if (index === stateKeys.length - 1) {
+          try {
+            currentStateRef[key] = JSON.parse(localStorage.getItem(storageKey));
+          } catch (e) {
+            currentStateRef[key] = '';
           }
-          currentStateRef[key] = currentStateRef[key] || {};
-          currentStateRef = currentStateRef[key];
-        });
-      }
+
+          return;
+        }
+
+        currentStateRef[key] = currentStateRef[key] || {};
+        currentStateRef = currentStateRef[key];
+      });
 
       return state;
     }, {});

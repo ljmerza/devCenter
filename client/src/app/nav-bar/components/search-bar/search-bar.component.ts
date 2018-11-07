@@ -6,6 +6,7 @@ import { NgForm } from '@angular/forms';
 import { environment as env } from '@env/environment';
 import { selectSettings } from '@app/settings/settings.selectors';
 import { ActionSearch, ActionOpenTicket } from '../../nav-bar.actions';
+import { NotificationService } from '@app/core/notifications/notification.service';
 
 @Component({
   selector: 'dc-search-bar',
@@ -82,7 +83,7 @@ export class SearchBarComponent implements OnInit {
     }
   ];
 
-  constructor(public store: Store<{}>) {}
+  constructor(public store: Store<{}>, private notificationsService: NotificationService) {}
 
   ngOnInit(){
     this.selectedSearchOption = this.validFormValues[0];
@@ -102,7 +103,7 @@ export class SearchBarComponent implements OnInit {
   searchTicket():void {
 
     if(!this.formValues.inputValue){
-      // this.toastr.showToast('MSRP or Jira key required to lookup a ticket', 'error');
+      this.notificationsService.error('MSRP or Jira key required to lookup a ticket');
       return;
     }
 

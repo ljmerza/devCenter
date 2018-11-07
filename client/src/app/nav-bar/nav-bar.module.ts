@@ -14,16 +14,21 @@ import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
 import { DropdownItemComponent } from './components/dropdown-item/dropdown-item.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
+import { LogTimeComponent } from './components/log-time/log-time.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    SharedModule,
-    StoreModule.forFeature('navbar', navBarReducer),
-    EffectsModule.forFeature([NavBarEffects])
-  ],
-  declarations: [NavBarComponent, DropdownMenuComponent, DropdownItemComponent, SearchBarComponent],
-  providers: [NavBarService],
-  exports: [NavBarComponent]
+	imports: [
+		CommonModule,
+		SharedModule,
+		StoreModule.forFeature('navbar', navBarReducer),
+		EffectsModule.forFeature([NavBarEffects])
+	],
+	declarations: [
+		NavBarComponent, DropdownMenuComponent, 
+		DropdownItemComponent, SearchBarComponent,
+		LogTimeComponent
+	],
+	providers: [NavBarService],
+	exports: [NavBarComponent]
 })
 export class NavBarModule {}
