@@ -9,7 +9,7 @@ import { NotificationService } from '@app/core/notifications/notification.servic
 
 import {
   ActionSettingsPersist, ActionSettingsEncryptPassword,
-  SettingsActionTypes, ActionSettingsRetrieveError
+  SettingsActionTypes
 } from './settings.actions';
 
 import { SettingsService } from './settings.service';
@@ -29,7 +29,6 @@ export class SettingsEffects {
 
       return this.service.encryptPassword(action.payload.password).pipe(
         map((response: any) => new ActionSettingsPersist({...action.payload, password: response.data})),
-        catchError(error => of(new ActionSettingsRetrieveError({ error })))
       );
     })
   );

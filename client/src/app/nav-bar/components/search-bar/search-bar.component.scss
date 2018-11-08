@@ -1,10 +1,10 @@
-.mat-select-panel {
- 	max-height: 3000px !important;
-}
-
-.search-bar {
+.dc-search-bar {
 	.mat-form-field {
 		margin-right: 12px;
 		font-size: 16px;
+	}
+	
+	&.mat-select-panel {
+ 		max-height: 3000px !important;
 	}
 }

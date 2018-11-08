@@ -38,7 +38,7 @@ export class SearchBarComponent implements OnInit {
     {
       name: 'ATX',
       buttonName: 'Open ATX',
-      placeholder: 'Open ATX',
+      placeholder: 'ATX Order',
       caller: 'openWorkitem',
       url: 'order/atx', // url piece to use in ember
       secondDropdown: [
@@ -56,28 +56,28 @@ export class SearchBarComponent implements OnInit {
     {
       name: 'Order',
       buttonName: 'Open Order',
-      placeholder: 'Open Order',
+      placeholder: 'Apollo Order',
       caller: 'openWorkitem',
       url: 'order/ethernet' // url piece to use in ember
     },
     {
       name: 'BMP',
       buttonName: 'Open BMP',
-      placeholder: 'Open BMP Ticket',
+      placeholder: 'BMP Ticket',
       caller: 'openWorkitem',
       url: 'ticket/bmp'
     },
     {
       name: 'Ticket',
       buttonName: 'Open Ticket',
-      placeholder: 'Open WFA Ticket',
+      placeholder: 'WFA Ticket',
       caller: 'openWorkitem',
       url: 'ticket/ethernet'
     },
     {
       name: 'RDS Package',
       buttonName: 'Open RDS',
-      placeholder: 'Open RDS Package',
+      placeholder: 'RDS Package',
       caller: 'openWorkitem',
       url: 'order/rds'
     }
@@ -101,7 +101,6 @@ export class SearchBarComponent implements OnInit {
    * Searches for a Jira ticket by key or MSRP. If ticket found opens in new tab.
    */
   searchTicket():void {
-
     if(!this.formValues.inputValue){
       this.notificationsService.error('MSRP or Jira key required to lookup a ticket');
       return;
@@ -122,7 +121,7 @@ export class SearchBarComponent implements OnInit {
    */
   private openWorkitem():void {
     if(!this.formValues.inputValue){
-      // this.toastr.showToast(`${workType} number required.`, 'error');
+      this.notificationsService.error(`${this.selectedSearchOption.placeholder} is required`);
       return;
     }
 

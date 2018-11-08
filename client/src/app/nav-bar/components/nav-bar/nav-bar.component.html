@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">
 
 	<!-- <img [src]="logo" /> -->
-  	<span>Dev Center</span>
+  	<span class='logo'>Dev Center</span>
 
 	<dc-dropdown-menu 
 		*ngIf='this.settings.username && this.settings.port'
@@ -33,9 +33,9 @@
 		<dc-log-time></dc-log-time>
 	</span>
 	
-
-	<div class="nav-bar-actions">
+	<div class="nav-link nav-bar-actions">
 		<dc-search-bar [emberBaseUrl]=emberBaseUrl></dc-search-bar>
+		<dc-profile-dropdown></dc-profile-dropdown>
 	</div>
   
 </mat-toolbar>

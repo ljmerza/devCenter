@@ -10,14 +10,17 @@ export const initialState: SettingsState = {
   tempUrl: '',
   teamUrl: '',
   cache: false,
-  theme: 'DEFAULT-THEME'
+  theme: 'DEFAULT-THEME',
+  isThemeChange: false
 };
 
 export function settingsReducer(state: SettingsState = initialState, action: SettingsActions): SettingsState {
   switch (action.type) {
     case SettingsActionTypes.CHANGE_THEME:
+      return { ...state, ...action.payload, isThemeChange: true };
+      
     case SettingsActionTypes.PERSIST:
-      return { ...state, ...action.payload };
+      return { ...state, ...action.payload, isThemeChange: false };
 
     default:
       return state;

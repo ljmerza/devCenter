@@ -5,8 +5,9 @@ export interface NavBarItem {}
 
 export interface NavBarState {
   loading: boolean;
-  navBarItems?: NavBarItem[];
-  error?: HttpErrorResponse | null,
+  navBarItems?: NavBarItem[],
+  loadingProfile: boolean,
+  profile: any
 }
 
 export interface State extends AppState {

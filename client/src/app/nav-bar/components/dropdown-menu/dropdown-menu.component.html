@@ -1,6 +1,13 @@
-<button mat-menu-item [matMenuTriggerFor]="menu" *ngIf='isSubMenu; else mainButton'>{{navLinks?.name}}</button>
+<button mat-menu-item [matMenuTriggerFor]="menu" *ngIf='isSubMenu; else mainButton'>
+	{{navLinks?.name}}
+</button>
+
 <ng-template #mainButton>
-	<button mat-button [matMenuTriggerFor]="menu">{{navLinks?.name}}</button>
+	
+	<button mat-button [matMenuTriggerFor]="menu">
+		{{navLinks?.name}}
+		<fa-icon icon="caret-down"></fa-icon>
+	</button>
 </ng-template>
 
 <mat-menu #menu="matMenu">

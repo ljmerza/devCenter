@@ -6,7 +6,6 @@ export enum SettingsActionTypes {
   CHANGE_THEME = '[Settings] Change THEME',
   PERSIST = '[Settings] PERSIST',
   ENCRYPT = '[Settings] ENCRYPT',
-  RETRIEVE_ERROR = '[Settings] RETRIEVE_ERROR'
 }
 
 export class ActionSettingsChangeTheme implements Action {
@@ -24,9 +23,6 @@ export class ActionSettingsEncryptPassword implements Action {
   constructor(readonly payload: SettingsState) {}
 }
 
-export class ActionSettingsRetrieveError implements Action {
-  readonly type = SettingsActionTypes.RETRIEVE_ERROR;
-  constructor(readonly payload: { error: HttpErrorResponse }) {}
-}
-
-export type SettingsActions = ActionSettingsChangeTheme | ActionSettingsPersist;
+export type SettingsActions = ActionSettingsChangeTheme 
+  | ActionSettingsPersist 
+  | ActionSettingsEncryptPassword;

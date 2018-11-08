@@ -6,11 +6,11 @@ import { NavBarItem } from './nav-bar.model';
 export enum NavBarActionTypes {
   RETRIEVE = '[nav-bar] Retrieve',
   RETRIEVE_SUCCESS = '[nav-bar] Retrieve Success',
-  RETRIEVE_ERROR = '[nav-bar] Retrieve Error',
   SEARCH = '[nav-bar] Search',
   SEARCH_SUCCESS = '[nav-bar] Search Success',
-  SEARCH_ERROR = '[nav-bar] Search Error',
-  OPEN_TICKET = '[nav-bar] Open Ticket'
+  OPEN_TICKET = '[nav-bar] Open Ticket',
+  PROFILE = '[nav-bar] Profile',
+  PROFILE_SUCCESS = '[nav-bar] Profile Success'
 }
 
 export class ActionNavBarRetrieve implements Action {
@@ -19,10 +19,6 @@ export class ActionNavBarRetrieve implements Action {
 export class ActionNavBarRetrieveSuccess implements Action {
   readonly type = NavBarActionTypes.RETRIEVE_SUCCESS;
   constructor(readonly payload: { navBarItems }) {}
-}
-export class ActionNavBarRetrieveError implements Action {
-  readonly type = NavBarActionTypes.RETRIEVE_ERROR;
-  constructor(readonly payload: { error: HttpErrorResponse }) {}
 }
 
 
@@ -33,22 +29,26 @@ export class ActionSearch implements Action {
 export class ActionSearchSuccess implements Action {
   readonly type = NavBarActionTypes.SEARCH_SUCCESS;
 }
-export class ActionSearchError implements Action {
-  readonly type = NavBarActionTypes.SEARCH_ERROR;
-  constructor(readonly payload: { error: HttpErrorResponse }) {}
-}
-
 
 export class ActionOpenTicket implements Action {
   readonly type = NavBarActionTypes.OPEN_TICKET;
   constructor(readonly payload: string) {}
 }
 
+
+export class ActionProfileRetrieve implements Action {
+  readonly type = NavBarActionTypes.PROFILE;
+}
+export class ActionProfileSuccess implements Action {
+  readonly type = NavBarActionTypes.PROFILE_SUCCESS;
+  constructor(readonly payload: { profile }) {}
+}
+
 export type NavBarActions =
   | ActionNavBarRetrieve
   | ActionNavBarRetrieveSuccess
-  | ActionNavBarRetrieveError
   | ActionSearch
   | ActionSearchSuccess
-  | ActionSearchError
-  | ActionOpenTicket;
+  | ActionOpenTicket
+  | ActionProfileRetrieve
+  | ActionProfileSuccess;

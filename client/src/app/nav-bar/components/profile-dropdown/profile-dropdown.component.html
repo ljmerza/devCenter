@@ -1,0 +1,14 @@
+<button mat-menu-item [matMenuTriggerFor]="profileMenu" *ngIf='profile'>
+  <img src="{{profile?.avatar}}" alt=""> 
+  {{profile?.displayName}}
+  <fa-icon icon="caret-down"></fa-icon>
+</button>
+<mat-menu #profileMenu="matMenu">
+  <button mat-menu-item>
+    <a [routerLink]="['settings']">User Settings</a>
+  </button>
+
+  <button mat-menu-item>User Metrics</button>
+  <button mat-menu-item>About</button>
+  <button mat-menu-item (click)='logout()'>Logout</button>
+</mat-menu>

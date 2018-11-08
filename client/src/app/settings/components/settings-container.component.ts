@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { ActionSettingsChangeTheme, ActionSettingsPersist, ActionSettingsEncryptPassword } from '../settings.actions';
 import { SettingsState } from '../settings.model';
 import { selectSettings } from '../settings.selectors';
+import { NotificationService } from '@app/core/notifications/notification.service';
 
 @Component({
   selector: 'dc-settings',
@@ -20,13 +21,18 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
   settingsForm;
   env = env;
 
-  constructor(private store: Store<{}>, private formBuilder: FormBuilder) {
+  constructor(private store: Store<{}>, private formBuilder: FormBuilder, private notificationsService: NotificationService) {
     this.settings$ = store.pipe(select(selectSettings)).subscribe(settings => {
       this.settings = settings;
 
-      // if password was changed from encryption then update UI
-      if(this.settingsForm && this.settingsForm.value.password !== settings.password)
-        this.settingsForm.setValue({ ...this.settingsForm.value, password: settings.password });
+      // only update all values in form if we aren't doing a theme change
+      // so logouts and saves will overwrite form but not theme changes
+      if(this.settingsForm && !settings.isThemeChange) {
+        const formValues  = {...settings};
+        delete formValues.isThemeChange;
+        delete formValues.encryptPassword;
+        this.settingsForm.setValue({ ...formValues});
+      }
     });
   }
 
@@ -54,6 +60,17 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * if any user info exist then we are updating else we are creating
+   */
+  get submitText(){
+    const isNew = !(this.settings.username && this.settings.cache && this.settings.theme &&
+      this.settings.password && this.settings.port && this.settings.devServer && 
+      this.settings.emberUrl && this.settings.teamUrl && this.settings.tempUrl);
+
+    return isNew ? 'Create' : 'Update';
+  }
+
+  /**
    * getters for ngform objects
    */
   get username() { return this.settingsForm.get('username'); }
@@ -71,8 +88,12 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
    * @param {boolean} submitType are we canceling or submitting user profile changes?
    * @return {boolean} return false to prevent bubbling.
    */
-  submit(): boolean {
-    if (this.settingsForm.invalid) return;
+  submit(): void {
+    if (this.settingsForm.invalid) {
+      console.log({settingsForm:this.settingsForm});
+      this.notificationsService.error(`Invalid form`);
+      return;
+    }
 
     const settings = {
       ...this.settingsForm.value,

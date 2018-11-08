@@ -5,4 +5,5 @@ export const selectSettingsState = createFeatureSelector<State, NavBarState>('na
 
 export const selectNavBarItems = createSelector(selectSettingsState, (state: NavBarState) => state.navBarItems);
 export const selectNavBarLoading = createSelector(selectSettingsState, (state: NavBarState) => state.loading);
-export const selectNavBarError = createSelector(selectSettingsState, (state: NavBarState) => state.error);
+
+export const selectProfile = createSelector(selectSettingsState, (state: NavBarState) => state.profile);

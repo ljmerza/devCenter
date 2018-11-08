@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
@@ -15,18 +16,20 @@ import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.
 import { DropdownItemComponent } from './components/dropdown-item/dropdown-item.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { LogTimeComponent } from './components/log-time/log-time.component';
+import { ProfileDropdownComponent } from './components/profile-dropdown/profile-dropdown.component';
 
 @NgModule({
 	imports: [
 		CommonModule,
 		SharedModule,
+		RouterModule,
 		StoreModule.forFeature('navbar', navBarReducer),
 		EffectsModule.forFeature([NavBarEffects])
 	],
 	declarations: [
 		NavBarComponent, DropdownMenuComponent, 
 		DropdownItemComponent, SearchBarComponent,
-		LogTimeComponent
+		LogTimeComponent, ProfileDropdownComponent
 	],
 	providers: [NavBarService],
 	exports: [NavBarComponent]

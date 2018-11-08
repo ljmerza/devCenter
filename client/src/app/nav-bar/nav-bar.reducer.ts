@@ -4,18 +4,22 @@ import { NavBarState } from './nav-bar.model';
 export const initialState: NavBarState = {
   loading: false,
   navBarItems: [],
-  error: null
+  loadingProfile: false,
+  profile: null
 };
 
 export function navBarReducer(state: NavBarState=initialState, action: NavBarActions): NavBarState {
   switch (action.type) {
 
     case NavBarActionTypes.RETRIEVE:
-      return { ...state, loading: true, error: null };
+      return { ...state, loading: true };
     case NavBarActionTypes.RETRIEVE_SUCCESS:
-      return { ...state, loading: false, error: null, ...action.payload };
-    case NavBarActionTypes.RETRIEVE_ERROR:
-      return { ...state, loading: false, error: action.payload.error };
+      return { ...state, loading: false, ...action.payload };
+
+    case NavBarActionTypes.PROFILE:
+      return { ...state, loadingProfile: true };
+    case NavBarActionTypes.PROFILE_SUCCESS:
+      return { ...state, loadingProfile: false, ...action.payload };
 
     default:
       return state;

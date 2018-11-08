@@ -9,10 +9,10 @@ import { environment as env } from '@env/environment';
 import { NotificationService } from '@app/core/notifications/notification.service';
 
 import {
-  ActionNavBarRetrieve, ActionNavBarRetrieveError,
+  ActionNavBarRetrieve,
   ActionNavBarRetrieveSuccess, NavBarActionTypes,
-  ActionSearch, ActionSearchSuccess, ActionSearchError, 
-  ActionOpenTicket
+  ActionSearch, ActionSearchSuccess, 
+  ActionOpenTicket, ActionProfileRetrieve, ActionProfileSuccess
 } from './nav-bar.actions';
 
 import { NavBarService } from './nav-bar.service';
@@ -31,7 +31,6 @@ export class NavBarEffects {
 
         return this.service.findJiraTicket(action.payload).pipe(
           map((response: any) => new ActionOpenTicket(response.data)),
-          catchError(error => of(new ActionSearchError({ error })))
         )
       })
     );
@@ -52,7 +51,17 @@ export class NavBarEffects {
       switchMap((action: ActionNavBarRetrieve) => 
         this.service.retrieveNavBar().pipe(
           map((response: any) => new ActionNavBarRetrieveSuccess({navBarItems: this.processNavBarItems(response.data)})),
-          catchError(error => of(new ActionNavBarRetrieveError({ error })))
+        )
+      )
+    );
+
+  @Effect()
+  getProfile = () =>
+    this.actions$.pipe(
+      ofType<ActionProfileRetrieve>(NavBarActionTypes.PROFILE),
+      switchMap((action: ActionProfileRetrieve) => 
+        this.service.getProfile().pipe(
+          map((response: any) => new ActionProfileSuccess({profile: response.data})),
         )
       )
     );

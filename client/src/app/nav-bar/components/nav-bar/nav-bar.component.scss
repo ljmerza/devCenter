@@ -1,8 +1,18 @@
 .nav-bar-actions {
 	margin-left: auto;
+	display: inline-flex;
+
+	dc-profile-dropdown {
+		margin-top: 9px;
+		margin-left: 10px;
+	}
 }
 
 .mat-toolbar-single-row {
 	flex-wrap: wrap;
 	height: auto;
+}
+
+.logo {
+	margin-right: 10px;
 }
