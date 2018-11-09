@@ -59,11 +59,12 @@ export class NavBarEffects {
   getProfile = () =>
     this.actions$.pipe(
       ofType<ActionProfileRetrieve>(NavBarActionTypes.PROFILE),
-      switchMap((action: ActionProfileRetrieve) => 
-        this.service.getProfile().pipe(
+      switchMap((action: ActionProfileRetrieve) => {
+        console.log({action});
+        return this.service.getProfile().pipe(
           map((response: any) => new ActionProfileSuccess({profile: response.data})),
         )
-      )
+      })
     );
 
   /**

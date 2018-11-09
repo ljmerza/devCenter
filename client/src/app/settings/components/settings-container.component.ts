@@ -22,17 +22,23 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
   env = env;
 
   constructor(private store: Store<{}>, private formBuilder: FormBuilder, private notificationsService: NotificationService) {
-    this.settings$ = store.pipe(select(selectSettings)).subscribe(settings => {
+    this.settings$ = store.pipe(select(selectSettings)).subscribe((settings:SettingsState) => {
       this.settings = settings;
+      if(!this.settingsForm || settings.isThemeChange) return;
 
-      // only update all values in form if we aren't doing a theme change
-      // so logouts and saves will overwrite form but not theme changes
-      if(this.settingsForm && !settings.isThemeChange) {
-        const formValues  = {...settings};
-        delete formValues.isThemeChange;
-        delete formValues.encryptPassword;
-        this.settingsForm.setValue({ ...formValues});
+      // get any settings that dont match the form
+      const changed:any = {};
+      for(let setting in settings){
+        if(this.settingsForm.value[setting] !== settings[setting]){
+          changed[setting] = settings[setting];
+        }
       }
+
+      // if we found any values that don't match then set them on the form
+      // make sure its not a theme change only cause it'll over write all other values
+      const hasChanges = Object.keys(changed).length;
+      if(hasChanges) this.settingsForm.patchValue(changed);
+
     });
   }
 
@@ -90,19 +96,17 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
    */
   submit(): void {
     if (this.settingsForm.invalid) {
-      console.log({settingsForm:this.settingsForm});
       this.notificationsService.error(`Invalid form`);
       return;
     }
 
-    const settings = {
-      ...this.settingsForm.value,
-      encryptPassword: this.settingsForm.value.password !== this.settings.password
-    };
-
     // if password has changed then encrypt it first else save settings only
-    if(settings.encryptPassword) this.store.dispatch(new ActionSettingsEncryptPassword(settings));
-    else this.store.dispatch(new ActionSettingsPersist(settings));
+    if(this.settingsForm.value.password !== this.settings.password) {
+      this.store.dispatch(new ActionSettingsEncryptPassword(this.settingsForm.value));
+
+    } else {
+      this.store.dispatch(new ActionSettingsPersist(this.settingsForm.value));
+    }
   }
 
   /**

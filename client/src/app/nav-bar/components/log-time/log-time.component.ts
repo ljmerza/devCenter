@@ -13,13 +13,7 @@ export class LogTimeComponent implements OnInit {
 	constructor(private notificationsService: NotificationService) {}
 
 	ngOnInit(){
-		this.showLogHours = this.isFriday();
 		this.setFridayChecker();
-
-		// if we are starting app on friday then show reminder
-		if(this.showLogHours)
-			this.notificationsService.info('Please remember to log your hours for the week.');
-		
 	}
 
 	private isFriday = () => (new Date()).getDay() == 5;
@@ -29,6 +23,8 @@ export class LogTimeComponent implements OnInit {
 	 * checks if it's Friday every minute to show log hours
 	 */
 	private setFridayChecker(){
+		this.showLogHours = this.isFriday();
+		
 		setInterval(() => {
 			const itIsFriday = this.isFriday();
 

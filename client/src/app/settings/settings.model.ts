@@ -10,8 +10,7 @@ export interface SettingsState {
   tempUrl: string,
   cache: boolean,
   theme: string,
-  encryptPassword?: boolean,
-  isThemeChange?: boolean
+  isThemeChange: boolean
 }
 
 export interface State extends AppState {
