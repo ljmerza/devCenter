@@ -5,7 +5,6 @@ export const environment = {
   envName: 'PROD',
   production: true,
   test: false,
-  i18nPrefix: '/angular-ngrx-material-starter',
   apiUrl: devServer,
   devServer,
   port: 5859

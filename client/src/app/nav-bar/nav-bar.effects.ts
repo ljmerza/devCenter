@@ -3,16 +3,16 @@ import { LocalStorageService } from '@app/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { of } from 'rxjs';
-import { catchError, tap, map, switchMap } from 'rxjs/operators';
+import { catchError, tap, map, switchMap, exhaustMap } from 'rxjs/operators';
 import { environment as env } from '@env/environment';
 
 import { NotificationService } from '@app/core/notifications/notification.service';
 
 import {
-  ActionNavBarRetrieve,
-  ActionNavBarRetrieveSuccess, NavBarActionTypes,
-  ActionSearch, ActionSearchSuccess, 
-  ActionOpenTicket, ActionProfileRetrieve, ActionProfileSuccess
+  NavBarActionTypes, ActionSearch,
+  ActionOpenTicket, ActionOpenTicketError,
+  ActionNavBarRetrieve, ActionNavBarRetrieveSuccess, ActionNavBarRetrieveError,
+  ActionProfileRetrieve, ActionProfileSuccess, ActionProfileError
 } from './nav-bar.actions';
 
 import { NavBarService } from './nav-bar.service';
@@ -31,6 +31,7 @@ export class NavBarEffects {
 
         return this.service.findJiraTicket(action.payload).pipe(
           map((response: any) => new ActionOpenTicket(response.data)),
+          catchError(() => of(new ActionProfileError()))
         )
       })
     );
@@ -51,6 +52,7 @@ export class NavBarEffects {
       switchMap((action: ActionNavBarRetrieve) => 
         this.service.retrieveNavBar().pipe(
           map((response: any) => new ActionNavBarRetrieveSuccess({navBarItems: this.processNavBarItems(response.data)})),
+          catchError(() => of(new ActionNavBarRetrieveError()))
         )
       )
     );
@@ -60,9 +62,9 @@ export class NavBarEffects {
     this.actions$.pipe(
       ofType<ActionProfileRetrieve>(NavBarActionTypes.PROFILE),
       switchMap((action: ActionProfileRetrieve) => {
-        console.log({action});
         return this.service.getProfile().pipe(
           map((response: any) => new ActionProfileSuccess({profile: response.data})),
+          catchError(() => of(new ActionProfileError()))
         )
       })
     );

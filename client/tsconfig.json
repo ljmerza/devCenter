@@ -13,10 +13,20 @@
       "node_modules/@types"
     ],
     "paths": {
-      "@app/*": ["app/*"],
-      "@env/*": ["environments/*"],
+      "@app/*": [
+        "app/*"
+      ],
+      "@env/*": [
+        "environments/*"
+      ],
       "@testing/*": [
         "testing/*"
+      ],
+      "example-ng6-lib": [
+        "dist/example-ng6-lib"
+      ],
+      "example-ng6-lib/*": [
+        "dist/example-ng6-lib/*"
       ]
     },
     "lib": [

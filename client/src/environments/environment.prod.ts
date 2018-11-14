@@ -8,5 +8,4 @@ export const environment = {
   devServer,
   port: 5858,
   test: false,
-  i18nPrefix: '/angular-ngrx-material-starter'
 };

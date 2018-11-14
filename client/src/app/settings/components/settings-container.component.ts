@@ -69,11 +69,11 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
    * if any user info exist then we are updating else we are creating
    */
   get submitText(){
-    const isNew = !(this.settings.username && this.settings.cache && this.settings.theme &&
-      this.settings.password && this.settings.port && this.settings.devServer && 
-      this.settings.emberUrl && this.settings.teamUrl && this.settings.tempUrl);
+    const profileHasData = !!(this.settings.username || this.settings.cache || this.settings.theme ||
+      this.settings.password || this.settings.port || this.settings.devServer || 
+      this.settings.emberUrl || this.settings.teamUrl || this.settings.tempUrl);
 
-    return isNew ? 'Create' : 'Update';
+    return profileHasData ? 'Update' : 'Create';
   }
 
   /**

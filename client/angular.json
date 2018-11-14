@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-ngrx-material-starter": {
+    "dev-center": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -31,8 +31,12 @@
               }
             ],
             "styles": [
-              { "input": "src/styles-app-loading.scss" },
-              { "input": "src/styles.scss" }
+              {
+                "input": "src/styles-app-loading.scss"
+              },
+              {
+                "input": "src/styles.scss"
+              }
             ],
             "scripts": []
           },
@@ -100,24 +104,24 @@
                   "with": "src/environments/environment.beta.ts"
                 }
               ]
-            },
+            }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-ngrx-material-starter:build"
+            "browserTarget": "dev-center:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "angular-ngrx-material-starter:build:production"
+              "browserTarget": "dev-center:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular-ngrx-material-starter:build"
+            "browserTarget": "dev-center:build"
           }
         },
         "test": {
@@ -171,7 +175,7 @@
         }
       }
     },
-    "angular-ngrx-material-starter-e2e": {
+    "dev-center-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -179,7 +183,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "angular-ngrx-material-starter:serve"
+            "devServerTarget": "dev-center:serve"
           }
         },
         "lint": {
@@ -192,7 +196,7 @@
           }
         }
       }
-    }
+    },
   },
-  "defaultProject": "angular-ngrx-material-starter"
+  "defaultProject": "dev-center"
 }
