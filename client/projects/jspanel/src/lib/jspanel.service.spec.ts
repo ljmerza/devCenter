@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ExampleNg6LibService } from './example-ng6-lib.service';
+import { JspanelService } from './jspanel.service';
 
-describe('ExampleNg6LibService', () => {
+describe('JspanelService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: ExampleNg6LibService = TestBed.get(ExampleNg6LibService);
+    const service: JspanelService = TestBed.get(JspanelService);
     expect(service).toBeTruthy();
   });
 });

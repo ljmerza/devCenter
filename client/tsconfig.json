@@ -22,11 +22,11 @@
       "@testing/*": [
         "testing/*"
       ],
-      "example-ng6-lib": [
-        "dist/example-ng6-lib"
+      "jspanel": [
+        "dist/jspanel"
       ],
-      "example-ng6-lib/*": [
-        "dist/example-ng6-lib/*"
+      "jspanel/*": [
+        "dist/jspanel/*"
       ]
     },
     "lib": [

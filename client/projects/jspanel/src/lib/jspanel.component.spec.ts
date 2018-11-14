@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExampleNg6LibComponent } from './example-ng6-lib.component';
+import { JspanelComponent } from './jspanel.component';
 
-describe('ExampleNg6LibComponent', () => {
-  let component: ExampleNg6LibComponent;
-  let fixture: ComponentFixture<ExampleNg6LibComponent>;
+describe('JspanelComponent', () => {
+  let component: JspanelComponent;
+  let fixture: ComponentFixture<JspanelComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExampleNg6LibComponent ]
+      declarations: [ JspanelComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ExampleNg6LibComponent);
+    fixture = TestBed.createComponent(JspanelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

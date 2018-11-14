@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'jspanel-example-ng6-lib',
+  selector: 'jspanel-jspanel',
   template: `
     <p>
-      example-ng6-lib works!
+      jspanel works!
     </p>
   `,
   styles: []
 })
-export class ExampleNg6LibComponent implements OnInit {
+export class JspanelComponent implements OnInit {
 
   constructor() { }
 
