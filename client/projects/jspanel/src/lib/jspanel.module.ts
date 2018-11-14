@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { JspanelComponent } from './jspanel.component';
 
 @NgModule({
-  imports: [
-  ],
+  imports: [CommonModule],
   declarations: [JspanelComponent],
   exports: [JspanelComponent]
 })

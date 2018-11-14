@@ -9,6 +9,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
 
+import { JspanelModule } from 'jspanel';
+
 import {
   MatAutocompleteModule,
   MatBadgeModule,
@@ -63,6 +65,8 @@ library.add(
   imports: [
     CommonModule,
     FormsModule,
+
+    JspanelModule,
 
     TranslateModule,
 

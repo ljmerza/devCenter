@@ -208,6 +208,11 @@
           "options": {
             "tsConfig": "projects/jspanel/tsconfig.lib.json",
             "project": "projects/jspanel/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "project": "projects/jspanel/ng-package.prod.json"
+            }
           }
         },
         "test": {
