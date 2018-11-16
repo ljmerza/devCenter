@@ -15,4 +15,14 @@
 
 
 <button (click)='modal.openModal()'>TEST</button>
-<dc-panel></dc-panel>
+<dc-panel>
+  <div class='modal-header'>Header TEST</div>
+  
+  <span class='modal-body'>
+    Body TEST
+  </span>
+  
+  <span class='modal-footer'>
+    <button mat-button (click)="modal.closeModal()">Close</button>
+  </span>
+</dc-panel>

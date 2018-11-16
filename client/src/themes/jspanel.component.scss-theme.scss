@@ -1,0 +1,28 @@
+@import '~@angular/material/theming';
+
+@mixin dc-jspanel-component-theme($theme) {
+
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  .jsPanel {
+    .jsPanel-headerbar {
+      
+      background-color: mat-color($primary);
+
+      .modal-header, .jsPanel-icon {
+        color: mat-color($primary) !important;
+      }
+    }
+
+    .jsPanel-content {
+      background-color: mat-color($accent);
+    }
+
+    .jsPanel-ftr {
+      border-top: mat-color($warn);
+      background-color: mat-color($primary);
+    }
+  }
+}

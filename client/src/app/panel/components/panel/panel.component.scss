@@ -5,10 +5,7 @@
 
 .jsPanel {
 	.jsPanel-headerbar {
-		.modal-header {
-			border-bottom: none;
-			padding: 0;
-		}
+		padding: 7px;
 
 		.modal-title {
 			font-size: 20px;
@@ -19,13 +16,7 @@
 		padding: 1rem;
 	}
 
-	.jsPanel-content, .jsPanel-ftr {
-		.modal-footer {
-			border-top: none;
-
-			.btn {
-				border-radius: 0 !important;
-			}
-		}
+	.jsPanel-ftr {
+		padding: 7px;
 	}
 }

@@ -6,7 +6,7 @@ import { environment as env } from '@env/environment';
 import { selectSettings } from '@app/settings/settings.selectors';
 
 import { selectNavBarItems, selectLinks } from '../../nav-bar.selectors';
-import { ActionNavBarRetrieve, ActionsLinksRetrieve } from '../../nav-bar.actions';
+import { ActionNavBarRetrieve, ActionLinksRetrieve } from '../../nav-bar.actions';
 
 @Component({
   selector: 'dc-nav-bar',
@@ -38,7 +38,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
       .subscribe(settings => (this.settings = settings));
 
     this.store.dispatch(new ActionNavBarRetrieve());
-    this.store.dispatch(new ActionsLinksRetrieve());
+    this.store.dispatch(new ActionLinksRetrieve());
   }
 
   ngOnDestroy(): void {

@@ -6,7 +6,9 @@ export interface NavBarState {
   loading: boolean;
   navBarItems?: NavBarItem[],
   loadingProfile: boolean,
-  profile: any
+  profile: any,
+  loadingLinks: boolean,
+  links: any
 }
 
 export interface State extends AppState {

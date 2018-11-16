@@ -53,6 +53,7 @@ export class PanelComponent implements OnDestroy {
       headerTitle: this.modalHeader.nativeElement,
       content: this.modalBody.nativeElement,
       footerToolbar: this.modalFooter.nativeElement,
+      container: '.mat-drawer-container',
       dragit: {
         cursor: 'move',
         handles: '.jsPanel-titlebar',

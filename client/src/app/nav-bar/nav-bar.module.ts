@@ -4,9 +4,10 @@ import { RouterModule } from '@angular/router';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { PanelModule } from '@app/panel';
 
 import { SharedModule } from '@app/shared';
+import { PanelModule } from '@app/panel';
+
 import { NavBarEffects } from './nav-bar.effects';
 import { NavBarService } from './nav-bar.service';
 import { navBarReducer } from './nav-bar.reducer';

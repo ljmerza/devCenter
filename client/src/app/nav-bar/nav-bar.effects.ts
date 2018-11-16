@@ -8,8 +8,8 @@ import { environment as env } from '@env/environment';
 
 import { NotificationService } from '@app/core/notifications/notification.service';
 
-import { processJqlLinks } from'./jql.tools';
-import { processNavBarItems } from'./navbar-items.tools';
+import { processJqlLinks } from'./jql.tool';
+import { processNavBarItems } from'./navbar-items.tool';
 
 import {
   NavBarActionTypes, ActionSearch,

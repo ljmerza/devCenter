@@ -7,7 +7,7 @@ export const initialState: NavBarState = {
   loadingProfile: false,
   profile: null,
   loadingLinks: false,
-  links: []]
+  links: []
 };
 
 export function navBarReducer(state: NavBarState=initialState, action: NavBarActions): NavBarState {
