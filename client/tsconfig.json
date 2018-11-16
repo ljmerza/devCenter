@@ -21,12 +21,6 @@
       ],
       "@testing/*": [
         "testing/*"
-      ],
-      "jspanel": [
-        "dist/jspanel"
-      ],
-      "jspanel/*": [
-        "dist/jspanel/*"
       ]
     },
     "lib": [

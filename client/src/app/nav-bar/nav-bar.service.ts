@@ -34,6 +34,13 @@ export class NavBarService {
 	 * gets a user's Jira profile and on success, stores it in the Redux store.
 	 */
 	getProfile(): Observable<any> {
-		return this.httpClient.get(`${env.apiUrl}/jira/profile/${this.settings.username}`)
+		return this.httpClient.get(`${env.apiUrl}/jira/profile/${this.settings.username}`);
+	}
+
+	/**
+	 * gets all route links for JQLs
+	 */
+	getLinks(): Observable<any> {
+		return this.httpClient.get(`${env.apiUrl}/skipcreds/jql_links`);
 	}
 }

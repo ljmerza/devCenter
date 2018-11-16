@@ -16,6 +16,11 @@ export enum NavBarActionTypes {
   PROFILE = '[nav-bar] Profile',
   PROFILE_SUCCESS = '[nav-bar] Profile Success',
   PROFILE_ERROR = '[nav-bar] Profile Error',
+
+  
+  LINKS = '[nav-bar] Links',
+  LINKS_SUCCESS = '[nav-bar] Links Success',
+  LINKS_ERROR = '[nav-bar] Links Error',
 }
 
 export class ActionNavBarRetrieve implements Action {
@@ -57,6 +62,18 @@ export class ActionProfileError implements Action {
   readonly type = NavBarActionTypes.PROFILE_ERROR;
 }
 
+
+export class ActionLinksRetrieve implements Action {
+  readonly type = NavBarActionTypes.LINKS;
+}
+export class ActionLinksSuccess implements Action {
+  readonly type = NavBarActionTypes.LINKS_SUCCESS;
+  constructor(readonly payload: { links }) {}
+}
+export class ActionLinksError implements Action {
+  readonly type = NavBarActionTypes.LINKS_ERROR;
+}
+
 export type NavBarActions = ActionSearch
   | ActionOpenTicket
   | ActionOpenTicketError
@@ -67,4 +84,8 @@ export type NavBarActions = ActionSearch
 
   | ActionProfileRetrieve
   | ActionProfileSuccess
-  | ActionProfileError;
+  | ActionProfileError
+
+  | ActionLinksRetrieve
+  | ActionLinksSuccess
+  | ActionLinksError;

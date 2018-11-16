@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -10,6 +10,7 @@ import { ActionProfileRetrieve } from '@app/nav-bar/nav-bar.actions';
 
 import { ActionSettingsPersist } from '@app/settings/settings.actions';
 import { initialState } from '@app/settings/settings.reducer';
+import { PanelComponent } from '@app/panel/components/panel/panel.component';
 
 @Component({
 	selector: 'dc-profile-dropdown',
@@ -20,6 +21,7 @@ export class ProfileDropdownComponent implements OnInit {
 	profile;
 	private profile$: Subscription;
 	private settings$: Subscription;
+	@ViewChild(PanelComponent) modal: PanelComponent;
 
 	constructor(public store: Store<{}>, private router: Router) {}
 
@@ -30,19 +32,16 @@ export class ProfileDropdownComponent implements OnInit {
     		select(selectSettings),
     		distinctUntilChanged((prev, next) => prev.username === next.username && prev.password === next.password)
     	)
-		.subscribe(settings => {
-			this.store.dispatch(new ActionProfileRetrieve());
-    	});
+		.subscribe(() => this.store.dispatch(new ActionProfileRetrieve()));
 
-    	this.profile$ = this.store.pipe(select(selectProfile))
-    		.subscribe(profile => this.profile = profile);
+    	this.profile$ = this.store.pipe(select(selectProfile)).subscribe(profile => this.profile = profile);
     }
 
 	ngOnDestroy(): void {
 		this.settings$.unsubscribe();
 		this.profile$.unsubscribe();
 	}
-
+	
 	logout(): void {
 		this.store.dispatch(new ActionSettingsPersist({...initialState}));
 		this.router.navigate(['/settings']);

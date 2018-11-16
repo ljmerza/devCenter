@@ -5,7 +5,9 @@ export const initialState: NavBarState = {
   loading: false,
   navBarItems: [],
   loadingProfile: false,
-  profile: null
+  profile: null,
+  loadingLinks: false,
+  links: []]
 };
 
 export function navBarReducer(state: NavBarState=initialState, action: NavBarActions): NavBarState {
@@ -24,6 +26,13 @@ export function navBarReducer(state: NavBarState=initialState, action: NavBarAct
       return { ...state, loadingProfile: false, ...action.payload };
     case NavBarActionTypes.PROFILE_ERROR:
       return { ...state, loadingProfile: false };
+
+    case NavBarActionTypes.LINKS:
+      return { ...state, loadingLinks: true };
+    case NavBarActionTypes.LINKS_SUCCESS:
+      return { ...state, loadingLinks: false, ...action.payload };
+    case NavBarActionTypes.LINKS_ERROR:
+      return { ...state, loadingLinks: false };
 
     default:
       return state;

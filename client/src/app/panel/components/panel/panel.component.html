@@ -1,0 +1,14 @@
+<div class='hidden'>
+  <div #modalHeader>
+    <div class="modal-title">
+      <ng-content select=".modal-header"></ng-content>
+    </div>
+  </div>
+
+  <div #modalBody>
+    <ng-content select=".modal-body"></ng-content>
+  </div>
+  <div #modalFooter>
+    <ng-content select=".modal-footer"></ng-content>
+  </div>
+</div>

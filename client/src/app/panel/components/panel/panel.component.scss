@@ -1,0 +1,31 @@
+
+.hidden {
+	display: none;
+}
+
+.jsPanel {
+	.jsPanel-headerbar {
+		.modal-header {
+			border-bottom: none;
+			padding: 0;
+		}
+
+		.modal-title {
+			font-size: 20px;
+		}
+	}
+
+	.jsPanel-content {
+		padding: 1rem;
+	}
+
+	.jsPanel-content, .jsPanel-ftr {
+		.modal-footer {
+			border-top: none;
+
+			.btn {
+				border-radius: 0 !important;
+			}
+		}
+	}
+}

@@ -7,3 +7,4 @@ export const selectNavBarItems = createSelector(selectSettingsState, (state: Nav
 export const selectNavBarLoading = createSelector(selectSettingsState, (state: NavBarState) => state.loading);
 
 export const selectProfile = createSelector(selectSettingsState, (state: NavBarState) => state.profile);
+export const selectLinks = createSelector(selectSettingsState, (state: NavBarState) => state.links);

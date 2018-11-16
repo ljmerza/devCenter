@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { PanelModule } from '@app/panel';
 
 import { SharedModule } from '@app/shared';
 import { NavBarEffects } from './nav-bar.effects';
@@ -23,6 +23,9 @@ import { ProfileDropdownComponent } from './components/profile-dropdown/profile-
 		CommonModule,
 		SharedModule,
 		RouterModule,
+
+		PanelModule,
+		
 		StoreModule.forFeature('navbar', navBarReducer),
 		EffectsModule.forFeature([NavBarEffects])
 	],

@@ -5,8 +5,8 @@ import { Subscription } from 'rxjs';
 import { environment as env } from '@env/environment';
 import { selectSettings } from '@app/settings/settings.selectors';
 
-import { selectNavBarItems } from '../../nav-bar.selectors';
-import { ActionNavBarRetrieve } from '../../nav-bar.actions';
+import { selectNavBarItems, selectLinks } from '../../nav-bar.selectors';
+import { ActionNavBarRetrieve, ActionsLinksRetrieve } from '../../nav-bar.actions';
 
 @Component({
   selector: 'dc-nav-bar',
@@ -16,8 +16,12 @@ import { ActionNavBarRetrieve } from '../../nav-bar.actions';
 export class NavBarComponent implements OnInit, OnDestroy {
   private settings$: Subscription;
   private navBarItems$: Subscription;
+  private links$: Subscription;
+
   navBarItems;
   settings;
+  links;
+
   env = env;
   logo = require('@app/../assets/logo.png');
 
@@ -30,12 +34,17 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.settings$ = this.store.pipe(select(selectSettings))
       .subscribe(settings => (this.settings = settings));
 
+    this.links$ = this.store.pipe(select(selectLinks))
+      .subscribe(settings => (this.settings = settings));
+
     this.store.dispatch(new ActionNavBarRetrieve());
+    this.store.dispatch(new ActionsLinksRetrieve());
   }
 
   ngOnDestroy(): void {
     this.navBarItems$.unsubscribe();
     this.settings$.unsubscribe();
+    this.links$.unsubscribe();
   }
 
   public get devBaseUrl(): string {
@@ -58,9 +67,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     const isLocalUrl = this.settings.teamUrl === 'local';
     const port = isLocalUrl ? '4200' : this.settings.port;
     const hash = isLocalUrl ? '/#' : '';
-    const server = isLocalUrl
-      ? 'localhost'
-      : `${this.settings.devServer}.${env.rootDomain}`;
+    const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
 
     return `http://${server}:${port}/teamdbgui${hash}`;
   }
@@ -69,9 +76,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     const isLocalUrl = this.settings.tempUrl === 'local';
     const port = isLocalUrl ? '4200' : this.settings.port;
     const hash = isLocalUrl ? '/#' : '';
-    const server = isLocalUrl
-      ? 'localhost'
-      : `${this.settings.devServer}.${env.rootDomain}`;
+    const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
 
     return `http://${server}:${port}/templatetools{hash}`;
   }

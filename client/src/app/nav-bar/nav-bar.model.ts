@@ -1,5 +1,4 @@
 import { AppState } from '@app/core';
-import { HttpErrorResponse } from '@angular/common/http';
 
 export interface NavBarItem {}
 

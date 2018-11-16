@@ -35,10 +35,14 @@
               }
             ],
             "styles": [
+              "node_modules/jspanel4/dist/jspanel.min.css",
               { "input": "src/styles-app-loading.scss" },
               { "input": "src/styles.scss" }
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/jspanel4/dist/jspanel.js"
+            ]
           },
           "configurations": {
             "production": {
