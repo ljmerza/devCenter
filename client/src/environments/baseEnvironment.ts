@@ -20,18 +20,13 @@ export const baseEnv = {
   rootDomain: 'gcsc.att.com',
 
   jiraUrl: 'http://jira.web.att.com',
-  crucibleUrl: 'https://icode3.web.att.com',
   codeCloudUrl: 'https://codecloud.web.att.com',
   betaUrl: 'http://chrapud16b.gcsc.att.com',
-  msrpLink: 'http://ix.web.att.com',
 
   jiraPath: '/secure/Dashboard.jspa',
-  cruciblePath: '/cru/browse/CR-UD',
   codeCloudPath: '/projects',
   scrumBoardPath:
     '/secure/RapidBoard.jspa?rapidView=178&view=planning.nodetail&versions=visible',
-
-  myApex: 'https://myapex.apexsystemsinc.com/psp/MYAPEX/',
 
   chatUrl: 'qto://talk',
   chatIconUrl: 'http://presence.q.att.com/presence',
