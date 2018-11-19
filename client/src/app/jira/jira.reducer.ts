@@ -9,7 +9,6 @@ export const initialState: JiraState = {
 };
 
 export function JiraReducer(state: JiraState = initialState, action: JiraActions): JiraState {
-    console.log(action)
     
     switch (action.type) {
         case JiraActionTypes.RETRIEVE:
