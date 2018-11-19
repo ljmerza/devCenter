@@ -29,13 +29,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.navBarItems$ = this.store.pipe(select(selectNavBarItems))
-      .subscribe(navBarItems => (this.navBarItems = navBarItems));
+      .subscribe(navBarItems => this.navBarItems = navBarItems);
 
     this.settings$ = this.store.pipe(select(selectSettings))
-      .subscribe(settings => (this.settings = settings));
+      .subscribe(settings => this.settings = settings);
 
     this.links$ = this.store.pipe(select(selectLinks))
-      .subscribe(settings => (this.settings = settings));
+      .subscribe(links => this.links = links);
 
     this.store.dispatch(new ActionNavBarRetrieve());
     this.store.dispatch(new ActionLinksRetrieve());

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { environment as env } from '@env/environment';
 
@@ -20,6 +20,8 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
   private settings$: Subscription;
   settingsForm;
   env = env;
+
+  @Output() updateProfile = new EventEmitter();
 
   constructor(private store: Store<{}>, private formBuilder: FormBuilder, private notificationsService: NotificationService) {
     this.settings$ = store.pipe(select(selectSettings)).subscribe((settings:SettingsState) => {
@@ -107,6 +109,8 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
     } else {
       this.store.dispatch(new ActionSettingsPersist(this.settingsForm.value));
     }
+
+    this.updateProfile.emit();
   }
 
   /**

@@ -4,8 +4,8 @@
   <fa-icon icon="caret-down"></fa-icon>
 </button>
 <mat-menu #profileMenu="matMenu">
-  <button mat-menu-item>
-    <a [routerLink]="['settings']">User Settings</a>
+  <button mat-menu-item (click)='modal.openModal()'>
+    <a>User Settings</a>
   </button>
 
   <button mat-menu-item>User Metrics</button>
@@ -13,16 +13,10 @@
   <button mat-menu-item (click)='logout()'>Logout</button>
 </mat-menu>
 
-
-<button (click)='modal.openModal()'>TEST</button>
 <dc-panel>
-  <div class='modal-header'>Header TEST</div>
+  <div class='modal-header'>User Settings</div>
   
   <span class='modal-body'>
-    Body TEST
-  </span>
-  
-  <span class='modal-footer'>
-    <button mat-button (click)="modal.closeModal()">Close</button>
+    <dc-settings (updateProfile)="modal.closeModal()"></dc-settings>
   </span>
 </dc-panel>

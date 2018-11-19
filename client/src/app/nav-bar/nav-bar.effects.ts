@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { LocalStorageService } from '@app/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { of } from 'rxjs';
-import { catchError, tap, map, switchMap, exhaustMap } from 'rxjs/operators';
+import { catchError, tap, map, switchMap } from 'rxjs/operators';
 import { environment as env } from '@env/environment';
 
 import { NotificationService } from '@app/core/notifications/notification.service';
@@ -14,13 +13,12 @@ import { processNavBarItems } from'./navbar-items.tool';
 import {
   NavBarActionTypes, ActionSearch,
   ActionOpenTicket, ActionOpenTicketError,
-  ActionNavBarRetrieve, ActionNavBarRetrieveSuccess, ActionNavBarRetrieveError,
+  ActionNavBarRetrieve, ActionNavBarSuccess, ActionNavBarError,
   ActionProfileRetrieve, ActionProfileSuccess, ActionProfileError,
   ActionLinksRetrieve, ActionLinksSuccess, ActionLinksError
 } from './nav-bar.actions';
 
 import { NavBarService } from './nav-bar.service';
-import { NavBarItem } from './nav-bar.model';
 
 @Injectable()
 export class NavBarEffects {
@@ -51,21 +49,21 @@ export class NavBarEffects {
 
   @Effect()
   retrieveNavBar = () =>
-    this.actions$.pipe(
+   this.actions$.pipe(
       ofType<ActionNavBarRetrieve>(NavBarActionTypes.RETRIEVE),
-      switchMap((action: ActionNavBarRetrieve) => 
-        this.service.retrieveNavBar().pipe(
-          map((response: any) => new ActionNavBarRetrieveSuccess({navBarItems: processNavBarItems(response.data)})),
-          catchError(() => of(new ActionNavBarRetrieveError()))
+      switchMap(() => {
+        return this.service.retrieveNavBar().pipe(
+          map((response: any) => new ActionNavBarSuccess({ navBarItems: processNavBarItems(response.data) })),
+          catchError(() => of(new ActionNavBarError()))
         )
-      )
+      })
     );
 
   @Effect()
   retrieveLinks = () =>
     this.actions$.pipe(
       ofType<ActionLinksRetrieve>(NavBarActionTypes.LINKS),
-      switchMap((action: ActionLinksRetrieve) => 
+      switchMap(() => 
         this.service.getLinks().pipe(
           map((response: any) => new ActionLinksSuccess({links: processJqlLinks(response.data)})),
           catchError(() => of(new ActionLinksError()))
@@ -77,7 +75,7 @@ export class NavBarEffects {
   getProfile = () =>
     this.actions$.pipe(
       ofType<ActionProfileRetrieve>(NavBarActionTypes.PROFILE),
-      switchMap((action: ActionProfileRetrieve) => {
+      switchMap(() => {
         return this.service.getProfile().pipe(
           map((response: any) => new ActionProfileSuccess({profile: response.data})),
           catchError(() => of(new ActionProfileError()))

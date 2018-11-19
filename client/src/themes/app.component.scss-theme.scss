@@ -1,0 +1,84 @@
+@import '~@angular/material/theming';
+
+@mixin dc-app-component-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+  $primary-text: map-get($theme, foreground);
+
+  // make all select dropdowns the same
+  .mat-select-panel, .mat-raised-button, .mat-menu-panel, .mat-menu-item {
+    .mat-option, .mat-menu-item, a, .mat-input-element {
+      &:hover {
+        background-color: mat-color($primary, darker) !important;
+      }
+      color: mat-color($primary, lighter) !important;
+    }
+
+    &::after {
+      color: mat-color($primary, lighter) !important;
+    }
+
+    background-color: mat-color($primary) !important;
+    color: mat-color($primary, lighter) !important;
+  }
+  
+  .mat-checkbox-background {
+    background-color: inherit !important;
+  }
+
+  .mat-checkbox-checkmark-path {
+    stroke: mat-color($primary-text, text) !important;
+  }
+  
+  .mat-input-element, .mat-checkbox-label {
+    color: mat-color($primary-text, text) !important;
+  }
+
+  mat-sidenav-content {
+    background-color: mat-color($accent);
+  }
+
+  mat-sidenav-container {
+
+    // navbar
+    mat-toolbar {
+
+      .mat-button, a, .mat-raised-button {
+        &:hover {
+          background-color: mat-color($primary, darker) !important;
+        }
+      }
+
+      button a, mat-form-field, .mat-raised-button, .mat-button, .logo {
+        color: mat-color($primary, lighter) !important;
+        background-color: mat-color($primary) !important;
+      }
+    }
+
+    .footer {
+      color: mat-color($primary, lighter);
+      background-color: mat-color($primary, darker);
+    }
+  }
+
+  .error-notification-overlay {
+    color: mat-color($warn, default-contrast);
+    background-color: mat-color($warn);
+  }
+
+  .info-notification-overlay {
+    color: mat-color($accent, default-contrast);
+    background-color: mat-color($accent);
+  }
+
+  .success-notification-overlay {
+    color: mat-color($success-colors, default-contrast);
+    background-color: mat-color($success-colors);
+  }
+
+  .warning-notification-overlay {
+    color: mat-color($warning-colors, default-contrast);
+    background-color: mat-color($warning-colors);
+  }
+}

@@ -1,10 +1,15 @@
 <mat-toolbar color="primary" class='nav-bar-shadow'>
 
 	<!-- <img [src]="logo" /> -->
-  	<span class='logo'>Dev Center</span>
+	  <span class='logo'>Dev Center</span>
+	  
+	<dc-dropdown-menu
+		*ngIf='links?.jqlNavbar' 
+		[navLinks]=links?.jqlNavbar 
+	></dc-dropdown-menu>
 
 	<dc-dropdown-menu 
-		*ngIf='this.settings.username && this.settings.port'
+		*ngIf='this.settings.username && this.settings.port && navBarItems?.DevLinks'
 		[navLinks]=navBarItems?.DevLinks
 		[baseUrl]=devBaseUrl
 		[emberUrl]=emberBaseUrl

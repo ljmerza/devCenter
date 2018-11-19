@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 
 import { environment as env } from '@env/environment';

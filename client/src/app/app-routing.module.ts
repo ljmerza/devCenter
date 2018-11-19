@@ -1,26 +1,27 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { environment as env } from '@env/environment';
 
 import { SettingsContainerComponent } from './settings';
 
 const routes: Routes = [
   {
-    path: '',
+    path: `${env.baseRoute}`,
     redirectTo: 'jira',
     pathMatch: 'full'
   },
   {
-    path: 'settings',
+    path: `${env.baseRoute}settings`,
     component: SettingsContainerComponent,
     data: { title: 'settings' }
   },
   {
-    path: 'jira',
+    path: `${env.baseRoute}jira`,
     loadChildren: 'app/jira/jira.module#JiraModule'
   },
   {
     path: '**',
-    redirectTo: 'jira'
+    redirectTo: `${env.baseRoute}jira`
   }
 ];
 

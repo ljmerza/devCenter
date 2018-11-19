@@ -7,15 +7,11 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DropdownItemComponent {
-  @Input()
-  navLink: any;
+  @Input() navLink: any;
 
-  @Input()
-  baseUrl: string = '';
-  @Input()
-  emberUrl: string = '';
-  @Input()
-  teamUrl: string = '';
+  @Input() baseUrl: string = '';
+  @Input() emberUrl: string = '';
+  @Input() teamUrl: string = '';
 
   constructor() {}
 }

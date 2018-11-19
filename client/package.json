@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --open",
+    "start": "ng serve --open --port 18173 --base-href '/devcenter_server/' --serve-path '/devcenter_server/'  --deploy-url '/devcenter_server/'",
     "docker-start": "ng serve  --host 0.0.0.0",
     "build": "ng build",
     "test": "npm run lint && ng test --configuration=test",

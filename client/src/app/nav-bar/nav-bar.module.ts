@@ -7,6 +7,7 @@ import { EffectsModule } from '@ngrx/effects';
 
 import { SharedModule } from '@app/shared';
 import { PanelModule } from '@app/panel';
+import { SettingsModule } from '@app/settings/settings.module';
 
 import { NavBarEffects } from './nav-bar.effects';
 import { NavBarService } from './nav-bar.service';
@@ -26,6 +27,7 @@ import { ProfileDropdownComponent } from './components/profile-dropdown/profile-
 		RouterModule,
 
 		PanelModule,
+		SettingsModule,
 		
 		StoreModule.forFeature('navbar', navBarReducer),
 		EffectsModule.forFeature([NavBarEffects])

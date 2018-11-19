@@ -16,6 +16,7 @@ import { SettingsContainerComponent } from './components/settings-container.comp
     EffectsModule.forFeature([SettingsEffects])
   ],
   providers: [SettingsService],
-  declarations: [SettingsContainerComponent]
+  declarations: [SettingsContainerComponent],
+  exports: [SettingsContainerComponent]
 })
 export class SettingsModule {}

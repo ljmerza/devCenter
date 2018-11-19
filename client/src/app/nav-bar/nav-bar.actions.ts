@@ -1,7 +1,4 @@
 import { Action } from '@ngrx/store';
-import { HttpErrorResponse } from '@angular/common/http';
-
-import { NavBarItem } from './nav-bar.model';
 
 export enum NavBarActionTypes {
   RETRIEVE = '[nav-bar] Retrieve',
@@ -26,11 +23,11 @@ export enum NavBarActionTypes {
 export class ActionNavBarRetrieve implements Action {
   readonly type = NavBarActionTypes.RETRIEVE;
 }
-export class ActionNavBarRetrieveSuccess implements Action {
+export class ActionNavBarSuccess implements Action {
   readonly type = NavBarActionTypes.RETRIEVE_SUCCESS;
   constructor(readonly payload: { navBarItems }) {}
 }
-export class ActionNavBarRetrieveError implements Action {
+export class ActionNavBarError implements Action {
   readonly type = NavBarActionTypes.RETRIEVE_ERROR;
 }
 
@@ -79,8 +76,8 @@ export type NavBarActions = ActionSearch
   | ActionOpenTicketError
 
   | ActionNavBarRetrieve
-  | ActionNavBarRetrieveSuccess
-  | ActionNavBarRetrieveError
+  | ActionNavBarSuccess
+  | ActionNavBarError
 
   | ActionProfileRetrieve
   | ActionProfileSuccess

@@ -7,7 +7,10 @@ export function processJqlLinks( jqlLinks){
  		return link;
  	});
 
- 	const jqlNavbar = _formatNavBarJqlLinks(jqlLinks);
+ 	const jqlNavbar = { 
+		name: 'Ticket Lists',
+		items: _formatNavBarJqlLinks(jqlLinks)
+	 };
 	return {fullJqls, jqlNavbar};
 }
 

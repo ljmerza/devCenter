@@ -5,14 +5,20 @@
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
+  $foreground: map-get($theme, foreground);
+
+
+  .jsPanel-minimized-container .jsPanel-replacement {
+    background-color: mat-color($primary, lighter)  !important;
+  }
 
   .jsPanel {
+
     .jsPanel-headerbar {
-      
       background-color: mat-color($primary);
 
-      .modal-header, .jsPanel-icon {
-        color: mat-color($primary) !important;
+      .modal-header, .jsPanel-icon path {
+        color: mat-color($primary, lighter) !important;
       }
     }
 
@@ -22,6 +28,7 @@
 
     .jsPanel-ftr {
       border-top: mat-color($warn);
+      color: mat-color($primary, lighter) !important;
       background-color: mat-color($primary);
     }
   }

@@ -7,22 +7,15 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DropdownMenuComponent {
-  @Input()
-  navLinks: Array<any> = [];
+  @Input() navLinks: Array<any> = [];
 
-  @Input()
-  title: string = '';
-  @Input()
-  isSubMenu: boolean = false;
-  @Input()
-  showDropdown: boolean = true;
+  @Input() title: string = '';
+  @Input() isSubMenu: boolean = false;
+  @Input() showDropdown: boolean = true;
 
-  @Input()
-  baseUrl: string = '';
-  @Input()
-  emberUrl: string = '';
-  @Input()
-  teamUrl: string = '';
+  @Input() baseUrl: string = '';
+  @Input() emberUrl: string = '';
+  @Input() teamUrl: string = '';
 
   constructor() {}
 }
