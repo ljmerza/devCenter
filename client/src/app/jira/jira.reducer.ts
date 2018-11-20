@@ -9,12 +9,12 @@ export const initialState: JiraState = {
 };
 
 export function JiraReducer(state: JiraState = initialState, action: JiraActions): JiraState {
-    
+
     switch (action.type) {
         case JiraActionTypes.RETRIEVE:
             return { ...state, loading: true, ...action.payload };
         case JiraActionTypes.RETRIEVE_SUCCESS:
-            return { ...state, loading: false, tickets: action.payload.data, totalTickets: action.payload.total_tickets };
+            return { ...state, loading: false, tickets: action.payload};
         case JiraActionTypes.RETRIEVE_ERROR:
             return { ...state, loading: false };
 

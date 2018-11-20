@@ -2,14 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { TranslateModule } from '@ngx-translate/core';
-
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
-
-// import { JspanelModule } from 'jspanel';
 
 import {
   MatAutocompleteModule,
@@ -66,10 +62,6 @@ library.add(
     CommonModule,
     FormsModule,
 
-    // JspanelModule,
-
-    TranslateModule,
-
     CdkTableModule,
     CdkTreeModule,
     DragDropModule,
@@ -117,8 +109,6 @@ library.add(
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-
-    TranslateModule,
 
     CdkTableModule,
     CdkTreeModule,

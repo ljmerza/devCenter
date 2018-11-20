@@ -21,9 +21,21 @@ export class JiraEffects {
         ofType<JiraActions>(JiraActionTypes.RETRIEVE),
         switchMap((action: ActionTicketsRetrieve) => 
             this.service.getTickets(action.payload).pipe(
-                map((response: any) => new ActionTicketsSuccess(response)),
+                map((response: any) => new ActionTicketsSuccess(this.processJiraTickets(response.data))),
                 catchError(() => of(new ActionTicketsError()))
             )
         )
     );
+
+    /**
+     * 
+     */
+    processJiraTickets(tickets){
+        const newTickets = tickets.map(ticket => {
+            // ticket.detailRow = true;
+            return ticket;
+        });
+
+        return newTickets;
+    }
 }

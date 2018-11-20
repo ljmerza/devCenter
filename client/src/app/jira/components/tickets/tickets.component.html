@@ -1,9 +1,6 @@
-<div *ngIf='loading; else ticketList'>loading...</div>
+
+<div *ngIf='loading; else ticketList'>Loading...</div>
 
 <ng-template #ticketList>
-  <ul>
-    <li *ngFor='let ticket of tickets'>
-      {{ticket.key}}
-    </li>   
-  </ul>
+  <dc-ticket-list [tickets]=tickets></dc-ticket-list>
 </ng-template>
