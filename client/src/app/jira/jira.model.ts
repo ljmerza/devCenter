@@ -5,8 +5,9 @@ export interface JiraTicket {}
 export interface JiraState {
     loading: boolean;
     tickets?: JiraTicket[], 
-    current_jql: string,
-    totalTickets: number
+    currentJql: string,
+    ticketType: string,
+    fields: string
 }
 
 export interface State extends AppState {

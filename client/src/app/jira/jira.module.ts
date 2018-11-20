@@ -16,6 +16,7 @@ import { JiraReducer } from './jira.reducer';
 import { TicketsComponent } from './components/tickets/tickets.component';
 import { TicketListComponent } from './components/ticket-list/ticket-list.component';
 import { ActionsComponent } from './components/actions/actions.component';
+import { LoadingTableComponent } from './components/loading-table/loading-table.component';
 
 @NgModule({
 
@@ -31,6 +32,6 @@ import { ActionsComponent } from './components/actions/actions.component';
     JiraRoutingModule
   ],
   providers: [JiraService],
-  declarations: [TicketsComponent, TicketListComponent, ActionsComponent]
+  declarations: [TicketsComponent, TicketListComponent, ActionsComponent, LoadingTableComponent]
 })
 export class JiraModule {}

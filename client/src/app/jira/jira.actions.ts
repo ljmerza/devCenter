@@ -8,7 +8,7 @@ export enum JiraActionTypes {
 
 export class ActionTicketsRetrieve implements Action {
     readonly type = JiraActionTypes.RETRIEVE;
-    constructor(readonly payload: { current_jql, fields }) {}
+    constructor(readonly payload: { currentJql, fields, ticketType }) {}
 }
 export class ActionTicketsSuccess implements Action {
     readonly type = JiraActionTypes.RETRIEVE_SUCCESS;

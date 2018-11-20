@@ -10,9 +10,9 @@ export class JiraService {
     /**
      * 
      */
-    getTickets({current_jql, fields=''}){
+    getTickets({currentJql, fields=''}){
         const params = new HttpParams()
-            .append('jql', current_jql)
+            .append('jql', currentJql)
             .append('fields', fields);
 
         return this.httpClient.get(`${env.apiUrl}/jira/tickets`, {params});

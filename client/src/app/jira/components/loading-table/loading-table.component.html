@@ -1,0 +1,42 @@
+<div class="container-fluid table-spacing">
+	<!-- header -->
+	<div class="row">
+		<div class="col-12">
+			<h1 class='text-center ticket-title'>
+				<span>{{tableTitle}}</span>
+
+				<span class="loading-icon">
+					<span *ngIf="!loadingIcon; else cancelRefresh">
+						<i class="material-icons text-success" title='Refresh {{tableTitle}}' (click)="refreshDataEvent()">update</i>
+					</span>
+					<ng-template #cancelRefresh>
+						<i class="material-icons text-danger" title='Stop Refresh of {{tableTitle}}' (click)="stopRefreshDataEvent()">highlight_off</i>
+					</ng-template>
+				</span>
+				
+			</h1>
+		</div>
+	</div>
+	
+	<!-- ticket loading -->
+	<div class='loading' [hidden]="!loadingTable">
+		<div class='container'>
+			<div class='loader'>
+				<div class='loader--dot'></div>
+				<div class='loader--dot'></div>
+				<div class='loader--dot'></div>
+				<div class='loader--dot'></div>
+				<div class='loader--dot'></div>
+				<div class='loader--dot'></div>
+				<div class='loader--text'></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- table -->
+	<div class="row" [hidden]='loadingTable'>
+		<div class="col-12">
+			<ng-content></ng-content>
+		</div>
+	</div>
+</div>

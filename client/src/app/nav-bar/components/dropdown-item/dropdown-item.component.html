@@ -1,6 +1,6 @@
 <button mat-menu-item>
 	<!-- full link given -->
-	<a *ngIf='navLink.query; else fullLink' class="dropdown-item" [routerLink]="['/jira', navLink.name, {jql: navLink.query}]">
+	<a *ngIf='navLink.query; else fullLink' class="dropdown-item" [routerLink]="['/jira', navLink.name, {jql: navLink.query, displayName:navLink.display_name}]">
 		{{navLink.display_name}}
 	</a>
 
