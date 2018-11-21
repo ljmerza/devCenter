@@ -10,18 +10,29 @@
 	      
 	        <ng-container matColumnDef="key">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Key </mat-header-cell>
-	          <mat-cell *matCellDef="let ticket"> {{ticket.key}} </mat-cell>
+	          <mat-cell *matCellDef="let ticket">
+							<i class="material-icons pointer copy-key" title="Copy Jira key to clipboard" dcCopyInput>note</i>
+							<span dcCopyInput class='hidden'>{{env.jiraUrl}}/browse/{{ticket.key}}</span>
+							
+							<i class="material-icons pointer copy-jira" title="Copy Jira link to clipboard" dcCopyInput>note</i>
+							<a dcCopyInput target="_blank" href="{{env.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira' dcInputToCopy>
+								{{ticket.key}}
+							</a>
+						</mat-cell>
 	        </ng-container>
 	      
 	        <ng-container matColumnDef="msrp">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> MSRP </mat-header-cell>
-	          <mat-cell *matCellDef="let ticket"> {{ticket.msrp}} </mat-cell>
+	          <mat-cell *matCellDef="let ticket">
+							<i class="material-icons pointer copy-msrp" title="Copy Jira key to clipboard" dcCopyInput>note</i>
+							<span>{{ticket.msrp}}</span>
+						</mat-cell>
 	        </ng-container>
 
 	        <ng-container matColumnDef="actions">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
-	            <dc-actions (expandRow)='expandedElement=ticket'></dc-actions>
+	            <dc-actions [selectorTicket]=ticket.selectorTicket></dc-actions>
 	          </mat-cell>
 	        </ng-container>
 	      
@@ -67,38 +78,27 @@
 	      
 	        <ng-container matColumnDef="Pull Requests">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Pull Requests </mat-header-cell>
-	          <mat-cell *matCellDef="let ticket"> {{ticket.status}} </mat-cell>
+	          <mat-cell *matCellDef="let ticket">
+							<dc-pull-requests [selectorTicket]=ticket.selectorTicket></dc-pull-requests>
+						</mat-cell>
 	        </ng-container>
 	      
 	        <ng-container matColumnDef="Assignee">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Assignee </mat-header-cell>
-	          <mat-cell *matCellDef="let ticket"> {{ticket.status}} </mat-cell>
+	          <mat-cell *matCellDef="let ticket">
+							<dc-user-details [selectorTicket]=ticket.selectorTicket></dc-user-details>
+						</mat-cell>
 	        </ng-container>
 	      
 	        <ng-container matColumnDef="Customer">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Customer </mat-header-cell>
-	          <mat-cell *matCellDef="let ticket"> {{ticket.status}} </mat-cell>
+	          <mat-cell *matCellDef="let ticket"> 
+							<dc-user-details [isCustomer]=true [selectorTicket]=ticket.selectorTicket></dc-user-details></mat-cell>
 	        </ng-container>
 
-	      <!--   <ng-container matColumnDef="expandedDetail">
-	          <mat-cell *matCellDef="let detail"> 
-	            The symbol for {{detail.element.msrp}} is {{detail.element.key}}
-	          </mat-cell>
-	        </ng-container> -->
-
 	        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-	        <mat-row 
-	          *matRowDef="let row; columns: displayedColumns;"
-	          matRipple 
-	          class="element-row" 
-	          [class.expanded]="expandedElement == row"
-	        ></mat-row>
+	        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
 
-	        <!-- <mat-row 
-	          *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
-	          [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'"
-	          style="overflow: hidden"> 
-	        </mat-row> -->
 
 	      </mat-table>
 

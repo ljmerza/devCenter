@@ -1,0 +1,30 @@
+.mat-cell, .mat-header-cell {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+
+.cdk-column-key, 
+.cdk-column-msrp, 
+.cdk-column-Estimate, 
+.cdk-column-Logged,
+.cdk-column-actions,
+.cdk-column-DueDate, 
+.cdk-column-StartDate, 
+.cdk-column-Last-Update, 
+.cdk-column-Created {
+    flex-grow: 1;
+}
+
+.cdk-column-key, 
+.cdk-column-Pull-Requests,
+.cdk-column-Assignee,
+.cdk-column-status,
+.cdk-column-Customer {
+    flex-grow: 2;
+}
+
+.cdk-column-summary {
+    flex-grow: 4;
+}
+

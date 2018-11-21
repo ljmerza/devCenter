@@ -4,15 +4,21 @@
   $primary: map-get($theme, primary);
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
-  $primary-text: map-get($theme, foreground);
+  $foreground: map-get($theme, foreground);
+  $background: map-get($theme, background);
 
   // make all select dropdowns the same
-  .mat-select-panel, .mat-raised-button, .mat-menu-panel, .mat-menu-item {
-    .mat-option, .mat-menu-item, a, .mat-input-element {
+  .mat-select-panel, .mat-menu-panel, .mat-menu-item {
+    .mat-option, .mat-menu-item, .dropdown-item {
       &:hover {
+        a {
+          background-color: mat-color($primary, darker) !important;
+        }
         background-color: mat-color($primary, darker) !important;
       }
+
       color: mat-color($primary, lighter) !important;
+      background-color: mat-color($primary) !important;
     }
 
     &::after {
@@ -22,40 +28,14 @@
     background-color: mat-color($primary) !important;
     color: mat-color($primary, lighter) !important;
   }
-  
-  .mat-checkbox-background {
-    background-color: inherit !important;
-  }
 
-  .mat-checkbox-checkmark-path {
-    stroke: mat-color($primary-text, text) !important;
-  }
-  
-  .mat-input-element, .mat-checkbox-label {
-    color: mat-color($primary-text, text) !important;
-  }
-
+  // main content bg
   mat-sidenav-content {
     background-color: mat-color($accent);
   }
 
+  // footer
   mat-sidenav-container {
-
-    // navbar
-    mat-toolbar {
-
-      .mat-button, a, .mat-raised-button {
-        &:hover {
-          background-color: mat-color($primary, darker) !important;
-        }
-      }
-
-      button a, mat-form-field, .mat-raised-button, .mat-button, .logo {
-        color: mat-color($primary, lighter) !important;
-        background-color: mat-color($primary) !important;
-      }
-    }
-
     .footer {
       color: mat-color($primary, lighter);
       background-color: mat-color($primary, darker);

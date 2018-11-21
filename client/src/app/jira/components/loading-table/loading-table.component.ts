@@ -3,7 +3,7 @@ import { Component, Output, Input, EventEmitter, ViewEncapsulation, ChangeDetect
 @Component({
   selector: 'dc-loading-table',
   templateUrl: './loading-table.component.html',
-  styleUrls: ['./loading-table.component.css'],
+  styleUrls: ['./loading-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoadingTableComponent {

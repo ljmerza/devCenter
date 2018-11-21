@@ -8,15 +8,18 @@ import { JiraRoutingModule } from './jira-routing.module';
 
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { PanelModule } from '@app/panel';
 
-import { JiraEffects } from './jira.effects';
-import { JiraService } from './jira.service';
-import { JiraReducer } from './jira.reducer';
+import { TicketsEffects, BranchInfoEffects } from './effects';
+import { TicketsService, BranchInfoService } from './services';
+import { TicketsReducer } from './reducers';
 
-import { TicketsComponent } from './components/tickets/tickets.component';
-import { TicketListComponent } from './components/ticket-list/ticket-list.component';
-import { ActionsComponent } from './components/actions/actions.component';
-import { LoadingTableComponent } from './components/loading-table/loading-table.component';
+import {
+  TicketsComponent, ActionsComponent,
+  LoadingTableComponent, UserDetailsComponent,
+  PullRequestsComponent, BranchInfoComponent 
+} from './components';
+
 
 @NgModule({
 
@@ -26,12 +29,14 @@ import { LoadingTableComponent } from './components/loading-table/loading-table.
     RouterModule,
     MomentModule,
 
-    StoreModule.forFeature('jira', JiraReducer),
-    EffectsModule.forFeature([JiraEffects]),
+    PanelModule,
+
+    StoreModule.forFeature('jira', TicketsReducer),
+    EffectsModule.forFeature([TicketsEffects, BranchInfoEffects]),
 
     JiraRoutingModule
   ],
-  providers: [JiraService],
-  declarations: [TicketsComponent, TicketListComponent, ActionsComponent, LoadingTableComponent]
+  providers: [TicketsService, BranchInfoService],
+  declarations: [TicketsComponent, ActionsComponent, LoadingTableComponent, UserDetailsComponent, PullRequestsComponent, BranchInfoComponent]
 })
 export class JiraModule {}

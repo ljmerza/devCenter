@@ -4,10 +4,10 @@ import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Store, select } from '@ngrx/store';
 
-import { ActionTicketsRetrieve } from '../../jira.actions';
-import { selectJiraState, selectJiraLoading, selectJiraTickets } from '../../jira.selectors';
+import { ActionTicketsRetrieve } from '../../actions';
+import { selectJiraState, selectJiraLoading, selectJiraTickets } from '../../selectors';
 
-import { map } from 'rxjs/operators';
+import { environment as env } from '@env/environment';
 
 @Component({
   selector: 'dc-tickets',
@@ -31,12 +31,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
+  env = env
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   tickets$;
-
   filteredTickets;
   loading:boolean = false;
   tableTitle = '';
@@ -50,7 +50,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
     this.tickets$ = this.store.pipe(select(selectJiraLoading))
       .subscribe(loading => this.setLoading(loading));
 
-    this.route.url.subscribe( (urlSegment:UrlSegment[]) => {
+    this.route.url.subscribe((urlSegment:UrlSegment[]) => {
       this.currentJql = urlSegment[0].parameters.jql;
       this.ticketType = urlSegment[0].path;
       this.tableTitle = `${urlSegment[0].parameters.displayName} Tickets`;

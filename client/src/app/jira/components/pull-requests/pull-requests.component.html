@@ -1,0 +1,13 @@
+<div class='float-left' *ngIf='ticket.pullRequests.length'>
+  <div *ngFor='let request of ticket.pullRequests'>
+    <a title='Open Pull Request for {{request.repo}}' target="_blank" href="{{request.link}}">
+      {{request.repo}}
+    </a>
+  </div>
+
+  <span>
+    <i (click)="pingUser()" class="material-icons text-primary pointer" title='Ping {{ticket.username}} that PCR comments need addressing'>chat</i>
+  </span>
+
+  <span *ngIf='ticket.pcrCountLeft'>PCR: {{ticket.pcrCountLeft}}</span>
+</div>

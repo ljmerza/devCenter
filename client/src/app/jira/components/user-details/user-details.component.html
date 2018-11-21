@@ -1,0 +1,12 @@
+<div>
+  <img src="{{env.chatIconUrl}}/{{username}}.gif">
+  <a [href]="sanitizedChatUrl()" title="Open chat with {{displayName}}">
+    {{username}}
+  </a>
+</div>
+
+<div *ngIf='emailAddress'>
+  <a href="mailto:{{emailAddress}}?Subject=MSRP%20{{msrp}}" title="Open email with {{displayName}}">
+    {{displayName}}
+  </a>
+</div>

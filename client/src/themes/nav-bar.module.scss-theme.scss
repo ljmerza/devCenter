@@ -1,0 +1,22 @@
+@import '~@angular/material/theming';
+
+@mixin nav-bar-module-theme($theme) {
+    $primary: map-get($theme, primary);
+
+
+    mat-toolbar {
+        mat-form-field {
+            color: mat-color($primary, lighter) !important;
+            background-color: mat-color($primary) !important;
+        }
+
+        .mat-button, a, .mat-raised-button, .mat-button, .logo {
+            &:hover {
+            background-color: mat-color($primary, darker) !important;
+            }
+
+            color: mat-color($primary, lighter) !important;
+            background-color: mat-color($primary) !important;
+        }
+    }
+}

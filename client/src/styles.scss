@@ -1,7 +1,31 @@
 @import 'styles-variables';
 
 @import '../node_modules/bootstrap/scss/bootstrap-reboot';
+@import '../node_modules/bootstrap/scss/variables';
+@import "../node_modules/bootstrap/scss/mixins";
+
+.text-primary{
+    color: $blue;
+}
+.text-warning{
+    color: $orange;
+}
+.text-success{
+    color: $green;
+}
+.text-info{
+    color: $purple;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+@import '../node_modules/bootstrap/scss/code';
+@import '../node_modules/bootstrap/scss/images';
 @import '../node_modules/bootstrap/scss/bootstrap-grid';
+@import '../node_modules/bootstrap/scss/mixins/float';
+
 @import 'themes/styles-reset';
 
 @import '../node_modules/@angular/material/theming';
@@ -17,12 +41,19 @@
 @import 'themes/notifications.component.scss-theme';
 @import 'themes/jspanel.component.scss-theme';
 @import 'themes/app.component.scss-theme';
+@import 'themes/settings.component.scss-theme';
+@import 'themes/nav-bar.module.scss-theme';
+@import 'themes/main-table.scss-theme';
 
 @mixin custom-components-theme($theme) {
   @include dc-styles-reset-theme($theme);
+  @include nav-bar-module-theme($theme);
+  
+  @include settings-component-theme($theme);
   @include dc-app-component-theme($theme);
   @include dc-notifications-component-theme($theme);
   @include dc-jspanel-component-theme($theme);
+  @include main-table-theme($theme);
 }
 
 .default-theme {

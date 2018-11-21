@@ -1,0 +1,30 @@
+@import '~@angular/material/theming';
+
+@mixin settings-component-theme($theme) {
+    $primary: map-get($theme, primary);
+    $foreground: map-get($theme, foreground);
+
+    dc-settings {
+
+        .mat-button, a, .mat-raised-button, .mat-button, .logo {
+            &:hover {
+            background-color: mat-color($primary, darker) !important;
+            }
+
+            color: mat-color($primary, lighter) !important;
+            background-color: mat-color($primary) !important;
+        }
+
+        .mat-checkbox-background {
+            background-color: inherit !important;
+        }
+    
+        .mat-checkbox-checkmark-path {
+            stroke: mat-color($foreground, text) !important;
+        }
+        
+        .mat-input-element, .mat-checkbox-label {
+            color: mat-color($foreground, text) !important;
+        }
+    }
+}

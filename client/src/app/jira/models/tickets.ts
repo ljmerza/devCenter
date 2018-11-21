@@ -2,14 +2,14 @@ import { AppState } from '@app/core';
 
 export interface JiraTicket {}
 
-export interface JiraState {
+export interface JiraTicketsState {
     loading: boolean;
-    tickets?: JiraTicket[], 
+    tickets: JiraTicket[], 
     currentJql: string,
     ticketType: string,
     fields: string
 }
 
-export interface State extends AppState {
-    jira: JiraState
+export interface TicketsState extends AppState {
+    jira: JiraTicketsState
 }

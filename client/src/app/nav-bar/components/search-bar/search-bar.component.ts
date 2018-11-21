@@ -153,7 +153,5 @@ export class SearchBarComponent implements OnInit {
     // if selected search option has second dropdown then set default as first selection
     const secondDropdown = this.selectedSearchOption.secondDropdown;
     this.formValues.secondSearchType = secondDropdown ? secondDropdown[0].value : '';
-
-    console.log({formValues:this.formValues, secondDropdown, selectedSearchOption:this.selectedSearchOption});
   }
 }
