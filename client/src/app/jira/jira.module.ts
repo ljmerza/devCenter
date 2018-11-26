@@ -20,9 +20,6 @@ import {
   PullRequestsComponent, TicketDetailsComponent, LoadingDetailsComponent
 } from './components';
 
-import { CommentFormatPipe } from './comment-format.pipe';
-import { SafehtmlPipe } from './safe-html.pipe';
-
 
 @NgModule({
 
@@ -41,7 +38,7 @@ import { SafehtmlPipe } from './safe-html.pipe';
   ],
   providers: [TicketsService, BranchInfoService, CommentsService],
   declarations: [
-    TicketsComponent, ActionsComponent, LoadingTableComponent, CommentFormatPipe, SafehtmlPipe,
+    TicketsComponent, ActionsComponent, LoadingTableComponent,
     UserDetailsComponent, PullRequestsComponent, TicketDetailsComponent, 
     LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent
   ]

@@ -51,7 +51,10 @@ import {
   faRocket,
   faCaretDown,
 } from '@fortawesome/free-solid-svg-icons';
-import { CopyInputDirective } from './directives/copy-input.directive';
+
+
+import { CommentFormatPipe, SafehtmlPipe } from './pipes';
+import { CopyInputDirective } from './directives';
 
 library.add(
   faRocket,
@@ -105,7 +108,7 @@ library.add(
 
     FontAwesomeModule
   ],
-  declarations: [CopyInputDirective],
+  declarations: [CopyInputDirective, CommentFormatPipe, SafehtmlPipe],
   exports: [
     CommonModule,
     FormsModule,
@@ -153,7 +156,9 @@ library.add(
 
     FontAwesomeModule,
 
-    CopyInputDirective,
+    CopyInputDirective, 
+    CommentFormatPipe, 
+    SafehtmlPipe,
   ]
 })
 export class SharedModule {}

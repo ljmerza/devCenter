@@ -1,0 +1,1 @@
+// adds copy input for an array of items fond by jquery
