@@ -16,44 +16,39 @@
 							</span>
 						</mat-panel-title>
 					</mat-expansion-panel-header>
-					<ng-container *ngTemplateOutlet="matExpansionPanelContent"></ng-container>
+					
+					<!-- editing buttons only if belongs to current user -->
+					<span class='edit-buttons' *ngIf='comment.username == settings.username'>
+						<button type="button" class="btn btn-outline-primary" (click)="toggleEditing(comment)">
+							{{comment.closeText}}
+						</button>
+
+						<button [hidden]="!comment.isEditing" type="button" class="btn btn-outline-success" 
+						(click)="editComment(comment)">
+							Save Edit
+						</button>
+
+						<button type="button" class="btn btn-outline-danger" (click)="deleteComment(comment.id)"
+						*ngIf='!comment.isEditing'>
+							Delete Comment
+						</button>
+					</span>
+
+					<!-- comment body -->
+					<div *ngIf="!comment.isEditing; else commentEditArea" [innerHTML]="comment.comment | commentFormat:ticket.attachments | safehtml"></div>
+					
+					<!-- text area comment body -->
+					<ng-template #commentEditArea>
+						<textarea 
+							[id]=comment.editId 
+							class='edit-area' 
+							cols="100" 
+							rows=25 
+							value={{comment.raw_comment}}
+						></textarea>
+					</ng-template>
 				</mat-expansion-panel>
 			</mat-accordion>
 		</dc-loading-details>
 	</span>
 </dc-panel>
-
-
-
-<ng-template #matExpansionPanelContent>
-	<!-- editing buttons only if belongs to current user -->
-	<span class='edit-buttons' *ngIf='comment.username == settings?.username'>
-		<button type="button" class="btn btn-outline-primary" (click)="toggleEditing(comment)">
-			{{comment.closeText}}
-		</button>
-
-		<button [hidden]="!comment.isEditing" type="button" class="btn btn-outline-success" 
-		(click)="editComment(comment)">
-			Save Edit
-		</button>
-
-		<button type="button" class="btn btn-outline-danger" (click)="deleteComment(comment.id)"
-		*ngIf='!comment.isEditing'>
-			Delete Comment
-		</button>
-	</span>
-
-	<!-- comment body -->
-	<div *ngIf="!comment.isEditing; else commentEditArea" [innerHTML]="comment.comment | commentFormat:ticket.attachments | safehtml"></div>
-	
-	<!-- text area comment body -->
-	<ng-template #commentEditArea>
-		<textarea 
-			[id]=comment.editId 
-			class='edit-area' 
-			cols="100" 
-			rows=25 
-			value={{comment.raw_comment}}
-		></textarea>
-	</ng-template>
-</ng-template>

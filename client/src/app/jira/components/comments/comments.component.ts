@@ -23,7 +23,7 @@ export class CommentsComponent implements OnInit {
 	ticket$: Subscription;
 	loading: boolean = false;
 
-	settings;
+	settings = {};
 	settings$;
 
 	@Input() key;
