@@ -12,10 +12,10 @@
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Key </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
 							<i class="material-icons pointer copy-key" title="Copy Jira key to clipboard" dcCopyInput>note</i>
-							<span dcCopyInput class='hidden'>{{env.jiraUrl}}/browse/{{ticket.key}}</span>
+							<span class='hidden'>{{env.jiraUrl}}/browse/{{ticket.key}}</span>
 							
 							<i class="material-icons pointer copy-jira" title="Copy Jira link to clipboard" dcCopyInput>note</i>
-							<a dcCopyInput target="_blank" href="{{env.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira' dcInputToCopy>
+							<a target="_blank" href="{{env.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira' dcInputToCopy>
 								{{ticket.key}}
 							</a>
 						</mat-cell>

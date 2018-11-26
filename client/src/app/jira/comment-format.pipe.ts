@@ -34,15 +34,12 @@ export class CommentFormatPipe implements PipeTransform {
 			if(index === 0) return piece;
 
 			let tableRowData = piece.split(/</);
-
 			const copyText = tableRowData.shift();
 
 			const newText = `
-				<span class='tableCopy'>
-					<span class="material-icons text-success" title="Copy to clipboard">note</span>
-					<input value='${copyText}'>
-				</span>
-				${copyText}`;
+				<i class="material-icons pointer copy-jira" title="Copy Jira link to clipboard">note</i>
+				<span>${copyText}</span>
+			`;
 
 			return [newText, ...tableRowData].join('<');
 		});
