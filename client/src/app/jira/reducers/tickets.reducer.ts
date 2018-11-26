@@ -1,31 +1,68 @@
-import { TicketsActions, TicketsActionTypes, branchInfoActionTypes, branchInfoActions } from '../actions';
-import { JiraTicketsState } from '../models';
+import { 
+    TicketsActions, TicketsActionTypes, 
+    branchInfoActionTypes, branchInfoActions,
+    CommentActionTypes, CommentActions,
+} from '../actions';
+import { JiraTicketsState, JiraTicket } from '../models';
 import { selectJiraTicketFactory } from '../selectors/tickets.selectors';
 
 export const initialState: JiraTicketsState = {
     loading: false,
     tickets: [],
+
+    additionalLoading: false,
+    additionalTickets: [],
+
+    commentsLoading: false,
+    commentsTickets: [],
+
     currentJql: '',
     ticketType: '',
     fields: ''
 };
 
-export function TicketsReducer(state: JiraTicketsState = initialState, action: TicketsActions | branchInfoActions): JiraTicketsState {
+type Action = TicketsActions | branchInfoActions | CommentActions;
+
+export function TicketsReducer(state: JiraTicketsState = initialState, action: Action): JiraTicketsState {
 
     switch (action.type) {
         case TicketsActionTypes.RETRIEVE:
             return { ...state, loading: true, ...action.payload };
+
         case TicketsActionTypes.RETRIEVE_SUCCESS:
-            return { ...state, loading: false, tickets: processJiraTickets(action.payload, state)};
+            const tickets = processJiraTickets(action.payload, state.tickets, state.ticketType);
+            const commentsTickets = tickets.map((ticket:JiraTicket) => ({
+                msrp: ticket.msrp, 
+                key:ticket.key, 
+                comments: ticket.comments,
+                attachments: ticket.attachments || [],
+            }));
+            return { ...state, loading: false, tickets, commentsTickets };
+
         case TicketsActionTypes.RETRIEVE_ERROR:
             return { ...state, loading: false };
 
+
+
         case branchInfoActionTypes.RETRIEVE:
-            return { ...state };
+            return { ...state, additionalLoading: true };
+
         case branchInfoActionTypes.RETRIEVE_SUCCESS:
-            return { ...state, tickets: replaceJiraTicket(action.payload, state) };
+            const additionalTickets = processJiraTickets(action.payload, state.additionalTickets, state.ticketType);
+            return { ...state, additionalLoading: false, additionalTickets};
+        
         case branchInfoActionTypes.RETRIEVE_ERROR:
-            return { ...state };
+            return { ...state, additionalLoading: false };
+
+
+        case CommentActionTypes.SAVE:
+            return { ...state, additionalLoading: true };
+
+        case CommentActionTypes.SAVE_SUCCESS:
+            return { ...state, additionalLoading: false };
+        
+        case CommentActionTypes.SAVE_ERROR:
+            return { ...state, additionalLoading: false };
 
         default:
             return state;
@@ -33,31 +70,19 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: T
 }
 
 /**
- * replaces the matching old jira ticket in the store with the new additional 
- * detailed jira ticket while leaving all the other tickts the same
- * @param {Object} ticket
- * @param {JiraTicketsState} state
- * 
- */
-function replaceJiraTicket(newTicket, state) {
-    return state.tickets.map(ticket => ticket.key === newTicket.key ? newTicket : ticket);
-}
-
-/**
  * add ticketType to all new tickets then replaces any old tickets matching any new tickets
  */
-function processJiraTickets(tickets, state){
-    const newTickets = tickets.map(ticket => processNewTicket(ticket, state.ticketType));
-
-    const oldTickets = Array.from(state.tickets);
+function processJiraTickets(tickets, oldTickets, ticketType): JiraTicket[] {
+    const newTickets = tickets.map(ticket => processNewTicket(ticket, ticketType));
+    const oldTicketsCopied = <JiraTicket[]>Array.from(oldTickets);
 
     newTickets.forEach(newTicket => {
-        const matchingOldTicketIndex = oldTickets.findIndex((oldTicket:any) => oldTicket.key === newTicket.key);
-        if(matchingOldTicketIndex !== -1) oldTickets[matchingOldTicketIndex] = newTicket;
-        else oldTickets.push(newTicket);
+        const matchingOldTicketIndex = oldTicketsCopied.findIndex((oldTicket: JiraTicket) => oldTicket.key === newTicket.key);
+        if (matchingOldTicketIndex !== -1) oldTicketsCopied[matchingOldTicketIndex] = newTicket;
+        else oldTicketsCopied.push(newTicket);
     });
 
-    return oldTickets;
+    return oldTicketsCopied;
 }
 
 /**

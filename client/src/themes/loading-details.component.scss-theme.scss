@@ -1,0 +1,19 @@
+@import '~@angular/material/theming';
+
+@mixin dc-loading-details-component-theme($theme) {
+    $primary: map-get($theme, primary);
+
+    @keyframes pulse {
+        50% { 
+            background: mat-color($primary, lighter);
+        } 
+    }
+
+    .loading-pulse {
+        background: mat-color($primary, darker);
+
+        &:before, &:after {
+            background: mat-color($primary, darker);
+        }
+    }
+}

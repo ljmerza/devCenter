@@ -7,6 +7,10 @@
   $foreground: map-get($theme, foreground);
   $background: map-get($theme, background);
 
+  h1, h2, h3 {
+    color: mat-color($primary) !important;
+  }
+
   // make all select dropdowns the same
   .mat-select-panel, .mat-menu-panel, .mat-menu-item {
     .mat-option, .mat-menu-item, .dropdown-item {

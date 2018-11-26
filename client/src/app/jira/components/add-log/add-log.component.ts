@@ -1,12 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'anms-branch-info',
-  templateUrl: './branch-info.component.html',
-  styleUrls: ['./branch-info.component.css'],
+  selector: 'anms-add-log',
+  templateUrl: './add-log.component.html',
+  styleUrls: ['./add-log.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BranchInfoComponent implements OnInit {
+export class AddLogComponent implements OnInit {
 
   constructor() { }
 

@@ -2,20 +2,22 @@ import { Component, Input, OnInit, OnDestroy, ComponentFactoryResolver, ViewCont
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
-import { BranchInfoComponent } from '../branch-info/branch-info.component';
+import { TicketDetailsComponent } from '../ticket-details/ticket-details.component';
+import { CommentsComponent } from '../comments/comments.component';
 
 
 @Component({
   selector: 'dc-actions',
   templateUrl: './actions.component.html',
   styleUrls: ['./actions.component.scss'], 
-  entryComponents: [BranchInfoComponent]
+  entryComponents: [TicketDetailsComponent, CommentsComponent]
 })
 export class ActionsComponent implements OnInit, OnDestroy {
   ticket$: Subscription;
   ticket;
 
   branchInfoRef;
+  commentsRef;
 
   @Input() selectorTicket;
 
@@ -39,18 +41,24 @@ export class ActionsComponent implements OnInit, OnDestroy {
   }
 
   openCommentsModal(){
+    if (!this.commentsRef) {
+      const factory = this.factoryResolver.resolveComponentFactory(CommentsComponent);
+      this.commentsRef = this.viewContRef.createComponent(factory);
+      (<CommentsComponent>this.commentsRef.instance).key = this.ticket.key;
+    }
 
+    (<CommentsComponent>this.commentsRef.instance).modal.openModal();
   }
 
   openAdditionalDetails(){
+
     if (!this.branchInfoRef) {
-      const factory = this.factoryResolver.resolveComponentFactory(BranchInfoComponent);
-      const component = this.viewContRef.createComponent(factory);
-      (<BranchInfoComponent>this.branchInfoRef.instance).selectorTicket = this.ticket.selectorTicket;
-      this.branchInfoRef = component;
+      const factory = this.factoryResolver.resolveComponentFactory(TicketDetailsComponent);
+      this.branchInfoRef = this.viewContRef.createComponent(factory);
+      (<TicketDetailsComponent>this.branchInfoRef.instance).key = this.ticket.key;
     }
 
-    (<BranchInfoComponent>this.branchInfoRef.instance).openModal();
+    (<TicketDetailsComponent>this.branchInfoRef.instance).openModal();
   }
 
 }

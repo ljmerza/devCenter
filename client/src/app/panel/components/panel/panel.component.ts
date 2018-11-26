@@ -49,6 +49,8 @@ export class PanelComponent implements OnDestroy {
 	 * @return {Object} 
 	 */
   getJsPanelOptions(options):Object {
+
+    console.log({t: this.getModalSize()});
     return {
       headerTitle: this.modalHeader.nativeElement,
       content: this.modalBody.nativeElement,
@@ -88,7 +90,7 @@ export class PanelComponent implements OnDestroy {
       case 'md':
         return { width: 'auto', height: 'auto' };
       case 'lg':
-        return { width: 'auto', height: 'auto' };
+        return { width: '60%', height: '70%' };
       case 'xl':
         return { width: 'auto', height: 'auto' };
       default:

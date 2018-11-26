@@ -1,0 +1,6 @@
+<div class="loading-pulse" *ngIf='loading; else detailsData'></div>
+
+<ng-template #detailsData>
+  <ng-content></ng-content>
+</ng-template>
+

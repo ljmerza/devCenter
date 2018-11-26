@@ -8,10 +8,6 @@
     $background: map-get($theme, background);
 
     dc-loading-table {
-        h1 {
-            color: mat-color($primary) !important;
-        }
-
         .loading-icon {
             color: mat-color($primary) !important;
         }

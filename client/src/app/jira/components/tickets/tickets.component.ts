@@ -37,6 +37,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   tickets$;
+  loading$;
   filteredTickets;
   loading:boolean = false;
   tableTitle = '';
@@ -47,7 +48,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
     this.tickets$ = this.store.pipe(select(selectJiraState))
       .subscribe(state => this.processTickets(state));
 
-    this.tickets$ = this.store.pipe(select(selectJiraLoading))
+    this.loading$ = this.store.pipe(select(selectJiraLoading))
       .subscribe(loading => this.setLoading(loading));
 
     this.route.url.subscribe((urlSegment:UrlSegment[]) => {
@@ -61,6 +62,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.tickets$.unsubscribe();
+    this.loading$.unsubscribe();
   }
 
   getTickets(){

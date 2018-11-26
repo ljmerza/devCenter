@@ -1,0 +1,165 @@
+<dc-panel [modalSize]='"lg"'>
+  <div class='modal-header'>Additional Details for Jira Ticket {{key}}</div>
+
+  <span class='modal-body'>
+    <dc-loading-details [loading]=loading>
+
+      <div class="container">
+        <div class='row'>
+
+          <!-- Ticket Time Logs -->
+          <section class="col-md-12" *ngIf='ticket?.worklog?.length > 0'>
+            <div><h1>Time Logs</h1></div>
+            <table mat-table [dataSource]="ticket?.worklog" class="mat-elevation-z8">
+
+              <ng-container matColumnDef="timeSpent">
+                <td mat-cell *matCellDef="let worklog">
+                  Time Spent: {{worklog.timeSpent}}
+                </td>
+              </ng-container>
+            
+              <ng-container matColumnDef="updated">
+                <td mat-cell *matCellDef="let worklog">
+                  Updated: {{worklog.updated | amDateFormat:'MMMM DD@h:mm:A'}}
+                </td>
+              </ng-container>
+            
+              <tr mat-row *matRowDef="let row; columns: timeLogRows;"></tr>
+            </table>
+          </section>
+
+          <!-- Ticket links -->
+          <section class="col-md-12" *ngIf='ticket?.links?.length > 0'>
+            <div><h1>Ticket Dependencies</h1></div>
+            <table mat-table [dataSource]="ticket?.links" class="mat-elevation-z8">
+
+              <ng-container matColumnDef="key">
+                <td mat-cell *matCellDef="let link">
+                  <a *ngIf='link.inwardIssue' target="_blank" href="{{env.jiraUrl}}/browse/{{link.inwardIssue?.key}}"
+                      title='Open in Jira'>
+                      {{link.inwardIssue?.key}}
+                    </a>
+                    <a *ngIf='link.outwardIssue' target="_blank" href="{{env.jiraUrl}}/browse/{{link.outwardIssue?.key}}"
+                      title='Open in Jira'>
+                      {{link.outwardIssue?.key}}
+                    </a>
+                </td>
+              </ng-container>
+            
+              <ng-container matColumnDef="summary">
+                <td mat-cell *matCellDef="let link">
+                  {{link.outwardIssue?.fields.summary}}
+                  {{link.inwardIssue?.fields.summary}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <td mat-cell *matCellDef="let link">
+                  {{link.outwardIssue?.fields.status.name}}
+                  {{link.inwardIssue?.fields.status.name}}
+                </td>
+              </ng-container>
+            
+              <tr mat-row *matRowDef="let row; columns: linkRows;"></tr>
+            </table>
+          </section>
+          
+          <!-- Ticket Details -->
+          <section class="col-md-12">
+            <div><h1>Ticket Details</h1></div>
+
+            <mat-card class='mat-elevation-z8'>
+              <mat-list>
+                <mat-list-item>
+                  <div class="row full-width">
+                    <div class="col-md-6">
+                      Environment: {{ticket?.environment}}
+                    </div>
+                    <div class="col-md-6">
+                      Issue Type:{{ticket?.issue_type}}
+                    </div>
+                  </div>
+                </mat-list-item>
+
+                <mat-divider></mat-divider>
+
+                <mat-list-item>
+                  <div class="row full-width">
+                    <div class="col-md-6">
+                      Sprint: {{ticket?.sprint}}
+                    </div>
+                    <div class="col-md-6">
+                      Priority: {{ticket?.priority}}
+                    </div>
+                  </div>
+                </mat-list-item>
+
+                <mat-divider></mat-divider>
+
+                <mat-list-item>
+                  <div class="row full-width">
+                    <div class="col-md-6">
+                      Severity: {{ticket?.severity}}
+                    </div>
+                    <div class="col-md-6">
+                      Description: {{ticket?.description}}
+                    </div>
+                  </div>
+                </mat-list-item>
+
+                <mat-divider></mat-divider>
+
+                <mat-list-item>
+                  <div class="row full-width">
+                    <div class="col-md-6">
+                      Label: {{ticket?.label}}
+                    </div>
+                    <div class="col-md-6">
+                      Code Reviewer: {{ticket?.code_reviewer.username}} {{ticket?.code_reviewer.displayName}}
+                    </div>
+                  </div>
+                </mat-list-item>
+
+                <mat-divider></mat-divider>
+
+                <mat-list-item>
+                  <div class="row full-width">
+                    <div class="col-md-12">
+                      <span>Dev Changes:</span>
+                      <div>{{ticket?.dev_changes}}</div>
+                    </div>
+                  </div>
+                </mat-list-item>
+
+              </mat-list>
+            </mat-card>
+          </section>
+
+          <!-- Ticket Status History -->
+          <section class="col-md-12" *ngIf='ticket?.history?.status?.length > 0'>
+            <div><h1>Status History</h1></div>
+            <table mat-table [dataSource]="ticket?.history?.status" class="mat-elevation-z8">
+
+              <ng-container matColumnDef="displayName">
+                <td mat-cell *matCellDef="let status">
+                  {{status.author.displayName}}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <td mat-cell *matCellDef="let status">
+                  <span *ngIf='status.items[0].fromString'>from {{status.items[0].fromString}} </span>
+                    <span *ngIf='status.items[0].toString'>to {{status.items[0].toString}} </span>
+                    <span>on {{status.created | amDateFormat:'MMMM DD@h:mm:A'}}</span>
+                </td>
+              </ng-container>
+            
+              <tr mat-row *matRowDef="let row; columns: statusRows;"></tr>
+            </table>
+          </section>
+        </div>
+      </div>
+    </dc-loading-details>
+  </span>
+
+</dc-panel>
