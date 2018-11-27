@@ -1,3 +1,14 @@
-<p>
-  add-log works!
-</p>
+<dc-panel [modalSize]='"lg"'>
+	<div class='modal-header'>Add Comment/Worklog for Jira Ticket {{key}}</div>
+
+	<span class="modal-body"></span>
+
+	<span class="modal-footer">
+		<button mat-raised-button (click)="addComment()">
+		   Submit
+		</button>
+		<button mat-raised-button (click)="cancelEdit()">
+		   Cancel
+		</button>
+	</span>
+</dc-panel>

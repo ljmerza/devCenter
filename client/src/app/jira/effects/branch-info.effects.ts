@@ -7,7 +7,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 
 import {
     branchInfoActionTypes, branchInfoActions,
-    ActionBranchInfoRetrieve, ActionBranchInfoSuccess, ActionBranchInfoError, 
+    ActionBranchInfoPing, ActionBranchInfoPingSuccess, ActionBranchInfoPingError, 
 } from '../actions';
 
 import { BranchInfoService } from '../services';
@@ -17,14 +17,16 @@ export class BranchInfoEffects {
     constructor(private actions$: Actions<Action>, private service: BranchInfoService) {}
 
     @Effect()
-    getAdditionalDetails = () =>
+    sendPing = () =>
         this.actions$.pipe(
-            ofType<branchInfoActions>(branchInfoActionTypes.RETRIEVE),
-            switchMap((action: ActionBranchInfoRetrieve) => 
-                this.service.getAdditionalDetails(action.payload).pipe(
-                    map((response: any) => new ActionBranchInfoSuccess(response.data)),
-                    catchError(() => of(new ActionBranchInfoError()))
+            ofType<branchInfoActions>(branchInfoActionTypes.PING),
+            switchMap((action: ActionBranchInfoPing) => 
+                this.service.sendPing(action.payload).pipe(
+                    map((response: any) => new ActionBranchInfoPingSuccess(response.data)),
+                    catchError(() => of(new ActionBranchInfoPingError()))
                 )
             )
         );
+
+    
 }

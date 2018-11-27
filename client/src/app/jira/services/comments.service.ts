@@ -20,17 +20,18 @@ export class CommentsService {
 
 	/**
 	 * edits a comment from a ticket and updates the store.
-	 * @param {Comment} postData new comment skeleton object to add to ticket
+	 * @param {string} comment the new comment
+	 * @param {string} commentId the id of the comment to edit
+	 * @param {string} key the key of the ticket
 	 * @return {Observable} the http observable
 	 */
-	editComment(postData):Observable<any>  {
-		return this.httpClient.put(`${env.apiUrl}/jira/comment`, postData)
-		
+	editComment({comment, commentId, key}):Observable<any>  {
+		return this.httpClient.put(`${env.apiUrl}/jira/comment`, {comment, comment_id:commentId, key})
 	}
 
 	/**
 	 * deletes a comment from a ticket and updates the store.
-	 * @param {String} comment_id the id of the comment to delete
+	 * @param {String} commentId the id of the comment to delete
 	 * @param {String} key the key of the ticket
 	 * @return {Observable} the http observable
 	 */

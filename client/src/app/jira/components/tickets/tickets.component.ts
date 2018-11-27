@@ -3,6 +3,7 @@ import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Store, select } from '@ngrx/store';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 import { ActionTicketsRetrieve } from '../../actions';
 import { selectJiraState, selectJiraLoading, selectJiraTickets } from '../../selectors';
@@ -45,7 +46,14 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   ngOnInit():void {
 
-    this.tickets$ = this.store.pipe(select(selectJiraState))
+    this.tickets$ = this.store.pipe(
+        select(selectJiraState),
+        distinctUntilChanged((prev, next) => {
+          return prev.loading === next.loading &&
+          prev.ticketType === next.ticketType &&
+          prev.tickets === next.tickets;
+        })
+      )
       .subscribe(state => this.processTickets(state));
 
     this.loading$ = this.store.pipe(select(selectJiraLoading))
@@ -81,6 +89,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
    *
    */
   processTickets(state) {
+    console.log({state});
 
     // find only matching tickets and then format them for expanded view
     this.filteredTickets = state.tickets.filter(ticket => ticket.ticketType === state.ticketType);

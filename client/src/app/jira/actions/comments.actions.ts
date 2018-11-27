@@ -14,50 +14,50 @@ export enum CommentActionTypes {
     DELETE_ERROR = '[jira-comment] Delete Error',
 }
 
-export class commentSave implements Action {
+export class ActionCommentSave implements Action {
     readonly type = CommentActionTypes.SAVE;
     constructor(readonly payload: any) {}
 }
-export class commentSaveSucess implements Action {
+export class ActionCommentSaveSucess implements Action {
     readonly type = CommentActionTypes.SAVE_SUCCESS;
     constructor(readonly payload: any) { }
 }
-export class commentSaveError implements Action {
+export class ActionCommentSaveError implements Action {
     readonly type = CommentActionTypes.SAVE_ERROR;
 }
 
 
-export class commentEdit implements Action {
+export class ActionCommentEdit implements Action {
     readonly type = CommentActionTypes.EDIT;
     constructor(readonly payload: any) {}
 }
-export class commentEditSuccess implements Action {
+export class ActionCommentEditSuccess implements Action {
     readonly type = CommentActionTypes.EDIT_SUCCESS;
     constructor(readonly payload: any) { }
 }
-export class commentEditError implements Action {
+export class ActionCommentEditError implements Action {
     readonly type = CommentActionTypes.EDIT_ERROR;
 }
 
 
-export class commentDelete implements Action {
+export class ActionCommentDelete implements Action {
     readonly type = CommentActionTypes.DELETE;
     constructor(readonly payload: any) {}
 }
-export class commentDeleteSuccess implements Action {
+export class ActionCommentDeleteSuccess implements Action {
     readonly type = CommentActionTypes.DELETE_SUCCESS;
     constructor(readonly payload: any) { }
 }
-export class commentDeleteError implements Action {
+export class ActionCommentDeleteError implements Action {
     readonly type = CommentActionTypes.DELETE_ERROR;
 }
 
-export type CommentActions = commentSave
-	| commentSaveSucess
-	| commentSaveError
-	| commentEdit
-	| commentEditSuccess
-	| commentEditError
-	| commentDelete
-	| commentDeleteSuccess
-	| commentDeleteError;
+export type CommentActions = ActionCommentSave
+	| ActionCommentSaveSucess
+	| ActionCommentSaveError
+	| ActionCommentEdit
+	| ActionCommentEditSuccess
+	| ActionCommentEditError
+	| ActionCommentDelete
+	| ActionCommentDeleteSuccess
+	| ActionCommentDeleteError;

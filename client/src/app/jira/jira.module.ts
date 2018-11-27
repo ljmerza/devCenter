@@ -10,8 +10,8 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { PanelModule } from '@app/panel';
 
-import { TicketsEffects, BranchInfoEffects, CommentEffects } from './effects';
-import { TicketsService, BranchInfoService, CommentsService } from './services';
+import { TicketsEffects, BranchInfoEffects, CommentEffects, AdditionalDetailsEffects } from './effects';
+import { TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService } from './services';
 import { TicketsReducer } from './reducers';
 
 import {
@@ -32,11 +32,15 @@ import {
     PanelModule,
 
     StoreModule.forFeature('jira', TicketsReducer),
-    EffectsModule.forFeature([TicketsEffects, BranchInfoEffects, CommentEffects]),
+    
+    EffectsModule.forFeature([
+      TicketsEffects, BranchInfoEffects, 
+      CommentEffects, AdditionalDetailsEffects
+     ]),
 
     JiraRoutingModule
   ],
-  providers: [TicketsService, BranchInfoService, CommentsService],
+  providers: [TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService],
   declarations: [
     TicketsComponent, ActionsComponent, LoadingTableComponent,
     UserDetailsComponent, PullRequestsComponent, TicketDetailsComponent, 

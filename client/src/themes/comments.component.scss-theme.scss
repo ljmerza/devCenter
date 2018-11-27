@@ -1,0 +1,27 @@
+@import '~@angular/material/theming';
+
+@mixin dc-comments-component-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+  $foreground: map-get($theme, foreground);
+  
+
+  .mat-accordion {
+    .mat-expansion-panel{
+      border-bottom: solid mat-color($primary, lighter) 1px !important;
+    }
+
+    .mat-expansion-panel-header {
+      background-color: mat-color($primary) !important;
+
+      &:hover {
+        background-color: mat-color($primary) !important;
+      }
+
+      .mat-expansion-panel-header-title {
+        color: mat-color($primary, lighter) !important;
+      }
+    }
+  }
+}

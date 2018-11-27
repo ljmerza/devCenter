@@ -21,6 +21,10 @@
     cursor: pointer;
 }
 
+.modal-footer button {
+  margin-left: 10px;
+}
+
 @import '../node_modules/bootstrap/scss/code';
 @import '../node_modules/bootstrap/scss/images';
 @import '../node_modules/bootstrap/scss/bootstrap-grid';
@@ -43,6 +47,7 @@
 @import 'themes/app.component.scss-theme';
 @import 'themes/loading-details.component.scss-theme';
 @import 'themes/settings.component.scss-theme';
+@import 'themes/comments.component.scss-theme';
 @import 'themes/nav-bar.module.scss-theme';
 @import 'themes/main-table.scss-theme';
 
@@ -53,6 +58,7 @@
   @include settings-component-theme($theme);
   @include dc-app-component-theme($theme);
   @include dc-notifications-component-theme($theme);
+  @include dc-comments-component-theme($theme);
   @include dc-jspanel-component-theme($theme);
   @include dc-loading-details-component-theme($theme);
   @include main-table-theme($theme);

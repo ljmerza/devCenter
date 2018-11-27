@@ -1,3 +1,82 @@
-<p>
-  branch-info works!
-</p>
+<dc-panel [modalSize]='"md"'>
+	<div class='modal-header'>Branch Information for Jira Ticket {{key}}</div>
+
+	<span class='modal-body'>
+		<dc-loading-details [loading]=loading>
+
+			<div class="container" dcCopyInputBubble>
+				<div class='row'>
+					<section class="col-md-12">
+						<mat-card class='mat-elevation-z8'>
+							<mat-list>
+								<mat-list-item>
+									<div class="row full-width">
+										<div class="col-md-3">
+											Master Branch
+										</div>
+										<div class="col-md-9">
+									 		<i class="material-icons pointer copy-input-dir" title="Copy sprint to clipboard">note</i>
+											<span>{{sprint}}</span>
+										</div>
+									</div>
+								</mat-list-item>
+
+								<mat-divider></mat-divider>
+
+								<mat-list-item>
+									<div class="row full-width">
+										<div class="col-md-3">
+											Branch
+										</div>
+										<div class="col-md-9">
+											<i class="material-icons pointer copy-input-dir" title="Copy branch to clipboard">note</i>
+											<span>{{branch}}</span>
+										</div>
+									</div>
+								</mat-list-item>
+
+								<mat-divider></mat-divider>
+
+								<mat-list-item>
+									<div class="row full-width">
+										<div class="col-md-3">
+											Commit
+										</div>
+										<div class="col-md-9">
+											<i class="material-icons pointer copy-input-dir" title="Copy commit to clipboard">note</i>
+											<span>{{commit}}</span>
+										</div>
+									</div>
+								</mat-list-item>
+
+							</mat-list>
+						</mat-card>
+					</section>
+
+					
+				</div>
+			</div>
+		</dc-loading-details>
+	</span>
+
+	<span class='modal-footer'>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<button mat-raised-button (click)="sendNewPing()">
+					   Send New Ping
+					</button>
+
+					<button mat-raised-button (click)="sendMergePing()">
+					   Send Merge Ping
+					</button>
+
+					<button mat-raised-button (click)="modal.closeModal()">
+					   Close
+					</button>
+				</div>
+			</div>
+		</div>
+	</span>
+
+</dc-panel>

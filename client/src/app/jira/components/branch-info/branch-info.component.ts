@@ -1,16 +1,65 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, Input, ViewChild } from '@angular/core';
+import { Store, select } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+import { selectSettings } from '@app/settings/settings.selectors';
 
+import { PanelComponent } from '@app/panel/components/panel/panel.component';
+import { ActionBranchInfoPing } from '../../actions';
 @Component({
-  selector: 'anms-branch-info',
-  templateUrl: './branch-info.component.html',
-  styleUrls: ['./branch-info.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'dc-branch-info',
+	templateUrl: './branch-info.component.html',
+	styleUrls: ['./branch-info.component.css'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BranchInfoComponent implements OnInit {
+export class BranchInfoComponent implements OnInit, OnDestroy {
+	settings:any = {};
+	settings$: Subscription;
 
-  constructor() { }
+	constructor(public store: Store<{}>) { }
 
-  ngOnInit() {
-  }
+	ngOnInit() {
+		this.settings$ = this.store.pipe(select(selectSettings))
+			.subscribe(settings => this.settings = settings);
+	}
+
+	ngOnDestroy(){
+		this.settings$.unsubscribe();
+	}
+
+	@ViewChild(PanelComponent) modal: PanelComponent;
+
+
+	@Input() sprint:string = '';
+	@Input() branch:string = '';
+	@Input() commit:string = '';
+	@Input() key:string = '';
+	@Input() epicLink:string = '';
+
+	/**
+	 *
+	 */
+	sendNewPing(){
+		this.store.dispatch(new ActionBranchInfoPing(this.createPingBody('new')));
+	}
+
+	/**
+	 *
+	 */
+	sendMergePing(){
+		this.store.dispatch(new ActionBranchInfoPing(this.createPingBody('merge')));
+	}
+
+	/**
+	 * creates payload for ping effect
+	 * @param {string} pingType - new or merge
+	 */
+	private createPingBody(pingType){
+		return {
+			key: this.key, 
+			pingType, 
+			epicLink: this.epicLink, 
+			username: this.settings.username
+		}
+	}
 
 }

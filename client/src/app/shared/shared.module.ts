@@ -54,7 +54,7 @@ import {
 
 
 import { CommentFormatPipe, SafehtmlPipe } from './pipes';
-import { CopyInputDirective } from './directives';
+import { CopyInputDirective, CopyInputsDirective } from './directives';
 
 library.add(
   faRocket,
@@ -108,7 +108,7 @@ library.add(
 
     FontAwesomeModule
   ],
-  declarations: [CopyInputDirective, CommentFormatPipe, SafehtmlPipe],
+  declarations: [CopyInputDirective, CommentFormatPipe, SafehtmlPipe, CopyInputsDirective],
   exports: [
     CommonModule,
     FormsModule,
@@ -157,6 +157,7 @@ library.add(
     FontAwesomeModule,
 
     CopyInputDirective, 
+    CopyInputsDirective,
     CommentFormatPipe, 
     SafehtmlPipe,
   ]

@@ -1,7 +1,8 @@
 import { 
     TicketsActions, TicketsActionTypes, 
     branchInfoActionTypes, branchInfoActions,
-    CommentActionTypes, CommentActions,
+    CommentActionTypes, CommentActions, 
+    additionalDetailsActionTypes, additionalDetailsActions
 } from '../actions';
 import { JiraTicketsState, JiraTicket } from '../models';
 import { selectJiraTicketFactory } from '../selectors/tickets.selectors';
@@ -21,14 +22,14 @@ export const initialState: JiraTicketsState = {
     fields: ''
 };
 
-type Action = TicketsActions | branchInfoActions | CommentActions;
+type Action = TicketsActions | branchInfoActions | CommentActions | additionalDetailsActions;
 
 export function TicketsReducer(state: JiraTicketsState = initialState, action: Action): JiraTicketsState {
 
     switch (action.type) {
+
         case TicketsActionTypes.RETRIEVE:
             return { ...state, loading: true, ...action.payload };
-
         case TicketsActionTypes.RETRIEVE_SUCCESS:
             const tickets = processJiraTickets(action.payload, state.tickets, state.ticketType);
             const commentsTickets = tickets.map((ticket:JiraTicket) => ({
@@ -38,35 +39,91 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
                 attachments: ticket.attachments || [],
             }));
             return { ...state, loading: false, tickets, commentsTickets };
-
         case TicketsActionTypes.RETRIEVE_ERROR:
             return { ...state, loading: false };
 
 
 
-        case branchInfoActionTypes.RETRIEVE:
+        case additionalDetailsActionTypes.RETRIEVE:
             return { ...state, additionalLoading: true };
-
-        case branchInfoActionTypes.RETRIEVE_SUCCESS:
+        case additionalDetailsActionTypes.RETRIEVE_SUCCESS:
             const additionalTickets = processJiraTickets(action.payload, state.additionalTickets, state.ticketType);
             return { ...state, additionalLoading: false, additionalTickets};
-        
-        case branchInfoActionTypes.RETRIEVE_ERROR:
+        case additionalDetailsActionTypes.RETRIEVE_ERROR:
             return { ...state, additionalLoading: false };
 
 
-        case CommentActionTypes.SAVE:
-            return { ...state, additionalLoading: true };
 
         case CommentActionTypes.SAVE_SUCCESS:
-            return { ...state, additionalLoading: false };
-        
+            const savedCommentsTickets = addComment(action.payload, state.commentsTickets);
+            return { ...state, commentsLoading: false, commentsTickets: savedCommentsTickets};
         case CommentActionTypes.SAVE_ERROR:
-            return { ...state, additionalLoading: false };
+            return { ...state, commentsLoading: false };
+
+        case CommentActionTypes.EDIT_SUCCESS:
+            const editedCommentsTickets = replaceEditedComment(action.payload, state.commentsTickets);
+            return { ...state, commentsLoading: false, commentsTickets: editedCommentsTickets};
+        case CommentActionTypes.EDIT_ERROR:
+            return { ...state, commentsLoading: false };
+
+        case CommentActionTypes.DELETE_SUCCESS:
+            const deletedCommentsTickets = deleteComment(action.payload, state.commentsTickets);
+            return { ...state, commentsLoading: false, commentsTickets: deletedCommentsTickets};
+        case CommentActionTypes.DELETE_ERROR:
+            return { ...state, commentsLoading: false };
+
+
 
         default:
             return state;
     }
+}
+
+function deleteComment(deletedCommentId, commentsTickets){
+
+    // find the matching old comment and delete it
+    return commentsTickets.map(ticket => {
+        ticket = {...ticket};
+
+        const deletedCommentIndex = ticket.comments.findIndex(comment => comment.id === deletedCommentId);
+        if(deletedCommentIndex !== -1){
+            ticket.comments = Array.from(ticket.comments);
+            ticket.comments.splice(deletedCommentIndex, 1);
+        }
+
+        return ticket;
+    });
+}
+
+function replaceEditedComment(newComment, commentsTickets){
+
+    // find the matching old comment and replace it's body
+    return commentsTickets.map(ticket => {
+        ticket = {...ticket};
+
+        ticket.comments = ticket.comments.map(comment => {
+            if(newComment.id === comment.id){
+                comment = {...comment};
+                comment.comment = newComment.comment;
+                comment.raw_comment = newComment.raw_comment;
+                comment.updated = newComment.updated;
+            }
+
+            return comment;
+        });
+
+        return ticket;
+    });
+}
+
+function addComment(newComment, commentsTickets){
+
+    // add new comment to matching ticket
+    return commentsTickets.map(ticket => {
+        ticket = {...ticket};
+        if(ticket.key === newComment.key) ticket.comments.push(newComment);
+        return ticket;
+    });
 }
 
 /**

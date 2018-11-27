@@ -13,13 +13,11 @@
         }
     }
 
-    dc-tickets {
-        .copy-jira, .copy-msrp {
-            color: mat-color($accent) !important;
-        }
+    .copy-key {
+        color: mat-color($warn) !important;
+    }
 
-        .copy-key {
-            color: mat-color($warn) !important;
-        }
+    .copy-comment, .copy-jira, .copy-msrp {
+        color: mat-color($accent) !important;
     }
 }

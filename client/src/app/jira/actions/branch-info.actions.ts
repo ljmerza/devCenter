@@ -1,21 +1,23 @@
 import { Action } from '@ngrx/store';
 
 export enum branchInfoActionTypes {
-  RETRIEVE = '[jira-branch-info] Retrieve',
-  RETRIEVE_SUCCESS = '[jira-branch-info] Retrieve Success',
-  RETRIEVE_ERROR = '[jira-branch-info] Retrieve Error',
+  PING = '[jira-branch-info] Ping',
+  PING_SUCCESS = '[jira-branch-info] Ping Success',
+  PING_ERROR = '[jira-branch-info] Ping Error',
 }
 
-export class ActionBranchInfoRetrieve implements Action {
-    readonly type = branchInfoActionTypes.RETRIEVE;
-    constructor(readonly payload: string) {}
+export class ActionBranchInfoPing implements Action {
+    readonly type = branchInfoActionTypes.PING;
+    constructor(readonly payload: any) {}
 }
-export class ActionBranchInfoSuccess implements Action {
-    readonly type = branchInfoActionTypes.RETRIEVE_SUCCESS;
+
+export class ActionBranchInfoPingSuccess implements Action {
+    readonly type = branchInfoActionTypes.PING_SUCCESS;
     constructor(readonly payload: any) { }
 }
-export class ActionBranchInfoError implements Action {
-    readonly type = branchInfoActionTypes.RETRIEVE_ERROR;
+
+export class ActionBranchInfoPingError implements Action {
+    readonly type = branchInfoActionTypes.PING_ERROR;
 }
 
-export type branchInfoActions = ActionBranchInfoRetrieve | ActionBranchInfoSuccess | ActionBranchInfoError;
+export type branchInfoActions = ActionBranchInfoPing | ActionBranchInfoPingSuccess | ActionBranchInfoPingError;

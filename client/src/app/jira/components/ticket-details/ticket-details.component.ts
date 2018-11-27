@@ -7,7 +7,7 @@ import { PanelComponent } from '@app/panel/components/panel/panel.component';
 import { Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
-import { ActionBranchInfoRetrieve } from '../../actions';
+import { ActionAdditionalDetailsRetrieve } from '../../actions';
 import { selectJiraState } from '../../selectors';
 import { JiraTicketsState, JiraTicket } from '../../models';
 
@@ -51,7 +51,7 @@ export class TicketDetailsComponent implements OnInit, OnDestroy {
   openModal(){
     this.loading = true;
     this.modal.openModal();
-    this.store.dispatch(new ActionBranchInfoRetrieve(this.key));
+    this.store.dispatch(new ActionAdditionalDetailsRetrieve(this.key));
   }
 
   _processTicket(ticket: JiraTicket): void{

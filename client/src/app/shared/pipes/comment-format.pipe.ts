@@ -2,16 +2,21 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({name: 'commentFormat'})
 export class CommentFormatPipe implements PipeTransform {
+	tRowSplit = "confluenceTd'>";
+	tHeadSplit = "confluenceTh'>";
+
 	constructor() {}
 
-	/*
-	*/
-	transform(comment:any, attachments:any,): any {
+	/**
+	 *
+	 */
+	transform(comment:any, attachments:any): any {
 		// if false return empty string
 		if(!comment) return '';
 
-		comment = comment.replace(/confluenceTable/g, 'table');
-		comment = this._formatTable(comment);
+		comment = comment.replace(/confluenceTable/g, 'table mat-card comment-table');
+		comment = this._formatTable(comment, this.tRowSplit);
+		comment = this._formatTable(comment, this.tHeadSplit);
 
 		// add new tab to all links
 		comment = comment.replace(/href\s*=\s*(\"|\')/g, `target="_blank" href=$1`);
@@ -19,15 +24,15 @@ export class CommentFormatPipe implements PipeTransform {
 	}
 
 
-	/*
-	*/
-	tableSplitter = "confluenceTd'>";
-	_formatTable(comment:string){
+	/**
+	 *
+	 */
+	_formatTable(comment:string, tableSplitter:string){
 
-		let commentPieces = comment.split(this.tableSplitter);
+		let commentPieces = comment.split(tableSplitter);
 
 		if(commentPieces.length === 1) {
-			return commentPieces.join(this.tableSplitter);
+			return commentPieces.join(tableSplitter);
 		}
 
 		commentPieces = commentPieces.map( (piece, index) => {
@@ -36,14 +41,15 @@ export class CommentFormatPipe implements PipeTransform {
 			let tableRowData = piece.split(/</);
 			const copyText = tableRowData.shift();
 
+			const nextText = copyText ? `<span>${copyText}</span>` : '';
 			const newText = `
-				<i class="material-icons pointer copy-jira" title="Copy Jira link to clipboard">note</i>
-				<span>${copyText}</span>
+				<i class="material-icons pointer copy-input-dir copy-comment" title="Copy to clipboard">note</i>
+				${nextText}
 			`;
 
 			return [newText, ...tableRowData].join('<');
 		});
 
-		return commentPieces.join(this.tableSplitter);
+		return commentPieces.join(tableSplitter);
 	}
 }

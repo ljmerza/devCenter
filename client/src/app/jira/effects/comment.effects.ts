@@ -6,9 +6,9 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import {
-    commentSave, commentSaveSucess, commentSaveError,
-    commentEdit, commentEditSuccess, commentEditError,
-    commentDelete, commentDeleteSuccess, commentDeleteError,
+    ActionCommentSave, ActionCommentSaveSucess, ActionCommentSaveError,
+    ActionCommentEdit, ActionCommentEditSuccess, ActionCommentEditError,
+    ActionCommentDelete, ActionCommentDeleteSuccess, ActionCommentDeleteError,
     CommentActions, CommentActionTypes
 } from '../actions';
 
@@ -22,32 +22,34 @@ export class CommentEffects {
     addComment = () =>
         this.actions$.pipe(
             ofType<CommentActions>(CommentActionTypes.SAVE),
-            switchMap((action: commentSave) => 
+            switchMap((action: ActionCommentSave) => 
                 this.service.addComment(action.payload).pipe(
-                    map((response: any) => new commentSaveSucess(response.data)),
-                    catchError(() => of(new commentSaveError()))
+                    map((response: any) => new ActionCommentSaveSucess(response.data)),
+                    catchError(() => of(new ActionCommentSaveError()))
                 )
             )
         );
 
+    @Effect()
     editComment = () =>
         this.actions$.pipe(
             ofType<CommentActions>(CommentActionTypes.EDIT),
-            switchMap((action: commentEdit) => 
+            switchMap((action: ActionCommentEdit) => 
                 this.service.editComment(action.payload).pipe(
-                    map((response: any) => new commentEditSuccess(response.data)),
-                    catchError(() => of(new commentEditError()))
+                    map((response: any) => new ActionCommentEditSuccess(response.data)),
+                    catchError(() => of(new ActionCommentEditError()))
                 )
             )
         );
 
+    @Effect()
     deleteComment = () =>
         this.actions$.pipe(
             ofType<CommentActions>(CommentActionTypes.DELETE),
-            switchMap((action: commentDelete) => 
+            switchMap((action: ActionCommentDelete) => 
                 this.service.deleteComment(action.payload).pipe(
-                    map((response: any) => new commentDeleteSuccess(response.data)),
-                    catchError(() => of(new commentDeleteError()))
+                    map((response: any) => new ActionCommentDeleteSuccess(action.payload.commentId)),
+                    catchError(() => of(new ActionCommentDeleteError()))
                 )
             )
         );

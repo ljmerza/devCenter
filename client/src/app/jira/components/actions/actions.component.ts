@@ -4,13 +4,18 @@ import { Subscription } from 'rxjs';
 
 import { TicketDetailsComponent } from '../ticket-details/ticket-details.component';
 import { CommentsComponent } from '../comments/comments.component';
+import { BranchInfoComponent } from '../branch-info/branch-info.component';
+import { AddLogComponent } from '../add-log/add-log.component';
 
 
 @Component({
   selector: 'dc-actions',
   templateUrl: './actions.component.html',
   styleUrls: ['./actions.component.scss'], 
-  entryComponents: [TicketDetailsComponent, CommentsComponent]
+  entryComponents: [
+    TicketDetailsComponent, CommentsComponent, 
+    BranchInfoComponent, AddLogComponent
+   ]
 })
 export class ActionsComponent implements OnInit, OnDestroy {
   ticket$: Subscription;
@@ -18,6 +23,8 @@ export class ActionsComponent implements OnInit, OnDestroy {
 
   branchInfoRef;
   commentsRef;
+  detailsRef;
+  logsRef;
 
   @Input() selectorTicket;
 
@@ -32,12 +39,28 @@ export class ActionsComponent implements OnInit, OnDestroy {
     this.ticket$.unsubscribe();
   }
     
-  openPingModal(){
+  openBranchModal(){
+    if (!this.branchInfoRef) {
+      const factory = this.factoryResolver.resolveComponentFactory(BranchInfoComponent);
+      this.branchInfoRef = this.viewContRef.createComponent(factory);
+      (<BranchInfoComponent>this.branchInfoRef.instance).sprint = this.ticket.sprint;
+      (<BranchInfoComponent>this.branchInfoRef.instance).branch = this.ticket.branch;
+      (<BranchInfoComponent>this.branchInfoRef.instance).commit = this.ticket.commit;
+      (<BranchInfoComponent>this.branchInfoRef.instance).key = this.ticket.key;
+      (<BranchInfoComponent>this.branchInfoRef.instance).epicLink = this.ticket.epic_link;
+    }
 
+    (<BranchInfoComponent>this.branchInfoRef.instance).modal.openModal();
   }
 
   openLogModal(){
+    if (!this.logsRef) {
+      const factory = this.factoryResolver.resolveComponentFactory(AddLogComponent);
+      this.logsRef = this.viewContRef.createComponent(factory);
+      (<AddLogComponent>this.logsRef.instance).ticket = this.ticket;
+    }
 
+    (<AddLogComponent>this.logsRef.instance).modal.openModal();
   }
 
   openCommentsModal(){
@@ -51,14 +74,13 @@ export class ActionsComponent implements OnInit, OnDestroy {
   }
 
   openAdditionalDetails(){
-
-    if (!this.branchInfoRef) {
+    if (!this.detailsRef) {
       const factory = this.factoryResolver.resolveComponentFactory(TicketDetailsComponent);
-      this.branchInfoRef = this.viewContRef.createComponent(factory);
-      (<TicketDetailsComponent>this.branchInfoRef.instance).key = this.ticket.key;
+      this.detailsRef = this.viewContRef.createComponent(factory);
+      (<TicketDetailsComponent>this.detailsRef.instance).key = this.ticket.key;
     }
 
-    (<TicketDetailsComponent>this.branchInfoRef.instance).openModal();
+    (<TicketDetailsComponent>this.detailsRef.instance).openModal();
   }
 
 }
