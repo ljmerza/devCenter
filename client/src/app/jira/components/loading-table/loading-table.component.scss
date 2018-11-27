@@ -1,5 +1,11 @@
 .table-spacing {
-	margin-bottom: 100px;
+	margin-top: 60px;
+}
+
+@media (max-width: 1380px){
+	.table-spacing {
+		margin-top: 75px;
+	}
 }
 
 .loading-icon {
