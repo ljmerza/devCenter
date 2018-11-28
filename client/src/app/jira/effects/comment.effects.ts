@@ -24,8 +24,11 @@ export class CommentEffects {
             ofType<CommentActions>(CommentActionTypes.SAVE),
             switchMap((action: ActionCommentSave) => 
                 this.service.addComment(action.payload).pipe(
-                    map((response: any) => new ActionCommentSaveSucess(response.data)),
-                    catchError(() => of(new ActionCommentSaveError()))
+                    map((response: any) => {
+                        response.data.key = action.payload.key; //save key for finding matching ticket
+                        return new ActionCommentSaveSucess(response.data)
+                    }),
+                    catchError(response => of(new ActionCommentSaveError(response.data)))
                 )
             )
         );

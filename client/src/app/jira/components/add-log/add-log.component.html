@@ -1,13 +1,63 @@
 <dc-panel [modalSize]='"lg"'>
 	<div class='modal-header'>Add Comment/Worklog for Jira Ticket {{key}}</div>
 
-	<span class="modal-body"></span>
+	<span class="modal-body add-log-body">
+		<dc-loading-details [loading]=loading>
+			<form #addLog="ngForm">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<mat-card class='mat-elevation-z8'>
+								<mat-form-field class='full-width'>
+									<mat-label>Comment</mat-label>
+									<textarea matInput rows=10 name='comment' [(ngModel)]="comment"></textarea>
+								</mat-form-field>
+							</mat-card>
+						</div>
+					</div>
+
+					<div class="row middle-row">
+						<div class="col-md-4">
+							<mat-card class='mat-elevation-z8'>
+								<mat-checkbox name='uctNotReady' [(ngModel)]="uctNotReady">UCT Not Ready</mat-checkbox>
+								<mat-checkbox name='conflictCode' [(ngModel)]="conflictCode">Merge Conflict</mat-checkbox>
+							</mat-card>
+						</div>
+						<div class="col-md-4"></div>
+						<div class="col-md-4">
+							<mat-card class='mat-elevation-z8'>
+								<mat-label>Log Time</mat-label>
+								<ngb-timepicker
+									name="logTime"
+									[(ngModel)]="logTime"
+									[hourStep]="hourStep" 
+									[minuteStep]="minuteStep">
+								</ngb-timepicker>
+							</mat-card>
+						</div>
+					</div>
+
+					<div class="row middle-row">
+						<div class="col-md-12">
+							<dc-branch-info-body
+								[sprint]=ticket.sprint
+								[branch]=ticket.branch
+								[commit]=ticket.commit
+								[key]=ticket.key
+								[epicLink]=ticket.epic_link
+							></dc-branch-info-body>
+						</div>
+					</div>
+				</div>
+			</form>
+		</dc-loading-details>
+	</span>
 
 	<span class="modal-footer">
-		<button mat-raised-button (click)="addComment()">
+		<button mat-raised-button (click)="onSubmit(addLog)">
 		   Submit
 		</button>
-		<button mat-raised-button (click)="cancelEdit()">
+		<button mat-raised-button (click)="cancel()">
 		   Cancel
 		</button>
 	</span>

@@ -53,7 +53,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 
-import { CommentFormatPipe, SafehtmlPipe } from './pipes';
+import { CommentFormatPipe, SafehtmlPipe, WorkLogPipe } from './pipes';
 import { CopyInputDirective, CopyInputsDirective } from './directives';
 
 library.add(
@@ -108,7 +108,7 @@ library.add(
 
     FontAwesomeModule
   ],
-  declarations: [CopyInputDirective, CommentFormatPipe, SafehtmlPipe, CopyInputsDirective],
+  declarations: [CopyInputDirective, CommentFormatPipe, SafehtmlPipe, WorkLogPipe, CopyInputsDirective],
   exports: [
     CommonModule,
     FormsModule,
@@ -160,6 +160,7 @@ library.add(
     CopyInputsDirective,
     CommentFormatPipe, 
     SafehtmlPipe,
+    WorkLogPipe,
   ]
 })
 export class SharedModule {}

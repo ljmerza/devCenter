@@ -63,7 +63,7 @@
 	      
 	        <ng-container matColumnDef="Logged">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Logged </mat-header-cell>
-	          <mat-cell *matCellDef="let ticket"> {{ticket.dates.logged}} </mat-cell>
+	          <mat-cell *matCellDef="let ticket"> {{ticket.dates.logged_seconds | workLog}} </mat-cell>
 	        </ng-container>
 	      
 	        <ng-container matColumnDef="Last Update">

@@ -20,7 +20,8 @@ import {
   PullRequestsComponent, TicketDetailsComponent, LoadingDetailsComponent
 } from './components';
 
-import { NgbTimePickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { BranchInfoBodyComponent } from './components/branch-info-body/branch-info-body.component';
 
 @NgModule({
 
@@ -31,7 +32,7 @@ import { NgbTimePickerModule } from '@ng-bootstrap/ng-bootstrap';
     MomentModule,
 
     PanelModule,
-    NgbTimePickerModule,
+    NgbTimepickerModule,
 
     StoreModule.forFeature('jira', TicketsReducer),
     
@@ -46,7 +47,7 @@ import { NgbTimePickerModule } from '@ng-bootstrap/ng-bootstrap';
   declarations: [
     TicketsComponent, ActionsComponent, LoadingTableComponent,
     UserDetailsComponent, PullRequestsComponent, TicketDetailsComponent, 
-    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent
+    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent
   ]
 })
 export class JiraModule {}

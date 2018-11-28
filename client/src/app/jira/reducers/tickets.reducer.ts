@@ -16,6 +16,7 @@ export const initialState: JiraTicketsState = {
 
     commentsLoading: false,
     commentsTickets: [],
+    commentsError: '',
 
     currentJql: '',
     ticketType: '',
@@ -55,10 +56,10 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
 
 
         case CommentActionTypes.SAVE_SUCCESS:
-            const savedCommentsTickets = addComment(action.payload, state.commentsTickets);
-            return { ...state, commentsLoading: false, commentsTickets: savedCommentsTickets};
+            const processedState = processAddLog(action.payload, state.commentsTickets, state.tickets);
+            return { ...state, commentsLoading: false, ...processedState};
         case CommentActionTypes.SAVE_ERROR:
-            return { ...state, commentsLoading: false };
+            return { ...state, commentsLoading: false, commentsError: action.payload };
 
         case CommentActionTypes.EDIT_SUCCESS:
             const editedCommentsTickets = replaceEditedComment(action.payload, state.commentsTickets);
@@ -116,14 +117,56 @@ function replaceEditedComment(newComment, commentsTickets){
     });
 }
 
-function addComment(newComment, commentsTickets){
+/**
+ *
+ */
+function processAddLog(addLogResponse, commentsTickets, tickets){
+    const newState = {commentsTickets, tickets};
 
-    // add new comment to matching ticket
-    return commentsTickets.map(ticket => {
-        ticket = {...ticket};
-        if(ticket.key === newComment.key) ticket.comments.push(newComment);
-        return ticket;
-    });
+    // add new comment if successful
+    if(addLogResponse.comment_response.status){
+        newState.commentsTickets = commentsTickets.map(ticket => {
+            ticket = {...ticket};
+            
+            if(ticket.key === addLogResponse.key){
+                ticket.comments = Array.from(ticket.comments);
+                const newComment = addLogResponse.comment_response.data;
+                ticket.comments.push(newComment);
+            }
+
+            return ticket;
+        });
+    }
+
+    // add work-log if successful
+    if(addLogResponse.log_response.status){
+        newState.tickets = tickets.map(ticket => {
+            ticket = {...ticket};
+            
+            if(ticket.key === addLogResponse.key){
+                ticket.dates = {...ticket.dates};
+                const timeSpentSeconds = addLogResponse.log_response.data.timeSpentSeconds;
+                ticket.dates.logged_seconds = parseInt(ticket.dates.logged_seconds) + timeSpentSeconds || 0;
+            }
+
+            return ticket;
+        });
+    }
+
+    // // change status if merge conflict successful
+    // if(addLogResponse.conflict_response.status){
+    //     const newStatus = addLogResponse.conflict_response.data;
+
+    // }
+
+    // // change status if merge successful
+    // if(addLogResponse.merge_response.status){
+    //     const newStatus = addLogResponse.merge_response.data;
+
+    // }
+
+    return newState;
+
 }
 
 /**

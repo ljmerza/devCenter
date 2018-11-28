@@ -24,6 +24,7 @@ export class ActionCommentSaveSucess implements Action {
 }
 export class ActionCommentSaveError implements Action {
     readonly type = CommentActionTypes.SAVE_ERROR;
+    constructor(readonly payload: any) { }
 }
 
 

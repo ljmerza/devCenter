@@ -11,6 +11,7 @@ export interface JiraTicketsState {
 
     commentsLoading: boolean,
     commentsTickets: Array<any>,
+    commentsError: string,
 
     currentJql: string,
     ticketType: string,

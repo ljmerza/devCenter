@@ -46,6 +46,7 @@
 @import 'themes/jspanel.component.scss-theme';
 @import 'themes/app.component.scss-theme';
 @import 'themes/loading-details.component.scss-theme';
+@import 'themes/add-log.component.scss-theme';
 @import 'themes/settings.component.scss-theme';
 @import 'themes/comments.component.scss-theme';
 @import 'themes/nav-bar.module.scss-theme';
@@ -59,6 +60,7 @@
   @include dc-app-component-theme($theme);
   @include dc-notifications-component-theme($theme);
   @include dc-comments-component-theme($theme);
+  @include dc-add-log-component-theme($theme);
   @include dc-jspanel-component-theme($theme);
   @include dc-loading-details-component-theme($theme);
   @include main-table-theme($theme);

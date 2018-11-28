@@ -3,57 +3,17 @@
 
 	<span class='modal-body'>
 		<dc-loading-details [loading]=loading>
-
-			<div class="container" dcCopyInputBubble>
+			<div class="container">
 				<div class='row'>
 					<section class="col-md-12">
-						<mat-card class='mat-elevation-z8'>
-							<mat-list>
-								<mat-list-item>
-									<div class="row full-width">
-										<div class="col-md-3">
-											Master Branch
-										</div>
-										<div class="col-md-9">
-									 		<i class="material-icons pointer copy-input-dir" title="Copy sprint to clipboard">note</i>
-											<span>{{sprint}}</span>
-										</div>
-									</div>
-								</mat-list-item>
-
-								<mat-divider></mat-divider>
-
-								<mat-list-item>
-									<div class="row full-width">
-										<div class="col-md-3">
-											Branch
-										</div>
-										<div class="col-md-9">
-											<i class="material-icons pointer copy-input-dir" title="Copy branch to clipboard">note</i>
-											<span>{{branch}}</span>
-										</div>
-									</div>
-								</mat-list-item>
-
-								<mat-divider></mat-divider>
-
-								<mat-list-item>
-									<div class="row full-width">
-										<div class="col-md-3">
-											Commit
-										</div>
-										<div class="col-md-9">
-											<i class="material-icons pointer copy-input-dir" title="Copy commit to clipboard">note</i>
-											<span>{{commit}}</span>
-										</div>
-									</div>
-								</mat-list-item>
-
-							</mat-list>
-						</mat-card>
+						<dc-branch-info-body
+							[sprint]=sprint
+							[branch]=branch
+							[commit]=commit
+							[key]=key
+							[epicLink]=epicLink
+						></dc-branch-info-body>
 					</section>
-
-					
 				</div>
 			</div>
 		</dc-loading-details>

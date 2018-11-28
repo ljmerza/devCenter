@@ -1,0 +1,15 @@
+@import '~@angular/material/theming';
+
+@mixin dc-add-log-component-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+  $foreground: map-get($theme, foreground);
+  
+
+  .add-log-body {
+    .chevron {
+      color: mat-color($primary, lighter);
+    }
+  }
+}
