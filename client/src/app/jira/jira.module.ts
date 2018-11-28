@@ -20,6 +20,7 @@ import {
   PullRequestsComponent, TicketDetailsComponent, LoadingDetailsComponent
 } from './components';
 
+import { NgbTimePickerModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
 
@@ -30,6 +31,7 @@ import {
     MomentModule,
 
     PanelModule,
+    NgbTimePickerModule,
 
     StoreModule.forFeature('jira', TicketsReducer),
     
