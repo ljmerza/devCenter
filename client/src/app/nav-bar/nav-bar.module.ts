@@ -9,9 +9,9 @@ import { SharedModule } from '@app/shared';
 import { PanelModule } from '@app/panel';
 import { SettingsModule } from '@app/settings/settings.module';
 
-import { NavBarEffects } from './nav-bar.effects';
-import { NavBarService } from './nav-bar.service';
-import { navBarReducer } from './nav-bar.reducer';
+import { NavBarEffects, NavBarLinksEffects, NavBarProfileEffects, NavBarSearchEffects, NavBarStatusEffects } from './effects';
+import { NavBarService, NavBarLinksService, NavBarProfileService, NavBarSearchService, NavBarStatusService } from './services';
+import { navBarReducer } from './reducers';
 
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
@@ -30,14 +30,14 @@ import { ProfileDropdownComponent } from './components/profile-dropdown/profile-
 		SettingsModule,
 		
 		StoreModule.forFeature('navbar', navBarReducer),
-		EffectsModule.forFeature([NavBarEffects])
+		EffectsModule.forFeature([NavBarEffects, NavBarLinksEffects, NavBarProfileEffects, NavBarSearchEffects, NavBarStatusEffects])
 	],
 	declarations: [
 		NavBarComponent, DropdownMenuComponent, 
 		DropdownItemComponent, SearchBarComponent,
 		LogTimeComponent, ProfileDropdownComponent
 	],
-	providers: [NavBarService],
+	providers: [NavBarService, NavBarLinksService, NavBarProfileService, NavBarSearchService, NavBarStatusService],
 	exports: [NavBarComponent]
 })
 export class NavBarModule {}

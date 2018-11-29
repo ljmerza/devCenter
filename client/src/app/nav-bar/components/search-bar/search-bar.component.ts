@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { NgForm } from '@angular/forms';
 
 import { environment as env } from '@env/environment';
 import { selectSettings } from '@app/settings/settings.selectors';
-import { ActionSearch, ActionOpenTicket } from '../../nav-bar.actions';
+import { ActionSearch, ActionOpenTicket } from '../../actions';
 import { NotificationService } from '@app/core/notifications/notification.service';
 
 @Component({

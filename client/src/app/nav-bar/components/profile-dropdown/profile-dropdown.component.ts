@@ -6,7 +6,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
 
 import { selectSettings } from '@app/settings/settings.selectors';
 import { selectProfile } from '@app/nav-bar/nav-bar.selectors';
-import { ActionProfileRetrieve } from '@app/nav-bar/nav-bar.actions';
+import { ActionProfile, ActionStatusRetrieve } from '@app/nav-bar/actions';
 
 import { ActionSettingsPersist } from '@app/settings/settings.actions';
 import { initialState } from '@app/settings/settings.reducer';
@@ -28,11 +28,15 @@ export class ProfileDropdownComponent implements OnInit {
 	ngOnInit(): void {
 
 		// get credential settings - anytime they change -> retrieve new profile
+		// also get the user's status changes for Jira
     	this.settings$ = this.store.pipe(
     		select(selectSettings),
     		distinctUntilChanged((prev, next) => prev.username === next.username && prev.password === next.password)
     	)
-		.subscribe(() => this.store.dispatch(new ActionProfileRetrieve()));
+		.subscribe(() => {
+			this.store.dispatch(new ActionProfile());
+			this.store.dispatch(new ActionStatusRetrieve());
+		});
 
     	this.profile$ = this.store.pipe(select(selectProfile)).subscribe(profile => this.profile = profile);
     }

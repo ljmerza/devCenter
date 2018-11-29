@@ -107,4 +107,13 @@ class OrderItems(Modal):
 	columnWidth = Column(VARCHAR(7))
 	defaultFields = Column(VARCHAR(11))
 	dataType = Column(VARCHAR(20))
+
+class Statuses(Modal):
+	__tablename__ = 'statuses'
+	id = Column(Integer, primary_key=True)
+	team_id = Column(Integer)
+	status_name = Column(VARCHAR(50))
+	status_code = Column(VARCHAR(50))
+	transitions = Column(VARCHAR(50))
+	constant = Column(VARCHAR(20))
 	

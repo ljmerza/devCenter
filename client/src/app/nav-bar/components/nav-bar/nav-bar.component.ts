@@ -6,7 +6,7 @@ import { environment as env } from '@env/environment';
 import { selectSettings } from '@app/settings/settings.selectors';
 
 import { selectNavBarItems, selectLinks } from '../../nav-bar.selectors';
-import { ActionNavBarRetrieve, ActionLinksRetrieve } from '../../nav-bar.actions';
+import { ActionNavBarRetrieve, ActionLinksRetrieve } from '../../actions';
 
 @Component({
   selector: 'dc-nav-bar',

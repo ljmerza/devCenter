@@ -43,7 +43,7 @@
 	      
 	        <ng-container matColumnDef="status">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
-	          <mat-cell *matCellDef="let ticket"> {{ticket.status}} </mat-cell>
+	          <mat-cell *matCellDef="let ticket"> <dc-status [key]=ticket.key></dc-status> </mat-cell>
 	        </ng-container>
 	      
 	        <ng-container matColumnDef="StartDate">
@@ -79,7 +79,7 @@
 	        <ng-container matColumnDef="Pull Requests">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Pull Requests </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
-							<dc-pull-requests [selectorTicket]=ticket.selectorTicket></dc-pull-requests>
+							<dc-pull-requests [key]=ticket.key></dc-pull-requests>
 						</mat-cell>
 	        </ng-container>
 	      

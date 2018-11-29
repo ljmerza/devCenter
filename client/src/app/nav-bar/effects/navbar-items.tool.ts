@@ -1,4 +1,4 @@
-import { NavBarItem } from './nav-bar.model';
+import { NavBarItem } from '../nav-bar.model';
 
 /**
  *

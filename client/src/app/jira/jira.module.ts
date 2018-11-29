@@ -16,13 +16,12 @@ import { TicketsReducer } from './reducers';
 
 import {
   TicketsComponent, ActionsComponent, CommentsComponent, BranchInfoComponent,
-  LoadingTableComponent, UserDetailsComponent, AddLogComponent,
-  PullRequestsComponent, TicketDetailsComponent, LoadingDetailsComponent
+  LoadingTableComponent, UserDetailsComponent, AddLogComponent, LoggedComponent,
+  PullRequestsComponent, TicketDetailsComponent, LoadingDetailsComponent, StatusComponent
 } from './components';
 
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { BranchInfoBodyComponent } from './components/branch-info-body/branch-info-body.component';
-import { LoggedComponent } from './components/logged/logged.component';
 
 @NgModule({
 
@@ -48,7 +47,7 @@ import { LoggedComponent } from './components/logged/logged.component';
   declarations: [
     TicketsComponent, ActionsComponent, LoadingTableComponent,
     UserDetailsComponent, PullRequestsComponent, TicketDetailsComponent, 
-    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent, LoggedComponent
+    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent, LoggedComponent, StatusComponent
   ]
 })
 export class JiraModule {}

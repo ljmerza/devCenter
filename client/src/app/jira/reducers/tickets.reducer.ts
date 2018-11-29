@@ -37,6 +37,7 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
 
         case TicketsActionTypes.RETRIEVE:
             return { ...state, loading: true, ...action.payload };
+
         case TicketsActionTypes.RETRIEVE_SUCCESS:
             const tickets = processJiraTickets(action.payload, state.tickets, state.ticketType);
             const commentsTickets = tickets.map((ticket:JiraTicket) => ({
@@ -46,7 +47,15 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
                 attachments: ticket.attachments || [],
             }));
             const datesTickets = tickets.map((ticket: JiraTicket) => ({...ticket.dates, key: ticket.key}));
-            return { ...state, loading: false, tickets, commentsTickets, datesTickets };
+            const statusTickets = tickets.map((ticket: JiraTicket) => ({
+                component: ticket.component, 
+                status:ticket.status, 
+                key: ticket.key,
+                pcrCountLeft: ticket.pcrCountLeft,
+                pullRequests: ticket.pullRequests
+            }));
+            return { ...state, loading: false, tickets, commentsTickets, datesTickets, statusTickets };
+
         case TicketsActionTypes.RETRIEVE_ERROR:
             return { ...state, loading: false };
 

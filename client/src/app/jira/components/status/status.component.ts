@@ -7,20 +7,21 @@ import { selectProfile } from '@app/nav-bar/nav-bar.selectors';
 import { selectStatusTickets } from '../../selectors'
 
 @Component({
-  selector: 'dc-pull-requests',
-  templateUrl: './pull-requests.component.html',
-  styleUrls: ['./pull-requests.component.css']
+  selector: 'dc-status',
+  templateUrl: './status.component.html',
+  styleUrls: ['./status.component.css'],
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PullRequestsComponent implements OnDestroy, OnInit {
+export class StatusComponent implements OnDestroy, OnInit {
   profile$: Subscription;
   profile;
 
   ticket$: Subscription;
   ticket;
 
-  constructor(public store: Store<{}>) { }
+  @Input() key: string = '';
 
-  @Input() key;
+  constructor(public store: Store<{}>) { }
 
   ngOnInit() {
     this.profile$ = this.store.pipe(select(selectProfile))
@@ -39,20 +40,9 @@ export class PullRequestsComponent implements OnDestroy, OnInit {
     this.ticket$.unsubscribe();
   }
 
-	/**
-	 *
-	 */
-  pingUser() {
-    const postData = {
-      fromName: this.profile.displayName,
-      toUsername: this.ticket.username,
-      pullLinks: this.ticket.pullRequests,
-      key: this.ticket.key,
-    };
-
-    // this.chat.sendPcrComments(postData).subscribe(
-    //   response => this.toastr.showToast(response.data, 'success'),
-    //   error => this.toastr.showToast(`Could not ping user: ${error.data}`, 'error')
-    // )
+  buildStatusDropdown(){
+    
   }
+
+
 }

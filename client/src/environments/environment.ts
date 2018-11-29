@@ -6,5 +6,5 @@ export const environment = {
   production: false,
   test: false,
   devServer,
-  apiUrl: `${devServer}:5858/dev_center`
+  apiUrl: `${devServer}:5859/dev_center`
 };
