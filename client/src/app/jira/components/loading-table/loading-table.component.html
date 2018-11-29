@@ -1,20 +1,20 @@
 <div class="container-fluid table-spacing">
 	<!-- header -->
 	<div class="row">
-		<div class="col-12">
-			<h1 class='text-center ticket-title'>
-				<span>{{tableTitle}}</span>
-
-				<span class="loading-icon">
-					<span *ngIf="!loadingIcon; else cancelRefresh">
-						<i class="material-icons text-success" title='Refresh {{tableTitle}}' (click)="refreshDataEvent()">update</i>
-					</span>
-					<ng-template #cancelRefresh>
-						<i class="material-icons text-danger" title='Stop Refresh of {{tableTitle}}' (click)="stopRefreshDataEvent()">highlight_off</i>
-					</ng-template>
+		<div class="col-md-12 text-center">
+			<h1>{{tableTitle}}</h1>
+			<span class="loading-icon">
+				<span *ngIf="!loadingIcon; else cancelRefresh">
+					<button mat-icon-button color="primary" title='Refresh {{tableTitle}}' (click)="refreshData.emit()">
+						<mat-icon>update</mat-icon>
+					</button>
 				</span>
-				
-			</h1>
+				<ng-template #cancelRefresh>
+					<button mat-icon-button color="warn" title='Stop Refresh of {{tableTitle}}' (click)="stopRefresh.emit()">
+						<mat-icon>highlight_off</mat-icon>
+					</button>
+				</ng-template>
+			</span>
 		</div>
 	</div>
 	

@@ -4,4 +4,5 @@ export interface JiraTicket {
     links?: Array<any>,
     comments?: Array<any>,
     attachments?: Array<any>,
+    dates?: any
 };

@@ -19,7 +19,7 @@
         background-color: mat-color($primary) !important;
       }
 
-      .mat-expansion-panel-header-title {
+      .mat-expansion-panel-header-title, .mat-expansion-indicator:after {
         color: mat-color($primary, lighter) !important;
       }
     }

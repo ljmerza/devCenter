@@ -10,11 +10,8 @@
             background-color: mat-color($primary) !important;
         }
 
-        .mat-button, a, .mat-raised-button, .mat-button, .logo {
-            &:hover {
-            background-color: mat-color($primary, darker) !important;
-            }
-
+        .logo {
+            cursor: pointer;
             color: mat-color($primary, lighter) !important;
             background-color: mat-color($primary) !important;
         }

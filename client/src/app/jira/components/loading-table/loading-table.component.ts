@@ -1,4 +1,4 @@
-import { Component, Output, Input, EventEmitter, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Output, Input, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'dc-loading-table',
@@ -9,23 +9,9 @@ import { Component, Output, Input, EventEmitter, ViewEncapsulation, ChangeDetect
 export class LoadingTableComponent {
 	@Output() refreshData = new EventEmitter();
 	@Output() stopRefresh = new EventEmitter();
-	@Input() loadingTable;
-	@Input() loadingIcon;
-	@Input() tableTitle;
+	@Input() loadingTable: boolean = false;
+	@Input() loadingIcon: boolean = false;
+	@Input() tableTitle: string = '';
 
 	constructor() { }
-
-	/**
-	 * send refresh notification
-	 */
-	refreshDataEvent(){
-		this.refreshData.emit();
-	}
-
-	/**
-	 * send stop refresh notification
-	 */
-	stopRefreshDataEvent(){
-		this.stopRefresh.emit();
-	}
 }

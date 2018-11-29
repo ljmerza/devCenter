@@ -27,8 +27,10 @@ function _formatNavBarJqlLinks(jqlLinks){
 
  		return acc;
  	}, []);
-
- 	jqlNavbar.sort(_sortByOrder);
+	
+	// sort then add default mytickets link
+	jqlNavbar.sort(_sortByOrder);
+	jqlNavbar.unshift({name: "My Tickets"});
  	return jqlNavbar;
 }
 

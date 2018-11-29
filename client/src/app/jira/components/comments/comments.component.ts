@@ -4,7 +4,7 @@ import { environment as env } from '@env/environment';
 
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
 import { Subscription } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, distinctUntilChanged } from 'rxjs/operators';
 
 import { selectSettings } from '@app/settings/settings.selectors';
 
@@ -20,7 +20,7 @@ import { MatAccordion } from '@angular/material/expansion';
 	styleUrls: ['./comments.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class CommentsComponent implements OnInit {
+export class CommentsComponent implements OnInit, OnDestroy {
 	env = env;
 	ticket: any;
 	ticket$: Subscription;
@@ -43,7 +43,7 @@ export class CommentsComponent implements OnInit {
 	constructor(public store: Store<{}>) { }
 
 	ngOnInit() {
-		this.settings$ = this.store.pipe(select(selectSettings))
+		this.settings$ = this.store.pipe(select(selectSettings), distinctUntilChanged())
 			.subscribe(settings => this.settings = settings);
 
 		this.ticket$ = this.store.pipe(
@@ -51,7 +51,8 @@ export class CommentsComponent implements OnInit {
 			tap(state => {
 				if(this.loading) this.loading = state.commentsLoading;
 			}),
-			map((state:JiraTicketsState) => state.commentsTickets.find(ticket => ticket.key === this.key))
+			map((state:JiraTicketsState) => state.commentsTickets.find(ticket => ticket.key === this.key)),
+			distinctUntilChanged()
 		)
 			.subscribe((ticket: JiraTicket) => this.ticket = ticket);
 	}

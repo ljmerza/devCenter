@@ -16,4 +16,9 @@ export class BranchInfoBodyComponent {
 	@Input() key:string = '';
 	@Input() epicLink:string = '';
 
+	 get masterName(){
+		if (this.sprint) return this.key.split('-')[0] + this.sprint;
+		else return '';
+	 }
+
 }

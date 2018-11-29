@@ -1,4 +1,4 @@
-<dc-loading-table [loadingTable]=loading [tableTitle]=tableTitle (refreshData)='getTickets()'>
+<dc-loading-table [loadingTable]=loading  [loadingIcon]=loadingIcon [tableTitle]=tableTitle (refreshData)='getTickets()'>
 	<div class="container-fluid">
 	  <div class="row">
 	    <div class="col-md-12">
@@ -11,10 +11,10 @@
 	        <ng-container matColumnDef="key">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Key </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
-							<i class="material-icons pointer copy-input-dir copy-key" title="Copy Jira key to clipboard">note</i>
+							<i class="material-icons pointer copy-input-dir copy-warn" title="Copy Jira key to clipboard">note</i>
 							<span class='hidden'>{{env.jiraUrl}}/browse/{{ticket.key}}</span>
 							
-							<i class="material-icons pointer copy-input-dir copy-jira" title="Copy Jira link to clipboard">note</i>
+							<i class="material-icons pointer copy-input-dir copy-accent" title="Copy Jira link to clipboard">note</i>
 							<a target="_blank" href="{{env.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira' dcInputToCopy>
 								{{ticket.key}}
 							</a>
@@ -24,7 +24,7 @@
 	        <ng-container matColumnDef="msrp">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> MSRP </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
-							<i class="material-icons pointer copy-input-dir copy-msrp" title="Copy Jira key to clipboard">note</i>
+							<i class="material-icons pointer copy-input-dir copy-accent" title="Copy Jira key to clipboard">note</i>
 							<span>{{ticket.msrp}}</span>
 						</mat-cell>
 	        </ng-container>
@@ -63,7 +63,7 @@
 	      
 	        <ng-container matColumnDef="Logged">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Logged </mat-header-cell>
-	          <mat-cell *matCellDef="let ticket"> {{ticket.dates.logged_seconds | workLog}} </mat-cell>
+	          <mat-cell *matCellDef="let ticket"><dc-logged [key]=ticket.key></dc-logged></mat-cell>
 	        </ng-container>
 	      
 	        <ng-container matColumnDef="Last Update">

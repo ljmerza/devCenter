@@ -1,6 +1,6 @@
-<i (click)="openBranchModal()" class="material-icons text-primary pointer" title='Branch Information'>record_voice_over</i>
-<i (click)="openLogModal()" class="material-icons text-warning pointer" title='Add Comment/Worklog'>add_circle_outline</i>
-<i (click)="openCommentsModal()" class="material-icons text-success pointer" title='View Comments'>storage</i>
-<i (click)="openAdditionalDetails()" class="material-icons text-info pointer" title='View Additional Ticket Data' >live_help</i>
-
 <!-- <dc-watchers [watchers]=ticket?.watchers [key]=ticket?.key></dc-watchers> -->
+
+<mat-icon class='text-primary' title='' (click)="openBranchModal()">record_voice_over</mat-icon>
+<mat-icon class='text-warning' title='Add Comment/Worklog' (click)="openLogModal()">add_circle_outline</mat-icon>
+<mat-icon class='text-success' title='View Comments' (click)="openCommentsModal()">storage</mat-icon>
+<mat-icon class='text-info' title='View Additional Ticket Data' (click)="openAdditionalDetails()">live_help</mat-icon>

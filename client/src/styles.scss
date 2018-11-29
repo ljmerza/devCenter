@@ -66,6 +66,35 @@
   @include main-table-theme($theme);
 }
 
+.text-center {
+	text-align: center;
+}
+.material-icons {
+	cursor: pointer;
+}
+
+.float-right {
+	float: right;
+}
+
+table, .full-width {
+	width: 100%;
+}
+
+.align-footer{
+	padding-right: 15px;	
+}
+
+.mat-list-base .mat-list-item, .mat-list-base .mat-list-option {
+    height: inherit;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.mat-card {
+	border-radius: 0px;
+}
+
 .default-theme {
   @include angular-material-theme($dc-theme);
   @include custom-components-theme($dc-theme);

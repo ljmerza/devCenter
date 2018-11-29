@@ -1,27 +1,15 @@
 .table-spacing {
-	margin-top: 60px;
 	margin-bottom: 35px;
-}
-
-@media (max-width: 1380px){
-	.table-spacing {
-		margin-top: 75px;
-	}
 }
 
 .loading-icon {
 	margin-left: 5px;
 }
 
-.ticket-title {
+h1 {
 	font-size: 3.5rem;
-	text-align: center;
+	display: inline;
 }
-
-a, .material-icons {
-	cursor: pointer;
-}
-
 
 .container {
 	height: 100vh;

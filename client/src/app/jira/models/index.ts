@@ -13,6 +13,12 @@ export interface JiraTicketsState {
     commentsTickets: Array<any>,
     commentsError: string,
 
+    statusLoading: boolean,
+    statusTickets: Array<any>,
+    statusError: string,
+
+    datesTickets: Array<any>,
+
     currentJql: string,
     ticketType: string,
     fields: string

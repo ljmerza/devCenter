@@ -11,6 +11,28 @@
     color: mat-color($primary) !important;
   }
 
+  // copy to clip board colors
+  .copy-warn {
+    color: mat-color($warn) !important;
+  }
+  .copy-accent {
+    color: mat-color($accent) !important;
+  }
+
+  // make all buttons act the same
+  button.mat-primary {
+    color: mat-color($primary, lighter) !important;
+    &:hover {
+      background-color: mat-color($primary, darker) !important;
+    }
+  }
+  button.mat-warn {
+    color: mat-color($warn, lighter) !important;
+    &:hover {
+      background-color: mat-color($warn, darker) !important;
+    }
+  }
+
   // make all select dropdowns the same
   .mat-select-panel, .mat-menu-panel, .mat-menu-item {
     .mat-option, .mat-menu-item, .dropdown-item {

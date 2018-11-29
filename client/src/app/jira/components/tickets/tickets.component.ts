@@ -40,7 +40,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
   tickets$;
   loading$;
   filteredTickets;
-  loading:boolean = false;
+  loading: boolean = false;
+  loadingIcon:boolean = false;
   tableTitle = '';
   ticketType = '';
 
@@ -60,9 +61,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
       .subscribe(loading => this.setLoading(loading));
 
     this.route.url.subscribe((urlSegment:UrlSegment[]) => {
-      this.currentJql = urlSegment[0].parameters.jql;
-      this.ticketType = urlSegment[0].path;
-      this.tableTitle = `${urlSegment[0].parameters.displayName} Tickets`;
+      this.currentJql = urlSegment[0].parameters.jql || 'assignee = currentUser() AND resolution = Unresolved ORDER BY due DESC';
+      this.ticketType = urlSegment[0].path || 'myopen';
+      this.tableTitle = `${urlSegment[0].parameters.displayName || 'My Open'} Tickets`;
       this.getTickets();
     });
 
@@ -73,12 +74,18 @@ export class TicketsComponent implements OnInit, OnDestroy {
     this.loading$.unsubscribe();
   }
 
+  /**
+   * fetch the list of thickets given the jql we current have
+   */
   getTickets(){
+    
     this.store.dispatch(new ActionTicketsRetrieve({
       currentJql:this.currentJql, 
       fields: '', 
       ticketType: this.ticketType
     }));
+
+    this.loadingIcon = true;
   }
 
   cancelGetTickets(){
@@ -89,8 +96,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
    *
    */
   processTickets(state) {
-    console.log({state});
-
+    
     // find only matching tickets and then format them for expanded view
     this.filteredTickets = state.tickets.filter(ticket => ticket.ticketType === state.ticketType);
     const formattedTickets = this.formatTicketsForExpanded(this.filteredTickets);
@@ -101,6 +107,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
     this.dataSource.paginator = this.paginator;
 
     this.setLoading(state.loading);
+    this.loadingIcon = false;
   }
 
   /**

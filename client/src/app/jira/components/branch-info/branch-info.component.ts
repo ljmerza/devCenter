@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, Input, ViewChild } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 import { selectSettings } from '@app/settings/settings.selectors';
 
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
@@ -18,7 +19,7 @@ export class BranchInfoComponent implements OnInit, OnDestroy {
 	constructor(public store: Store<{}>) { }
 
 	ngOnInit() {
-		this.settings$ = this.store.pipe(select(selectSettings))
+		this.settings$ = this.store.pipe(select(selectSettings), distinctUntilChanged())
 			.subscribe(settings => this.settings = settings);
 	}
 

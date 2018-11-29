@@ -43,7 +43,7 @@ export class CommentFormatPipe implements PipeTransform {
 
 			const nextText = copyText ? `<span>${copyText}</span>` : '';
 			const newText = `
-				<i class="material-icons pointer copy-input-dir copy-comment" title="Copy to clipboard">note</i>
+				<i class="material-icons pointer copy-input-dir copy-accent" title="Copy to clipboard">note</i>
 				${nextText}
 			`;
 

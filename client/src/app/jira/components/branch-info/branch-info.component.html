@@ -19,24 +19,18 @@
 		</dc-loading-details>
 	</span>
 
-	<span class='modal-footer'>
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<button mat-raised-button (click)="sendNewPing()">
-					   Send New Ping
-					</button>
+	<span class='modal-footer align-footer'>
+		<button mat-raised-button color='primary' (click)="sendNewPing()">
+			Send New Ping
+		</button>
 
-					<button mat-raised-button (click)="sendMergePing()">
-					   Send Merge Ping
-					</button>
+		<button mat-raised-button color='primary' (click)="sendMergePing()">
+			Send Merge Ping
+		</button>
 
-					<button mat-raised-button (click)="modal.closeModal()">
-					   Close
-					</button>
-				</div>
-			</div>
-		</div>
+		<button mat-raised-button color='warn' (click)="modal.closeModal()">
+			Close
+		</button>
 	</span>
 
 </dc-panel>

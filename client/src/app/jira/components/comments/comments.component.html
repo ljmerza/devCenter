@@ -17,18 +17,22 @@
 						</mat-panel-title>
 					</mat-expansion-panel-header>
 					
-					<div class="container edit-buttons-container" *ngIf='comment.username == settings.username'>
+					<div class="edit-buttons-container" *ngIf='comment.username == settings.username'>
 						<div class="row">
-							<div class="col-md-11">
-								<button mat-raised-button *ngIf='comment.id !== commentEditingId' (click)="toggleEditing(comment)">
+							<div class="col-md-12">
+								<button mat-raised-button color="primary" *ngIf='comment.id !== commentEditingId' (click)="toggleEditing(comment)">
 								   Edit Comment
 								</button>
 
-								<button mat-raised-button *ngIf='comment.id === commentEditingId' (click)="editComment()">
-									Save Comment Edits
+								<button mat-raised-button color="warn" *ngIf='comment.id === commentEditingId' (click)="toggleEditing(comment)">
+									Cancel Editing
 								</button>
 
-								<button mat-raised-button *ngIf='comment.id !== commentEditingId' (click)="deleteComment(comment.id)">
+								<button mat-raised-button color="primary" *ngIf='comment.id === commentEditingId' (click)="editComment()">
+									Save Changes
+								</button>
+
+								<button mat-raised-button color="warn" *ngIf='comment.id !== commentEditingId' (click)="deleteComment(comment.id)">
 									Delete Comment
 								</button>
 							</div>
@@ -45,7 +49,7 @@
 							[id]=comment.editId 
 							class='edit-area' 
 							cols="100" 
-							rows=25 
+							rows=20 
 							[(ngModel)]=commentEditingText
 						></textarea>
 					</ng-template>
@@ -54,12 +58,12 @@
 		</dc-loading-details>
 	</span>
 
-	<span class='modal-footer'>
-		<button mat-raised-button (click)="toggleAllPanels()">
+	<span class='modal-footer align-footer'>
+		<button mat-raised-button color='primary' (click)="toggleAllPanels()">
 		   Toggle All Panels
 		</button>
 
-		<button mat-raised-button (click)="modal.closeModal()">
+		<button mat-raised-button color='warn' (click)="modal.closeModal()">
 		   Close
 		</button>
 	</span>
@@ -74,11 +78,11 @@
 	</span>
 
 	<span class="modal-footer">
-		<button mat-raised-button (click)="deleteCommentConfirm()">
+		<button mat-raised-button color='primary' (click)="deleteCommentConfirm()">
 		   Yes
 		</button>
 
-		<button mat-raised-button (click)="deleteModal.closeModal()">
+		<button mat-raised-button color='warn' (click)="deleteModal.closeModal()">
 		   No
 		</button>
 	</span>

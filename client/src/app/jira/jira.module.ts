@@ -10,8 +10,8 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { PanelModule } from '@app/panel';
 
-import { TicketsEffects, BranchInfoEffects, CommentEffects, AdditionalDetailsEffects } from './effects';
-import { TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService } from './services';
+import { TicketsEffects, BranchInfoEffects, CommentEffects, AdditionalDetailsEffects, StatusEffects } from './effects';
+import { TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService, StatusService } from './services';
 import { TicketsReducer } from './reducers';
 
 import {
@@ -22,6 +22,7 @@ import {
 
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { BranchInfoBodyComponent } from './components/branch-info-body/branch-info-body.component';
+import { LoggedComponent } from './components/logged/logged.component';
 
 @NgModule({
 
@@ -37,17 +38,17 @@ import { BranchInfoBodyComponent } from './components/branch-info-body/branch-in
     StoreModule.forFeature('jira', TicketsReducer),
     
     EffectsModule.forFeature([
-      TicketsEffects, BranchInfoEffects, 
+      TicketsEffects, BranchInfoEffects, StatusEffects,
       CommentEffects, AdditionalDetailsEffects
      ]),
 
     JiraRoutingModule
   ],
-  providers: [TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService],
+  providers: [TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService, StatusService],
   declarations: [
     TicketsComponent, ActionsComponent, LoadingTableComponent,
     UserDetailsComponent, PullRequestsComponent, TicketDetailsComponent, 
-    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent
+    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent, LoggedComponent
   ]
 })
 export class JiraModule {}

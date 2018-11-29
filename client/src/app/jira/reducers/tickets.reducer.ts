@@ -18,6 +18,12 @@ export const initialState: JiraTicketsState = {
     commentsTickets: [],
     commentsError: '',
 
+    statusLoading: false,
+    statusTickets: [],
+    statusError: '',
+
+    datesTickets: [],
+
     currentJql: '',
     ticketType: '',
     fields: ''
@@ -39,7 +45,8 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
                 comments: ticket.comments,
                 attachments: ticket.attachments || [],
             }));
-            return { ...state, loading: false, tickets, commentsTickets };
+            const datesTickets = tickets.map((ticket: JiraTicket) => ({...ticket.dates, key: ticket.key}));
+            return { ...state, loading: false, tickets, commentsTickets, datesTickets };
         case TicketsActionTypes.RETRIEVE_ERROR:
             return { ...state, loading: false };
 
@@ -56,7 +63,7 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
 
 
         case CommentActionTypes.SAVE_SUCCESS:
-            const processedState = processAddLog(action.payload, state.commentsTickets, state.tickets);
+            const processedState = processAddLog(action.payload, state.commentsTickets, state.tickets, state.datesTickets);
             return { ...state, commentsLoading: false, ...processedState};
         case CommentActionTypes.SAVE_ERROR:
             return { ...state, commentsLoading: false, commentsError: action.payload };
@@ -120,8 +127,8 @@ function replaceEditedComment(newComment, commentsTickets){
 /**
  *
  */
-function processAddLog(addLogResponse, commentsTickets, tickets){
-    const newState = {commentsTickets, tickets};
+function processAddLog(addLogResponse, commentsTickets, tickets, datesTickets){
+    const newState = { commentsTickets, tickets, datesTickets };
 
     // add new comment if successful
     if(addLogResponse.comment_response.status){
@@ -140,13 +147,12 @@ function processAddLog(addLogResponse, commentsTickets, tickets){
 
     // add work-log if successful
     if(addLogResponse.log_response.status){
-        newState.tickets = tickets.map(ticket => {
+        newState.datesTickets = datesTickets.map(ticket => {
             ticket = {...ticket};
             
             if(ticket.key === addLogResponse.key){
-                ticket.dates = {...ticket.dates};
                 const timeSpentSeconds = addLogResponse.log_response.data.timeSpentSeconds;
-                ticket.dates.logged_seconds = parseInt(ticket.dates.logged_seconds) + timeSpentSeconds || 0;
+                ticket.logged_seconds = parseInt(ticket.logged_seconds) + timeSpentSeconds || 0;
             }
 
             return ticket;
