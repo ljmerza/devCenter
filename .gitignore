@@ -3,3 +3,5 @@ ng-devCenter/src/app/shared/services/config.service.ts
 ng-devCenter/mock-server/node_modules
 ng-devCenter/src/environments
 server/APIs/data/
+
+client/src/environments/baseEnvironment.ts
