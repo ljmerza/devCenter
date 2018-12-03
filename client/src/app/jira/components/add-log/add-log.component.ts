@@ -3,13 +3,11 @@ import { NgForm } from '@angular/forms';
 
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import {  tap } from 'rxjs/operators';
 
 import { selectJiraState } from '../../selectors';
-import { JiraTicketsState, JiraTicket } from '../../models';
 import { ActionCommentSave } from '../../actions';
 
-import { selectSettings } from '@app/settings/settings.selectors';
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
 
 @Component({
@@ -22,7 +20,7 @@ export class AddLogComponent implements OnInit, OnDestroy {
 	@ViewChild(PanelComponent) modal: PanelComponent;
 	@Input() ticket;
 
-	state$;
+	state$: Subscription;
 	loading;
 
 	uctNotReady:boolean = false;

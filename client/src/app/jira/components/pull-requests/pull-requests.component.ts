@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
-import { selectProfile } from '@app/nav-bar/nav-bar.selectors';
+import { selectProfile } from '@app/nav-bar/selectors';
 
 import { selectStatusTickets } from '../../selectors'
 

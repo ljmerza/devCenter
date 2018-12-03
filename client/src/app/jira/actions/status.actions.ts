@@ -14,7 +14,7 @@ export class ActionStatusSave implements Action {
     readonly type = StatusActionTypes.SAVE;
     constructor(readonly payload: any) { }
 }
-export class ActionStatusSaveSucess implements Action {
+export class ActionStatusSaveSuccess implements Action {
     readonly type = StatusActionTypes.SAVE_SUCCESS;
     constructor(readonly payload: any) { }
 }
@@ -27,7 +27,7 @@ export class ActionStatusQaSave implements Action {
     readonly type = StatusActionTypes.SAVE_QA;
     constructor(readonly payload: any) { }
 }
-export class ActionStatusQaSaveSucess implements Action {
+export class ActionStatusQaSaveSuccess implements Action {
     readonly type = StatusActionTypes.SAVE_QA_SUCCESS;
     constructor(readonly payload: any) { }
 }
@@ -38,9 +38,9 @@ export class ActionStatusQaSaveError implements Action {
 
 
 export type StatusActions = ActionStatusSave 
-| ActionStatusSaveSucess 
+| ActionStatusSaveSuccess 
 | ActionStatusSaveError
 
 | ActionStatusQaSave
-| ActionStatusQaSaveSucess
+| ActionStatusQaSaveSuccess
 | ActionStatusQaSaveError;

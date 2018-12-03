@@ -7,8 +7,8 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 
 import {
     StatusActionTypes, StatusActions,
-    ActionStatusSave, ActionStatusSaveSucess, ActionStatusSaveError,
-    ActionStatusQaSave, ActionStatusQaSaveSucess, ActionStatusQaSaveError
+    ActionStatusSave, ActionStatusSaveSuccess, ActionStatusSaveError,
+    ActionStatusQaSave, ActionStatusQaSaveSuccess, ActionStatusQaSaveError
 } from '../actions';
 
 import { StatusService } from '../services';
@@ -46,7 +46,7 @@ export class StatusEffects {
      * @param response 
      */
     processUpdateStatus(response){
-        return new ActionStatusSaveSucess(response.data);
+        return new ActionStatusSaveSuccess(response.data);
     }
 
     /**
@@ -54,6 +54,6 @@ export class StatusEffects {
      * @param response 
      */
     processGenerateQa(response) {
-        return new ActionStatusQaSaveSucess(response.data);
+        return new ActionStatusQaSaveSuccess(response.data);
     }
 }

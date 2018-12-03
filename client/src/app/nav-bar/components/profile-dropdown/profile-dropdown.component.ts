@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
 import { selectSettings } from '@app/settings/settings.selectors';
-import { selectProfile } from '@app/nav-bar/nav-bar.selectors';
+import { selectProfile } from '@app/nav-bar/selectors';
 import { ActionProfile, ActionStatusRetrieve } from '@app/nav-bar/actions';
 
 import { ActionSettingsPersist } from '@app/settings/settings.actions';

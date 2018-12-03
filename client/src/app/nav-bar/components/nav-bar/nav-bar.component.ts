@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { environment as env } from '@env/environment';
 import { selectSettings } from '@app/settings/settings.selectors';
 
-import { selectNavBarItems, selectLinks } from '../../nav-bar.selectors';
+import { selectNavBarItems, selectLinks } from '../../selectors';
 import { ActionNavBarRetrieve, ActionLinksRetrieve } from '../../actions';
 
 @Component({
