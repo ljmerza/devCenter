@@ -140,7 +140,7 @@
 
             <ng-container matColumnDef="displayName">
               <td mat-cell *matCellDef="let status">
-                {{status.author.displayName}}
+                <dc-user-chat [username]=status.author.name [displayName]=status.author.displayName></dc-user-chat>
               </td>
             </ng-container>
 

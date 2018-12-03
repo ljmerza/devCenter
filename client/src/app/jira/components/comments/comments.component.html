@@ -7,10 +7,7 @@
 				<mat-expansion-panel *ngFor='let comment of ticket?.comments; last as isLast' [expanded]='isLast'>
 					<mat-expansion-panel-header>
 						<mat-panel-title>
-							<span>
-								{{comment.display_name}}
-								<img src="{{env.chatIconUrl}}/{{comment.username}}.gif">
-							</span>
+							<dc-user-chat [username]=comment.username [displayName]=comment.display_name></dc-user-chat>
 							<span class="float-right">
 								{{comment.created | amDateFormat:'MM/D/YY h:mm A'}}
 							</span>

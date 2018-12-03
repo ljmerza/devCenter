@@ -11,6 +11,7 @@ export * from './add-log/add-log.component';
 
 export * from './loading-table/loading-table.component';
 export * from './loading-details/loading-details.component';
+export * from './user-chat/user-chat.component';
 
 export * from './logged/logged.component';
 export * from './status/status.component';

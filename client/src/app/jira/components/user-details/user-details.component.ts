@@ -1,10 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, OnInit, OnDestroy } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-
-import { environment as env } from '@env/environment';
 
 @Component({
   selector: 'dc-user-details',
@@ -14,9 +10,8 @@ import { environment as env } from '@env/environment';
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
 
-  constructor(private sanitizer: DomSanitizer, public store: Store<{}>) { }
+  constructor(public store: Store<{}>) { }
   ticket$: Subscription;
-  env = env;
 
   msrp:string = '';
   username:string = '';
@@ -40,13 +35,4 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   ngOnDestroy(){
     this.ticket$.unsubscribe();
   }
-  
-
-  /**
-   * generate and sanitize a chat link from a username
-   */
-  sanitizedChatUrl(): SafeUrl{
-    return this.sanitizer.bypassSecurityTrustUrl(`${env.chatUrl}/${this.username}`)
-  }
-
 }

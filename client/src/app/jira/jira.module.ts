@@ -15,7 +15,7 @@ import { TicketsService, BranchInfoService, CommentsService, AdditionalDetailsSe
 import { TicketsReducer } from './reducers';
 
 import {
-  TicketsComponent, ActionsComponent, CommentsComponent, BranchInfoComponent,
+  TicketsComponent, ActionsComponent, CommentsComponent, BranchInfoComponent, UserChatComponent,
   LoadingTableComponent, UserDetailsComponent, AddLogComponent, LoggedComponent,
   PullRequestsComponent, TicketDetailsComponent, LoadingDetailsComponent, StatusComponent
 } from './components';
@@ -45,9 +45,9 @@ import { BranchInfoBodyComponent } from './components/branch-info-body/branch-in
   ],
   providers: [TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService, StatusService],
   declarations: [
-    TicketsComponent, ActionsComponent, LoadingTableComponent,
-    UserDetailsComponent, PullRequestsComponent, TicketDetailsComponent, 
-    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent, LoggedComponent, StatusComponent
+    TicketsComponent, ActionsComponent, LoadingTableComponent, UserChatComponent,
+    UserDetailsComponent, PullRequestsComponent, TicketDetailsComponent, LoggedComponent, StatusComponent,
+    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent
   ]
 })
 export class JiraModule {}

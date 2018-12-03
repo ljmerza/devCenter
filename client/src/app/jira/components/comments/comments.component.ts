@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { environment as env } from '@env/environment';
 
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
 import { Subscription } from 'rxjs';
@@ -21,7 +20,6 @@ import { MatAccordion } from '@angular/material/expansion';
     encapsulation: ViewEncapsulation.None
 })
 export class CommentsComponent implements OnInit, OnDestroy {
-	env = env;
 	ticket: any;
 	ticket$: Subscription;
 	loading: boolean = false;
