@@ -1,18 +1,19 @@
 .comments-dialog {
 	.comment-table {
-		width: 100%;
 	    margin-bottom: 10px;
-	    margin-top: 10px;
+		margin-top: 10px;
+		width: 100%;
 	}
 
-	.confluenceTd {
+	.confluenceTd, .confluenceTh {
 		margin-left: 10px;
 		margin-right: 10px;
+		padding: 10px;
 	}
 
 	.edit-buttons-container {
 		margin-bottom: 20px;
-		margin-right: 10px;
+		margin-right: 10px;\
 
 		button {
 			float: right;

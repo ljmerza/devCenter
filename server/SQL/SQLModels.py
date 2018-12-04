@@ -116,4 +116,5 @@ class Statuses(Modal):
 	status_code = Column(VARCHAR(50))
 	transitions = Column(VARCHAR(50))
 	constant = Column(VARCHAR(20))
+	color = Column(VARCHAR(20))
 	

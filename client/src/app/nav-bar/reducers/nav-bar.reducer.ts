@@ -4,9 +4,12 @@ import {
 } from '../actions';
 import { NavBarState } from '../nav-bar.model';
 
+import { processNavBarItems } from './navbar-items.tool';
+import { processJqlLinks } from './jql.tool';
+
 export const initialState: NavBarState = {
 	loading: false,
-	navBarItems: [],
+	navBarItems: {},
 	navBarError: '',
 
 	loadingProfile: false,
@@ -31,7 +34,7 @@ export function navBarReducer(state: NavBarState = initialState, action: Action)
 		case NavBarActionTypes.RETRIEVE:
 			return { ...state, loading: true };
 		case NavBarActionTypes.RETRIEVE_SUCCESS:
-			return { ...state, loading: false, navBarItems: action.payload};
+			return { ...state, loading: false, navBarItems: processNavBarItems(action.payload)};
 		case NavBarActionTypes.RETRIEVE_ERROR:
 			return { ...state, loading: false, navBarError: action.payload };
 
@@ -45,7 +48,8 @@ export function navBarReducer(state: NavBarState = initialState, action: Action)
 		case NavBarLinksActionTypes.LINKS:
 			return { ...state, loadingLinks: true };
 		case NavBarLinksActionTypes.LINKS_SUCCESS:
-			return { ...state, loadingLinks: false, links: action.payload };
+			const jqls = action.payload.map(jql => ({...jql}));
+			return { ...state, loadingLinks: false, links: processJqlLinks(jqls) };
 		case NavBarLinksActionTypes.LINKS_ERROR:
 			return { ...state, loadingLinks: false, linksError: action.payload };
 

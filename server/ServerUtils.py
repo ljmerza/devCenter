@@ -42,6 +42,8 @@ def build_commit_message(key, msrp, summary, epic_link):
 	if epic_link:
 		commit +=f" - {epic_link} -"
 
+	summary = re.sub(r"\"", '', summary)
+	summary = re.sub(r"\'", '', summary)
 	commit += f" {summary}"
 	return commit
 

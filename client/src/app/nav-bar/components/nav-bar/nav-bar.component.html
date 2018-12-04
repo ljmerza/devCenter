@@ -1,12 +1,8 @@
 <mat-toolbar color="primary" class='nav-bar-shadow'>
 
 	<!-- <img [src]="logo" /> -->
-	  <span class='logo'>Dev Center</span>
-	  
-	<dc-dropdown-menu
-		*ngIf='links?.jqlNavbar' 
-		[navLinks]=links?.jqlNavbar 
-	></dc-dropdown-menu>
+	<span class='logo'>Dev Center</span>
+	<dc-dropdown-menu *ngIf='links?.jqlNavbar' [navLinks]=links.jqlNavbar></dc-dropdown-menu>
 
 	<dc-dropdown-menu 
 		*ngIf='this.settings.username && this.settings.port && navBarItems?.DevLinks'
@@ -16,20 +12,9 @@
 		[teamUrl]=teamBaseUrl
 	></dc-dropdown-menu>
 
-	<dc-dropdown-menu 
-		*ngIf='navBarItems?.BetaLinks' 
-		[navLinks]=navBarItems?.BetaLinks 
-	></dc-dropdown-menu>
-
-	<dc-dropdown-menu 
-		*ngIf='navBarItems?.ProdLinks' 
-		[navLinks]=navBarItems?.ProdLinks
-	></dc-dropdown-menu>
-
-	<dc-dropdown-menu 
-		*ngIf='navBarItems?.HelpfulLinks' 
-		[navLinks]=navBarItems?.HelpfulLinks 
-	></dc-dropdown-menu>
+	<dc-dropdown-menu *ngIf='navBarItems?.BetaLinks' [navLinks]=navBarItems?.BetaLinks ></dc-dropdown-menu>
+	<dc-dropdown-menu *ngIf='navBarItems?.ProdLinks' [navLinks]=navBarItems?.ProdLinks></dc-dropdown-menu>
+	<dc-dropdown-menu *ngIf='navBarItems?.HelpfulLinks' [navLinks]=navBarItems?.HelpfulLinks ></dc-dropdown-menu>
 	
 	<span class="nav-link">
 		<dc-log-time></dc-log-time>

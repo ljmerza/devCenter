@@ -1,16 +1,19 @@
 import { NavBarItem } from '../nav-bar.model';
 
 /**
- *
+ * converts a list of navbar items to a nested array of dropdown menus
+ * @param navBarItems 
  */
 export function processNavBarItems(navBarItems): NavBarItem[] {
     let fullNavbar = splitNavbarItems(navBarItems);
-    const navItems = converNavbarToObject(fullNavbar);
+    const navItems = convertNavbarToObject(fullNavbar);
     return navItems;
 }
 
+
 /**
- *
+ * split dropdown item by name to see where itgoes in the nested dropdowns
+ * @param navBarItems 
  */
 function splitNavbarItems(navBarItems = []) {
     let fullNavbar: any = [];
@@ -33,13 +36,14 @@ function splitNavbarItems(navBarItems = []) {
 }
 
 /**
- *
+ * convert a navbar dropdown to an object
+ * @param fullNavbar 
  */
-function converNavbarToObject(fullNavbar) {
+function convertNavbarToObject(fullNavbar) {
     return fullNavbar.reduce((acc, curr) => {
         if (!acc[curr.name]) {
-        const propName = curr.name.replace(/\s/g, '');
-        acc[propName] = curr;
+            const propName = curr.name.replace(/\s/g, '');
+            acc[propName] = curr;
         }
         return acc;
     }, {});
@@ -49,7 +53,6 @@ function converNavbarToObject(fullNavbar) {
  * find a child navmenu - if does't exist then create one and add it
  * @param {Object} parentNavMenu the parent navmenu we want to find a child of
  * @param {string} name the name of the navmenu we are trying to locate
- * @param {string} itemType the type of the navbar item
  * @return {Object}
  */
 function getChildNavMenu(parentNavMenu, name) {
@@ -67,7 +70,9 @@ function getChildNavMenu(parentNavMenu, name) {
 }
 
 /**
- *
+ * adds a new menu item to where it belongs on the nested dropdowns
+ * @param fullNavbar 
+ * @param item 
  */
 function processNavBarItem(fullNavbar, item) {
     let navBarItem: any = {

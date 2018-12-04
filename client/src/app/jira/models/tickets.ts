@@ -11,6 +11,10 @@ export interface JiraTicket {
 
     master_branch: string,
     sprint: string,
+    branch: string,
+    commit: string,
+    epicLink: string,
+
     dev_changes: string,
     pcrCountLeft: string,
     pullRequests: Array<any>,

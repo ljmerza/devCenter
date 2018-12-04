@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Subscription, combineLatest } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
@@ -13,7 +13,8 @@ import { PanelComponent } from '@app/panel/components/panel/panel.component';
   selector: 'dc-status',
   templateUrl: './status.component.html',
   styleUrls: ['./status.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush
+  host: { 'class': 'dc-status' },
+  encapsulation: ViewEncapsulation.None
 })
 export class StatusComponent implements OnDestroy, OnInit {
   profile$: Subscription;
@@ -21,7 +22,7 @@ export class StatusComponent implements OnDestroy, OnInit {
 
   statuses$: Subscription;
   statuses;
-  ticket;
+  ticket:any = {};
 
   // keep track of valid transitions, the original values, and the values the user changed to
   transitions:any = {};
@@ -29,6 +30,10 @@ export class StatusComponent implements OnDestroy, OnInit {
   originalStatusName: string = '';
   changedStatusCode: string = '';
   changedStatusName: string = '';
+  borderColor: string = '';
+
+  // matching string to show branch info
+  branchInfoMatcherCode: string = '';
 
   @Input() key: string = '';
   @ViewChild(PanelComponent) modal: PanelComponent;
@@ -57,18 +62,20 @@ export class StatusComponent implements OnDestroy, OnInit {
   processNewStatus([ticket, statuses]){
     this.ticket = ticket;
     this.statuses = statuses;
+    this.branchInfoMatcherCode = (statuses.find(status => status.constant === 'UCTREADY') || {}).status_code || '';
 
     // get matching status object
-    const matchingStatus = { ...this.statuses.find(allStatus => allStatus.status_name === this.ticket.status) || {} };
+    const matchingStatus = { ...(this.statuses.find(allStatus => allStatus.status_name === this.ticket.status) || {}) };
 
     // reset all status values
-    this.originalStatusCode = matchingStatus.status_code;
-    this.originalStatusName = matchingStatus.status_name;
-    this.changedStatusCode = matchingStatus.status_code;
-    this.changedStatusName = matchingStatus.status_name;
+    this.originalStatusCode = matchingStatus.status_code || '';
+    this.originalStatusName = matchingStatus.status_name || '';
+    this.changedStatusCode = matchingStatus.status_code || '';
+    this.changedStatusName = matchingStatus.status_name || '';
+    this.borderColor = matchingStatus.color ? `solid 2px ${matchingStatus.color}` : '';
 
     // reset transitions and add current status to top
-    this.transitions = Array.from(matchingStatus.transitions);
+    this.transitions = Array.from(matchingStatus.transitions || []);
     this.transitions.unshift({ status_code: this.originalStatusCode, status_name: this.originalStatusName });
   }
 
@@ -91,7 +98,14 @@ export class StatusComponent implements OnDestroy, OnInit {
     this.originalStatusCode = this.changedStatusCode;
     this.originalStatusName = this.changedStatusName;
     this.modal.closeModal();
-    this.store.dispatch(new ActionStatusSave({ key: this.key, statusType: this.changedStatusCode }));
+
+    this.store.dispatch(new ActionStatusSave({ 
+      username: this.profile.name, 
+      key: this.ticket.key, 
+      statusType: this.changedStatusCode,
+      repoName: this.ticket.repoName,
+      pullRequests: this.ticket.pullRequests
+    }));
   }
 
   /**

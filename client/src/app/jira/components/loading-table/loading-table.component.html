@@ -5,14 +5,10 @@
 			<h1>{{tableTitle}}</h1>
 			<span class="loading-icon">
 				<span *ngIf="!loadingIcon; else cancelRefresh">
-					<button mat-icon-button color="primary" title='Refresh {{tableTitle}}' (click)="refreshData.emit()">
-						<mat-icon>update</mat-icon>
-					</button>
+					<mat-icon color="primary" title='Refresh {{tableTitle}}' (click)="refreshData.emit()">update</mat-icon>
 				</span>
 				<ng-template #cancelRefresh>
-					<button mat-icon-button color="warn" title='Stop Refresh of {{tableTitle}}' (click)="stopRefresh.emit()">
-						<mat-icon>highlight_off</mat-icon>
-					</button>
+					<mat-icon color="warn" title='Stop Refresh of {{tableTitle}} (click)="stopRefresh.emit()"'>highlight_off</mat-icon>
 				</ng-template>
 			</span>
 		</div>

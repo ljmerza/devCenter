@@ -40,22 +40,12 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
 
         case TicketsActionTypes.RETRIEVE_SUCCESS:
             const tickets = processJiraTickets(action.payload, state.tickets, state.ticketType);
-            const commentsTickets = tickets.map((ticket:JiraTicket) => ({
-                msrp: ticket.msrp, 
-                key:ticket.key, 
-                comments: ticket.comments,
-                attachments: ticket.attachments || [],
-            }));
-            const datesTickets = tickets.map((ticket: JiraTicket) => ({...ticket.dates, key: ticket.key}));
-            const statusTickets = tickets.map((ticket: JiraTicket) => ({
-                component: ticket.component, 
-                status:ticket.status, 
-                key: ticket.key,
-                pcrCountLeft: ticket.pcrCountLeft,
-                pullRequests: ticket.pullRequests
-            }));
-            return { ...state, loading: false, tickets, commentsTickets, datesTickets, statusTickets };
-
+            return { 
+                ...state, loading: false, tickets, 
+                commentsTickets: createCommentsTickets(tickets), 
+                datesTickets: createDatesTickets(tickets), 
+                statusTickets: createStatusTickets(tickets) 
+            };
         case TicketsActionTypes.RETRIEVE_ERROR:
             return { ...state, loading: false };
 
@@ -94,6 +84,34 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
         default:
             return state;
     }
+}
+
+function createStatusTickets(tickets){
+    return tickets.map((ticket: JiraTicket) => ({
+        component: ticket.component,
+        status: ticket.status,
+        key: ticket.key,
+        pcrCountLeft: ticket.pcrCountLeft,
+        pullRequests: ticket.pullRequests,
+        repoName: ticket.master_branch,
+        sprint: ticket.sprint,
+        branch: ticket.branch,
+        commit: ticket.commit,
+        epicLink: ticket.epicLink,
+    }));
+}
+
+function createDatesTickets(tickets){
+    return tickets.map((ticket: JiraTicket) => ({ ...ticket.dates, key: ticket.key }));
+}
+
+function createCommentsTickets(tickets){
+    return tickets.map((ticket: JiraTicket) => ({
+        msrp: ticket.msrp,
+        key: ticket.key,
+        comments: ticket.comments,
+        attachments: ticket.attachments || [],
+    }));
 }
 
 function deleteComment(deletedCommentId, commentsTickets){

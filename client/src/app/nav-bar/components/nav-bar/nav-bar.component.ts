@@ -57,9 +57,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     const isLocalUrl = this.settings.emberUrl === 'local';
     const port = isLocalUrl ? '4200' : this.settings.port;
     const hash = isLocalUrl ? '/#' : '';
-    const server = isLocalUrl
-      ? 'localhost'
-      : `${this.settings.devServer}.${env.rootDomain}`;
+    const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
     return `http://${server}:${port}/UD-ember${hash}`;
   }
 

@@ -1,18 +1,25 @@
-<mat-form-field class='status-width'>
-    <mat-label></mat-label>
-    <mat-select name="ticket-status" [(ngModel)]="changedStatusCode"  (selectionChange)='changeStatus($event)'>
-        <mat-option *ngFor="let select of transitions" [value]="select.status_code">
-            {{select.status_name}}
+    <mat-select [ngStyle]="{'border': borderColor}" name="ticket-status" [(ngModel)]="changedStatusCode"  (selectionChange)='changeStatus($event)'>
+        <mat-option *ngFor="let select of transitions" [value]="select?.status_code">
+            {{select?.status_name}}
         </mat-option>
     </mat-select>
-</mat-form-field>
 
 
 <dc-panel [modalSize]='"md"'>
-    <div class='modal-header'>Change Ticket Status to {{changeStatusName}} For {{key}}</div>
+    <div class='modal-header'>{{key}} Status</div>
 
     <span class='modal-body'>
-        Are you sure you want to change the ticket status for <span class='status-highlight'>{{key}}</span> from <span class='status-highlight'>{{originalStatusName}}</span> to <span class='status-highlight'>{{changedStatusName}}</span>?
+        Are you sure you want to change the ticket status<br> 
+        for <span class='status-highlight'>{{key}}</span> from <span class='status-highlight'>{{originalStatusName}}</span> to <span class='status-highlight'>{{changedStatusName}}</span>?
+        
+        <dc-branch-info-body 
+            *ngIf='changedStatusCode === branchInfoMatcherCode' 
+            [sprint]=ticket.sprint 
+            [branch]=ticket.branch 
+            [commit]=ticket.commit 
+            [key]=key 
+            [epicLink]=ticket.epicLink
+        ></dc-branch-info-body>
     </span>
 
     <span class='modal-footer align-footer'>
@@ -24,5 +31,4 @@
             No
         </button>
     </span>
-
 </dc-panel>

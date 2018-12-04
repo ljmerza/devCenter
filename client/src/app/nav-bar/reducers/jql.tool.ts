@@ -1,4 +1,4 @@
-export function processJqlLinks( jqlLinks){
+export function processJqlLinks(jqlLinks){
  	const projectIndex = jqlLinks.findIndex(link => link.name === 'PROJECT');
  	const projectJql = (jqlLinks.splice(projectIndex, 1)[0] || {}).query || '';
 
@@ -26,11 +26,15 @@ function _formatNavBarJqlLinks(jqlLinks){
  		}
 
  		return acc;
- 	}, []);
+	 }, []);
+	 
 	
-	// sort then add default mytickets link
+	// sort by order_on_list
 	jqlNavbar.sort(_sortByOrder);
-	jqlNavbar.unshift({name: "My Tickets"});
+	jqlNavbar.forEach(item => {
+		if (item.items) item.items.sort(_sortByOrder);
+	});
+
  	return jqlNavbar;
 }
 
@@ -38,6 +42,7 @@ function _formatNavBarJqlLinks(jqlLinks){
  * sorts the jql navbar links by order wanted on list
  */
 function _sortByOrder(a, b){
+	if (!b.order_on_list) return -1;
 	if(a.order_on_list > b.order_on_list) return 1;
 	else if(a.order_on_list < b.order_on_list) return -1;
 	else return 0;

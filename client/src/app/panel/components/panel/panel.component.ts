@@ -49,8 +49,6 @@ export class PanelComponent implements OnDestroy {
 	 * @return {Object} 
 	 */
   getJsPanelOptions(options):Object {
-
-    console.log({t: this.getModalSize()});
     return {
       headerTitle: this.modalHeader.nativeElement,
       content: this.modalBody.nativeElement,

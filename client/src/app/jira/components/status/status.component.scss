@@ -1,7 +1,12 @@
-.status-width {
-    width: 90%;
+.dc-status {
+	width: 100%;
+
+	.mat-select {
+		padding: 5px;
+	}
+
+	.status-highlight{
+		filter: brightness(85%);
+	}
 }
 
-.status-highlight{
-    filter: brightness(85%);
-}

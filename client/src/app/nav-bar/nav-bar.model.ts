@@ -4,7 +4,7 @@ export interface NavBarItem {}
 
 export interface NavBarState {
   loading: boolean;
-  navBarItems?: NavBarItem[],
+  navBarItems?: {},
   navBarError: string
 
   loadingProfile: boolean,

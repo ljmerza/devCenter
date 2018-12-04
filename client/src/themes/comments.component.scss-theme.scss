@@ -5,8 +5,13 @@
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
   $foreground: map-get($theme, foreground);
-  
 
+  .comment-table {
+    .confluenceTd, .confluenceTh {
+		  border-top: mat-color($primary, lighter) 1px solid;
+	  }
+  }
+  
   .mat-accordion {
     .mat-expansion-panel{
       border-bottom: solid mat-color($primary, lighter) 1px !important;

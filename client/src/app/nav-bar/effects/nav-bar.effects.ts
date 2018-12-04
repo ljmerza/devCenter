@@ -4,9 +4,7 @@ import { Action } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { processNavBarItems } from './navbar-items.tool';
 import { NavBarActionTypes, ActionNavBarRetrieve, ActionNavBarSuccess, ActionNavBarError } from '../actions';
-
 import { NavBarService } from '../services';
 
 @Injectable()
@@ -19,7 +17,7 @@ export class NavBarEffects {
             ofType<ActionNavBarRetrieve>(NavBarActionTypes.RETRIEVE),
             switchMap(() => {
                 return this.service.retrieveNavBar().pipe(
-                    map((response: any) => new ActionNavBarSuccess(processNavBarItems(response.data))),
+                    map((response: any) => new ActionNavBarSuccess(response.data)),
                     catchError(error => of(new ActionNavBarError(error)))
                 )
             })
