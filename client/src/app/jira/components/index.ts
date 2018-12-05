@@ -6,6 +6,7 @@ export * from './pull-requests/pull-requests.component';
 export * from './actions/actions.component';
 export * from './ticket-details/ticket-details.component';
 export * from './branch-info/branch-info.component';
+export * from './branch-info-body/branch-info-body.component';
 export * from './comments/comments.component';
 export * from './add-log/add-log.component';
 

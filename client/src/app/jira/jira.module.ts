@@ -3,25 +3,22 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '@app/shared';
 import { RouterModule } from '@angular/router';
 import { MomentModule } from 'ngx-moment';
-
-import { JiraRoutingModule } from './jira-routing.module';
-
+import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+
+import { JiraRoutingModule } from './jira-routing.module';
 import { PanelModule } from '@app/panel';
 
 import { TicketsEffects, BranchInfoEffects, CommentEffects, AdditionalDetailsEffects, StatusEffects } from './effects';
 import { TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService, StatusService } from './services';
-import { TicketsReducer } from './reducers';
+import { jiraReducer } from './reducers';
 
 import {
   TicketsComponent, ActionsComponent, CommentsComponent, BranchInfoComponent, UserChatComponent,
-  LoadingTableComponent, UserDetailsComponent, AddLogComponent, LoggedComponent,
+  LoadingTableComponent, UserDetailsComponent, AddLogComponent, LoggedComponent, BranchInfoBodyComponent,
   PullRequestsComponent, TicketDetailsComponent, LoadingDetailsComponent, StatusComponent
 } from './components';
-
-import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
-import { BranchInfoBodyComponent } from './components/branch-info-body/branch-info-body.component';
 
 @NgModule({
 
@@ -34,7 +31,7 @@ import { BranchInfoBodyComponent } from './components/branch-info-body/branch-in
     PanelModule,
     NgbTimepickerModule,
 
-    StoreModule.forFeature('jira', TicketsReducer),
+    StoreModule.forFeature('jira', jiraReducer),
     
     EffectsModule.forFeature([
       TicketsEffects, BranchInfoEffects, StatusEffects,

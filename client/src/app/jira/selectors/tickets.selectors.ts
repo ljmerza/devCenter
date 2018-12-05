@@ -1,10 +1,11 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { JiraTicketsState, TicketsState } from '../models';
+import { createSelector } from '@ngrx/store';
+import { TicketsState, JiraState } from '../models';
+import { selectJiraState } from './jira.selectors';
 
-export const selectJiraState = createFeatureSelector<TicketsState, JiraTicketsState>('jira');
+const selectTickets = createSelector(selectJiraState, (state: JiraState) => state.tickets);
+export const selectJiraTickets = createSelector(selectTickets, (state: TicketsState) => state.tickets);
+export const selectJiraLoading = createSelector(selectTickets, (state: TicketsState) => state.loading);
 
-export const selectJiraTickets = createSelector(selectJiraState, (state: JiraTicketsState) => state.tickets);
-export const selectJiraLoading = createSelector(selectJiraState, (state: JiraTicketsState) => state.loading);
-
-export const selectJiraTicketFactory = (key) => createSelector(selectJiraState, (state: JiraTicketsState) => state.tickets.find((ticket:any) => ticket.key === key));
+export const selectJiraTicketFactory = (key) => 
+    createSelector(selectTickets, (state: TicketsState) => state.tickets.find((ticket:any) => ticket.key === key));
 

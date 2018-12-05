@@ -19,3 +19,21 @@ export interface JiraTicket {
     pcrCountLeft: string,
     pullRequests: Array<any>,
 };
+
+export interface TicketsState {
+    loading: boolean;
+    tickets: JiraTicket[],
+
+    additionalLoading: boolean,
+    additionalTickets: JiraTicket[],
+
+    commentsLoading: boolean,
+    commentsTickets: Array<any>,
+    commentsError: string,
+
+    datesTickets: Array<any>,
+
+    currentJql: string,
+    ticketType: string,
+    fields: string
+}

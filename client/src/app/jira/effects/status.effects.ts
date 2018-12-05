@@ -23,7 +23,7 @@ export class StatusEffects {
             ofType<StatusActions>(StatusActionTypes.SAVE),
             switchMap((action: ActionStatusSave) =>
                 this.service.updateStatus(action.payload).pipe(
-                    map(response => this.processUpdateStatus(response)),
+                    map(response => new ActionStatusSaveSuccess(response.data)),
                     catchError(error => of(new ActionStatusSaveError(error)))
                 )
             )

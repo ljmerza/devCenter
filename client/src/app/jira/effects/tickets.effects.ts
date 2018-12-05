@@ -5,11 +5,7 @@ import { Action } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import {
-    TicketsActionTypes, TicketsActions,
-    ActionTicketsRetrieve, ActionTicketsSuccess, ActionTicketsError, 
-} from '../actions';
-
+import { TicketsActionTypes, TicketsActions, ActionTicketsRetrieve, ActionTicketsSuccess, ActionTicketsError } from '../actions';
 import { TicketsService } from '../services';
 
 @Injectable()

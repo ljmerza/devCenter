@@ -4,8 +4,9 @@ import { Subscription, combineLatest } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 
 import { selectAllStatuses, selectProfile } from '@app/nav-bar/selectors';
-import { selectStatusTickets } from '../../selectors';
+import { selectStatusesTickets } from '../../selectors';
 import { ActionStatusSave } from '../../actions';
+import { StatusTicket } from '../../models';
 
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
 
@@ -25,7 +26,7 @@ export class StatusComponent implements OnDestroy, OnInit {
   ticket:any = {};
 
   // keep track of valid transitions, the original values, and the values the user changed to
-  transitions:any = {};
+  transitions:any = [];
   originalStatusCode: string = '';
   originalStatusName: string = '';
   changedStatusCode: string = '';
@@ -45,7 +46,11 @@ export class StatusComponent implements OnDestroy, OnInit {
       .subscribe(profile => this.profile = profile);
 
     this.statuses$ = combineLatest(
-      this.store.pipe(select(selectStatusTickets), map(tickets => tickets.find(ticket => ticket.key === this.key)), distinctUntilChanged()),
+      this.store.pipe(
+        select(selectStatusesTickets), 
+        map((tickets: StatusTicket[]) => tickets.find(ticket => ticket.key === this.key)), 
+        distinctUntilChanged()
+      ),
       this.store.pipe(select(selectAllStatuses), distinctUntilChanged())
     )
       .subscribe(this.processNewStatus.bind(this));
@@ -59,7 +64,7 @@ export class StatusComponent implements OnDestroy, OnInit {
   /**
    * 
    */
-  processNewStatus([ticket, statuses]){
+  processNewStatus([ticket = [], statuses = []]){
     this.ticket = ticket;
     this.statuses = statuses;
     this.branchInfoMatcherCode = (statuses.find(status => status.constant === 'UCTREADY') || {}).status_code || '';

@@ -6,7 +6,8 @@ import { Store, select } from '@ngrx/store';
 import { distinctUntilChanged } from 'rxjs/operators';
 
 import { ActionTicketsRetrieve } from '../../actions';
-import { selectJiraState, selectJiraLoading, selectJiraTickets } from '../../selectors';
+import { selectJiraLoading } from '../../selectors';
+import { selectJiraState, selectTickets } from '../../selectors/jira.selectors';
 
 import { environment as env } from '@env/environment';
 
@@ -39,7 +40,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   tickets$;
   loading$;
-  filteredTickets;
+  filteredTickets: Array<any> = [];
   loading: boolean = false;
   loadingIcon:boolean = false;
   tableTitle = '';
@@ -48,7 +49,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   ngOnInit():void {
 
     this.tickets$ = this.store.pipe(
-        select(selectJiraState),
+      select(selectTickets),
         distinctUntilChanged((prev, next) => {
           return prev.loading === next.loading &&
           prev.ticketType === next.ticketType &&
@@ -78,7 +79,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
    * fetch the list of thickets given the jql we current have
    */
   getTickets(){
-    
     this.store.dispatch(new ActionTicketsRetrieve({
       currentJql:this.currentJql, 
       fields: '', 
@@ -96,13 +96,13 @@ export class TicketsComponent implements OnInit, OnDestroy {
    *
    */
   processTickets(state) {
+    console.warn({ state})
     
     // find only matching tickets and then format them for expanded view
     this.filteredTickets = state.tickets.filter(ticket => ticket.ticketType === state.ticketType);
-    const formattedTickets = this.formatTicketsForExpanded(this.filteredTickets);
 
     // create material table array
-    this.dataSource = new MatTableDataSource(formattedTickets);
+    this.dataSource = new MatTableDataSource(this.filteredTickets);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
 
@@ -130,14 +130,4 @@ export class TicketsComponent implements OnInit, OnDestroy {
   trackTableBy(index, ticket){
     return ticket.key;
   }
-
-  /**
-   *
-   */
-  formatTicketsForExpanded(tickets): Array<any>{
-    const rows = [];
-    tickets.forEach(element => rows.push(element, { detailRow: true, element }));
-    return tickets;
-  }
-
 }

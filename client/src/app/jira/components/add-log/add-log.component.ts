@@ -5,7 +5,7 @@ import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import {  tap } from 'rxjs/operators';
 
-import { selectJiraState } from '../../selectors';
+import { selectTickets } from '../../selectors/jira.selectors';
 import { ActionCommentSave } from '../../actions';
 
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
@@ -36,7 +36,7 @@ export class AddLogComponent implements OnInit, OnDestroy {
 
 		// watch for errors
 		this.state$ = this.store.pipe(
-			select(selectJiraState),
+			select(selectTickets),
 			tap(state => {
 				if(this.loading) this.loading = state.commentsLoading;
 				if(!state.commentsError) this.resetForm();

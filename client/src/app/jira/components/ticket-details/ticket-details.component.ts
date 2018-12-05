@@ -8,8 +8,8 @@ import { Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { ActionAdditionalDetailsRetrieve } from '../../actions';
-import { selectJiraState } from '../../selectors';
-import { JiraTicketsState, JiraTicket } from '../../models';
+import { TicketsState, JiraTicket } from '../../models';
+import { selectTickets } from '../../selectors/jira.selectors';
 
 
 @Component({
@@ -35,11 +35,11 @@ export class TicketDetailsComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.state$ = this.store.pipe(
-      select(selectJiraState),
+      select(selectTickets),
       tap(state => {
         if(this.loading) this.loading = state.additionalLoading;
       }),
-      map((state:JiraTicketsState) => state.additionalTickets.find(ticket => ticket.key === this.key))
+      map((state: TicketsState) => state.additionalTickets.find(ticket => ticket.key === this.key))
     )
       .subscribe((ticket: JiraTicket) => this._processTicket(ticket));
   }

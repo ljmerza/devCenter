@@ -7,9 +7,9 @@ import { map, tap, distinctUntilChanged } from 'rxjs/operators';
 
 import { selectSettings } from '@app/settings/settings.selectors';
 
-import { selectJiraState } from '../../selectors';
+import { selectTickets } from '../../selectors/jira.selectors';
 import { ActionCommentEdit, ActionCommentDelete } from '../../actions';
-import { JiraTicketsState, JiraTicket } from '../../models';
+import { TicketsState, JiraTicket } from '../../models';
 
 import { MatAccordion } from '@angular/material/expansion';
 
@@ -45,11 +45,11 @@ export class CommentsComponent implements OnInit, OnDestroy {
 			.subscribe(settings => this.settings = settings);
 
 		this.ticket$ = this.store.pipe(
-			select(selectJiraState),
+			select(selectTickets),
 			tap(state => {
 				if(this.loading) this.loading = state.commentsLoading;
 			}),
-			map((state:JiraTicketsState) => state.commentsTickets.find(ticket => ticket.key === this.key)),
+			map((state: TicketsState) => state.commentsTickets.find(ticket => ticket.key === this.key)),
 			distinctUntilChanged()
 		)
 			.subscribe((ticket: JiraTicket) => this.ticket = ticket);

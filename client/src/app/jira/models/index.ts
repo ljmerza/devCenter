@@ -1,29 +1,9 @@
-import { AppState } from '@app/core';
-import { JiraTicket } from './tickets';
+import { TicketsState, StatusState } from './';
+
 export * from './tickets';
+export * from './status';
 
-export interface JiraTicketsState {
-    loading: boolean;
-    tickets: JiraTicket[], 
-
-    additionalLoading: boolean,
-    additionalTickets: JiraTicket[],
-
-    commentsLoading: boolean,
-    commentsTickets: Array<any>,
-    commentsError: string,
-
-    statusLoading: boolean,
-    statusTickets: Array<any>,
-    statusError: string,
-
-    datesTickets: Array<any>,
-
-    currentJql: string,
-    ticketType: string,
-    fields: string
-}
-
-export interface TicketsState extends AppState {
-    jira: JiraTicketsState
-}
+export type JiraState = {
+    tickets: TicketsState,
+    statuses: StatusState,
+};

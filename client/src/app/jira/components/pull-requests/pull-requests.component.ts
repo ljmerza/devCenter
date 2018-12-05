@@ -4,7 +4,8 @@ import { Subscription } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { selectProfile } from '@app/nav-bar/selectors';
 
-import { selectStatusTickets } from '../../selectors'
+import { selectStatusesTickets } from '../../selectors';
+import { StatusTicket } from '../../models';
 
 @Component({
   selector: 'dc-pull-requests',
@@ -16,7 +17,7 @@ export class PullRequestsComponent implements OnDestroy, OnInit {
   profile;
 
   ticket$: Subscription;
-  ticket;
+  ticket: any = {};
 
   constructor(public store: Store<{}>) { }
 
@@ -27,11 +28,11 @@ export class PullRequestsComponent implements OnDestroy, OnInit {
       .subscribe(profile => this.profile = profile);
 
     this.ticket$ = this.store.pipe(
-      select(selectStatusTickets),
-      map(tickets => tickets.find(ticket => ticket.key === this.key)),
+      select(selectStatusesTickets),
+      map((tickets: StatusTicket[]) => tickets.find(ticket => ticket.key === this.key)),
       distinctUntilChanged()
     )
-      .subscribe(ticket => this.ticket = ticket);
+      .subscribe(ticket => this.ticket = ticket || []);
   }
 
   ngOnDestroy() {

@@ -1,13 +1,14 @@
 import { 
-    TicketsActions, TicketsActionTypes, 
+    TicketsActions, TicketsActionTypes,
     branchInfoActionTypes, branchInfoActions,
     CommentActionTypes, CommentActions, 
-    additionalDetailsActionTypes, additionalDetailsActions
+    additionalDetailsActionTypes, additionalDetailsActions,
 } from '../actions';
-import { JiraTicketsState, JiraTicket } from '../models';
+
+import { TicketsState, JiraTicket } from '../models';
 import { selectJiraTicketFactory } from '../selectors/tickets.selectors';
 
-export const initialState: JiraTicketsState = {
+export const initialTicketsState: TicketsState = {
     loading: false,
     tickets: [],
 
@@ -18,10 +19,6 @@ export const initialState: JiraTicketsState = {
     commentsTickets: [],
     commentsError: '',
 
-    statusLoading: false,
-    statusTickets: [],
-    statusError: '',
-
     datesTickets: [],
 
     currentJql: '',
@@ -31,8 +28,8 @@ export const initialState: JiraTicketsState = {
 
 type Action = TicketsActions | branchInfoActions | CommentActions | additionalDetailsActions;
 
-export function TicketsReducer(state: JiraTicketsState = initialState, action: Action): JiraTicketsState {
-
+export function TicketsReducer(state: TicketsState = initialTicketsState, action: Action): TicketsState {
+    
     switch (action.type) {
 
         case TicketsActionTypes.RETRIEVE:
@@ -40,15 +37,15 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
 
         case TicketsActionTypes.RETRIEVE_SUCCESS:
             const tickets = processJiraTickets(action.payload, state.tickets, state.ticketType);
+            console.warn({ state2: state });
+            
             return { 
                 ...state, loading: false, tickets, 
                 commentsTickets: createCommentsTickets(tickets), 
                 datesTickets: createDatesTickets(tickets), 
-                statusTickets: createStatusTickets(tickets) 
             };
         case TicketsActionTypes.RETRIEVE_ERROR:
             return { ...state, loading: false };
-
 
 
         case additionalDetailsActionTypes.RETRIEVE:
@@ -58,7 +55,6 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
             return { ...state, additionalLoading: false, additionalTickets};
         case additionalDetailsActionTypes.RETRIEVE_ERROR:
             return { ...state, additionalLoading: false };
-
 
 
         case CommentActionTypes.SAVE_SUCCESS:
@@ -86,25 +82,19 @@ export function TicketsReducer(state: JiraTicketsState = initialState, action: A
     }
 }
 
-function createStatusTickets(tickets){
-    return tickets.map((ticket: JiraTicket) => ({
-        component: ticket.component,
-        status: ticket.status,
-        key: ticket.key,
-        pcrCountLeft: ticket.pcrCountLeft,
-        pullRequests: ticket.pullRequests,
-        repoName: ticket.master_branch,
-        sprint: ticket.sprint,
-        branch: ticket.branch,
-        commit: ticket.commit,
-        epicLink: ticket.epicLink,
-    }));
-}
 
+/**
+ * 
+ * @param tickets 
+ */
 function createDatesTickets(tickets){
     return tickets.map((ticket: JiraTicket) => ({ ...ticket.dates, key: ticket.key }));
 }
 
+/**
+ * 
+ * @param tickets 
+ */
 function createCommentsTickets(tickets){
     return tickets.map((ticket: JiraTicket) => ({
         msrp: ticket.msrp,
@@ -114,6 +104,11 @@ function createCommentsTickets(tickets){
     }));
 }
 
+/**
+ * 
+ * @param deletedCommentId 
+ * @param commentsTickets 
+ */
 function deleteComment(deletedCommentId, commentsTickets){
 
     // find the matching old comment and delete it
@@ -130,6 +125,11 @@ function deleteComment(deletedCommentId, commentsTickets){
     });
 }
 
+/**
+ * 
+ * @param newComment 
+ * @param commentsTickets 
+ */
 function replaceEditedComment(newComment, commentsTickets){
 
     // find the matching old comment and replace it's body
@@ -152,7 +152,11 @@ function replaceEditedComment(newComment, commentsTickets){
 }
 
 /**
- *
+ * 
+ * @param addLogResponse 
+ * @param commentsTickets 
+ * @param tickets 
+ * @param datesTickets 
  */
 function processAddLog(addLogResponse, commentsTickets, tickets, datesTickets){
     const newState = { commentsTickets, tickets, datesTickets };
@@ -202,9 +206,12 @@ function processAddLog(addLogResponse, commentsTickets, tickets, datesTickets){
 
 }
 
-/**
- * add ticketType to all new tickets then replaces any old tickets matching any new tickets
- */
+ /**
+  * add ticketType to all new tickets then replaces any old tickets matching any new tickets
+  * @param tickets 
+  * @param oldTickets 
+  * @param ticketType 
+  */
 function processJiraTickets(tickets, oldTickets, ticketType): JiraTicket[] {
     const newTickets = tickets.map(ticket => processNewTicket(ticket, ticketType));
     const oldTicketsCopied = <JiraTicket[]>Array.from(oldTickets);
