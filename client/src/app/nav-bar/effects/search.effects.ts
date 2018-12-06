@@ -33,7 +33,7 @@ export class NavBarSearchEffects {
         ofType<ActionOpenTicket>(NavBarSearchActionTypes.OPEN_TICKET),
         tap(action => {
             this.notificationsService.success(`Opening ticket key ${action.payload}`);
-            window.open(`${env.jiraUrl}/browse/${action.payload}`)
+            window.open(`${env.jiraUrl}/browse/${action.payload}`);
         })
     );
 }

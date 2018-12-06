@@ -24,9 +24,11 @@ export class StatusEffects {
             switchMap((action: ActionStatusSave) =>
                 this.service.updateStatus(action.payload).pipe(
                     map(response => {
+
+                        // open each pull request
                         action.payload.pullRequests.forEach(pullRequest => {
-                            console.log(pullRequest)
-                        })
+                            window.open(pullRequest.link);
+                        });
                         return new ActionStatusSaveSuccess(response.data)
                     }),
                     catchError(error => of(new ActionStatusSaveError(error)))
