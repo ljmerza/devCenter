@@ -1,5 +1,6 @@
 import { AppState } from '@app/core';
 
+import { StatusesModel } from './models';
 export interface NavBarItem {}
 
 export interface NavBarState {
@@ -16,7 +17,7 @@ export interface NavBarState {
   linksError: string
 
   loadingStatuses: boolean,
-  statuses: any,
+  statuses: StatusesModel[],
   statusesError: string
 }
 

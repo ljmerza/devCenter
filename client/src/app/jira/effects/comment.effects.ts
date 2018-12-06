@@ -51,7 +51,7 @@ export class CommentEffects {
             ofType<CommentActions>(CommentActionTypes.DELETE),
             switchMap((action: ActionCommentDelete) => 
                 this.service.deleteComment(action.payload).pipe(
-                    map((response: any) => new ActionCommentDeleteSuccess(action.payload.commentId)),
+                    map((response: any) => new ActionCommentDeleteSuccess(response.data)),
                     catchError(() => of(new ActionCommentDeleteError()))
                 )
             )

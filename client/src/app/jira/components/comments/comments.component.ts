@@ -7,9 +7,9 @@ import { map, tap, distinctUntilChanged } from 'rxjs/operators';
 
 import { selectSettings } from '@app/settings/settings.selectors';
 
-import { selectTickets } from '../../selectors/jira.selectors';
+import { selectComments } from '../../selectors/';
 import { ActionCommentEdit, ActionCommentDelete } from '../../actions';
-import { TicketsState, JiraTicket } from '../../models';
+import { CommentState, CommentTicket } from '../../models';
 
 import { MatAccordion } from '@angular/material/expansion';
 
@@ -20,7 +20,7 @@ import { MatAccordion } from '@angular/material/expansion';
     encapsulation: ViewEncapsulation.None
 })
 export class CommentsComponent implements OnInit, OnDestroy {
-	ticket: any;
+	ticket: CommentTicket;
 	ticket$: Subscription;
 	loading: boolean = false;
 	isAllOpen: boolean = false;
@@ -45,14 +45,14 @@ export class CommentsComponent implements OnInit, OnDestroy {
 			.subscribe(settings => this.settings = settings);
 
 		this.ticket$ = this.store.pipe(
-			select(selectTickets),
+			select(selectComments),
 			tap(state => {
-				if(this.loading) this.loading = state.commentsLoading;
+				if(this.loading) this.loading = state.loading;
 			}),
-			map((state: TicketsState) => state.commentsTickets.find(ticket => ticket.key === this.key)),
+			map((state: CommentState) => state.tickets.find(ticket => ticket.key === this.key)),
 			distinctUntilChanged()
 		)
-			.subscribe((ticket: JiraTicket) => this.ticket = ticket);
+			.subscribe((ticket: CommentTicket) => this.ticket = ticket);
 	}
 
 	ngOnDestroy() {

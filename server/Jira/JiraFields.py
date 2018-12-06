@@ -113,10 +113,7 @@ def get_user_details(issue):
 	'''
 	# try to get name only instead of username with it
 
-	assignee_data = issue.get('fields', {}).get('assignee', '')
-
-	if assignee_data is None:
-		assignee_data = {}
+	assignee_data = issue.get('fields', {}).get('assignee', {})
 
 	# return all data
 	return {

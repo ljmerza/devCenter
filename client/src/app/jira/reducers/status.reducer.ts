@@ -28,14 +28,19 @@ export function StatusReducer(state: StatusState = initialStatusState, action: S
 }
 
 /**
- * 
+ * update the matching ticket status and component
  * @param newStatus 
  * @param statusTickets 
  */
-function updateTicketStatus(newStatus, statusTickets): Array<StatusTicket> {
+function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): StatusTicket[] {
     return statusTickets.map((ticket: StatusTicket) => {
-        if (newStatus.key === ticket.key) return newStatus;
-        else return ticket;
+        if (newStatusTicket.key === ticket.key) {
+            ticket = { ...ticket };
+            ticket.status = newStatusTicket.new_status.status;
+            ticket.component = newStatusTicket.new_status.component;
+        };
+
+        return ticket;
     });
 }
 
@@ -44,16 +49,104 @@ function updateTicketStatus(newStatus, statusTickets): Array<StatusTicket> {
  * @param tickets 
  */
 function createStatusTickets(tickets) {
-    return tickets.map((ticket: JiraTicket) => ({
-        component: ticket.component,
-        status: ticket.status,
-        key: ticket.key,
-        pcrCountLeft: ticket.pcrCountLeft,
-        pullRequests: ticket.pullRequests,
-        repoName: ticket.master_branch,
-        sprint: ticket.sprint,
-        branch: ticket.branch,
-        commit: ticket.commit,
-        epicLink: ticket.epicLink,
-    }));
+    return tickets.map((ticket: JiraTicket) => {
+        ticket = { ...ticket };
+
+        const devChangeWords = (ticket.dev_changes || ticket.description || '').split(/\n|(\n\r)| /g);
+        let pullRequests = getPullRequestsFromDevChanges(devChangeWords);
+
+        const devChangeLines = (ticket.dev_changes || '').split(/\n|(\n\r)/g);
+        let pcrCountLeft = getPcrCountLeft(devChangeLines, ticket.story_point);
+
+        // if we didn't get pull requests from dev changes field try to get from comments
+        if (pullRequests && pullRequests.length == 0) {
+            ticket.comments.forEach(comment => {
+                const devChangeLines = (comment.raw_comment || '').split(/\n|(\n\r)| |\[|\]|\|/g);
+
+                if (pullRequests.length == 0)
+                    pullRequests = getPullRequestsFromDevChanges(devChangeLines);
+            });
+        }
+
+        return {
+            pullRequests,
+            pcrCountLeft,
+            component: ticket.component,
+            status: ticket.status,
+            key: ticket.key,
+            repoName: ticket.master_branch,
+            sprint: ticket.sprint,
+            branch: ticket.branch,
+            commit: ticket.commit,
+            epicLink: ticket.epicLink,
+        };
+});
+}
+
+/**
+ * 
+ * @param devChangeLines 
+ */
+function getPullRequestsFromDevChanges(devChangeLines) {
+    const pullRequests = devChangeLines
+        .filter(request => {
+            return request &&
+                request.startsWith('http')
+                && (request.includes('pull-request') || request.includes('compare/commits'))
+        })
+        .map(request => request.trimStart());
+
+    return getPullRequests(pullRequests);
+}
+
+/**
+ * 
+ * @param pullRequests 
+ */
+export function getPullRequests(pullRequests) {
+    return pullRequests.map(request => {
+        request = request.split('\n')[0]; // make sure we only have the url
+
+        let repo = /repos\/(\w+)\/pull-requests/.exec(request);
+        let repoName = repo && repo[1];
+        let requestId;
+
+        // if we found a repo name then is a pull request 
+        // else we found a diff link
+        if (repoName) {
+            requestId = /pull-requests\/(\w+)\/?/.exec(request);
+        } else {
+            repo = /repos\/(\w+)\/compare\/commits/.exec(request);
+            repoName = repo && repo[1];
+            if (repoName) repoName += ' (Diff Link)';
+        }
+
+        return {
+            repo: repoName || 'Unknown Repo',
+            link: request,
+            requestId: (requestId && requestId[1]) || ''
+        };
+    });
+}
+
+/**
+ * 
+ * @param devChangeLines 
+ * @param storyPoint 
+ */
+function getPcrCountLeft(devChangeLines, storyPoint) {
+
+    // get any lines that might have pcr needed
+    const pcrRemaining = devChangeLines.find(line => line && /PCR/i.test(line) && !/Pull Request/i.test(line));
+    if (!pcrRemaining) return;
+
+    // get only the numbers
+    const potentialPcrs = pcrRemaining.replace(/\D/g, '');
+    if ((potentialPcrs !== 0 && !potentialPcrs) || isNaN(potentialPcrs)) return;
+
+    // get the PCR needed for the ticket - if smaller  
+    // then most likely PCR remaining else definitely not
+    const pcrNeeded = Math.ceil(storyPoint / 2);
+    if (pcrNeeded < potentialPcrs) return;
+    else return potentialPcrs;
 }

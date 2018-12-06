@@ -38,7 +38,7 @@
 					
 
 					<!-- comment body -->
-					<div dcCopyInputBubble *ngIf="comment.id !== commentEditingId; else commentEditArea" [innerHTML]="comment.comment | commentFormat:ticket.attachments | safehtml"></div>
+					<div dcCopyInputBubble *ngIf="comment.id !== commentEditingId; else commentEditArea" [innerHTML]="comment.comment | commentFormat:ticket?.attachments | safehtml"></div>
 					
 					<!-- text area comment body -->
 					<ng-template #commentEditArea>

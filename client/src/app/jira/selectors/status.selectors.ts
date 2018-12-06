@@ -1,7 +1,7 @@
-import { createSelector } from '@ngrx/store';
+import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { StatusState, JiraState } from '../models';
-import { selectJiraState } from './jira.selectors'; 
 
+const selectJiraState = createFeatureSelector<JiraState>('jira');
 export const selectStatuses = createSelector(selectJiraState, (state: JiraState) => state.statuses);
 export const selectStatusesTickets = createSelector(selectStatuses, (state: StatusState) => state.tickets);
 

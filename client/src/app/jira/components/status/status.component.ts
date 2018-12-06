@@ -1,12 +1,13 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Subscription, combineLatest } from 'rxjs';
-import { distinctUntilChanged, map } from 'rxjs/operators';
+import { distinctUntilChanged, map, tap } from 'rxjs/operators';
 
 import { selectAllStatuses, selectProfile } from '@app/nav-bar/selectors';
-import { selectStatusesTickets } from '../../selectors';
+import { selectStatuses } from '../../selectors';
 import { ActionStatusSave } from '../../actions';
-import { StatusTicket } from '../../models';
+import { StatusTicket, StatusState } from '../../models';
+import { StatusesModel } from '@app/nav-bar/models';
 
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
 
@@ -22,16 +23,17 @@ export class StatusComponent implements OnDestroy, OnInit {
   profile;
 
   statuses$: Subscription;
-  statuses;
-  ticket:any = {};
+  statuses: StatusesModel[] = [];
+  ticket: StatusTicket;
 
   // keep track of valid transitions, the original values, and the values the user changed to
-  transitions:any = [];
+  transitions: StatusesModel[] = [];
   originalStatusCode: string = '';
   originalStatusName: string = '';
   changedStatusCode: string = '';
   changedStatusName: string = '';
   borderColor: string = '';
+  loading: boolean = false;
 
   // matching string to show branch info
   branchInfoMatcherCode: string = '';
@@ -47,8 +49,11 @@ export class StatusComponent implements OnDestroy, OnInit {
 
     this.statuses$ = combineLatest(
       this.store.pipe(
-        select(selectStatusesTickets), 
-        map((tickets: StatusTicket[]) => tickets.find(ticket => ticket.key === this.key)), 
+        select(selectStatuses), 
+        tap(state => {
+          if(this.loading) this.loading = state.loading;
+        }),
+        map((state: StatusState): StatusTicket => state.tickets.find(ticket => ticket.key === this.key)), 
         distinctUntilChanged()
       ),
       this.store.pipe(select(selectAllStatuses), distinctUntilChanged())
@@ -64,14 +69,16 @@ export class StatusComponent implements OnDestroy, OnInit {
   /**
    * 
    */
-  processNewStatus([ticket = [], statuses = []]){
+  processNewStatus([ticket, statuses]: [StatusTicket, StatusesModel[]]){
     this.ticket = ticket;
     this.statuses = statuses;
-    this.branchInfoMatcherCode = (statuses.find(status => status.constant === 'UCTREADY') || {}).status_code || '';
+
+    const matchiongStatus: StatusesModel = statuses.find(status => status.constant === 'UCTREADY');
+    if (matchiongStatus) this.branchInfoMatcherCode = matchiongStatus.status_code || '';
 
     // get matching status object
-    const matchingStatus = { ...(this.statuses.find(allStatus => allStatus.status_name === this.ticket.status) || {}) };
-
+    const matchingStatus:any = { ...(this.statuses.find(allStatus => allStatus.status_name === ticket.status) || {}) };
+    
     // reset all status values
     this.originalStatusCode = matchingStatus.status_code || '';
     this.originalStatusName = matchingStatus.status_name || '';
@@ -90,24 +97,25 @@ export class StatusComponent implements OnDestroy, OnInit {
    */
   changeStatus(event){
     this.changedStatusCode = event.value;
-    this.changedStatusName = (this.statuses.find(allStatus => allStatus.status_code === event.value) || {}).status_name || '';
+
+    const matchingStatus: StatusesModel = this.statuses.find(allStatus => allStatus.status_code === event.value);
+    if (matchingStatus) this.changedStatusName = matchingStatus.status_name || '';
 
     if (event.value === 'pcrNeeded') return this.openQaGenerator();
     else this.modal.openModal();
   }
 
   /**
-   * 
+   * persists the status change for this ticket
    */
   confirmChangeStatus(){
-    this.originalStatusCode = this.changedStatusCode;
-    this.originalStatusName = this.changedStatusName;
     this.modal.closeModal();
 
     this.store.dispatch(new ActionStatusSave({ 
       username: this.profile.name, 
       key: this.ticket.key, 
       statusType: this.changedStatusCode,
+      status: this.changedStatusName,
       repoName: this.ticket.repoName,
       pullRequests: this.ticket.pullRequests
     }));

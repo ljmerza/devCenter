@@ -75,9 +75,19 @@ function processStatuses(statuses){
 		if (!status.transitions) return status;
 		status = { ...status}
 		
-		status.transitions = status.transitions.split(',').map(transition => {
-			return statuses.find(status => status.id === transition);
+		const transitions = [];
+		status.transitions.split(',').forEach(transition => {
+			const matchingTransition = statuses.find(status => status.id === transition);
+			if (matchingTransition) transitions.push(matchingTransition);
 		});
+		status.transitions = transitions;
+
+		const auto_transition = [];
+		status.auto_transition.split(',').forEach(transition => {
+			const matchingTransition = statuses.find(status => status.id === transition);
+			if (matchingTransition) auto_transition.push(matchingTransition);
+		});
+		status.auto_transition = auto_transition;
 
 		return status;
 	});

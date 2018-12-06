@@ -3,7 +3,8 @@ import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 
-import { selectDatesTickets } from '../../selectors';
+import { selectCommentsTickets } from '../../selectors';
+import { CommentTicket, TicketDate } from '../../models';
 
 @Component({
   selector: 'dc-logged',
@@ -12,21 +13,20 @@ import { selectDatesTickets } from '../../selectors';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoggedComponent implements OnInit, OnDestroy {
-  dates = {};
+  dates: TicketDate;
   dates$: Subscription;
 
   @Input() key;
-
   constructor(public store: Store<{}>, private cd: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.dates$ = this.store.pipe(
-        select(selectDatesTickets), 
-        map(tickets => tickets.find(ticket => ticket.key === this.key)),
+      select(selectCommentsTickets), 
+      map((tickets: CommentTicket[]) => tickets.find(ticket => ticket.key === this.key)),
         distinctUntilChanged()
       )
-      .subscribe(dates => {
-        this.dates = dates;
+      .subscribe((ticket: CommentTicket) => {
+        this.dates = ticket.dates;
         this.cd.markForCheck();
       });
   }

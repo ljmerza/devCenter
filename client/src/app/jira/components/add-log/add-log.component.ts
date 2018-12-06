@@ -3,9 +3,9 @@ import { NgForm } from '@angular/forms';
 
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import {  tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
-import { selectTickets } from '../../selectors/jira.selectors';
+import { selectComments } from '../../selectors/';
 import { ActionCommentSave } from '../../actions';
 
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
@@ -21,7 +21,7 @@ export class AddLogComponent implements OnInit, OnDestroy {
 	@Input() ticket;
 
 	state$: Subscription;
-	loading;
+	loading: boolean = false;
 
 	uctNotReady:boolean = false;
 	conflictCode:boolean = false;
@@ -36,10 +36,10 @@ export class AddLogComponent implements OnInit, OnDestroy {
 
 		// watch for errors
 		this.state$ = this.store.pipe(
-			select(selectTickets),
+			select(selectComments),
 			tap(state => {
-				if(this.loading) this.loading = state.commentsLoading;
-				if(!state.commentsError) this.resetForm();
+				if(this.loading) this.loading = state.loading;
+				if(!state.error) this.resetForm();
 			}),
 		)
 		.subscribe(_ => {});

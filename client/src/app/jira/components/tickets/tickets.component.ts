@@ -4,10 +4,11 @@ import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Store, select } from '@ngrx/store';
 import { distinctUntilChanged } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 import { ActionTicketsRetrieve } from '../../actions';
-import { selectJiraLoading } from '../../selectors';
-import { selectJiraState, selectTickets } from '../../selectors/jira.selectors';
+import { selectJiraLoading, selectTickets } from '../../selectors';
+import { JiraTicket } from '../../models';
 
 import { environment as env } from '@env/environment';
 
@@ -32,19 +33,18 @@ export class TicketsComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<any>;
 
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
-  expandedElement: any;
-  env = env
+  env = env;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  tickets$;
-  loading$;
-  filteredTickets: Array<any> = [];
+  tickets$: Subscription;
+  loading$: Subscription;
+  filteredTickets: Array<JiraTicket> = [];
   loading: boolean = false;
   loadingIcon:boolean = false;
-  tableTitle = '';
-  ticketType = '';
+  tableTitle: string = '';
+  ticketType: string = '';
 
   ngOnInit():void {
 
@@ -88,15 +88,18 @@ export class TicketsComponent implements OnInit, OnDestroy {
     this.loadingIcon = true;
   }
 
+  /**
+   * cancels the current request to get tickets
+   */
   cancelGetTickets(){
 
   }
 
   /**
-   *
+   * processes any new ticket lists into the UI
+   * @param state 
    */
   processTickets(state) {
-    console.warn({ state})
     
     // find only matching tickets and then format them for expanded view
     this.filteredTickets = state.tickets.filter(ticket => ticket.ticketType === state.ticketType);
@@ -111,22 +114,26 @@ export class TicketsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   *
+   * 
+   * @param loading 
    */
   setLoading(loading){
     this.loading = this.filteredTickets.length === 0 && loading;
   }
 
   /**
-   *
+   * table filtering function 
+   * @param filterValue 
    */
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   /**
-   *
-   */
+  * track by function for table
+  * @param index 
+  * @param ticket 
+  */
   trackTableBy(index, ticket){
     return ticket.key;
   }

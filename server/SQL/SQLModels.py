@@ -117,4 +117,5 @@ class Statuses(Modal):
 	transitions = Column(VARCHAR(50))
 	constant = Column(VARCHAR(20))
 	color = Column(VARCHAR(20))
+	auto_transition = Column(SMALLINT)
 	

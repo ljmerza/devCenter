@@ -15,7 +15,7 @@ class JiraTickets():
 
 		return {'status': True, 'data': response['data']['searchUrl'] }
 
-	def get_raw_jira_tickets(self, cred_hash, fields='', jql='', filter_number=''):
+	def get_raw_jira_tickets(self, cred_hash, fields='', jql='', filter_number='', get_expanded=True):
 		if not jql and not filter_number:
 			return {'status': False, 'data': 'Please provide a filter number or URL to get Jira tickets.'}
 
@@ -31,7 +31,10 @@ class JiraTickets():
 		if not fields:
 			fields = self.jira_api.fields
 
-		full_url = f'{url}&startAt=0&maxResults=1000&fields={fields}&expand=names,renderedFields,changelog'
+		full_url = f'{url}&startAt=0&maxResults=1000&fields={fields}'
+		if get_expanded:
+			full_url += '&expand=names,renderedFields,changelog'
+
 		response = self.jira_api.get(url=full_url, cred_hash=cred_hash)
 		if not response['status']:
 			return response
@@ -40,6 +43,21 @@ class JiraTickets():
 
 	def get_full_ticket(self, key, cred_hash):
 		return self.get_jira_tickets(cred_hash=cred_hash, jql=f"key%3D%27{key}%27", fields=self.jira_api.fields)
+
+	def get_ticket_field_values(self, key, cred_hash, fields, get_expanded=True):
+		'''gets a list of ticket values for a single ticket
+		'''
+		response = self.get_jira_tickets(cred_hash=cred_hash, jql=f"key%3D%27{key}%27", fields=fields, get_expanded=get_expanded)
+		
+		if(not response['status']):
+			return response
+		elif(len(response['data']) == 0):
+			return {'status': False, 'data': f'Could not find matching ticket for {key}'}
+		elif(len(response['data']) > 1):
+			return {'status': False, 'data': f'Found more than one match for {key}'}
+		
+		response['data'] = response['data'][0]
+		return response
 
 	def get_ticket_dev_changes(self, key, cred_hash):
 		return self.get_jira_tickets(cred_hash=cred_hash, jql=f"key%3D%27{key}%27", fields='customfield_10138')
@@ -89,11 +107,11 @@ class JiraTickets():
 
 		return ticket
 
-	def get_jira_tickets(self, cred_hash, fields='', jql='', filter_number=''):
+	def get_jira_tickets(self, cred_hash, fields='', jql='', filter_number='', get_expanded=True):
 		if not fields or fields is None:
 			fields = self.jira_api.fields
 
-		response = self.get_raw_jira_tickets(filter_number=filter_number, cred_hash=cred_hash, fields=fields, jql=jql)
+		response = self.get_raw_jira_tickets(filter_number=filter_number, cred_hash=cred_hash, fields=fields, jql=jql, get_expanded=get_expanded)
 		if not response['status']:
 			return response
 

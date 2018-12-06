@@ -36,7 +36,10 @@ class JiraComments():
 			}
 
 	def delete_comment(self, key, comment_id, cred_hash):
-		return self.jira_api.delete(url=f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}', cred_hash=cred_hash)
+		response =  self.jira_api.delete(url=f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}', cred_hash=cred_hash)
+		# save key/comment id on return hash
+		response['data'] = {'key':key, 'comment_id': comment_id}
+		return response
 
 	def _set_json(self, comment, private_comment):
 		json_data = {"body": comment}

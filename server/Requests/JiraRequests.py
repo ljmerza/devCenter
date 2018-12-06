@@ -15,51 +15,77 @@ def set_status(data):
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
+	response = {"status": False}
+	jira = Jira()
+
 	if data['status_type'] == 'inDev':
-		return Jira().set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
+		response = jira.set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
 
-	if data['status_type'] == 'pcrNeeded':
-		return Jira().set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
-	if data['status_type'] == 'removePcrNeeded':
-		return Jira().remove_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
-	if data['status_type'] == 'pcrWorking':
-		return pcr_working_transition(data=data)
-	if data['status_type'] == 'pcrPass':
-		return pcr_pass_transition(data=data)
-	if data['status_type'] == 'pcrCompleted':
-		return pcr_complete_transition(data=data)
-	if data['status_type'] == 'removePcrCompleted':
-		return Jira().remove_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status_type'] == 'pcrNeeded':
+		response = jira.set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status_type'] == 'removePcrNeeded':
+		response = jiraremove_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status_type'] == 'pcrWorking':
+		response = pcr_working_transition(data=data)
+	elif data['status_type'] == 'pcrPass':
+		response = pcr_pass_transition(data=data)
+	elif data['status_type'] == 'pcrCompleted':
+		response = pcr_complete_transition(data=data)
+	elif data['status_type'] == 'removePcrCompleted':
+		response = jira.remove_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
 
-	if data['status_type'] == 'cr':
-		return Jira().set_code_review(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status_type'] == 'cr':
+		response = jira.set_code_review(key=data['key'], cred_hash=data['cred_hash'])
 
 	elif data['status_type'] == 'qaReady':
-		return qa_ready_transition(data)
+		response = qa_ready_transition(data)
 	elif data['status_type'] == 'inQa':
-		return Jira().set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
+		response = jira.set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'qaFail':
-		return Jira().set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
+		response = jira.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'qaPass':
-		return qa_pass_transition(data)
+		response = qa_pass_transition(data)
 
 	elif data['status_type'] == 'mergeCode':
-		return Jira().set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
+		response = jira.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'mergeConflict':
-		return Jira().set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
+		response = jira.set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'removeMergeConflict':
-		return Jira().remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
+		response = jira.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctReady':
-		return uct_ready_transition(data)
+		response = uct_ready_transition(data)
 
 	elif data['status_type'] == 'inUct':
-		return Jira().set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
+		response = jira.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctPass':
-		return Jira().set_uct_pass(key=data['key'], cred_hash=data['cred_hash'])
+		response = jira.set_uct_pass(key=data['key'], cred_hash=data['cred_hash'])
 	elif data['status_type'] == 'uctFail':
-		return Jira().set_uct_fail(key=data['key'], cred_hash=data['cred_hash'])
-	else:
-		return {"status": False, "data": 'Invalid status type'}
+		response = jira.set_uct_fail(key=data['key'], cred_hash=data['cred_hash'])
+
+	# save key and get new status for response
+	if(response['status']):
+		response['data']['key'] = data['key']
+		response = get_new_component(response=response, key=data['key'], cred_hash=data['cred_hash'])
+	return response
+
+def get_new_component(response, key, cred_hash):
+	'''gets the new component for a ticket if the status transition worked
+	'''
+	# if we didnt create a data prop then create one
+	if(not response.get('data', False)):
+		response['data'] = {}
+
+	# get new ticket data so we can get new component
+	jira = Jira()
+	new_ticket = jira.get_ticket_field_values(key=key, cred_hash=cred_hash, fields='components', get_expanded=False)
+	if(not new_ticket['status']):
+		return response
+
+	response['data']['new_status'] = {
+		'component': new_ticket['data'].get('component', ''),
+		'status': new_ticket['data'].get('status', ''),
+	}
+	return response
 
 def add_comment(data):
 	'''Add a Jira comment to a ticket

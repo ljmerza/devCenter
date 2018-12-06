@@ -16,22 +16,18 @@ export interface JiraTicket {
     epicLink: string,
 
     dev_changes: string,
-    pcrCountLeft: string,
-    pullRequests: Array<any>,
+    description: string,
+    story_point: string,
 };
 
 export interface TicketsState {
     loading: boolean;
     tickets: JiraTicket[],
+    error: string,
 
     additionalLoading: boolean,
     additionalTickets: JiraTicket[],
-
-    commentsLoading: boolean,
-    commentsTickets: Array<any>,
-    commentsError: string,
-
-    datesTickets: Array<any>,
+    additionalError: string,
 
     currentJql: string,
     ticketType: string,
