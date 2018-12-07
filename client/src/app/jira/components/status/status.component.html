@@ -9,16 +9,15 @@
     <div class='modal-header'>{{key}} Status</div>
 
     <span class='modal-body'>
-        Are you sure you want to change the ticket status<br> 
-        for <span class='status-highlight'>{{key}}</span> from <span class='status-highlight'>{{originalStatusName}}</span> to <span class='status-highlight'>{{changedStatusName}}</span>?
+        Are you sure you want to change the ticket status for <span class='status-highlight'>{{key}}</span> from <span class='status-highlight'>{{originalStatusName}}</span> to <span class='status-highlight'>{{changedStatusName}}</span>?
         
         <dc-branch-info-body 
             *ngIf='changedStatusCode === branchInfoMatcherCode' 
-            [sprint]=ticket.sprint 
-            [branch]=ticket.branch 
-            [commit]=ticket.commit 
+            [sprint]=ticket?.sprint 
+            [branch]=ticket?.branch 
+            [commit]=ticket?.commit 
             [key]=key 
-            [epicLink]=ticket.epicLink
+            [epicLink]=ticket?.epicLink
         ></dc-branch-info-body>
     </span>
 

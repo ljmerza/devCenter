@@ -20,17 +20,13 @@ def transition_to_pcr(data):
 	cr_response = {'status': False}
 	dev_change_response = {'status': False}
 	log_response = {'status': False}
-	diff_response = {'status': False}
 	
 	# if repos given and transitioning to PCR then create pull requests
-	# else if only have repos then we just want diff links
 	if len(data['repos']) and data['autoPCR'] and not data['skip_pulls']:
 		pull_response = create_pull_requests(data)
-	if len(data['repos']):
-		diff_response = CodeCloud().generate_diff_links(repos=data['repos'], master_branch=data['master_branch'])
 
 	if data['qa_steps']:
-		comment_response = add_qa_comment(data=data, pull_response=pull_response, diff_response=diff_response)
+		comment_response = add_qa_comment(data=data, pull_response=pull_response)
 
 	# if transitioning to PCR then update Jira ticket statuses and add dev changes text
 	if data['autoPCR']:
@@ -49,7 +45,6 @@ def transition_to_pcr(data):
 	response['data']['cr_response'] = cr_response
 	response['data']['pcr_response'] = pcr_response
 	response['data']['pull_response'] = pull_response
-	response['data']['diff_response'] = diff_response
 	return response
 
 def get_repos(data):
@@ -122,7 +117,7 @@ def ticket_branches(data):
 	return CodeCloud().ticket_branches(cred_hash=data['cred_hash'], msrp=data['msrp'])
 
 
-def add_qa_comment(data, pull_response=None, diff_response=None):
+def add_qa_comment(data, pull_response=None):
 	'''add a QA steps generated Jira comment 
 	'''
 	missing_params = missing_parameters(params=data, required=['key','repos', 'qa_steps', 'cred_hash'])
@@ -132,8 +127,7 @@ def add_qa_comment(data, pull_response=None, diff_response=None):
 	qa_step_comment = CodeCloud().generate_qa_template(
 		qa_steps=data['qa_steps'], 
 		repos=data['repos'], 
-		pull_response=pull_response, 
-		diff_response=diff_response, 
+		pull_response=pull_response,
 	)
 
 	return Jira().add_comment(

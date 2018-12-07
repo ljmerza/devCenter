@@ -105,14 +105,16 @@ export class SearchBarComponent implements OnInit {
       return;
     }
 
-    if(isNaN(parseInt(this.formValues.inputValue))){
-      this.store.dispatch(new ActionOpenTicket(this.formValues.inputValue));
+    const input = (this.formValues.inputValue || '').trim();
+    this.formValues.inputValue = '';
+
+    if (isNaN(parseInt(input))){
+      this.store.dispatch(new ActionOpenTicket(input));
 
     } else {
-      this.store.dispatch(new ActionSearch(this.formValues.inputValue));
+      this.store.dispatch(new ActionSearch(input));
     }
 
-    this.formValues.inputValue = '';
   }
 
   /**

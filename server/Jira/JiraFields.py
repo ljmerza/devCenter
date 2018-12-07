@@ -112,8 +112,14 @@ def get_user_details(issue):
 		the username, email, and display name of the user assigned to the Jira ticket
 	'''
 	# try to get name only instead of username with it
-
 	assignee_data = issue.get('fields', {}).get('assignee', {})
+
+	if not assignee_data:
+		assignee_data = {
+			'name': '',
+			'emailAddress': '',
+			'displayName': ''
+		}
 
 	# return all data
 	return {

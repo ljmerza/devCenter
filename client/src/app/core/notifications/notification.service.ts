@@ -1,31 +1,28 @@
-import { Injectable, NgZone } from '@angular/core';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
+import { Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+
 
 @Injectable()
 export class NotificationService {
-  constructor(private readonly snackBar: MatSnackBar, private readonly zone: NgZone) {}
+  constructor(private toastr: ToastrService) { }
 
   default(message: string) {
-    this.show(message, {duration: 2000, panelClass: 'default-notification-overlay'});
+    this.toastr.info(message);
   }
 
   info(message: string) {
-    this.show(message, {duration: 2000, panelClass: 'info-notification-overlay'});
+    this.toastr.info(message);
   }
 
   success(message: string) {
-    this.show(message, {duration: 2000, panelClass: 'success-notification-overlay'});
+    this.toastr.success(message);
   }
 
   warn(message: string) {
-    this.show(message, {duration: 2500, panelClass: 'warning-notification-overlay'});
+    this.toastr.warning(message);
   }
 
   error(message: string) {
-    this.show(message, {duration: 3000, panelClass: 'error-notification-overlay'});
-  }
-
-  private show(message: string, configuration: MatSnackBarConfig) {
-    this.zone.run(() => this.snackBar.open(message, null, configuration));
+    this.toastr.error(message, '', {timeOut: 10000});
   }
 }

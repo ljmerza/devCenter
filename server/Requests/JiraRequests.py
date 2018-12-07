@@ -62,8 +62,10 @@ def set_status(data):
 	elif data['status_type'] == 'uctFail':
 		response = jira.set_uct_fail(key=data['key'], cred_hash=data['cred_hash'])
 
+	print(response)
+
 	# save key and get new status for response
-	if(response['status']):
+	if response['status']:
 		response['data']['key'] = data['key']
 		response = get_new_component(response=response, key=data['key'], cred_hash=data['cred_hash'])
 	return response
@@ -77,7 +79,7 @@ def get_new_component(response, key, cred_hash):
 
 	# get new ticket data so we can get new component
 	jira = Jira()
-	new_ticket = jira.get_ticket_field_values(key=key, cred_hash=cred_hash, fields='components', get_expanded=False)
+	new_ticket = jira.get_ticket_field_values(key=key, cred_hash=cred_hash, fields='components,status', get_expanded=False)
 	if(not new_ticket['status']):
 		return response
 

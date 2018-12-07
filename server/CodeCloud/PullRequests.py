@@ -7,8 +7,8 @@ class PullRequests():
 		self.qa_begin = "h3. ==== QA Steps ===="
 		self.qa_end = "h3. ==============="
 
-	def generate_qa_template(self, qa_steps, repos, pull_response, diff_response):
-		repo_table = self.generate_repo_table(repos, pull_response, diff_response)
+	def generate_qa_template(self, qa_steps, repos, pull_response):
+		repo_table = self.generate_repo_table(repos, pull_response)
 		
 		return """
 	"""+repo_table+"""
@@ -20,20 +20,20 @@ class PullRequests():
 	"""+self.qa_end+"""
 	"""
 
-	def generate_repo_table(self, repos, pull_response, diff_response):
-		'''generates a QA step Jira comment with pull requests or diff links'''
-		table_data = self.create_qa_header(pull_response=pull_response, diff_response=diff_response)
+	def generate_repo_table(self, repos, pull_response):
+		'''generates a QA step Jira comment with pull requests'''
+		table_data = self.create_qa_header(pull_response=pull_response)
 
 		for repo in repos:
-			table_data += self.create_qa_table_row(repo, pull_response, diff_response)
+			table_data += self.create_qa_table_row(repo, pull_response)
 
 		return table_data
 
-	def create_qa_header(self, pull_response, diff_response):
+	def create_qa_header(self, pull_response):
 		'''generate the QA step table header'''
-		return "|| Repo || Branch || Branched From || Pull Requests || Diff Links ||"
+		return "|| Repo || Branch || Branched From || Pull Requests ||"
 
-	def create_qa_table_row(self, repo, pull_response, diff_response):
+	def create_qa_table_row(self, repo, pull_response):
 		base_branch = repo['baseBranch']
 		repository_name = repo['repositoryName']
 		reviewed_branch = repo['reviewedBranch']
@@ -42,14 +42,9 @@ class PullRequests():
 		table_data = """
 |"""+repository_name+'|'+reviewed_branch+'|'+base_branch+'|'
 		
-		# build diff/request table box
+		# build request table box
 		if pull_response:
 			table_data += self._create_qa_td(repository_name=repository_name, links=pull_response)
-		else:
-			table_data += ' |'
-
-		if diff_response:
-			table_data += self._create_qa_td(repository_name=repository_name, links=diff_response)
 		else:
 			table_data += ' |'
 
@@ -80,28 +75,3 @@ class PullRequests():
 						pull_request_link = request.get('data', {}).get('links', {}).get('self', [])[0].get('href', '')
 
 		return pull_request_link
-
-	def get_diff_link(self, repository_name, reviewed_branch, base_branch):
-		'''generates a diff link from a branch object'''
-		link = f'{self.code_cloud_api.code_cloud_path}/{repository_name}/{self.code_cloud_api.code_cloud_path2}'
-		link += f'?targetBranch=refs%2Fheads%2F{base_branch}'
-		if reviewed_branch:
-			link += f'&sourceBranch=refs%2Fheads%2F{reviewed_branch}'
-
-		return link
-
-	def generate_diff_links(self, repos, master_branch=''):
-		'''generates diff links from given ticket branches'''
-		response = {'status': True, 'data': []}
-
-		for repo in repos:
-			base_branch = repo['baseBranch']
-			repository_name = repo['repositoryName']
-			reviewed_branch = repo['reviewedBranch']
-
-			response['data'].append({
-				'link': self.get_diff_link(repository_name, reviewed_branch, base_branch),
-				'repo': repository_name
-			})
-		
-		return response

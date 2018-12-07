@@ -4,6 +4,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ToastrModule } from 'ngx-toastr';
 
 import { environment } from '@env/environment';
 
@@ -26,6 +27,11 @@ import { NotificationService } from './notifications/notification.service';
     // angular
     CommonModule,
     HttpClientModule,
+    ToastrModule.forRoot({
+      closeButton: true,
+      enableHtml: true,
+      timeOut: 5000
+    }),
 
     // ngrx
     StoreModule.forRoot(reducers, { metaReducers }),
@@ -48,11 +54,7 @@ import { NotificationService } from './notifications/notification.service';
   exports: []
 })
 export class CoreModule {
-  constructor(
-    @Optional()
-    @SkipSelf()
-    parentModule: CoreModule
-  ) {
+  constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
     if (parentModule) {
       throw new Error('CoreModule is already loaded. Import only in AppModule');
     }

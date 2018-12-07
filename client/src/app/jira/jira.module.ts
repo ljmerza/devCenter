@@ -10,7 +10,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { JiraRoutingModule } from './jira-routing.module';
 import { PanelModule } from '@app/panel';
 
-import { TicketsEffects, BranchInfoEffects, CommentEffects, AdditionalDetailsEffects, StatusEffects } from './effects';
+import { TicketsEffects, BranchInfoEffects, CommentEffects, AdditionalDetailsEffects, StatusEffects, QaGeneratorEffects } from './effects';
 import { TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService, StatusService } from './services';
 import { jiraReducer } from './reducers';
 
@@ -35,7 +35,7 @@ import {
     
     EffectsModule.forFeature([
       TicketsEffects, BranchInfoEffects, StatusEffects,
-      CommentEffects, AdditionalDetailsEffects
+      CommentEffects, AdditionalDetailsEffects, QaGeneratorEffects
      ]),
 
     JiraRoutingModule

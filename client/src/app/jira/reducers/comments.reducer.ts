@@ -1,5 +1,5 @@
 import { CommentActionTypes, CommentActions, TicketsActionTypes, TicketsActions } from '../actions';
-import { CommentState, CommentTicket, JiraTicket } from '../models';
+import { CommentState, CommentTicket } from '../models';
 
 export const initialCommentState: CommentState = {
     loading: false,
@@ -11,7 +11,7 @@ export function CommentsReducer(state: CommentState = initialCommentState, actio
     switch (action.type) {
 
         case TicketsActionTypes.RETRIEVE_SUCCESS:
-            return { ...state, tickets: createCommentsTickets(action.payload)};
+            return { ...state, tickets: processCommentTickets(action.payload, state.tickets)};
 
 
         case CommentActionTypes.SAVE_SUCCESS:
@@ -43,17 +43,37 @@ export function CommentsReducer(state: CommentState = initialCommentState, actio
 }
 
 /**
+ * adds any new status ticket and replaces any old ones
+ * @param tickets 
+ * @param oldTickets 
+ */
+function processCommentTickets(tickets, oldTickets): CommentTicket[] {
+    const oldTicketsCopied = <CommentTicket[]>Array.from(oldTickets);
+
+    tickets.forEach(newTicket => {
+        const matchingOldTicketIndex = oldTicketsCopied.findIndex((oldTicket: CommentTicket) => oldTicket.key === newTicket.key);
+        newTicket = createCommentsTickets(newTicket);
+
+        if (matchingOldTicketIndex !== -1) oldTicketsCopied[matchingOldTicketIndex] = newTicket;
+        else oldTicketsCopied.push(newTicket);
+    });
+
+    return oldTicketsCopied;
+}
+
+
+/**
  * creates the base comment tickets list
  * @param tickets 
  */
-function createCommentsTickets(tickets): CommentTicket[] {
-    return tickets.map((ticket: JiraTicket) => ({
+function createCommentsTickets(ticket): CommentTicket {
+    return {
         msrp: ticket.msrp,
         key: ticket.key,
         comments: ticket.comments,
         attachments: ticket.attachments || [],
         dates: ticket.dates,
-    }));
+    };
 }
 
 /**

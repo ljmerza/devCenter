@@ -6,7 +6,11 @@ class JiraStatus():
 
 	def _set_status(self, key, transition_id, cred_hash):
 		url = f'{self.jira_api.api_base}/issue/{key}/transitions'
-		return self.jira_api.post_json(url=url, json_data={"transition":{"id":transition_id}}, cred_hash=cred_hash)
+		response =  self.jira_api.post_json(url=url, json_data={"transition":{"id":transition_id}}, cred_hash=cred_hash)
+
+		if not response.get('data', False):
+			response['data'] = {}
+		return response
 
 	def set_in_dev(self, key, cred_hash):
 		return self._set_status(key=key, transition_id=51, cred_hash=cred_hash)

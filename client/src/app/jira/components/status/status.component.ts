@@ -70,14 +70,15 @@ export class StatusComponent implements OnDestroy, OnInit {
    * 
    */
   processNewStatus([ticket, statuses]: [StatusTicket, StatusesModel[]]){
+    if (!ticket) return;
+
     this.ticket = ticket;
     this.statuses = statuses;
 
-    const matchiongStatus: StatusesModel = statuses.find(status => status.constant === 'UCTREADY');
-    if (matchiongStatus) this.branchInfoMatcherCode = matchiongStatus.status_code || '';
-
-    // get matching status object
-    const matchingStatus:any = { ...(this.statuses.find(allStatus => allStatus.status_name === ticket.status) || {}) };
+    
+    // get matching status object - fall back on component so we at least also show something
+    const status: string = ticket.status || ticket.component;
+    const matchingStatus: StatusesModel = { ...this.statuses.find(allStatus => allStatus.status_name === status) };
     
     // reset all status values
     this.originalStatusCode = matchingStatus.status_code || '';
@@ -89,6 +90,7 @@ export class StatusComponent implements OnDestroy, OnInit {
     // reset transitions and add current status to top
     this.transitions = Array.from(matchingStatus.transitions || []);
     this.transitions.unshift({ status_code: this.originalStatusCode, status_name: this.originalStatusName });
+    console.log({ matchingStatus, ticket, statuses, transitions: this.transitions })
   }
 
   /**
@@ -97,12 +99,11 @@ export class StatusComponent implements OnDestroy, OnInit {
    */
   changeStatus(event){
     this.changedStatusCode = event.value;
+    if (event.value === 'pcrNeeded' && this.changedStatusCode !== 'pcrWorking') return this.openQaGenerator();
 
     const matchingStatus: StatusesModel = this.statuses.find(allStatus => allStatus.status_code === event.value);
     if (matchingStatus) this.changedStatusName = matchingStatus.status_name || '';
-
-    if (event.value === 'pcrNeeded') return this.openQaGenerator();
-    else this.modal.openModal();
+    this.modal.openModal();
   }
 
   /**

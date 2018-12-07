@@ -46,25 +46,29 @@ export class TicketsComponent implements OnInit, OnDestroy {
   tableTitle: string = '';
   ticketType: string = '';
 
+  filterValue:string = '';
+  currentPage: number = 0;
+
   ngOnInit():void {
 
+    // watch for ticket changes from store
     this.tickets$ = this.store.pipe(
       select(selectTickets),
-        distinctUntilChanged((prev, next) => {
-          return prev.loading === next.loading &&
-          prev.ticketType === next.ticketType &&
-          prev.tickets === next.tickets;
-        })
-      )
-      .subscribe(state => this.processTickets(state));
-
+      distinctUntilChanged((prev, next) => prev.ticketType === next.ticketType && prev.tickets === next.tickets)
+    )
+    .subscribe(state => this.processTickets(state));
+    
+    // watch for laoding changes from store
     this.loading$ = this.store.pipe(select(selectJiraLoading))
       .subscribe(loading => this.setLoading(loading));
-
+    
+    // watch for route cahnges to fetch a different ticket list
     this.route.url.subscribe((urlSegment:UrlSegment[]) => {
       this.currentJql = urlSegment[0].parameters.jql || 'assignee = currentUser() AND resolution = Unresolved ORDER BY due DESC';
       this.ticketType = urlSegment[0].path || 'myopen';
       this.tableTitle = `${urlSegment[0].parameters.displayName || 'My Open'} Tickets`;
+
+      if (this.filteredTickets.length === 0) this.resetTable();
       this.getTickets();
     });
 
@@ -73,6 +77,15 @@ export class TicketsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.tickets$.unsubscribe();
     this.loading$.unsubscribe();
+  }
+
+  /**
+   * 
+   * @param loading 
+   */
+  setLoading(loading) {
+    this.loadingIcon = loading;
+    this.loading = this.filteredTickets.length === 0 && loading;
   }
 
   /**
@@ -96,6 +109,20 @@ export class TicketsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * reset the mat table values
+   */
+  resetTable(){
+    // reset filter if has value
+    if (this.dataSource && this.dataSource.filter) {
+      this.dataSource.filter = '';
+      this.filterValue = ''
+    }
+
+    // reset paginator
+    this.paginator.pageIndex = 0;
+  }
+
+  /**
    * processes any new ticket lists into the UI
    * @param state 
    */
@@ -108,17 +135,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
     this.dataSource = new MatTableDataSource(this.filteredTickets);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-
-    this.setLoading(state.loading);
-    this.loadingIcon = false;
-  }
-
-  /**
-   * 
-   * @param loading 
-   */
-  setLoading(loading){
-    this.loading = this.filteredTickets.length === 0 && loading;
   }
 
   /**

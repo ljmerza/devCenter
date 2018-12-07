@@ -1,5 +1,5 @@
 import { StatusActionTypes, StatusActions, TicketsActionTypes, TicketsActions } from '../actions';
-import { StatusState, StatusTicket, JiraTicket } from '../models';
+import { StatusState, StatusTicket } from '../models';
 
 export const initialStatusState: StatusState = {
     loading: false,
@@ -11,7 +11,7 @@ export function StatusReducer(state: StatusState = initialStatusState, action: S
     switch (action.type) {
 
         case TicketsActionTypes.RETRIEVE_SUCCESS:
-            return { ...state, tickets: createStatusTickets(action.payload)};
+            return { ...state, tickets: processStatusTickets(action.payload, state.tickets)};
 
         case StatusActionTypes.SAVE:
             return { ...state, loading: true };
@@ -44,43 +44,61 @@ function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): Sta
     });
 }
 
+
 /**
- * 
+ * adds any new status ticket and replaces any old ones
+ * @param tickets 
+ * @param oldTickets 
+ */
+function processStatusTickets(tickets, oldTickets): StatusTicket[] {
+    const oldTicketsCopied = <StatusTicket[]>Array.from(oldTickets);
+
+    tickets.forEach(newTicket => {
+        const matchingOldTicketIndex = oldTicketsCopied.findIndex((oldTicket: StatusTicket) => oldTicket.key === newTicket.key);
+        newTicket = createStatusTickets(newTicket);
+
+        if (matchingOldTicketIndex !== -1) oldTicketsCopied[matchingOldTicketIndex] = newTicket;
+        else oldTicketsCopied.push(newTicket);
+    });
+
+    return oldTicketsCopied;
+}
+
+/**
+ * creates a new status ticket
  * @param tickets 
  */
-function createStatusTickets(tickets) {
-    return tickets.map((ticket: JiraTicket) => {
-        ticket = { ...ticket };
+function createStatusTickets(ticket) {
+    ticket = { ...ticket };
 
-        const devChangeWords = (ticket.dev_changes || ticket.description || '').split(/\n|(\n\r)| /g);
-        let pullRequests = getPullRequestsFromDevChanges(devChangeWords);
+    const devChangeWords = (ticket.dev_changes || ticket.description || '').split(/\n|(\n\r)| /g);
+    let pullRequests = getPullRequestsFromDevChanges(devChangeWords);
 
-        const devChangeLines = (ticket.dev_changes || '').split(/\n|(\n\r)/g);
-        let pcrCountLeft = getPcrCountLeft(devChangeLines, ticket.story_point);
+    const devChangeLines = (ticket.dev_changes || '').split(/\n|(\n\r)/g);
+    let pcrCountLeft = getPcrCountLeft(devChangeLines, ticket.story_point);
 
-        // if we didn't get pull requests from dev changes field try to get from comments
-        if (pullRequests && pullRequests.length == 0) {
-            ticket.comments.forEach(comment => {
-                const devChangeLines = (comment.raw_comment || '').split(/\n|(\n\r)| |\[|\]|\|/g);
+    // if we didn't get pull requests from dev changes field try to get from comments
+    if (pullRequests && pullRequests.length == 0) {
+        ticket.comments.forEach(comment => {
+            const devChangeLines = (comment.raw_comment || '').split(/\n|(\n\r)| |\[|\]|\|/g);
 
-                if (pullRequests.length == 0)
-                    pullRequests = getPullRequestsFromDevChanges(devChangeLines);
-            });
-        }
+            if (pullRequests.length == 0)
+                pullRequests = getPullRequestsFromDevChanges(devChangeLines);
+        });
+    }
 
-        return {
-            pullRequests,
-            pcrCountLeft,
-            component: ticket.component,
-            status: ticket.status,
-            key: ticket.key,
-            repoName: ticket.master_branch,
-            sprint: ticket.sprint,
-            branch: ticket.branch,
-            commit: ticket.commit,
-            epicLink: ticket.epicLink,
-        };
-});
+    return {
+        pullRequests,
+        pcrCountLeft,
+        component: ticket.component,
+        status: ticket.status,
+        key: ticket.key,
+        repoName: ticket.master_branch,
+        sprint: ticket.sprint,
+        branch: ticket.branch,
+        commit: ticket.commit,
+        epicLink: ticket.epicLink,
+    };
 }
 
 /**
