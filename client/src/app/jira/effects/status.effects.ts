@@ -4,7 +4,8 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '@app/core/notifications/notification.service';
+
 
 import {
     StatusActionTypes, StatusActions,
@@ -17,7 +18,7 @@ import { StatusService } from '../services';
 
 @Injectable()
 export class StatusEffects {
-    constructor(private actions$: Actions<Action>, private service: StatusService) { }
+    constructor(private actions$: Actions<Action>, private service: StatusService, private notifications: NotificationService) { }
 
     @Effect()
     updateStatus = () =>
@@ -70,7 +71,7 @@ export class StatusEffects {
         const { success, actionDispatched } = this.newStatus(response);
         successMessage += success;
 
-        console.log({ successMessage });
+        if (successMessage) this.notifications.success(successMessage);
         return actionDispatched;
         
     }
@@ -91,16 +92,20 @@ export class StatusEffects {
             }
         });
 
-        if (success) success = `Added as reviewer to pull requests:\n${success}`;
+        if (success) success = `Added as reviewer to pull requests:\n${success}\n\n`;
 
         if (error) {
-            error = `Failed to added as reviewer to pull requests:\n${error}\n`;
-
+            error = `Failed to added as reviewer to pull requests:\n${error}`;
+            this.notifications.error(error);
         }
 
         return success;
     }
 
+    /**
+     * 
+     * @param response 
+     */
     newStatus(response) {
         let success = '';
         let actionDispatched;
@@ -110,13 +115,18 @@ export class StatusEffects {
             actionDispatched = new ActionStatusSaveSuccess(response.data);
 
         } else {
-            let error = `Failed to update status:\n${response.data}\n`;
+            let error = `Failed to update status:\n${response.data}`;
+            this.notifications.error(error);
             actionDispatched = new ActionStatusSaveError(error);
         }
 
         return { success, actionDispatched};
     }
 
+    /**
+     * 
+     * @param response 
+     */
     addPullComment(response) {
         let success = ''
         let error = '';
@@ -129,16 +139,20 @@ export class StatusEffects {
             }
         });
 
-        if (success) success = `Added the following pull request comments:\n${success}`;
+        if (success) success = `Added the following pull request comments:\n${success}\n\n`;
 
         if (error) {
-            error = `Failed to added the following pull request comments:\n${error}\n`;
-
+            error = `Failed to added the following pull request comments:\n${error}`;
+            this.notifications.error(error);
         }
 
         return success;
     }
 
+    /**
+     * 
+     * @param response 
+     */
     passResponse(response) {
         let success = ''
         let error = '';
@@ -151,24 +165,28 @@ export class StatusEffects {
             }
         });
 
-        if (success) success = `Successfully approved the following pull request repos:\n${success}`;
+        if (success) success = `Successfully approved the following pull request repos:\n${success}\n\n`;
 
         if (error) {
-            error = `Failed to approve the following pull request repos:\n${error}\n`;
-
+            error = `Failed to approve the following pull request repos:\n${error}`;
+            this.notifications.error(error);
         }
 
         return success;
     }
 
+    /**
+     * 
+     */
     commentResponse(response){
         if (response.status) {
             new ActionCommentSaveSucess(response.data);
-            return `Added comment ${response.data.raw_comment} to ${response.data.key}\n`;
+            return `Added comment ${response.data.raw_comment} to ${response.data.key}\n\n`;
 
         } else {
             new ActionCommentSaveError(response.data);
-            let error = `Failed to add comment ${response.data.raw_comment} to ${response.data.key}\n`;
+            let error = `Failed to add comment ${response.data.raw_comment} to ${response.data.key}`;
+            this.notifications.error(error);
             return;
         }
     }

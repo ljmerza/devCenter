@@ -30,7 +30,7 @@ import { NotificationService } from './notifications/notification.service';
     ToastrModule.forRoot({
       closeButton: true,
       enableHtml: true,
-      timeOut: 5000
+      timeOut: 10000000
     }),
 
     // ngrx
