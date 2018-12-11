@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-
+import { ToastContainerModule } from 'ngx-toastr';
 import { SharedModule } from '@app/shared';
 import { CoreModule } from '@app/core';
 
@@ -24,6 +24,7 @@ import { AppComponent } from './app.component';
     // features
     SettingsModule,
     NavBarModule,
+    ToastContainerModule,
 
     // app
     AppRoutingModule

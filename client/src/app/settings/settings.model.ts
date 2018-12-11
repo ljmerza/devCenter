@@ -10,7 +10,13 @@ export interface SettingsState {
   tempUrl: string,
   cache: boolean,
   theme: string,
-  isThemeChange: boolean
+  isThemeChange: boolean,
+  ticketColumnDefinitions: ColumnDefinition[]
+}
+
+export interface ColumnDefinition {
+  name: string,
+  display: boolean
 }
 
 export interface State extends AppState {

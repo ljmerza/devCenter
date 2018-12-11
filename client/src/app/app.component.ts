@@ -1,10 +1,10 @@
-import browser from 'browser-detect';
 import { OverlayContainer } from '@angular/cdk/overlay';
-import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivationEnd, Router, NavigationEnd } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 
 import {
   AnimationsService, routeAnimations,
@@ -33,19 +33,23 @@ export class AppComponent implements OnInit, OnDestroy {
   year = new Date().getFullYear();
 
   settings: SettingsState;
+  @ViewChild(ToastContainerDirective) toastContainer: ToastContainerDirective;
 
   constructor(
     public overlayContainer: OverlayContainer,
     private store: Store<AppState>,
     private router: Router,
     private titleService: TitleService,
-    private storageService: LocalStorageService
+    private storageService: LocalStorageService,
+    private toastrService: ToastrService
   ) {}
 
   ngOnInit(): void {
     this.subscribeToSettings();
     this.subscribeToRouterEvents();
     this.storageService.testLocalStorage();
+
+    this.toastrService.overlayContainer = this.toastContainer;
   }
 
   ngOnDestroy(): void {

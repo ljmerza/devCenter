@@ -107,6 +107,7 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
       this.store.dispatch(new ActionSettingsEncryptPassword(this.settingsForm.value));
 
     } else {
+      this.notificationsService.info('Saving Settings');
       this.store.dispatch(new ActionSettingsPersist(this.settingsForm.value));
     }
 

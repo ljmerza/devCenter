@@ -11,6 +11,7 @@ import { ActionProfile, ActionStatusRetrieve } from '@app/nav-bar/actions';
 import { ActionSettingsPersist } from '@app/settings/settings.actions';
 import { initialState } from '@app/settings/settings.reducer';
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
+import { NotificationService } from '@app/core/notifications/notification.service';
 
 @Component({
 	selector: 'dc-profile-dropdown',
@@ -23,7 +24,7 @@ export class ProfileDropdownComponent implements OnInit {
 	private settings$: Subscription;
 	@ViewChild(PanelComponent) modal: PanelComponent;
 
-	constructor(public store: Store<{}>, private router: Router) {}
+	constructor(public store: Store<{}>, private router: Router, private notificationsService: NotificationService) {}
 
 	ngOnInit(): void {
 
@@ -47,6 +48,7 @@ export class ProfileDropdownComponent implements OnInit {
 	}
 	
 	logout(): void {
+		this.notificationsService.info('Erasing settings and logging out');
 		this.store.dispatch(new ActionSettingsPersist({...initialState}));
 		this.router.navigate(['/settings']);
 	}

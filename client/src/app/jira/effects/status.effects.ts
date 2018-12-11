@@ -67,10 +67,11 @@ export class StatusEffects {
             successMessage += success;
         }
 
-        // finally get the status cahnge result and return action triggered based on that
+        // finally get the status change result and return action triggered based on that
         const { success, actionDispatched } = this.newStatus(response);
         successMessage += success;
 
+        console.log({successMessage});
         if (successMessage) this.notifications.success(successMessage);
         return actionDispatched;
         
@@ -86,16 +87,16 @@ export class StatusEffects {
 
         response.add_reviewer.forEach(pullRequest => {
             if (pullRequest.status){
-                success += `    ${pullRequest.data.repo_name}\n`;
+                success += `&#09;${pullRequest.data.repo_name}<br>`;
             } else {
-                error += `  ${pullRequest.data.repo_name}\n`;
+                error += `&#09;${pullRequest.data.repo_name}<br>`;
             }
         });
 
-        if (success) success = `Added as reviewer to pull requests:\n${success}\n\n`;
+        if (success) success = `Added you as a reviewer to pull requests:<br>${success}<br><br>`;
 
         if (error) {
-            error = `Failed to added as reviewer to pull requests:\n${error}`;
+            error = `Failed to added as reviewer to pull requests:<br>${error}`;
             this.notifications.error(error);
         }
 
@@ -115,7 +116,7 @@ export class StatusEffects {
             actionDispatched = new ActionStatusSaveSuccess(response.data);
 
         } else {
-            let error = `Failed to update status:\n${response.data}`;
+            let error = `Failed to update status:<br>${response.data}`;
             this.notifications.error(error);
             actionDispatched = new ActionStatusSaveError(error);
         }
@@ -133,16 +134,16 @@ export class StatusEffects {
 
         response.add_comment.forEach(comment => {
             if (comment.status) {
-                success += `    ${comment.data.repo_name}: ${comment.data.text}\n`;
+                success += `&#09;${comment.data.repo_name}: ${comment.data.text}<br>`;
             } else {
-                error += `  ${comment.data.repo_name}: ${comment.data.text}\n`;
+                error += `&#09;${comment.data.repo_name}: ${comment.data.text}<br>`;
             }
         });
 
-        if (success) success = `Added the following pull request comments:\n${success}\n\n`;
+        if (success) success = `Added the following pull request comments:<br>${success}<br><br>`;
 
         if (error) {
-            error = `Failed to added the following pull request comments:\n${error}`;
+            error = `Failed to added the following pull request comments:<br>${error}`;
             this.notifications.error(error);
         }
 
@@ -159,16 +160,16 @@ export class StatusEffects {
 
         response.pass_response.forEach(pass => {
             if (pass.status) {
-                success += `    ${pass.data.repo_name}\n`;
+                success += `&#09;${pass.data.repo_name}<br>`;
             } else {
-                error += `  ${pass.data.repo_name}\n`;
+                error += `&#09;${pass.data.repo_name}<br>`;
             }
         });
 
-        if (success) success = `Successfully approved the following pull request repos:\n${success}\n\n`;
+        if (success) success = `Successfully approved the following pull request repos:<br>${success}<br><br>`;
 
         if (error) {
-            error = `Failed to approve the following pull request repos:\n${error}`;
+            error = `Failed to approve the following pull request repos:<br>${error}`;
             this.notifications.error(error);
         }
 
@@ -181,7 +182,7 @@ export class StatusEffects {
     commentResponse(response){
         if (response.status) {
             new ActionCommentSaveSucess(response.data);
-            return `Added comment ${response.data.raw_comment} to ${response.data.key}\n\n`;
+            return `Added comment ${response.data.raw_comment} to ${response.data.key}<br><br>`;
 
         } else {
             new ActionCommentSaveError(response.data);

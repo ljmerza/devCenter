@@ -1,7 +1,12 @@
 $infoColor: #0275d8;
 
-#toast-container {
+.toast-container {
 	z-index: 10000;
+  	padding-top: 75px;
+
+  	.toast {
+  		width: 400px;
+  	}
 
 	div {
 		border-radius: 0;
@@ -17,3 +22,8 @@ $infoColor: #0275d8;
 	}
 }
 
+@media (max-width: 1380px){
+  .toast-container {
+    margin-top: 100px;
+  }
+}

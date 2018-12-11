@@ -1,14 +1,24 @@
-<dc-loading-table [loadingTable]=loading  [loadingIcon]=loadingIcon [tableTitle]=tableTitle (refreshData)='getTickets()'>
+<dc-loading-table [loadingTable]=loading  [loadingIcon]=loadingIcon [tableTitle]=tableTitle (refreshData)='getTickets()' (stopRefresh)='cancelGetTickets()'>
 	<div class="container-fluid">
 	  <div class="row">
 	    <div class="col-md-12">
 	      <mat-form-field>
+	      	<mat-label>Filter Rows</mat-label>
 	        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter" [(ngModel)]='filterValue'>
+	      </mat-form-field>
+
+	      <mat-form-field class='seperate-inputs'>
+	      	<mat-label>Filter Columns</mat-label>
+	      	<mat-select name="fields-shown" (selectionChange)='changeShown($event)' multiple [(value)]=displayedColumns>
+			    <mat-option *ngFor="let select of ticketColumnDefinitions" [value]="select?.name">
+			        {{select?.name}}
+			    </mat-option>
+			</mat-select>
 	      </mat-form-field>
 	      
 	      <mat-table [trackBy]='trackTableBy' [dataSource]="dataSource" matSort class="mat-elevation-z8" dcCopyInputBubble>
 	      
-	        <ng-container matColumnDef="key">
+	        <ng-container matColumnDef="Key">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Key </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
 							<i class="material-icons pointer copy-input-dir copy-warn" title="Copy Jira key to clipboard">note</i>
@@ -21,7 +31,7 @@
 						</mat-cell>
 	        </ng-container>
 	      
-	        <ng-container matColumnDef="msrp">
+	        <ng-container matColumnDef="MSRP">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> MSRP </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
 							<i class="material-icons pointer copy-input-dir copy-accent" title="Copy Jira key to clipboard">note</i>
@@ -29,29 +39,29 @@
 						</mat-cell>
 	        </ng-container>
 
-	        <ng-container matColumnDef="actions">
+	        <ng-container matColumnDef="Actions">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
 	            <dc-actions [selectorTicket]=ticket.selectorTicket></dc-actions>
 	          </mat-cell>
 	        </ng-container>
 	      
-	        <ng-container matColumnDef="summary">
+	        <ng-container matColumnDef="Summary">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Summary </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket"> {{ticket.summary}} </mat-cell>
 	        </ng-container>
 	      
-	        <ng-container matColumnDef="status">
+	        <ng-container matColumnDef="Status">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket"> <dc-status [key]=ticket.key></dc-status> </mat-cell>
 	        </ng-container>
 	      
-	        <ng-container matColumnDef="StartDate">
+	        <ng-container matColumnDef="Start Date">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket"> {{ticket.dates.started | amDateFormat:'LL'}} </mat-cell>
 	        </ng-container>
 	      
-	        <ng-container matColumnDef="DueDate">
+	        <ng-container matColumnDef="Due Date">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Due Date </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket"> {{ticket.dates.duedate | amDateFormat:'LL'}} </mat-cell>
 	        </ng-container>
@@ -74,6 +84,14 @@
 	        <ng-container matColumnDef="Created">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Created </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket"> {{ticket.dates.created | amDateFormat:'LL'}} </mat-cell>
+	        </ng-container>
+
+	        <ng-container matColumnDef="Sprint">
+	          <mat-header-cell *matHeaderCellDef mat-sort-header> Sprint </mat-header-cell>
+	          <mat-cell *matCellDef="let ticket">
+	          	<i class="material-icons pointer copy-input-dir copy-accent" title="Copy Sprint to clipboard">note</i>
+				<span>{{ticket.master_branch}}</span>
+	          </mat-cell>
 	        </ng-container>
 	      
 	        <ng-container matColumnDef="Pull Requests">

@@ -6,9 +6,14 @@ import { Store, select } from '@ngrx/store';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
-import { ActionTicketsRetrieve } from '../../actions';
+import { ActionTicketsRetrieve, ActionTicketsCancel } from '../../actions';
 import { selectJiraLoading, selectTickets } from '../../selectors';
 import { JiraTicket } from '../../models';
+import { TicketsEffects } from '../../effects';
+
+import { selectSettings } from '@app/settings/settings.selectors';
+import { SettingsState, ColumnDefinition } from '@app/settings/settings.model';
+import { ActionSettingsPersist } from '@app/settings/settings.actions';
 
 import { environment as env } from '@env/environment';
 
@@ -25,11 +30,11 @@ import { environment as env } from '@env/environment';
   ],
 })
 export class TicketsComponent implements OnInit, OnDestroy {
-
-  constructor(private route: ActivatedRoute, public store: Store<{}>) { }
+  constructor(private route: ActivatedRoute, public store: Store<{}>, private ticketEffects: TicketsEffects) { }
 
   currentJql:string = '';
-  displayedColumns: string[] = ['key', 'msrp', 'actions', 'summary','status','StartDate','DueDate','Estimate','Logged', 'Last Update','Created','Pull Requests','Assignee','Customer'];
+  columnDefinitions: ColumnDefinition[] = [];
+
   dataSource: MatTableDataSource<any>;
 
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
@@ -40,6 +45,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   tickets$: Subscription;
   loading$: Subscription;
+  settings$: Subscription;
+  settings:SettingsState;
+
   filteredTickets: Array<JiraTicket> = [];
   loading: boolean = false;
   loadingIcon:boolean = false;
@@ -50,6 +58,13 @@ export class TicketsComponent implements OnInit, OnDestroy {
   currentPage: number = 0;
 
   ngOnInit():void {
+
+    // watch for ticket column changes
+    this.settings$ = this.store.pipe(
+      select(selectSettings),
+      distinctUntilChanged((prev, next) => prev.ticketColumnDefinitions === next.ticketColumnDefinitions)
+    )
+    .subscribe(state => this.settings = state);
 
     // watch for ticket changes from store
     this.tickets$ = this.store.pipe(
@@ -77,11 +92,35 @@ export class TicketsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.tickets$.unsubscribe();
     this.loading$.unsubscribe();
+    this.settings$.unsubscribe();
+  }
+
+  get displayedColumns(): string[] {
+    return (this.ticketColumnDefinitions || []).filter(cd => cd.display).map(cd => cd.name);
+  }
+
+  get ticketColumnDefinitions(){
+    return ((<any>this.settings || {}).ticketColumnDefinitions || []);
   }
 
   /**
-   * 
-   * @param loading 
+   * change the user settings for which columns show on the ticket table
+   * @param {string} value array of columns to show 
+   */
+  changeShown({value}){
+    const newColumnDefinitions = this.ticketColumnDefinitions.map(cd => {
+      cd = {...cd}
+      cd.display = value.includes(cd.name);
+      return cd;
+    });
+
+    this.store.dispatch(new ActionSettingsPersist({ ...this.settings, ticketColumnDefinitions: newColumnDefinitions}));
+  }
+
+  /**
+   * set loading indicator based on if we have tickets already 
+   * (refreshing list) or getting new ticket list
+   * @param {boolean} loading 
    */
   setLoading(loading) {
     this.loadingIcon = loading;
@@ -105,7 +144,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
    * cancels the current request to get tickets
    */
   cancelGetTickets(){
-
+    this.loading = false;
+    this.ticketEffects.cancelSearchJiraTicket();
   }
 
   /**

@@ -1,6 +1,7 @@
 <mat-sidenav-container>
   <div class="wrapper">
     <dc-nav-bar></dc-nav-bar>
+    <div toastContainer></div>
 
     <div class="content" [@routeAnimations]="o.isActivated && o.activatedRoute.routeConfig.path">
       <router-outlet #o="outlet"></router-outlet>

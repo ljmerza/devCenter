@@ -15,14 +15,15 @@ export class NotificationService {
   }
 
   success(message: string) {
-    this.toastr.success(message);
+    this.toastr.success(message, '', {timeOut: 1000000});
   }
 
   warn(message: string) {
     this.toastr.warning(message);
   }
 
-  error(message: string) {
-    this.toastr.error(message, '', {timeOut: 10000});
+  error(message: string='Unknown Error') {
+    console.log({error:message}); // intentionally left here
+    this.toastr && this.toastr.error(message, '', {timeOut: 10000});
   }
 }

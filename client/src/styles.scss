@@ -116,3 +116,19 @@ table, .full-width {
   @include angular-material-theme($dc-nature-theme);
   @include custom-components-theme($dc-nature-theme);
 }
+
+
+
+#toast-container {
+  margin-top: 75px;
+
+  .toast {
+    width: 350px;
+  }
+}
+
+@media (max-width: 1380px){
+  #toast-container {
+    margin-top: 100px;
+  }
+}
