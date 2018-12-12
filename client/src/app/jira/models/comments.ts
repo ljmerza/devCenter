@@ -5,7 +5,8 @@ export interface CommentTicket {
     key: string,
     comments: Array<Comment>,
     attachments?: Array<Attachment>,
-    dates: TicketDate
+    dates: TicketDate,
+    ticketType?: string,
 }
 
 export interface Attachment {
@@ -45,5 +46,5 @@ export interface Comment {
 export interface CommentState {
     loading: boolean,
     tickets: Array<CommentTicket>,
-    error: string,
+    error: string
 };

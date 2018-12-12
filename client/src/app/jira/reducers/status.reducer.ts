@@ -1,5 +1,6 @@
 import { StatusActionTypes, StatusActions, TicketsActionTypes, TicketsActions } from '../actions';
 import { StatusState, StatusTicket } from '../models';
+import { purgeOldTickets, processNewTicket } from './purge.tools';
 
 export const initialStatusState: StatusState = {
     loading: false,
@@ -11,7 +12,7 @@ export function StatusReducer(state: StatusState = initialStatusState, action: S
     switch (action.type) {
 
         case TicketsActionTypes.RETRIEVE_SUCCESS:
-            return { ...state, tickets: processStatusTickets(action.payload, state.tickets)};
+            return { ...state, tickets: processStatusTickets(action.payload, state.tickets, action.payload.ticketType) };
 
         case StatusActionTypes.SAVE:
             return { ...state, loading: true };
@@ -28,47 +29,30 @@ export function StatusReducer(state: StatusState = initialStatusState, action: S
 }
 
 /**
- * update the matching ticket status and component
- * @param newStatus 
- * @param statusTickets 
- */
-function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): StatusTicket[] {
-    return statusTickets.map((ticket: StatusTicket) => {
-        if (newStatusTicket.key === ticket.key) {
-            ticket = { ...ticket };
-            ticket.status = newStatusTicket.new_status.status;
-            ticket.component = newStatusTicket.new_status.component;
-        };
-
-        return ticket;
-    });
-}
-
-
-/**
  * adds any new status ticket and replaces any old ones
  * @param tickets 
  * @param oldTickets 
  */
-function processStatusTickets(tickets, oldTickets): StatusTicket[] {
-    const oldTicketsCopied = <StatusTicket[]>Array.from(oldTickets);
+function processStatusTickets(tickets, oldTickets, ticketType): StatusTicket[] {
+    const newTickets = tickets.map(ticket => processNewTicket(ticket, ticketType));
+    const newTicketState = <StatusTicket[]>Array.from(oldTickets);
 
-    tickets.forEach(newTicket => {
-        const matchingOldTicketIndex = oldTicketsCopied.findIndex((oldTicket: StatusTicket) => oldTicket.key === newTicket.key);
+    newTickets.forEach(newTicket => {
+        const matchingOldTicketIndex = newTicketState.findIndex((oldTicket: StatusTicket) => oldTicket.key === newTicket.key);
         newTicket = createStatusTickets(newTicket);
 
-        if (matchingOldTicketIndex !== -1) oldTicketsCopied[matchingOldTicketIndex] = newTicket;
-        else oldTicketsCopied.push(newTicket);
+        if (matchingOldTicketIndex !== -1) newTicketState[matchingOldTicketIndex] = newTicket;
+        else newTicketState.push(newTicket);
     });
 
-    return oldTicketsCopied;
+    return purgeOldTickets(newTickets, newTicketState, ticketType);
 }
 
 /**
  * creates a new status ticket
  * @param tickets 
  */
-function createStatusTickets(ticket) {
+function createStatusTickets(ticket): StatusTicket {
     ticket = { ...ticket };
 
     const devChangeWords = (ticket.dev_changes || ticket.description || '').split(/\n|(\n\r)| /g);
@@ -98,7 +82,25 @@ function createStatusTickets(ticket) {
         branch: ticket.branch,
         commit: ticket.commit,
         epicLink: ticket.epicLink,
+        ticketType: ticket.ticketType
     };
+}
+
+/**
+ * update the matching ticket status and component
+ * @param newStatus 
+ * @param statusTickets 
+ */
+function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): StatusTicket[] {
+    return statusTickets.map((ticket: StatusTicket) => {
+        if (newStatusTicket.key === ticket.key) {
+            ticket = { ...ticket };
+            ticket.status = newStatusTicket.new_status.status;
+            ticket.component = newStatusTicket.new_status.component;
+        };
+
+        return ticket;
+    });
 }
 
 /**

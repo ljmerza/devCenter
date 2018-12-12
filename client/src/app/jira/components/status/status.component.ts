@@ -123,7 +123,7 @@ export class StatusComponent implements OnDestroy, OnInit {
   }
 
   /**
-   * 
+   * reset the selected status and close the confirm modal
    */
   confirmCancelStatus(){
     this.changedStatusCode = this.originalStatusCode;

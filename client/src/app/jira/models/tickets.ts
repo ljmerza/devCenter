@@ -18,6 +18,7 @@ export interface JiraTicket {
     dev_changes: string,
     description: string,
     story_point: string,
+    ticketType: string,
 };
 
 export interface TicketsState {

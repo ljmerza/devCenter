@@ -3,37 +3,19 @@
     padding-right: 5px;
 }
 
-
-./*cdk-column-key, 
-.cdk-column-msrp, 
-.cdk-column-Estimate, 
-.cdk-column-Logged,
-.cdk-column-actions,
-.cdk-column-DueDate, 
-.cdk-column-StartDate, 
-.cdk-column-Last-Update, 
-.cdk-column-Created {
-    flex-grow: 1;
-}*/
-
-/*.cdk-column-key, 
-.cdk-column-msrp, 
-.cdk-column-Pull-Requests,
-.cdk-column-Assignee,
-.cdk-column-Customer {
-    flex-grow: 2;
-}*/
-
-/*.mat-column-Status {
+.mat-column-Status {
 	flex-grow: 2;
-}*/
+}
 
-.mat-column-Status,
 .mat-column-Summary {
-    flex-grow: 2;
+    flex-grow: 3;
 }
 
 .seperate-inputs {
 	margin-left: 10px;
+}
+
+.hidden {
+	display: none;
 }
 

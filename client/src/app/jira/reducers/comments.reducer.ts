@@ -1,5 +1,6 @@
 import { CommentActionTypes, CommentActions, TicketsActionTypes, TicketsActions } from '../actions';
 import { CommentState, CommentTicket } from '../models';
+import { purgeOldTickets, processNewTicket } from './purge.tools';
 
 export const initialCommentState: CommentState = {
     loading: false,
@@ -8,10 +9,12 @@ export const initialCommentState: CommentState = {
 };
 
 export function CommentsReducer(state: CommentState = initialCommentState, action: CommentActions | TicketsActions): CommentState {
+    console.log({ action })
+
     switch (action.type) {
 
         case TicketsActionTypes.RETRIEVE_SUCCESS:
-            return { ...state, tickets: processCommentTickets(action.payload, state.tickets)};
+            return { ...state, tickets: processCommentTickets(action.payload, state.tickets, action.payload.ticketType)};
 
 
         case CommentActionTypes.SAVE_SUCCESS:
@@ -47,32 +50,33 @@ export function CommentsReducer(state: CommentState = initialCommentState, actio
  * @param tickets 
  * @param oldTickets 
  */
-function processCommentTickets(tickets, oldTickets): CommentTicket[] {
-    const oldTicketsCopied = <CommentTicket[]>Array.from(oldTickets);
+function processCommentTickets(tickets, oldTickets, ticketType): CommentTicket[] {
+    const newTickets = tickets.map(ticket => processNewTicket(ticket, ticketType));
+    const newTicketState = <CommentTicket[]>Array.from(oldTickets);
 
-    tickets.forEach(newTicket => {
-        const matchingOldTicketIndex = oldTicketsCopied.findIndex((oldTicket: CommentTicket) => oldTicket.key === newTicket.key);
-        newTicket = createCommentsTickets(newTicket);
+    newTickets.forEach(newTicket => {
+        const matchingOldTicketIndex = newTicketState.findIndex((oldTicket: CommentTicket) => oldTicket.key === newTicket.key);
+        newTicket = createCommentsTickets(newTicket, ticketType);
 
-        if (matchingOldTicketIndex !== -1) oldTicketsCopied[matchingOldTicketIndex] = newTicket;
-        else oldTicketsCopied.push(newTicket);
+        if (matchingOldTicketIndex !== -1) newTicketState[matchingOldTicketIndex] = newTicket;
+        else newTicketState.push(newTicket);
     });
 
-    return oldTicketsCopied;
+    return purgeOldTickets(newTickets, newTicketState, ticketType);
 }
-
 
 /**
  * creates the base comment tickets list
  * @param tickets 
  */
-function createCommentsTickets(ticket): CommentTicket {
+function createCommentsTickets(ticket, ticketType): CommentTicket {
     return {
         msrp: ticket.msrp,
         key: ticket.key,
         comments: ticket.comments,
         attachments: ticket.attachments || [],
         dates: ticket.dates,
+        ticketType: ticketType
     };
 }
 

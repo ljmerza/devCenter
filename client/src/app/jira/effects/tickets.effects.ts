@@ -20,7 +20,11 @@ export class TicketsEffects {
             switchMap((action: ActionTicketsRetrieve) => 
                 this.service.getTickets(action.payload).pipe(
                     takeUntil(this.unsubscribe$),
-                    map((response: any) => new ActionTicketsSuccess(response.data)),
+                    map((response: any) => {
+                        response.data.ticketType = action.payload.ticketType || '';
+                        console.log({ response })
+                        return new ActionTicketsSuccess(response.data);
+                    }),
                     catchError(error => of(new ActionTicketsError(error)))
                 )
             )

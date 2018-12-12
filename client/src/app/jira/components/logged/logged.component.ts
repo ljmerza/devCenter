@@ -26,7 +26,7 @@ export class LoggedComponent implements OnInit, OnDestroy {
         distinctUntilChanged()
       )
       .subscribe((ticket: CommentTicket) => {
-        this.dates = ticket.dates;
+        this.dates = ticket && ticket.dates;
         this.cd.markForCheck();
       });
   }

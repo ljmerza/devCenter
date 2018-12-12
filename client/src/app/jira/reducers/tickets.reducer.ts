@@ -4,6 +4,7 @@ import {
     additionalDetailsActionTypes, additionalDetailsActions,
 } from '../actions';
 
+import { purgeOldTickets } from './purge.tools';
 import { TicketsState, JiraTicket } from '../models';
 import { selectJiraTicketFactory } from '../selectors/tickets.selectors';
 
@@ -31,7 +32,7 @@ export function TicketsReducer(state: TicketsState = initialTicketsState, action
             return { ...state, loading: true, ...action.payload };
 
         case TicketsActionTypes.RETRIEVE_SUCCESS:
-            const tickets = processJiraTickets(action.payload, state.tickets, state.ticketType);
+            const tickets = processJiraTickets(action.payload, state.tickets, action.payload.ticketType);
             return { ...state, loading: false, tickets };
 
         case TicketsActionTypes.RETRIEVE_ERROR:
@@ -61,16 +62,19 @@ export function TicketsReducer(state: TicketsState = initialTicketsState, action
   * @param ticketType 
   */
 function processJiraTickets(tickets, oldTickets, ticketType): JiraTicket[] {
+    
     const newTickets = tickets.map(ticket => processNewTicket(ticket, ticketType));
-    const oldTicketsCopied = <JiraTicket[]>Array.from(oldTickets);
-
+    const newTicketState = <JiraTicket[]>Array.from(oldTickets);
+    
+    // first merge all new tickets into the master list - keep track of all keys for new tickets to purge old ticket
     newTickets.forEach(newTicket => {
-        const matchingOldTicketIndex = oldTicketsCopied.findIndex((oldTicket: JiraTicket) => oldTicket.key === newTicket.key);
-        if (matchingOldTicketIndex !== -1) oldTicketsCopied[matchingOldTicketIndex] = newTicket;
-        else oldTicketsCopied.push(newTicket);
+        const matchingOldTicketIndex = newTicketState.findIndex((oldTicket: JiraTicket) => oldTicket.key === newTicket.key);
+        if (matchingOldTicketIndex !== -1) newTicketState[matchingOldTicketIndex] = newTicket;
+        else newTicketState.push(newTicket);
     });
-
-    return oldTicketsCopied;
+    
+    // filter out any left over tickets before returning new list
+    return purgeOldTickets(newTickets, newTicketState, ticketType);
 }
 
 /**

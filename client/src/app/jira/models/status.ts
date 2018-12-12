@@ -11,6 +11,7 @@ export interface StatusTicket {
     branch: string,
     commit: string,
     epicLink: string,
+    ticketType?: string,
 }
 
 export interface PullRequest {
@@ -23,5 +24,5 @@ export interface PullRequest {
 export interface StatusState {
     loading: boolean,
     tickets: Array<StatusTicket>,
-    error: string,
+    error: string
 };
