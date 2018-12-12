@@ -9,13 +9,10 @@ export const initialCommentState: CommentState = {
 };
 
 export function CommentsReducer(state: CommentState = initialCommentState, action: CommentActions | TicketsActions): CommentState {
-    console.log({ action })
 
     switch (action.type) {
-
         case TicketsActionTypes.RETRIEVE_SUCCESS:
             return { ...state, tickets: processCommentTickets(action.payload, state.tickets, action.payload.ticketType)};
-
 
         case CommentActionTypes.SAVE_SUCCESS:
             const processedState = processAddLog(action.payload, state.tickets);
@@ -24,14 +21,12 @@ export function CommentsReducer(state: CommentState = initialCommentState, actio
         case CommentActionTypes.SAVE_ERROR:
             return { ...state, loading: false, error: action.payload };
 
-
         case CommentActionTypes.EDIT_SUCCESS:
             const editedCommentsTickets = replaceEditedComment(action.payload, state.tickets);
             return { ...state, loading: false, tickets: editedCommentsTickets };
 
         case CommentActionTypes.EDIT_ERROR:
             return { ...state, loading: false };
-
 
         case CommentActionTypes.DELETE_SUCCESS:
             const deletedCommentsTickets = deleteComment(action.payload, state.tickets);

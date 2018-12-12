@@ -22,7 +22,6 @@ export class TicketsEffects {
                     takeUntil(this.unsubscribe$),
                     map((response: any) => {
                         response.data.ticketType = action.payload.ticketType || '';
-                        console.log({ response })
                         return new ActionTicketsSuccess(response.data);
                     }),
                     catchError(error => of(new ActionTicketsError(error)))
