@@ -6,7 +6,7 @@ import {
 
 import { purgeOldTickets } from './purge.tools';
 import { TicketsState, JiraTicket } from '../models';
-import { selectJiraTicketFactory } from '../selectors/tickets.selectors';
+import { processNewTicket } from './purge.tools';
 
 export const initialTicketsState: TicketsState = {
     loading: false,
@@ -75,13 +75,4 @@ function processJiraTickets(tickets, oldTickets, ticketType): JiraTicket[] {
     
     // filter out any left over tickets before returning new list
     return purgeOldTickets(newTickets, newTicketState, ticketType);
-}
-
-/**
- * adds a selector for the ticket itself
- * @param {Ticket} ticket
- * @param {string} ticketType
- */
-function processNewTicket(ticket, ticketType){
-    return { ...ticket, ticketType, selectorTicket: selectJiraTicketFactory(ticket.key)};
 }

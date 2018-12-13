@@ -1,6 +1,10 @@
 import { Component, ChangeDetectionStrategy, Input, OnInit, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { selectTickets } from '../../selectors';
+import { TicketsState } from '../../models';
 
 @Component({
   selector: 'dc-user-details',
@@ -18,11 +22,14 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   displayName:string = '';
   emailAddress:string = '';
 
-  @Input() selectorTicket;
+  @Input() key;
   @Input() isCustomer;
 
   ngOnInit() {
-    this.ticket$ = this.store.pipe(select(this.selectorTicket))
+    this.ticket$ = this.store.pipe(
+      select(selectTickets),
+      map((state: TicketsState) => state.tickets.find(ticket => ticket.key === this.key)),
+    )
       .subscribe(ticket => {
         this.msrp = ticket && ticket.msrp;
         const details = ticket && ticket[this.isCustomer ? 'customer_details' : 'user_details'] || {};

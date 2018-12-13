@@ -1,4 +1,4 @@
-<dc-loading-table [loadingTable]=loading  [loadingIcon]=loadingIcon [tableTitle]=tableTitle (refreshData)='getTickets()' (stopRefresh)='cancelGetTickets()'>
+<dc-loading-table [loadingTable]=loading [loadingIcon]=loadingIcon [tableTitle]=tableTitle (refreshData)='getTickets()' (stopRefresh)='cancelGetTickets()'>
 	<div class="container-fluid">
 	  <div class="row">
 	    <div class="col-md-12">
@@ -16,7 +16,7 @@
 			</mat-select>
 	      </mat-form-field>
 	      
-	      <mat-table [trackBy]='trackTableBy' [dataSource]="dataSource" matSort class="mat-elevation-z8" dcCopyInputBubble>
+	      <mat-table [trackBy]='trackTableBy' [dataSource]="dataSource" matSort matSortActive="Start Date" matSortDirection="asc" (matSortChange)="sortData($event)" class="mat-elevation-z8" dcCopyInputBubble>
 	      
 	        <ng-container matColumnDef="Key">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Key </mat-header-cell>
@@ -42,7 +42,7 @@
 	        <ng-container matColumnDef="Actions">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Actions </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
-	            <dc-actions [selectorTicket]=ticket.selectorTicket></dc-actions>
+	            <dc-actions [key]=ticket.key></dc-actions>
 	          </mat-cell>
 	        </ng-container>
 	      
@@ -104,14 +104,14 @@
 	        <ng-container matColumnDef="Assignee">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Assignee </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
-							<dc-user-details [selectorTicket]=ticket.selectorTicket></dc-user-details>
+							<dc-user-details [key]=ticket.key></dc-user-details>
 						</mat-cell>
 	        </ng-container>
 	      
 	        <ng-container matColumnDef="Customer">
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Customer </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket"> 
-							<dc-user-details [isCustomer]=true [selectorTicket]=ticket.selectorTicket></dc-user-details></mat-cell>
+							<dc-user-details [isCustomer]=true [key]=ticket.key></dc-user-details></mat-cell>
 	        </ng-container>
 
 	        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

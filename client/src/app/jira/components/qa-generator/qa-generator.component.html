@@ -1,0 +1,22 @@
+<dc-panel [modalSize]='"md"'>
+  <div class='modal-header'>QA Generator for {{ticket?.key}}</div>
+
+  <span class='modal-body'>
+    <form [formGroup]="qaForm">
+
+      <!-- branches -->
+      <mat-card class='mat-elevation-z8'>
+        <dc-qa-generator-branches [branchesFormArray]=qaForm.branches [ticket]=ticket></dc-qa-generator-branches>
+      </mat-card>
+
+      <!-- qa steps -->
+
+      <!-- time log / set to PCR needed -->
+    </form>
+  </span>
+
+  <span class='modal-footer align-footer'>
+  
+  </span>
+
+</dc-panel>

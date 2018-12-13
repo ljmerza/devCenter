@@ -11,11 +11,13 @@ export function purgeOldTickets(newTickets, newTicketState, ticketType) {
     // get all tickets we need to purge
     const purgedTickets = newTicketState
         .filter(oldTicket =>  oldTicket.ticketType === ticketType && !newTickets.find(newTicket => newTicket.key === oldTicket.key));
-
+    
     // get the indexes of those purged tickets and slice them out of the master ticket list
     purgedTickets
         .map(leftOverTicket => newTicketState.findIndex(oldTicket => leftOverTicket.key === oldTicket.key))
-        .forEach(leftOverTicketIndex => newTicketState.splice(leftOverTicketIndex, 1));
+        .forEach(leftOverTicketIndex => {
+            newTicketState.splice(leftOverTicketIndex, 1)
+        });
 
     return newTicketState;
 }

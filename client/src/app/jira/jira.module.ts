@@ -15,9 +15,9 @@ import { TicketsService, BranchInfoService, CommentsService, AdditionalDetailsSe
 import { jiraReducer } from './reducers';
 
 import {
-  TicketsComponent, ActionsComponent, CommentsComponent, BranchInfoComponent, UserChatComponent,
+  TicketsComponent, ActionsComponent, CommentsComponent, BranchInfoComponent, UserChatComponent, QaGeneratorBranchesComponent,
   LoadingTableComponent, UserDetailsComponent, AddLogComponent, LoggedComponent, BranchInfoBodyComponent,
-  PullRequestsComponent, TicketDetailsComponent, LoadingDetailsComponent, StatusComponent
+  PullRequestsComponent, TicketDetailsComponent, LoadingDetailsComponent, StatusComponent, QaGeneratorComponent
 } from './components';
 
 @NgModule({
@@ -42,9 +42,9 @@ import {
   ],
   providers: [TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService, StatusService],
   declarations: [
-    TicketsComponent, ActionsComponent, LoadingTableComponent, UserChatComponent,
+    TicketsComponent, ActionsComponent, LoadingTableComponent, UserChatComponent, QaGeneratorComponent,
     UserDetailsComponent, PullRequestsComponent, TicketDetailsComponent, LoggedComponent, StatusComponent,
-    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent
+    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent, QaGeneratorBranchesComponent
   ]
 })
 export class JiraModule {}

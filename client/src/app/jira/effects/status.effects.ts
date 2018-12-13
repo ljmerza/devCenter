@@ -24,12 +24,14 @@ export class StatusEffects {
     updateStatus = () =>
         this.actions$.pipe(
             ofType<StatusActions>(StatusActionTypes.SAVE),
-            switchMap((action: ActionStatusSave) =>
-                this.service.updateStatus(action.payload).pipe(
+            switchMap((action: ActionStatusSave) => {
+                this.notifications.info(`Saving new status for ${action.payload.key}`);
+
+                return this.service.updateStatus(action.payload).pipe(
                     map(response => this.processUpdateStatus(response, action)),
                     catchError(error => of(new ActionStatusSaveError(error)))
                 )
-            )
+            })
         );
 
     /**

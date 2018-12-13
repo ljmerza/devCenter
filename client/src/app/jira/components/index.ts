@@ -16,3 +16,5 @@ export * from './user-chat/user-chat.component';
 
 export * from './logged/logged.component';
 export * from './status/status.component';
+export * from './qa-generator/qa-generator.component';
+export * from './qa-generator-branches/qa-generator-branches.component';

@@ -1,11 +1,14 @@
 import { Component, Input, OnInit, OnDestroy, ComponentFactoryResolver, ViewContainerRef } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { TicketDetailsComponent } from '../ticket-details/ticket-details.component';
 import { CommentsComponent } from '../comments/comments.component';
 import { BranchInfoComponent } from '../branch-info/branch-info.component';
 import { AddLogComponent } from '../add-log/add-log.component';
+import { selectTickets } from '../../selectors';
+import { TicketsState } from '../../models';
 
 
 @Component({
@@ -26,12 +29,15 @@ export class ActionsComponent implements OnInit, OnDestroy {
   detailsRef;
   logsRef;
 
-  @Input() selectorTicket;
+  @Input() key;
 
   constructor(public store: Store<{}>, private factoryResolver: ComponentFactoryResolver, private viewContRef: ViewContainerRef) { }
 
   ngOnInit() {
-    this.ticket$ = this.store.pipe(select(this.selectorTicket))
+    this.ticket$ = this.store.pipe(
+        select(selectTickets),
+        map((state: TicketsState) => state.tickets.find(ticket => ticket.key === this.key)),
+      )
       .subscribe(ticket => this.ticket = ticket);
   }
 

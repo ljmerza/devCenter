@@ -1,6 +1,6 @@
 import { NgModule, Optional, SkipSelf, ErrorHandler } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -9,11 +9,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { environment } from '@env/environment';
 
 import { LocalStorageService } from './local-storage/local-storage.service';
-import { AuthEffects } from './auth/auth.effects';
-import { AuthGuardService } from './auth/auth-guard.service';
 import { AnimationsService } from './animations/animations.service';
 import { TitleService } from './title/title.service';
-import { ConfigService } from './config/config.service';
 import { reducers, metaReducers } from './core.state';
 import { AppErrorHandler } from './error-handler/app-error-handler.service';
 import { httpInterceptorProviders } from '@app/core/http-interceptors';
@@ -21,6 +18,8 @@ import { httpInterceptorProviders } from '@app/core/http-interceptors';
 import { StoreRouterConnectingModule, RouterStateSerializer } from '@ngrx/router-store';
 import { CustomSerializer } from './router/custom-serializer';
 import { NotificationService } from './notifications/notification.service';
+
+import { ReposService, ReposEffects } from './repos';
 
 @NgModule({
   imports: [
@@ -36,16 +35,15 @@ import { NotificationService } from './notifications/notification.service';
     // ngrx
     StoreModule.forRoot(reducers, { metaReducers }),
     StoreRouterConnectingModule.forRoot(),
-    EffectsModule.forRoot([AuthEffects]),
+    EffectsModule.forRoot([ReposEffects]),
     environment.production ? [] : StoreDevtoolsModule.instrument({ name: 'Dev Center' })
   ],
   declarations: [],
   providers: [
     NotificationService,
     LocalStorageService,
-    AuthGuardService,
-    AnimationsService,
-    ConfigService,
+    AnimationsService, 
+    ReposService,
     ...httpInterceptorProviders,
     TitleService,
     { provide: ErrorHandler, useClass: AppErrorHandler },

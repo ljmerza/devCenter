@@ -1,6 +1,6 @@
-import { Component, ChangeDetectionStrategy, Input, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
-import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
+import { Sort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Store, select } from '@ngrx/store';
 import { distinctUntilChanged } from 'rxjs/operators';
@@ -12,7 +12,7 @@ import { JiraTicket } from '../../models';
 import { TicketsEffects } from '../../effects';
 
 import { selectSettings } from '@app/settings/settings.selectors';
-import { SettingsState, ColumnDefinition } from '@app/settings/settings.model';
+import { ColumnDefinition } from '@app/settings/settings.model';
 import { ActionSettingsPersist } from '@app/settings/settings.actions';
 
 import { environment as env } from '@env/environment';
@@ -40,13 +40,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   env = env;
 
-  @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   tickets$: Subscription;
   loading$: Subscription;
   settings$: Subscription;
-  settings:SettingsState;
+  settings: any;
 
   filteredTickets: Array<JiraTicket> = [];
   loading: boolean = false;
@@ -100,7 +99,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   }
 
   get ticketColumnDefinitions(){
-    return ((<any>this.settings || {}).ticketColumnDefinitions || []);
+    return ((this.settings || {}).ticketColumnDefinitions || []);
   }
 
   /**
@@ -167,14 +166,11 @@ export class TicketsComponent implements OnInit, OnDestroy {
    * @param state 
    */
   processTickets(state) {
-    
-    // find only matching tickets and then format them for expanded view
+    // find only matching ticketType tickets
     this.filteredTickets = state.tickets.filter(ticket => ticket.ticketType === state.ticketType);
 
-    // create material table array
-    this.dataSource = new MatTableDataSource(this.filteredTickets);
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+    // create sorted material table array
+    this.sortData({ active: 'Start Date', direction: 'asc' }, this.filteredTickets);
   }
 
   /**
@@ -192,5 +188,58 @@ export class TicketsComponent implements OnInit, OnDestroy {
   */
   trackTableBy(index, ticket){
     return ticket.key;
+  }
+
+  /**
+   * adds sort functionality
+   * @param sort 
+   */
+  sortData(sort: Sort, data) {
+    data = data || this.dataSource.data.slice();
+    if (!sort.active || sort.direction === '') return;
+
+    data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+
+      switch (sort.active) {
+        case 'Key': return this.compare(a.key, b.key, isAsc);
+        case 'MSRP': return this.compare(a.msrp, b.msrp, isAsc);
+        case 'Summary': return this.compare(a.summary, b.summary, isAsc);
+        case 'Status': return this.compare(a.status, b.status, isAsc);
+        case 'Start Date': return this.compare(a.dates.started, b.dates.started, isAsc);
+        case 'Due Date': return this.compare(a.dates.duedate, b.dates.duedate, isAsc);
+        case 'Estimate': return this.compare(a.dates.estimate_seconds, b.dates.estimate_seconds, isAsc);
+        case 'Logged': return this.compare(a.dates.logged_seconds, b.dates.logged_seconds, isAsc);
+        case 'Pull Requests': return this.pullCompare(a.pullRequests || [], b.pullRequests || [], isAsc);
+        case 'Assignee': return this.compare(a.username, b.username, isAsc);
+        case 'Customer': return this.compare(a.customer_details.username, b.customer_details.username, isAsc);
+        default: return 0;
+      }
+    });
+    
+    this.dataSource = new MatTableDataSource(data);
+    this.dataSource.paginator = this.paginator;
+  }
+
+  /**
+   * basic comparitor for sorting
+   * @param a 
+   * @param b 
+   * @param isAsc 
+   */
+  compare(a: number | string, b: number | string, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  /**
+   * wrapper around compare to sort pull requests
+   * @param a 
+   * @param b 
+   * @param isAsc 
+   */
+  pullCompare(a, b, isAsc){
+    a = a.map(a_ => a_.repoName).join('');
+    b = b.map(b_ => b_.repoName).join('');
+    return this.compare(a, b, isAsc);
   }
 }

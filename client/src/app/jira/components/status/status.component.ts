@@ -1,4 +1,8 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component, Input, OnDestroy, OnInit, ViewChild, 
+  ViewEncapsulation, ComponentFactoryResolver, ViewContainerRef 
+} from '@angular/core';
+
 import { Store, select } from '@ngrx/store';
 import { Subscription, combineLatest } from 'rxjs';
 import { distinctUntilChanged, map, tap } from 'rxjs/operators';
@@ -10,13 +14,15 @@ import { StatusTicket, StatusState } from '../../models';
 import { StatusesModel } from '@app/nav-bar/models';
 
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
+import { QaGeneratorComponent } from '../qa-generator/qa-generator.component';
 
 @Component({
   selector: 'dc-status',
   templateUrl: './status.component.html',
   styleUrls: ['./status.component.scss'],
   host: { 'class': 'dc-status' },
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  entryComponents: [QaGeneratorComponent]
 })
 export class StatusComponent implements OnDestroy, OnInit {
   profile$: Subscription;
@@ -37,11 +43,13 @@ export class StatusComponent implements OnDestroy, OnInit {
 
   // matching string to show branch info
   branchInfoMatcherCode: string = '';
+  qaGeneratorRef;
+
 
   @Input() key: string = '';
   @ViewChild(PanelComponent) modal: PanelComponent;
 
-  constructor(public store: Store<{}>) { }
+  constructor(public store: Store<{}>, private factoryResolver: ComponentFactoryResolver, private viewContRef: ViewContainerRef) { }
 
   ngOnInit() {
     this.profile$ = this.store.pipe(select(selectProfile))
@@ -90,7 +98,6 @@ export class StatusComponent implements OnDestroy, OnInit {
     // reset transitions and add current status to top
     this.transitions = Array.from(matchingStatus.transitions || []);
     this.transitions.unshift({ status_code: this.originalStatusCode, status_name: this.originalStatusName });
-    console.log({ matchingStatus, ticket, statuses, transitions: this.transitions })
   }
 
   /**
@@ -135,7 +142,14 @@ export class StatusComponent implements OnDestroy, OnInit {
    * opens the QA generator
    */
   openQaGenerator(){
+    if (!this.qaGeneratorRef) {
+      const factory = this.factoryResolver.resolveComponentFactory(QaGeneratorComponent);
+      this.qaGeneratorRef = this.viewContRef.createComponent(factory);
+      (<QaGeneratorComponent>this.qaGeneratorRef.instance).ticket = this.ticket;
+      (<QaGeneratorComponent>this.qaGeneratorRef.instance).profile = this.profile;
+    }
 
+    (<QaGeneratorComponent>this.qaGeneratorRef.instance).modal.openModal();
   }
 
 }

@@ -6,9 +6,10 @@
 
   #toast-container {
     margin-top: 75px;
+    margin-right: 10px;
 
     .toast {
-      width: 350px;
+      width: 400px;
 
       &.toast-info {
         background-color: mat-color($primary) !important;
