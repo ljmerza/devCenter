@@ -20,6 +20,7 @@ import { CustomSerializer } from './router/custom-serializer';
 import { NotificationService } from './notifications/notification.service';
 
 import { ReposService, ReposEffects } from './repos';
+import { ProfileService, ProfileEffects } from './profile';
 
 @NgModule({
   imports: [
@@ -35,7 +36,7 @@ import { ReposService, ReposEffects } from './repos';
     // ngrx
     StoreModule.forRoot(reducers, { metaReducers }),
     StoreRouterConnectingModule.forRoot(),
-    EffectsModule.forRoot([ReposEffects]),
+    EffectsModule.forRoot([ReposEffects, ProfileEffects]),
     environment.production ? [] : StoreDevtoolsModule.instrument({ name: 'Dev Center' })
   ],
   declarations: [],
@@ -44,6 +45,7 @@ import { ReposService, ReposEffects } from './repos';
     LocalStorageService,
     AnimationsService, 
     ReposService,
+    ProfileService,
     ...httpInterceptorProviders,
     TitleService,
     { provide: ErrorHandler, useClass: AppErrorHandler },

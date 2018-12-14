@@ -1,52 +1,83 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import {
   NgForm, FormGroup, FormControl, Validators,
   FormBuilder, AbstractControl, ValidationErrors, FormArray
 } from '@angular/forms';
+import { Store, select } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+
+import { selectRepos, Repo } from '@app/core/repos';
 
 @Component({
   selector: 'dc-qa-generator-branches',
   templateUrl: './qa-generator-branches.component.html',
   styleUrls: ['./qa-generator-branches.component.css']
 })
-export class QaGeneratorBranchesComponent implements OnInit {
+export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
 
   loadingBranches: boolean = false;
-  @Input() branchesFormArray: FormArray;
+  @Input() qaForm: FormGroup;
   @Input() ticket;
-  constructor() { }
+
+  repos$: Subscription;
+  allRepos: FormArray;
+
+  defaultBranchMessage: string = 'Select a Repo';
+  defaultSelectBranchMessage: string = 'Select a Branch';
+  defaultBranchLoadingMessage:string = 'Loading branches please wait...';
+
+  constructor(public store: Store<{}>, private fb: FormBuilder) { }
 
   ngOnInit() {
+    this.repos$ = this.store.pipe(select(selectRepos))
+      .subscribe((repos:Repo[]) => {
+        this.allRepos = this.fb.array(repos);
+        this.addBranch({})
+      });
   }
 
+  ngOnDestroy() {
+    this.repos$.unsubscribe();
+  }
 
   /**
 	* getter for branches array
 	* @return {FormArray}
 	*/
-  get branches(): FormArray {
-    return this.branchesFormArray.get('branches') as FormArray;
+  get selectedRepos(): FormArray {
+    return this.qaForm.get('repos') as FormArray;
   };
 
   /**
-   * Adds a new branch to the branches form array. Adds subscription to
+   * 
+   * @param value 
+   */
+  isInvalidOption(value) {
+    return [this.defaultBranchMessage, this.defaultBranchLoadingMessage, this.defaultSelectBranchMessage].includes(value);
+  }
+
+  /**
+   * Adds a new branch to the branches form array. subscribes to
    * value change on repository selection to get all branches for that repository.
-   * @param {Object} the new branch object to add to the ngForm
+   * @param {Object} newBranch the new branch object to add to the ngForm
    */
   addBranch(newBranch) {
-    let repositoryName = new FormControl(newBranch.repositoryName || '');
+    const allReposChoice = new FormControl(newBranch.repoChoice || this.defaultBranchMessage);
 
     const branch = new FormGroup({
-      allRepos: new FormArray([]),
-      allBranches: new FormArray(newBranch.allBranches || []),
-      allBranchedFrom: new FormArray(newBranch.allBranches || []),
-      repositoryName,
-      reviewedBranch: new FormControl(newBranch.reviewedBranch || ''),
-      baseBranch: new FormControl(newBranch.baseBranch || '')
+      allRepos: this.allRepos,
+      allReposChoice,
+      allBranches: new FormArray(newBranch.allBranches || [new FormControl(this.defaultBranchMessage)]),
+      allBranchesChoice: new FormControl(newBranch.allBranchesChoice || this.defaultBranchMessage),
+      allBranchedFrom: new FormArray(newBranch.allBranches || [new FormControl(this.defaultBranchMessage)]),
+      allBranchedFromChoice: new FormControl(newBranch.allBranchedFromChoice || this.defaultBranchMessage),
     });
 
-    repositoryName.valueChanges.subscribe(repoName => this.getBranches(repoName, branch));
-    this.branchesFormArray.push(branch);
+    // watch for repo cahnges to fetch branches for that repo
+    allReposChoice.valueChanges.subscribe(repoName => this.getBranches(repoName, branch));
+
+    // add new repo to array of repos
+    this.selectedRepos.push(branch);
   }
   
   /**
@@ -54,17 +85,25 @@ export class QaGeneratorBranchesComponent implements OnInit {
    * @param {number} branchIndex the index of the branch to remove from the array.
    */
   removeBranch(branchIndex: number): void {
-    this.branchesFormArray.removeAt(branchIndex);
+    this.selectedRepos.removeAt(branchIndex);
   }
 
   /**
    * gets a repository's branch list and adds it to the corresponding branch form control.
    * @param {string} repoName the name of the repository
-   * @param {FormControl} branch
+   * @param {FormGroup} branch
    */
-  getBranches(repoName, branch) {
-    branch.setControl('allBranches', this.branchesFormArray.setValue(['Loading branches please wait...']));
+  getBranches(repoName:string, branch: FormGroup) {
 
+    
+    // set loading for branches inputs 
+    branch.get('allBranches').setValue([this.defaultBranchLoadingMessage]);
+    branch.get('allBranchesChoice').setValue(this.defaultBranchLoadingMessage);
+
+    branch.get('allBranchedFrom').setValue([this.defaultBranchLoadingMessage]);
+    branch.get('allBranchedFromChoice').setValue(this.defaultBranchLoadingMessage);
+    
+    console.log({ repoName, branch });
     // this.git.getBranches(repoName).subscribe(
     //   branches => {
     //     branches.data.unshift('Select a branch');
@@ -116,7 +155,10 @@ export class QaGeneratorBranchesComponent implements OnInit {
           baseBranch: baseBranch || ''
         };
       })
-        .forEach(this.addBranch.bind(this));
+
+      // add each branch found to form
+      .forEach(this.addBranch);
+
     });
   }
 

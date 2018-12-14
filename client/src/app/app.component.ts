@@ -6,6 +6,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 
+import { ActionReposRetrieve } from '@app/core/repos';
+
 import {
   AnimationsService, routeAnimations,
   TitleService, AppState, LocalStorageService
@@ -36,12 +38,8 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild(ToastContainerDirective) toastContainer: ToastContainerDirective;
 
   constructor(
-    public overlayContainer: OverlayContainer,
-    private store: Store<AppState>,
-    private router: Router,
-    private titleService: TitleService,
-    private storageService: LocalStorageService,
-    private toastrService: ToastrService
+    public overlayContainer: OverlayContainer, private store: Store<AppState>, private router: Router,
+    private titleService: TitleService, private storageService: LocalStorageService, private toastrService: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +48,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.storageService.testLocalStorage();
 
     this.toastrService.overlayContainer = this.toastContainer;
+
+    // get init data
+    this.store.dispatch(new ActionReposRetrieve());
   }
 
   ngOnDestroy(): void {
@@ -57,6 +58,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
+  /**
+   * watch for settings changes to save the settings and set the theme
+   */
   private subscribeToSettings() {
     this.store.pipe(select(selectSettings), takeUntil(this.unsubscribe$))
       .subscribe(settings => {
@@ -65,6 +69,10 @@ export class AppComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Changes the CSS theme by setting the body class
+   * @param settings 
+   */
   private setTheme(settings: SettingsState) {
     const { theme = '' } = settings;
 
@@ -81,6 +89,9 @@ export class AppComponent implements OnInit, OnDestroy {
     classList.add(effectiveTheme);
   }
 
+  /**
+   * Watch for title changes from the router
+   */
   private subscribeToRouterEvents() {
     this.router.events.pipe(takeUntil(this.unsubscribe$)).subscribe(event => {
       if (event instanceof ActivationEnd) {

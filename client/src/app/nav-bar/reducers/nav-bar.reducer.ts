@@ -1,6 +1,6 @@
 import { 
-	NavBarActions, NavBarProfileActions, NavBarLinksActions, NavBarStatusActions,
-	NavBarActionTypes, NavBarProfileActionTypes, NavBarLinksActionTypes, NavBarStatusActionTypes
+	NavBarActions, NavBarLinksActions, NavBarStatusActions,
+	NavBarActionTypes, NavBarLinksActionTypes, NavBarStatusActionTypes
 } from '../actions';
 import { NavBarState } from '../nav-bar.model';
 
@@ -12,10 +12,6 @@ export const initialState: NavBarState = {
 	navBarItems: {},
 	navBarError: '',
 
-	loadingProfile: false,
-	profile: null,
-	profileError: '',
-
 	loadingLinks: false,
 	links: [],
 	linksError: '',
@@ -25,7 +21,7 @@ export const initialState: NavBarState = {
 	statusesError: ''
 };
 
-type Action = NavBarActions | NavBarProfileActions | NavBarLinksActions | NavBarStatusActions;
+type Action = NavBarActions | NavBarLinksActions | NavBarStatusActions;
 
 
 export function navBarReducer(state: NavBarState = initialState, action: Action): NavBarState {
@@ -37,13 +33,6 @@ export function navBarReducer(state: NavBarState = initialState, action: Action)
 			return { ...state, loading: false, navBarItems: processNavBarItems(action.payload)};
 		case NavBarActionTypes.RETRIEVE_ERROR:
 			return { ...state, loading: false, navBarError: action.payload };
-
-		case NavBarProfileActionTypes.PROFILE:
-			return { ...state, loadingProfile: true };
-		case NavBarProfileActionTypes.PROFILE_SUCCESS:
-			return { ...state, loadingProfile: false, profile: action.payload };
-		case NavBarProfileActionTypes.PROFILE_ERROR:
-			return { ...state, loadingProfile: false, profileError: action.payload };
 
 		case NavBarLinksActionTypes.LINKS:
 			return { ...state, loadingLinks: true };

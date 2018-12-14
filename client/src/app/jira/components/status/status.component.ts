@@ -7,13 +7,13 @@ import { Store, select } from '@ngrx/store';
 import { Subscription, combineLatest } from 'rxjs';
 import { distinctUntilChanged, map, tap } from 'rxjs/operators';
 
-import { selectAllStatuses, selectProfile } from '@app/nav-bar/selectors';
+import { selectAllStatuses, StatusesModel } from '@app/nav-bar';
+import { selectProfile } from '@app/core/profile';
+import { PanelComponent } from '@app/panel';
+
 import { selectStatuses } from '../../selectors';
 import { ActionStatusSave } from '../../actions';
 import { StatusTicket, StatusState } from '../../models';
-import { StatusesModel } from '@app/nav-bar/models';
-
-import { PanelComponent } from '@app/panel/components/panel/panel.component';
 import { QaGeneratorComponent } from '../qa-generator/qa-generator.component';
 
 @Component({

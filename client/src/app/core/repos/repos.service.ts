@@ -7,9 +7,9 @@ export class ReposService {
     constructor(private httpClient: HttpClient) { }
 
     /**
-     * 
+     * gets all repos available
      */
     getRepos() {
-        return this.httpClient.get(`${env.apiUrl}/jira/repos`);
+        return this.httpClient.get(`${env.apiUrl}/git/repos`);
     }
 }

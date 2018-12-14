@@ -1,5 +1,6 @@
 export interface Repo {
-    name: string;
+    id: string,
+    name: string,
 }
 
 export interface ReposState {

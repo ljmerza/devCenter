@@ -5,10 +5,10 @@ import { Subscription } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
 import { selectSettings } from '@app/settings/settings.selectors';
-import { selectProfile } from '@app/nav-bar/selectors';
-import { ActionProfile, ActionStatusRetrieve } from '@app/nav-bar/actions';
-
+import { ActionProfile, selectProfile } from '@app/core/profile';
+import { ActionStatusRetrieve } from '@app/nav-bar/actions';
 import { ActionSettingsPersist } from '@app/settings/settings.actions';
+
 import { initialState } from '@app/settings/settings.reducer';
 import { PanelComponent } from '@app/panel/components/panel/panel.component';
 import { NotificationService } from '@app/core/notifications/notification.service';

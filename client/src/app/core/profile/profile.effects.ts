@@ -4,17 +4,17 @@ import { Action } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { ActionProfile, ActionProfileSuccess, ActionProfileError, NavBarProfileActionTypes } from '../actions';
-import { NavBarProfileService } from '../services';
+import { ActionProfile, ActionProfileSuccess, ActionProfileError, ProfileActionTypes } from './profile.actions';
+import { ProfileService } from './profile.service';
 
 @Injectable()
-export class NavBarProfileEffects {
-    constructor(private actions$: Actions<Action>, private service: NavBarProfileService) { }
+export class ProfileEffects {
+    constructor(private actions$: Actions<Action>, private service: ProfileService) { }
 
     @Effect()
     getProfile = () =>
         this.actions$.pipe(
-            ofType<ActionProfile>(NavBarProfileActionTypes.PROFILE),
+            ofType<ActionProfile>(ProfileActionTypes.RETRIEVE),
             switchMap(() => {
                 return this.service.getProfile().pipe(
                     map((response: any) => new ActionProfileSuccess(response.data)),

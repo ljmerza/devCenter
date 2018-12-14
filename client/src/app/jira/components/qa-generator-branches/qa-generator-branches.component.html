@@ -1,43 +1,52 @@
-<div class="container">
-  <div class="row">
+<span [formGroup]='qaForm'>
+  <div class="container-fluid" formArrayName='repos'>
+    <div class="row" *ngFor="let repo of selectedRepos.controls; index as i" [formGroupName]="i">
+      
+      <div class="col-md-2">
+        <mat-form-field class='full-width'>
+          <mat-label *ngIf='i==0'>Repo</mat-label>
+          <mat-select formControlName="allReposChoice" name='allReposChoice'>
+            <mat-option disabled>Please choose...</mat-option>
+            <mat-option *ngFor="let repoControl of selectedRepos.value[i].allRepos" [value]="repoControl.name">
+              {{repoControl.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+  
+     <div class="col-md-4">
+        <mat-form-field class='full-width'>
+          <mat-label *ngIf='i==0'>Branch</mat-label>
+          <mat-select formControlName="allBranchesChoice" name='allBranchesChoice'>
+            <mat-option *ngFor="let branch of selectedRepos.value[i].allBranches" [value]="branch">
+              {{branch}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+  
+      <div class="col-md-4">
+        <mat-form-field class='full-width'>
+          <mat-label *ngIf='i==0'>Branched From</mat-label>
+          <mat-select formControlName="allBranchedFromChoice" name='allBranchedFromChoice'>
+            <mat-option *ngFor="let branch of selectedRepos.value[i].allBranchedFrom" [value]="branch">
+              {{branch}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+  
+      <div class="col-md-1">
+        <mat-form-field class='full-width'>
+          <mat-label *ngIf='i==0'>Delete</mat-label>
+        </mat-form-field>
+      </div>
 
-    <div class="col-md-3">
-      <mat-form-field class='full-width'>
-        <mat-label>Repo</mat-label>
-        <mat-select>
-          <mat-option disabled>Please choose...</mat-option>
-          <mat-option *ngFor="let branch of branchesFormArray" [value]="branch.value">
-            {{branch | json}}
-            {{branch.value}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <div class="col-md-6">
-      <mat-form-field class='full-width'>
-        <mat-label>Branch</mat-label>
-        <mat-select>
-          <mat-option disabled>Please choose...</mat-option>
-          <mat-option *ngFor="let branch of branchesFormArray" [value]="branch.value">
-            {{branch | json}}
-            {{branch.value}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <div class="col-md-3">
-      <mat-form-field class='full-width'>
-        <mat-label>Branched From</mat-label>
-        <mat-select>
-          <mat-option disabled>Please choose...</mat-option>
-          <mat-option *ngFor="let branch of branchesFormArray" [value]="branch.value">
-            {{branch | json}}
-            {{branch.value}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="col-md-1">
+        <mat-form-field class='full-width'>
+          <mat-label *ngIf='i==0'>Diff</mat-label>
+        </mat-form-field>
+      </div>
     </div>
   </div>
-</div>
+</span>

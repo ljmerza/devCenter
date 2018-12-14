@@ -5,8 +5,9 @@ import {
   FormBuilder, AbstractControl, ValidationErrors, FormArray 
 } from '@angular/forms';
 
+
 @Component({
-  selector: 'anms-qa-generator',
+  selector: 'dc-qa-generator',
   templateUrl: './qa-generator.component.html',
   styleUrls: ['./qa-generator.component.css']
 })
@@ -20,17 +21,14 @@ export class QaGeneratorComponent implements OnInit {
   defaultLogTime = { hour: 0, minute: 0 };
   defaultPcrNeeded = true;
 
-  constructor(public formBuilder: FormBuilder) { 
+  constructor(public fb: FormBuilder) { 
 
-    this.qaForm = this.formBuilder.group({
-      selections: this.formBuilder.group({
-        pcrNeeded: this.formBuilder.control(this.defaultPcrNeeded),
-        logTime: this.formBuilder.control(this.defaultLogTime),
-      }),
-      qaSteps: this.formBuilder.control(''),
-      branches: this.formBuilder.array([])
+    this.qaForm = this.fb.group({
+      pcrNeeded: this.fb.control(this.defaultPcrNeeded),
+      logTime: this.fb.control(this.defaultLogTime),
+      qaSteps: this.fb.control(''),
+      repos: this.fb.array([])
     });
-
   }
 
   ngOnInit() {

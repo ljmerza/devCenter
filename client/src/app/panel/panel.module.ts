@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { SharedModule } from '@app/shared';
-import { PanelComponent } from './components/panel/panel.component';
+import { PanelComponent } from './components';
 
 @NgModule({
   declarations: [PanelComponent],

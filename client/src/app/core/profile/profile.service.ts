@@ -7,7 +7,7 @@ import { selectSettings } from '@app/settings/settings.selectors';
 import { environment as env } from '@env/environment';
 
 @Injectable()
-export class NavBarProfileService {
+export class ProfileService {
     private settings$: Subscription;
     settings;
 

@@ -8,10 +8,6 @@ export interface NavBarState {
   navBarItems?: {},
   navBarError: string
 
-  loadingProfile: boolean,
-  profile: any,
-  profileError: string
-
   loadingLinks: boolean,
   links: any,
   linksError: string

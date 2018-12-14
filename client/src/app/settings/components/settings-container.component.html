@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6">
-				<mat-form-field class='full-width'>
+				<mat-form-field class='full-width' appearance="outline">
 					<mat-label>Username<span class='required'>*</span></mat-label>
 					<input matInput formControlName="username">
 					<mat-error *ngIf="username.invalid">
@@ -13,7 +13,7 @@
 			</div>
 
 			<div class="col-md-6">
-				<mat-form-field class='full-width'>
+				<mat-form-field class='full-width' appearance="outline">
 					<mat-label>Password <span class='required'>*</span></mat-label>
 					<input matInput type='password' formControlName="password">
 					<mat-error *ngIf="password.invalid">
@@ -23,7 +23,7 @@
 			</div>
 
 			<div class="col-md-6">
-				<mat-form-field class='full-width'>
+				<mat-form-field class='full-width' appearance="outline">
 					<mat-label>Port<span class='required'>*</span></mat-label>
 					<input matInput type='number' formControlName="port">
 					<mat-error *ngIf="port.invalid">
@@ -34,7 +34,7 @@
 			</div>
 
 			<div class="col-md-6">
-				<mat-form-field class='full-width'>
+				<mat-form-field class='full-width' appearance="outline">
 					<mat-label>Development Server<span class='required'>*</span></mat-label>
 					<mat-select formControlName="devServer">
 						<mat-option disabled>Please choose...</mat-option>
@@ -49,7 +49,7 @@
 			</div>
 
 			<div class="col-md-6">
-				<mat-form-field class='full-width'>
+				<mat-form-field class='full-width' appearance="outline">
 					<mat-label>Ember Url<span class='required'>*</span></mat-label>
 					<mat-select formControlName="emberUrl">
 						<mat-option disabled>Please choose...</mat-option>
@@ -64,7 +64,7 @@
 			</div>
 
 			<div class="col-md-6">
-				<mat-form-field class='full-width'>
+				<mat-form-field class='full-width' appearance="outline">
 					<mat-label>TeamDB Ember Url<span class='required'>*</span></mat-label>
 					<mat-select formControlName="teamUrl">
 						<mat-option disabled>Please choose...</mat-option>
@@ -79,7 +79,7 @@
 			</div>
 
 			<div class="col-md-6">
-				<mat-form-field class='full-width'>
+				<mat-form-field class='full-width' appearance="outline">
 					<mat-label>Template Tool Ember Url<span class='required'>*</span></mat-label>
 					<mat-select formControlName="tempUrl">
 						<mat-option disabled>Please choose...</mat-option>
@@ -94,7 +94,7 @@
 			</div>
 
 			<div class="col-md-6">
-				<mat-form-field class='full-width'>
+				<mat-form-field class='full-width' appearance="outline">
 					<mat-label>Theme</mat-label>
 					<mat-select formControlName="theme">
 						<mat-option disabled>Please choose...</mat-option>

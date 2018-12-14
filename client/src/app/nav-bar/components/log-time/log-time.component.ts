@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { environment as env } from '@env/environment';
-import { NotificationService } from '@app/core/notifications/notification.service';
 
 @Component({
   selector: 'dc-log-time',
@@ -10,7 +9,7 @@ import { NotificationService } from '@app/core/notifications/notification.servic
 export class LogTimeComponent implements OnInit {
 	showLogHours = false;
 	env = env
-	constructor(private notificationsService: NotificationService) {}
+	constructor() {}
 
 	ngOnInit(){
 		this.setFridayChecker();
