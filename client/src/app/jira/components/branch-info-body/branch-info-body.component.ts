@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 @Component({
 	selector: 'dc-branch-info-body',
 	templateUrl: './branch-info-body.component.html',
-	styleUrls: ['./branch-info-body.component.css'],
+	styleUrls: ['./branch-info-body.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BranchInfoBodyComponent {

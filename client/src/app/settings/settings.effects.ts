@@ -13,7 +13,6 @@ import {
 } from './settings.actions';
 
 import { SettingsService } from './settings.service';
-import { SettingsState } from './settings.model';
 import { initialState } from './settings.reducer';
 
 export const SETTINGS_KEY = 'SETTINGS';
@@ -29,10 +28,7 @@ export class SettingsEffects {
       this.notificationsService.info('Encrypting password');
 
       return this.service.encryptPassword(action.payload.password).pipe(
-        map((response: any) => {
-          this.notificationsService.info('Saving Settings');
-          new ActionSettingsPersist({...action.payload, password: response.data})
-        }),
+        map((response: any) =>  new ActionSettingsPersist({...action.payload, password: response.data})),
       );
     })
   );
@@ -41,6 +37,7 @@ export class SettingsEffects {
   persistSettings = this.actions$.pipe(
     ofType<ActionSettingsPersist>(SettingsActionTypes.PERSIST),
     tap(action => {
+      this.notificationsService.success('Saved Settings');
       const currentSettings = this.ls.getItem(SETTINGS_KEY) || {};
       this.ls.setItem(SETTINGS_KEY, {...initialState, ...currentSettings, ...action.payload});
     })

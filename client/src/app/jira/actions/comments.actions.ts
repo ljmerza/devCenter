@@ -24,9 +24,8 @@ export class ActionCommentSaveSucess implements Action {
 }
 export class ActionCommentSaveError implements Action {
     readonly type = CommentActionTypes.SAVE_ERROR;
-    constructor(readonly payload: any) { }
+    constructor(readonly payload: string) { }
 }
-
 
 export class ActionCommentEdit implements Action {
     readonly type = CommentActionTypes.EDIT;
@@ -38,8 +37,8 @@ export class ActionCommentEditSuccess implements Action {
 }
 export class ActionCommentEditError implements Action {
     readonly type = CommentActionTypes.EDIT_ERROR;
+    constructor(readonly payload: string) { }
 }
-
 
 export class ActionCommentDelete implements Action {
     readonly type = CommentActionTypes.DELETE;
@@ -51,6 +50,7 @@ export class ActionCommentDeleteSuccess implements Action {
 }
 export class ActionCommentDeleteError implements Action {
     readonly type = CommentActionTypes.DELETE_ERROR;
+    constructor(readonly payload: string) { }
 }
 
 export type CommentActions = ActionCommentSave

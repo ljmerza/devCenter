@@ -77,6 +77,7 @@ function createStatusTickets(ticket): StatusTicket {
         component: ticket.component,
         status: ticket.status,
         key: ticket.key,
+        msrp: ticket.msrp,
         repoName: ticket.master_branch,
         sprint: ticket.sprint,
         branch: ticket.branch,

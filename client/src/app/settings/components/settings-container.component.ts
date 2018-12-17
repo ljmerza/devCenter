@@ -105,9 +105,7 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
     // if password has changed then encrypt it first else save settings only
     if(this.settingsForm.value.password !== this.settings.password) {
       this.store.dispatch(new ActionSettingsEncryptPassword(this.settingsForm.value));
-
     } else {
-      this.notificationsService.info('Saving Settings');
       this.store.dispatch(new ActionSettingsPersist(this.settingsForm.value));
     }
 

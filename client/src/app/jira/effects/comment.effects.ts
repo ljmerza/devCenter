@@ -13,47 +13,73 @@ import {
 } from '../actions';
 
 import { CommentsService } from '../services';
+import { NotificationService } from '@app/core/notifications/notification.service';
 
 @Injectable()
 export class CommentEffects {
-    constructor(private actions$: Actions<Action>, private service: CommentsService) {}
+    constructor(private actions$: Actions<Action>, private service: CommentsService, private notifications: NotificationService) {}
 
     @Effect()
     addComment = () =>
         this.actions$.pipe(
             ofType<CommentActions>(CommentActionTypes.SAVE),
-            switchMap((action: ActionCommentSave) => 
-                this.service.addComment(action.payload).pipe(
+            switchMap((action: ActionCommentSave) => {
+                this.notifications.info(`Saving comment for ${action.payload.key}`);
+
+                return this.service.addComment(action.payload).pipe(
                     map((response: any) => {
                         response.data.key = action.payload.key; //save key for finding matching ticket
-                        return new ActionCommentSaveSucess(response.data)
+                        if (response.data.comment_response && response.data.comment_response.status) {
+                            this.notifications.success(`Successfully saved comment for ${action.payload.key}`);
+                            return new ActionCommentSaveSucess(response.data);
+                        } else {
+                            throw new Error(response);
+                        }
                     }),
                     catchError(response => of(new ActionCommentSaveError(response.data)))
-                )
-            )
+                );
+            })
         );
 
     @Effect()
     editComment = () =>
         this.actions$.pipe(
             ofType<CommentActions>(CommentActionTypes.EDIT),
-            switchMap((action: ActionCommentEdit) => 
-                this.service.editComment(action.payload).pipe(
-                    map((response: any) => new ActionCommentEditSuccess(response.data)),
-                    catchError(() => of(new ActionCommentEditError()))
-                )
-            )
+            switchMap((action: ActionCommentEdit) => {
+                this.notifications.info(`Saving edited comment ${action.payload.comment_id} for ${action.payload.key}`);
+                
+                return this.service.editComment(action.payload).pipe(
+                    map((response: any) => {
+                        if (response.status) {
+                            this.notifications.success(`Successfully edited comment ${action.payload.comment_id} for ${action.payload.key}`);
+                            return new ActionCommentEditSuccess(response.data);
+                        } else {
+                            throw new Error(response);
+                        }
+                    }),
+                    catchError(response => of(new ActionCommentEditError(response.data)))
+                );
+            })
         );
 
     @Effect()
     deleteComment = () =>
         this.actions$.pipe(
             ofType<CommentActions>(CommentActionTypes.DELETE),
-            switchMap((action: ActionCommentDelete) => 
-                this.service.deleteComment(action.payload).pipe(
-                    map((response: any) => new ActionCommentDeleteSuccess(response.data)),
-                    catchError(() => of(new ActionCommentDeleteError()))
-                )
-            )
+            switchMap((action: ActionCommentDelete) => { 
+                this.notifications.info(`Deleting comment ${action.payload.commentId} for ${action.payload.key}`);
+
+                return this.service.deleteComment(action.payload).pipe(
+                    map((response: any) => {
+                        if (response.status) {
+                            this.notifications.success(`Successfully deleted comment ${action.payload.comment_id} for ${action.payload.key}`);
+                            return new ActionCommentDeleteSuccess(response.data);
+                        } else {
+                            throw new Error(response);
+                        }
+                    }),
+                    catchError(response => of(new ActionCommentDeleteError(response.data)))
+                );
+            })
         );
 }

@@ -4,6 +4,7 @@ export interface StatusTicket {
     component: string,
     status: string,
     key: string,
+    msrp: string,
     pcrCountLeft: string,
     pullRequests: Array<PullRequest>,
     repoName: string,

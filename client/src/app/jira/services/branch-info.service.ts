@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment as env } from '@env/environment';
@@ -21,5 +21,21 @@ export class BranchInfoService {
 	sendPing({key, pingType, epicLink, username}): Observable<any> {
 		const postData = { key, ping_type:pingType, username, epic_link: epicLink };
 		return this.httpClient.post(`${env.apiUrl}/chat/send_ping`, postData);
+	}
+
+	/**
+	 * gets a repository's branch list.
+	 * @param {string} repoName the name of the repository to get all its branches.
+	 */
+	getRepoBranches(repoName): Observable<any> {
+		return this.httpClient.get(`${env.apiUrl}/git/repo/${repoName}`);
+	}
+
+	/**
+	 * gets a Jira ticket's related Git branches.
+	 * @param {string} mrsp the msrp of the ticket to get Git info from.
+	 */
+	getTicketBranches(msrp: string): Observable<any> {
+		return this.httpClient.get(`${env.apiUrl}/git/branches/${msrp}`);
 	}
 }
