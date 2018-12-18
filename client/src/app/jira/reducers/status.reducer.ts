@@ -6,6 +6,7 @@ export const initialStatusState: StatusState = {
     loading: false,
     tickets: [],
     error: '',
+    allStatuses: []
 };
 
 export function StatusReducer(state: StatusState = initialStatusState, action: StatusActions | TicketsActions): StatusState {

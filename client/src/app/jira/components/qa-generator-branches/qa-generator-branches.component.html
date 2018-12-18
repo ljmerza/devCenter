@@ -42,7 +42,7 @@
         </div>
 
         <div class="col-md-1">
-            <i class="material-icons pointer form-icon">delete</i>
+          <a class='form-icon' target='_blank' href='{{selectedRepos.value[i].diffLink}}' *ngIf='selectedRepos.value[i].diffLink'>Diff</a>
         </div>
       </div>
     </div>
