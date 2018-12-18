@@ -38,6 +38,8 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.repos$ = this.store.pipe(select(selectRepos))
       .subscribe((repos:Repo[]) => {
+        repos = Array.from(repos);
+        repos.unshift({name: this.defaultBranchMessage});
         this.allRepos = this.fb.array(repos);
       });
     
