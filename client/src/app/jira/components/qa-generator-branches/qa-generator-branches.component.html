@@ -7,7 +7,6 @@
           <mat-form-field class='full-width'>
             <mat-label *ngIf='i==0'>Repo</mat-label>
             <mat-select formControlName="allReposChoice" name='allReposChoice'>
-              <mat-option disabled>Please choose...</mat-option>
               <mat-option *ngFor="let repoControl of selectedRepos.value[i].allRepos" [value]="repoControl.name">
                 {{repoControl.name}}
               </mat-option>
@@ -43,6 +42,12 @@
 
         <div class="col-md-1">
           <a class='form-icon' target='_blank' href='{{selectedRepos.value[i].diffLink}}' *ngIf='selectedRepos.value[i].diffLink'>Diff</a>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+            <i class="material-icons pointer" (click)="addRepo({})">add_box</i> Add Repo
         </div>
       </div>
     </div>

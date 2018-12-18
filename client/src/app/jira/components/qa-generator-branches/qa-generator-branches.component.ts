@@ -27,6 +27,8 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
   repos$: Subscription;
   allRepos: FormArray;
 
+  getRepos$: Subscription; 
+
   defaultBranchMessage: string = 'Select a Repo';
   defaultSelectBranchMessage: string = 'Select a Branch';
   defaultBranchLoadingMessage:string = 'Loading branches please wait...';
@@ -69,7 +71,7 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
    * value change on repository selection to get all branches for that repository.
    * @param {Object} newBranch the new branch object to add to the ngForm
    */
-  addBranch(newBranch) {
+  addRepo(newBranch) {
     const { repoChoice='', allBranches='', allBranchesChoice='', allBranchedFromChoice='' } = newBranch;
 
     const repo = new FormGroup({
@@ -159,7 +161,7 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
     this.loadingBranches = true;
 
     // get all branches associated with this msrp
-    this.gitService.getTicketBranches(this.ticket.msrp).subscribe(
+    this.getRepos$ = this.gitService.getTicketBranches(this.ticket.msrp).subscribe(
       response => {
         this.processBranches(response.data);
         this.loadingBranches = false;
@@ -169,6 +171,14 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
         this.loadingBranches = false;
       }
     );
+  }
+
+  /**
+   * cancels getting the ticket's branches
+   */
+  cancelGetTiccketBrances(){
+    this.getRepos$.unsubscribe();
+    this.loadingBranches = false;
   }
 
   /**
@@ -196,7 +206,7 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
         };
       })
       // add each branch found to form
-      .forEach(this.addBranch.bind(this));
+      .forEach(this.addRepo.bind(this));
 
     });
   }
