@@ -15,22 +15,19 @@ export function CommentsReducer(state: CommentState = initialCommentState, actio
             return { ...state, tickets: processCommentTickets(action.payload, state.tickets, action.payload.ticketType)};
 
         case CommentActionTypes.SAVE_SUCCESS:
-            const processedState = processAddLog(action.payload, state.tickets);
-            return { ...state, loading: false, ...processedState };
+            return { ...state, loading: false, tickets: processAddLog(action.payload, state.tickets) };
 
         case CommentActionTypes.SAVE_ERROR:
             return { ...state, loading: false, error: action.payload };
 
         case CommentActionTypes.EDIT_SUCCESS:
-            const editedCommentsTickets = replaceEditedComment(action.payload, state.tickets);
-            return { ...state, loading: false, tickets: editedCommentsTickets };
+            return { ...state, loading: false, tickets: replaceEditedComment(action.payload, state.tickets) };
 
         case CommentActionTypes.EDIT_ERROR:
             return { ...state, loading: false };
 
         case CommentActionTypes.DELETE_SUCCESS:
-            const deletedCommentsTickets = deleteComment(action.payload, state.tickets);
-            return { ...state, loading: false, tickets: deletedCommentsTickets };
+            return { ...state, loading: false, tickets: deleteComment(action.payload, state.tickets) };
 
         case CommentActionTypes.DELETE_ERROR:
             return { ...state, loading: false };
@@ -134,14 +131,14 @@ function replaceEditedComment(newComment, tickets) {
  * @param tickets
  */
 function processAddLog(addLogResponse, tickets) {
-    const newTickets = { tickets };
+    let newTickets:CommentTicket[] = Array.from(tickets);
 
     // add new comment if successful
     if (addLogResponse.comment_response.status) {
-        newTickets.tickets = tickets.map(ticket => {
-            ticket = { ...ticket };
-
+        newTickets = newTickets.map((ticket: CommentTicket) => {
+            
             if (ticket.key === addLogResponse.key) {
+                ticket = { ...ticket };
                 ticket.comments = Array.from(ticket.comments);
                 const newComment = addLogResponse.comment_response.data;
                 ticket.comments.push(newComment);
@@ -153,29 +150,18 @@ function processAddLog(addLogResponse, tickets) {
 
     // add work-log if successful
     if (addLogResponse.log_response.status) {
-        newTickets.tickets = tickets.map(ticket => {
-            ticket = { ...ticket };
-
+        newTickets = newTickets.map((ticket: CommentTicket) => {
+            
             if (ticket.key === addLogResponse.key) {
+                ticket = { ...ticket };
+                ticket.dates = { ...ticket.dates };
                 const timeSpentSeconds = addLogResponse.log_response.data.timeSpentSeconds;
-                ticket.logged_seconds = parseInt(ticket.logged_seconds) + timeSpentSeconds || 0;
+                ticket.dates.logged_seconds = ticket.dates.logged_seconds + timeSpentSeconds || 0;
             }
 
             return ticket;
         });
     }
-
-    // // change status if merge conflict successful
-    // if(addLogResponse.conflict_response.status){
-    //     const newStatus = addLogResponse.conflict_response.data;
-
-    // }
-
-    // // change status if merge successful
-    // if(addLogResponse.merge_response.status){
-    //     const newStatus = addLogResponse.merge_response.data;
-
-    // }
 
     return newTickets;
 }

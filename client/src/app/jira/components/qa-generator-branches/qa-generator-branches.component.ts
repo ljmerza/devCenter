@@ -42,9 +42,6 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
         repos.unshift({name: this.defaultBranchMessage});
         this.allRepos = this.fb.array(repos);
       });
-    
-      // if we have no branches selected then try to auto get them
-    if (!this.selectedRepos.length) this.getTicketBranches();
   }
 
   ngOnDestroy() {
@@ -164,21 +161,16 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
 
     // get all branches associated with this msrp
     this.getRepos$ = this.gitService.getTicketBranches(this.ticket.msrp).subscribe(
-      response => {
-        this.processBranches(response.data);
-        this.loadingBranches = false;
-      },
-      error => {
-        this.notifications.error(`Could not get ticket branches: ${error.data}`);
-        this.loadingBranches = false;
-      }
+      response => this.processBranches(response.data),
+      error => this.notifications.error(`Could not get ticket branches: ${error.data}`), 
+      () => this.loadingBranches = false
     );
   }
 
   /**
    * cancels getting the ticket's branches
    */
-  cancelGetTiccketBrances(){
+  cancelGetTicketBrances(){
     this.getRepos$.unsubscribe();
     this.loadingBranches = false;
   }

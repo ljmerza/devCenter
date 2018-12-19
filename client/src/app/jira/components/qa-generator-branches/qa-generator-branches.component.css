@@ -1,3 +1,12 @@
 .form-icon {
     padding-top: 20px;
 }
+
+.qa-add-repo {
+    margin-top: 10px
+}
+
+.align-center {
+    margin-left: 50%;
+    transform: translateX(-50%);
+}

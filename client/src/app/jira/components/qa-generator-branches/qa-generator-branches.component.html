@@ -36,20 +36,29 @@
           </mat-form-field>
         </div>
     
-        <div class="col-md-1">
-            <i class="material-icons pointer form-icon" (click)="removeBranch(i)">delete</i>
+        <div class="col-md-1 form-icon">
+          <i class="material-icons pointer qa-delete-icon" (click)="removeBranch(i)">delete</i>
         </div>
 
-        <div class="col-md-1">
-          <a class='form-icon' target='_blank' href='{{selectedRepos.value[i].diffLink}}' *ngIf='selectedRepos.value[i].diffLink'>Diff</a>
+        <div class="col-md-1 form-icon">
+          <a target='_blank' href='{{selectedRepos.value[i].diffLink}}' *ngIf='selectedRepos.value[i].diffLink'>Diff</a>
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-12">
-            <i class="material-icons pointer" (click)="addRepo({})">add_box</i> Add Repo
+        <div class="col-md-12 qa-add-repo">
+          <i class="material-icons pointer qa-add-repo-icon" (click)="addRepo({})">add_box</i> 
+          <span>Add Repo</span>
         </div>
       </div>
     </div>
   </span>
 </dc-loading-details>
+
+<div class="container-fluid" *ngIf='loadingBranches'>
+  <div class="row">
+    <div class="col-md-12">
+        <mat-icon class='align-center' color="warn" title='Stop' (click)="cancelGetTicketBrances()">highlight_off</mat-icon>
+      </div>
+  </div>
+</div>

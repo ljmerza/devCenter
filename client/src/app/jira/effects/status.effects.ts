@@ -57,6 +57,11 @@ export class StatusEffects {
             successMessage += success;
         }
 
+        if (response.data.commit_comment) {
+            const success = this.commitResponse(response.data);
+            successMessage += success;
+        }
+
         // open each pull request
         if (response.data.set_pcr_working) {
             action.payload.pullRequests.forEach(pullRequest => {
@@ -118,12 +123,33 @@ export class StatusEffects {
             actionDispatched = new ActionStatusSaveSuccess(response.data);
 
         } else {
-            let error = `Failed to update status:<br>${response.data}`;
+            const error = `Failed to update status:<br>${response.data}`;
             this.notifications.error(error);
             actionDispatched = new ActionStatusSaveError(error);
         }
 
         return { success, actionDispatched};
+    }
+
+    /**
+     * 
+     * @param response 
+     */
+    commitResponse(response){
+        let success = this.commentResponse(response.commit_comment);
+
+        if (response.commit_ids && response.commit_ids.status){
+            success += `The following commits have been added to Jira:<br>`
+            response.commit_ids.data.forEach(commit => {
+                success += `${commit.repo_name}: ${commit.commit_id}<br>`;
+            });
+            
+        } else {
+            const error = `Failed to add commits to Jira:<br>${response.data}`;
+            this.notifications.error(error);
+        }
+
+        return success;
     }
 
     /**
@@ -180,15 +206,16 @@ export class StatusEffects {
 
     /**
      * 
+     * @param response 
      */
     commentResponse(response){
         if (response.status) {
             new ActionCommentSaveSucess(response.data);
-            return `Added comment ${response.data.raw_comment} to ${response.data.key}<br><br>`;
+            return `Added comment to ${response.data.key}<br><br>`;
 
         } else {
             new ActionCommentSaveError(response.data);
-            let error = `Failed to add comment ${response.data.raw_comment} to ${response.data.key}`;
+            let error = `Failed to add comment to ${response.data.key}`;
             this.notifications.error(error);
             return;
         }

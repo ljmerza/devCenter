@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ChangeDetectorRef } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
@@ -9,8 +9,7 @@ import { CommentTicket, TicketDate } from '../../models';
 @Component({
   selector: 'dc-logged',
   templateUrl: './logged.component.html',
-  styleUrls: ['./logged.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./logged.component.css']
 })
 export class LoggedComponent implements OnInit, OnDestroy {
   dates: TicketDate;
@@ -25,10 +24,7 @@ export class LoggedComponent implements OnInit, OnDestroy {
       map((tickets: CommentTicket[]) => tickets.find(ticket => ticket.key === this.key)),
         distinctUntilChanged()
       )
-      .subscribe((ticket: CommentTicket) => {
-        this.dates = ticket && ticket.dates;
-        this.cd.markForCheck();
-      });
+      .subscribe((ticket: CommentTicket) => this.dates = ticket && ticket.dates);
   }
 
   ngOnDestroy(){

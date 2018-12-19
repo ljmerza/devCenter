@@ -28,6 +28,8 @@ export class StatusComponent implements OnDestroy, OnInit {
   profile$: Subscription;
   profile;
 
+  qaCancel$: Subscription;
+
   statuses$: Subscription;
   statuses: StatusesModel[] = [];
   ticket: StatusTicket;
@@ -41,8 +43,7 @@ export class StatusComponent implements OnDestroy, OnInit {
   borderColor: string = '';
   loading: boolean = false;
 
-  // matching string to show branch info
-  branchInfoMatcherCode: string = '';
+  showBranchInfo;
   qaGeneratorRef;
 
 
@@ -70,8 +71,9 @@ export class StatusComponent implements OnDestroy, OnInit {
   }
 
   ngOnDestroy() {
-    this.profile$.unsubscribe();
-    this.statuses$.unsubscribe();
+    this.profile$ && this.profile$.unsubscribe();
+    this.statuses$ && this.statuses$.unsubscribe();
+    this.qaCancel$ && this.qaCancel$.unsubscribe();
   }
 
   /**
@@ -82,7 +84,6 @@ export class StatusComponent implements OnDestroy, OnInit {
 
     this.ticket = ticket;
     this.statuses = statuses;
-
     
     // get matching status object - fall back on component so we at least also show something
     const status: string = ticket.status || ticket.component;
@@ -110,6 +111,8 @@ export class StatusComponent implements OnDestroy, OnInit {
 
     const matchingStatus: StatusesModel = this.statuses.find(allStatus => allStatus.status_code === event.value);
     if (matchingStatus) this.changedStatusName = matchingStatus.status_name || '';
+
+    this.showBranchInfo = this.changedStatusCode === 'uctReady';
     this.modal.openModal();
   }
 
@@ -125,7 +128,9 @@ export class StatusComponent implements OnDestroy, OnInit {
       statusType: this.changedStatusCode,
       status: this.changedStatusName,
       repoName: this.ticket.repoName,
-      pullRequests: this.ticket.pullRequests
+      pullRequests: this.ticket.pullRequests,
+      addCommits: this.changedStatusCode === 'uctReady',
+      masterBranch: this.ticket.repoName
     }));
   }
 
@@ -147,9 +152,11 @@ export class StatusComponent implements OnDestroy, OnInit {
       this.qaGeneratorRef = this.viewContRef.createComponent(factory);
       (<QaGeneratorComponent>this.qaGeneratorRef.instance).ticket = this.ticket;
       (<QaGeneratorComponent>this.qaGeneratorRef.instance).profile = this.profile;
+      this.qaCancel$ = (<QaGeneratorComponent>this.qaGeneratorRef.instance).cancel
+        .subscribe(() => this.confirmCancelStatus());
     }
 
-    (<QaGeneratorComponent>this.qaGeneratorRef.instance).modal.openModal();
+    (<QaGeneratorComponent>this.qaGeneratorRef.instance).openModal();
   }
 
 }

@@ -12,7 +12,7 @@
         Are you sure you want to change the ticket status for <span class='status-highlight'>{{key}}</span> from <span class='status-highlight'>{{originalStatusName}}</span> to <span class='status-highlight'>{{changedStatusName}}</span>?
         
         <dc-branch-info-body 
-            *ngIf='changedStatusCode === branchInfoMatcherCode' 
+            *ngIf='showBranchInfo' 
             [sprint]=ticket?.sprint 
             [branch]=ticket?.branch 
             [commit]=ticket?.commit 

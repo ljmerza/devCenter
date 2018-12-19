@@ -62,7 +62,6 @@ export class AddLogComponent implements OnInit, OnDestroy {
 		this.modal.closeModal();
 		if(!formObj) return;
 
-
 		let {comment='', conflictCode=false, uctNotReady=false} = formObj.value;
 		const logTime = formObj.value.logTime.hour * 60 + formObj.value.logTime.minute;
 
@@ -73,6 +72,7 @@ export class AddLogComponent implements OnInit, OnDestroy {
 		this.loading = true;
 		this.store.dispatch(new ActionCommentSave({
 			comment,
+			uctNotReady,
 			remove_conflict: conflictCode,
 			log_time: logTime,
 			key: this.ticket.key,
@@ -80,7 +80,9 @@ export class AddLogComponent implements OnInit, OnDestroy {
 		}));
 	}
 
-
+	/**
+	 * reset the form
+	 */
 	resetForm(){
 		this.uctNotReady = false;
 		this.conflictCode = false;
@@ -89,5 +91,4 @@ export class AddLogComponent implements OnInit, OnDestroy {
 		this.hourStep = 1;
 		this.minuteStep = 15;
 	}
-
 }

@@ -1,4 +1,4 @@
-<dc-panel [modalSize]='"md"'>
+<dc-panel [modalSize]='"xl"'>
   <div class='modal-header'>QA Generator for {{ticket?.key}}</div>
 
   <span class='modal-body'>
@@ -9,14 +9,35 @@
         <dc-qa-generator-branches [qaForm]=qaForm [ticket]=ticket></dc-qa-generator-branches>
       </mat-card>
 
-      <!-- qa steps -->
+      <mat-card class='mat-elevation-z8 section'>
+        <div class="row">
+          <!-- qa step -->
+          <div class="col-md-10">
+            <mat-label>QA Steps</mat-label>
+            <textarea class='full-width' name="qaSteps" formControlName='qaSteps' rows="15"></textarea>
+          </div>
 
-      <!-- time log / set to PCR needed -->
+          <!-- log time -->
+          <div class="col-md-2">
+            <mat-label>Log Time</mat-label>
+            <span class='dc-time-picker'>
+              <ngb-timepicker name="logTime" formControlName="logTime" [hourStep]="hourStep" [minuteStep]="minuteStep">
+              </ngb-timepicker>
+            </span>
+          </div>
+        </div>
+      </mat-card>
+
     </form>
   </span>
 
-  <span class='modal-footer align-footer'>
-  
+  <span class="modal-footer align-footer">
+    <button mat-raised-button color='primary' (click)="onSubmit()">
+      Submit
+    </button>
+    <button mat-raised-button color='warn' (click)="cancelGenerator()">
+      Cancel
+    </button>
   </span>
 
 </dc-panel>

@@ -90,7 +90,7 @@ export class PanelComponent implements OnDestroy {
       case 'lg':
         return { width: '60%', height: '70%' };
       case 'xl':
-        return { width: 'auto', height: 'auto' };
+        return { width: '80%', height: '80%' };
       default:
         return { width: 'auto', height: 'auto' };
     }
@@ -100,7 +100,7 @@ export class PanelComponent implements OnDestroy {
 	 * closes jsPanel dialog
 	 */
   closeModal():void {
-    this._jspanel.close();
+    this._jspanel && this._jspanel.close();
   }
 
 }

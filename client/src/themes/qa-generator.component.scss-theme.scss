@@ -1,0 +1,14 @@
+@import '~@angular/material/theming';
+
+@mixin dc-qa-generator-component-theme($theme) {
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  .qa-delete-icon {
+    color: mat-color($warn);
+  }
+
+  .qa-add-repo-icon {
+    color: mat-color($accent);
+  }
+}

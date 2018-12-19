@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -9,7 +9,8 @@ import {
     ActionCommentSave, ActionCommentSaveSucess, ActionCommentSaveError,
     ActionCommentEdit, ActionCommentEditSuccess, ActionCommentEditError,
     ActionCommentDelete, ActionCommentDeleteSuccess, ActionCommentDeleteError,
-    CommentActions, CommentActionTypes
+    CommentActions, CommentActionTypes,
+    ActionStatusSaveSuccess
 } from '../actions';
 
 import { CommentsService } from '../services';
@@ -17,26 +18,21 @@ import { NotificationService } from '@app/core/notifications/notification.servic
 
 @Injectable()
 export class CommentEffects {
-    constructor(private actions$: Actions<Action>, private service: CommentsService, private notifications: NotificationService) {}
+    constructor(public store: Store<{}>, private actions$: Actions<Action>, private service: CommentsService, private notifications: NotificationService) {}
 
-    @Effect()
+    @Effect({dispatch: false})
     addComment = () =>
         this.actions$.pipe(
             ofType<CommentActions>(CommentActionTypes.SAVE),
             switchMap((action: ActionCommentSave) => {
-                this.notifications.info(`Saving comment for ${action.payload.key}`);
+                this.savingNotification(action);
 
                 return this.service.addComment(action.payload).pipe(
-                    map((response: any) => {
-                        response.data.key = action.payload.key; //save key for finding matching ticket
-                        if (response.data.comment_response && response.data.comment_response.status) {
-                            this.notifications.success(`Successfully saved comment for ${action.payload.key}`);
-                            return new ActionCommentSaveSucess(response.data);
-                        } else {
-                            throw new Error(response);
-                        }
+                    map(response => {
+                        console.log(response);
+                        this.processSaveLog(response.data, action)
                     }),
-                    catchError(response => of(new ActionCommentSaveError(response.data)))
+                    // catchError(response => of(new ActionCommentSaveError(response.data)))
                 );
             })
         );
@@ -50,12 +46,8 @@ export class CommentEffects {
                 
                 return this.service.editComment(action.payload).pipe(
                     map((response: any) => {
-                        if (response.status) {
-                            this.notifications.success(`Successfully edited comment ${action.payload.comment_id} for ${action.payload.key}`);
-                            return new ActionCommentEditSuccess(response.data);
-                        } else {
-                            throw new Error(response);
-                        }
+                        this.notifications.success(`Successfully edited comment ${action.payload.comment_id} for ${action.payload.key}`);
+                        return new ActionCommentEditSuccess(response.data);
                     }),
                     catchError(response => of(new ActionCommentEditError(response.data)))
                 );
@@ -71,15 +63,74 @@ export class CommentEffects {
 
                 return this.service.deleteComment(action.payload).pipe(
                     map((response: any) => {
-                        if (response.status) {
-                            this.notifications.success(`Successfully deleted comment ${action.payload.comment_id} for ${action.payload.key}`);
-                            return new ActionCommentDeleteSuccess(response.data);
-                        } else {
-                            throw new Error(response);
-                        }
+                        this.notifications.success(`Successfully deleted comment ${action.payload.comment_id} for ${action.payload.key}`);
+                        return new ActionCommentDeleteSuccess(response.data);
                     }),
                     catchError(response => of(new ActionCommentDeleteError(response.data)))
                 );
             })
         );
+
+    /**
+     * generate notification for add log dialog
+     * @param action 
+     */
+    savingNotification(action){
+        let message = 'Performing the following actions:<br>';
+
+        if(action.payload.comment){
+            message += `Adding comment for ${action.payload.key}<br>`;
+        }
+        
+        if(action.payload.log_time){
+            const hours = action.payload.log_time >= 60 ? parseInt(action.payload.log_time) / 60 : 0;
+            const minutes = parseInt(action.payload.log_time) % 60;
+            message += `Adding time log of ${hours} hours and ${minutes} minutes<br>`;
+        }
+
+        if (action.payload.remove_merge) {
+            message += `Removing merge conflict component<br>`;
+        }
+
+        if (action.payload.uctNotReady) {
+            message += `Adding UCT not ready to comment<br>`;
+        }
+
+        this.notifications.info(message);
+    }
+
+    /**
+     * process API response for add log
+     * @param response 
+     * @param action 
+     */
+    processSaveLog(response, action){
+        response.key = action.payload.key; 
+        let message = 'Successfully completed the following actions:<br>';
+
+        const success_comment = response.comment_response && response.comment_response.status;
+        if (success_comment) {
+            message += `Saved comment<br>`;
+        }
+
+        const success_log = response.log_response && response.log_response.status;
+        if (response.log_response && response.log_response.status) {
+            message += `Added time log<br>`;
+        }
+
+        if (success_comment || success_log){
+            this.store.dispatch(new ActionCommentSaveSucess(response));
+        }
+
+        if (response.conflict_response && response.conflict_response.status) {
+            message += `Changed status to Merge Conflict<br>`;
+            this.store.dispatch(new ActionStatusSaveSuccess(response.conflict_response));
+
+        } else if (response.merge_response && response.merge_response.status){
+            message += `Changed status to Merge Code<br>`;
+            this.store.dispatch(new ActionStatusSaveSuccess(response.merge_response));
+        }
+        
+        this.notifications.success(message);
+    }
 }
