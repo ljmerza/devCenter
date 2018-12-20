@@ -32,7 +32,7 @@ export class CommentEffects {
                         console.log(response);
                         this.processSaveLog(response.data, action)
                     }),
-                    // catchError(response => of(new ActionCommentSaveError(response.data)))
+                    catchError(response => of(new ActionCommentSaveError(response.data)))
                 );
             })
         );
@@ -123,11 +123,13 @@ export class CommentEffects {
         }
 
         if (response.conflict_response && response.conflict_response.status) {
-            message += `Changed status to Merge Conflict<br>`;
+            message += `Removed Merge Conflict component<br>`;
             this.store.dispatch(new ActionStatusSaveSuccess(response.conflict_response));
 
-        } else if (response.merge_response && response.merge_response.status){
-            message += `Changed status to Merge Code<br>`;
+        }
+        
+        if (response.merge_response && response.merge_response.status){
+            message += `Removed  Merge Code component<br>`;
             this.store.dispatch(new ActionStatusSaveSuccess(response.merge_response));
         }
         

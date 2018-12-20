@@ -5,7 +5,7 @@
 </mat-select>
 
 
-<dc-panel [modalSize]='"md"'>
+<dc-panel [modalSize]='"md"' (modalCloseEvent)='confirmCancelStatus()'>
     <div class='modal-header'>{{key}} Status</div>
 
     <span class='modal-body'>

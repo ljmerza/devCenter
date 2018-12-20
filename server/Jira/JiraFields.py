@@ -428,7 +428,7 @@ def get_history(issue):
 	for history in histories:
 		items = history.get('items')
 		status = items[0].get('field')
-		if len(items) and status in ['status', 'Component'] :
+		if len(items) and status in ['status', 'Component']:
 				formatted_history['status'].append(history)
 
 	# sort by created date

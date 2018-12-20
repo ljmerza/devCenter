@@ -13,6 +13,8 @@ export interface StatusTicket {
     commit: string,
     epicLink: string,
     ticketType?: string,
+    storyPoint: string,
+    summary: string,
 }
 
 export interface PullRequest {

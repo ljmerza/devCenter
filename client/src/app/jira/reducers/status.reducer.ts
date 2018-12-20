@@ -84,7 +84,9 @@ function createStatusTickets(ticket): StatusTicket {
         branch: ticket.branch,
         commit: ticket.commit,
         epicLink: ticket.epicLink,
-        ticketType: ticket.ticketType
+        ticketType: ticket.ticketType,
+        storyPoint: ticket.story_point,
+        summary: ticket.summary,
     };
 }
 

@@ -5,3 +5,5 @@ ng-devCenter/src/environments
 server/APIs/data/
 
 client/src/environments/baseEnvironment.ts
+ticket_history/node_modules/
+ticket_history/keys.js

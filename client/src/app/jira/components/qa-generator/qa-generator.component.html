@@ -1,4 +1,4 @@
-<dc-panel [modalSize]='"xl"'>
+<dc-panel [modalSize]='"lg"' (modalCloseEvent)='cancelGenerator()'>
   <div class='modal-header'>QA Generator for {{ticket?.key}}</div>
 
   <span class='modal-body'>
