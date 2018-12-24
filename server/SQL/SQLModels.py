@@ -118,4 +118,12 @@ class Statuses(Modal):
 	constant = Column(VARCHAR(20))
 	color = Column(VARCHAR(20))
 	auto_transition = Column(SMALLINT)
+
+class TicketHistory(Modal):
+	__tablename__ = 'ticket_history'
+	key = Column(VARCHAR(30), primary_key=True)
+	assignee = Column(VARCHAR(30))
+	time_tracking = Column(TEXT(charset='utf8'))
+	changelog = Column(TEXT(charset='utf8'))
+	fix_version = Column(TEXT(charset='utf8'))
 	

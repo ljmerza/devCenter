@@ -77,7 +77,12 @@ def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no
 		# if 401 then invalid password
 		if response.status_code == 401:
 			return Response(json.dumps({'status': False, 'data': 'Invalid username and/or password'}), status=401, mimetype='application/json')
+
+		if response.status_code == 404:
+			return Response(json.dumps({'status': False, 'data': 'API route not found'}), status=401, mimetype='application/json')
+
 		status=200
+
 		# if we have response data then overwrite data
 		if response and len(response.response):
 			data = json.dumps(response.response)

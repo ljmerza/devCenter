@@ -21,6 +21,15 @@ def get_statuses(devdb, sql_echo):
 		'data': sql_obj.get_statuses()
 	}
 
+def get_ticket_history(devdb, sql_echo):
+	'''gets all navbar items
+	'''
+	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
+	return {
+		'status': True,
+		'data': sql_obj.get_ticket_history()
+	}
+
 def get_jql_links(devdb, sql_echo):
 	'''gets all navbar items
 	'''

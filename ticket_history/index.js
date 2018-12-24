@@ -70,22 +70,27 @@ async function saveTicket(ticket){
         connection.query(searchQuery, function (error, results, fields) {
             if (error) return reject(error);
             
-            if (results.length) {
-                return resolve();
-            }
-
-            // insert new ticket   
             const timeTracking = JSON.stringify(ticket.fields.timetracking || {});
             const fixVersions = formatFixVersion(ticket.fields.fixVersions || {})
             const histories = formatHistory(ticket.changelog.histories || []);
             const assignee = ticket.fields.assignee && ticket.fields.assignee.name || '';
-
-            const insertQuery = `INSERT INTO ${keys.dbTable} (\`key\`, assignee, time_tracking, changelog, fix_version) VALUES (?,?,?,?,?)`;
             
-            connection.query(insertQuery, [ticket.key, assignee, timeTracking, histories, fixVersions], function (error, results, fields) {
+            let query = `INSERT INTO ${keys.dbTable} (assignee, time_tracking, changelog, fix_version, \`key\`) VALUES (?,?,?,?,?)`;
+            let updateType = 'INSERT';
+
+            if (results.length) {
+                query = `UPDATE ${keys.dbTable} SET assignee = ?, time_tracking = ?, changelog = ?, fix_version = ? WHERE \`key\` = ?`;
+                updateType = 'UPDATE';
+            }
+
+            console.log(`${updateType} ${ticket.key}`);
+            connection.query(query, [assignee, timeTracking, histories, fixVersions, ticket.key], error => {
                 if (error) return reject(error);
                 return resolve();
-            })
+            });
+
+            
+            
         });
     });
 }
@@ -135,28 +140,26 @@ function formatFixVersion(fixVersion){
         listIndexes.push(startAt);
     }
 
-
     for await (let startAt of listIndexes) {
         const url = generateJiraUrl(startAt);
-        console.log(startAt);
 
         try {
             const tickets = await getTickets(url);
             console.log(`found ${tickets.length} tickets`);
+
+            if (tickets.length == 0) {
+                connection.end();
+                return;
+            }
             
             for await(let ticket of tickets){
                 await saveTicket(ticket);
             }
 
-            // if (tickets.length <= keys.jiraTicketParams.maxResults) {
-            //     break;
-            // }
-
         } catch(e){
             console.log(e);
         }
-
     }
 
     connection.end();
-})()
+})();

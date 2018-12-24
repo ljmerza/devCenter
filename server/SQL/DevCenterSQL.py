@@ -6,6 +6,7 @@ from .SQLTickets import SQLTickets
 from .SQLUsers import SQLUsers
 from .SQLNavBar import SQLNavBar
 from .Statuses import Statuses
+from .TicketHistory import TicketHistory
 from .SQLModels import ErrorLogs
 from .Misc import Misc
 
@@ -13,7 +14,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import inspect, create_engine
 
-class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses):
+class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistory):
 
 	def __init__(self, devdb, sql_echo):
 		self.project_managers = os.environ['PM'].split(',')

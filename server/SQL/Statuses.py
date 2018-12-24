@@ -3,9 +3,7 @@
 from .SQLModels import Statuses as StatusModel
 
 class Statuses():
-	def __init__(self, project_managers):
-		self.project_managers = project_managers
-
+		
 	def get_statuses(self):
 
 		session = self.login()

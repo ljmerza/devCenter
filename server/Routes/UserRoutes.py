@@ -3,7 +3,7 @@
 from flask import Response, request
 from flask_cors import cross_origin
 
-from Requests.UserRequests import set_navbar_item, get_navbar_items, get_jql_links, get_statuses
+from Requests.UserRequests import set_navbar_item, get_navbar_items, get_jql_links, get_statuses, get_ticket_history
 from Requests.JiraRequests import get_profile
 
 def define_routes(app, app_name, g, devdb, sql_echo):
@@ -38,4 +38,10 @@ def define_routes(app, app_name, g, devdb, sql_echo):
 	@cross_origin()
 	def get_statuses_request():
 		response = get_statuses(devdb=devdb, sql_echo=sql_echo)
+		return Response(response, mimetype='application/json')
+
+	@app.route(f'/{app_name}/skipcreds/ticket_history', methods=['GET'])
+	@cross_origin()
+	def get_ticket_history_request():
+		response = get_ticket_history(devdb=devdb, sql_echo=sql_echo)
 		return Response(response, mimetype='application/json')
