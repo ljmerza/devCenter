@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { NotificationService } from '@app/core/notifications/notification.service';
@@ -18,7 +18,7 @@ import { StatusService } from '../services';
 
 @Injectable()
 export class StatusEffects {
-    constructor(private actions$: Actions<Action>, private service: StatusService, private notifications: NotificationService) { }
+    constructor(public store: Store<{}>, private actions$: Actions<Action>, private service: StatusService, private notifications: NotificationService) { }
 
     @Effect()
     updateStatus = () =>
@@ -57,7 +57,7 @@ export class StatusEffects {
             successMessage += success;
         }
 
-        if (response.data.commit_comment) {
+        if (response.data.commit_comment && response.data.commit_ids) {
             const success = this.commitResponse(response.data);
             successMessage += success;
         }
@@ -78,7 +78,6 @@ export class StatusEffects {
         const { success, actionDispatched } = this.newStatus(response);
         successMessage += success;
 
-        console.log({successMessage});
         if (successMessage) this.notifications.success(successMessage);
         return actionDispatched;
         
@@ -128,24 +127,32 @@ export class StatusEffects {
             actionDispatched = new ActionStatusSaveError(error);
         }
 
-        return { success, actionDispatched};
+        return { success, actionDispatched };
     }
 
     /**
      * 
      * @param response 
      */
-    commitResponse(response){
-        let success = this.commentResponse(response.commit_comment);
+    commitResponse(data){
+        let success = '';
 
-        if (response.commit_ids && response.commit_ids.status){
-            success += `The following commits have been added to Jira:<br>`
-            response.commit_ids.data.forEach(commit => {
+        if (data.commit_ids.status){
+            success += `The following commits have been found:<br>`
+            data.commit_ids.data.forEach(commit => {
                 success += `${commit.repo_name}: ${commit.commit_id}<br>`;
             });
-            
+
         } else {
-            const error = `Failed to add commits to Jira:<br>${response.data}`;
+            const error = `Failed to add commits to Jira:<br>${data.commit_ids.data}`;
+            this.notifications.error(error);
+        }
+
+        if (data.commit_comment.status) {
+            success += this.commentResponse(data.commit_comment);
+
+        } else {
+            const error = `Failed to add commits comment to Jira:<br>${data.commit_comment.data}`;
             this.notifications.error(error);
         }
 
@@ -168,7 +175,9 @@ export class StatusEffects {
             }
         });
 
-        if (success) success = `Added the following pull request comments:<br>${success}<br><br>`;
+        if (success) {
+            success = `Added the following pull request comments:<br>${success}<br><br>`;
+        }
 
         if (error) {
             error = `Failed to added the following pull request comments:<br>${error}`;
@@ -209,12 +218,15 @@ export class StatusEffects {
      * @param response 
      */
     commentResponse(response){
+
         if (response.status) {
-            new ActionCommentSaveSucess(response.data);
+            // format for add log reducer
+            const addLogResponse = { comment_response: response, key: response.data.key };
+            this.store.dispatch(new ActionCommentSaveSucess(addLogResponse));
             return `Added comment to ${response.data.key}<br><br>`;
 
         } else {
-            new ActionCommentSaveError(response.data);
+            this.store.dispatch(new ActionCommentSaveError(response.data));
             let error = `Failed to add comment to ${response.data.key}`;
             this.notifications.error(error);
             return;

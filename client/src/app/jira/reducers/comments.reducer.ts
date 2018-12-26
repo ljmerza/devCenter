@@ -134,7 +134,7 @@ function processAddLog(addLogResponse, tickets) {
     let newTickets:CommentTicket[] = Array.from(tickets);
 
     // add new comment if successful
-    if (addLogResponse.comment_response.status) {
+    if (addLogResponse.comment_response && addLogResponse.comment_response.status) {
         newTickets = newTickets.map((ticket: CommentTicket) => {
             
             if (ticket.key === addLogResponse.key) {
@@ -149,7 +149,7 @@ function processAddLog(addLogResponse, tickets) {
     }
 
     // add work-log if successful
-    if (addLogResponse.log_response.status) {
+    if (addLogResponse.log_response && addLogResponse.log_response.status) {
         newTickets = newTickets.map((ticket: CommentTicket) => {
             
             if (ticket.key === addLogResponse.key) {

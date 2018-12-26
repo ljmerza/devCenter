@@ -1,39 +1,59 @@
-<button mat-menu-item>
-	<!-- full link given -->
-	<a *ngIf='navLink.query; else fullLink' class="dropdown-item" [routerLink]="['/jira', navLink.name, {jql: navLink.query, displayName:navLink.display_name}]">
-		{{navLink.display_name}}
+<!-- full link given -->
+<a 
+	mat-menu-item 
+	class="dropdown-item" 
+	[routerLink]="['/jira', navLink.name, {jql: navLink.query, displayName:navLink.display_name}]"
+	*ngIf='navLink.query; else fullLink' 
+>
+	{{navLink.display_name}}
+</a>
+
+<ng-template #fullLink>
+	<a 
+		mat-menu-item 
+		class="dropdown-item" 
+		target="_blank" 
+		href="{{navLink.link}}"
+		*ngIf='navLink.hasFullUrl; else emberLink' 
+	>
+		{{navLink.name}}
 	</a>
+</ng-template>
 
-	<ng-template #fullLink>
-		<a *ngIf='navLink.hasFullUrl; else emberLink' class="dropdown-item" target="_blank" href="{{navLink.link}}">
-			{{navLink.name}}
-		</a>
-	</ng-template>
+<!-- link with given emberUrl -->
+<ng-template #emberLink>
+	<a 
+		mat-menu-item
+		class="dropdown-item" 
+		target="_blank" 
+		href="{{emberUrl}}/{{navLink.link}}"
+		*ngIf='navLink.isEmber; else teamUrlLink' 
+	>
+		{{navLink.name}}
+	</a>
+</ng-template>
 
-	<!-- link with given emberUrl -->
-	<ng-template #emberLink>
-		<a 
-			*ngIf='navLink.isEmber; else teamUrlLink' 
-			class="dropdown-item" target="_blank" 
-			href="{{emberUrl}}/{{navLink.link}}">
-			{{navLink.name}}
-		</a>
-	</ng-template>
+<!-- link given teamUrl -->
+<ng-template #teamUrlLink>
+	<a 
+		mat-menu-item 
+		class="dropdown-item" 
+		target="_blank" 
+		href="{{teamUrl}}/{{navLink.link}}"
+		*ngIf='navLink.isTeam; else baseUrlLink' 
+	>
+		{{navLink.name}}
+	</a>
+</ng-template>
 
-	<!-- link given teamUrl -->
-	<ng-template #teamUrlLink>
-		<a 
-			*ngIf='navLink.isTeam; else baseUrlLink' 
-			class="dropdown-item" target="_blank" 
-			href="{{teamUrl}}/{{navLink.link}}">
-			{{navLink.name}}
-		</a>
-	</ng-template>
-
-	<!-- link given baseUrl -->
-	<ng-template #baseUrlLink>
-		<a class="dropdown-item" target="_blank" href="{{baseUrl}}/{{navLink.link}}">
-			{{navLink.name}}
-		</a>
-	</ng-template>
-</button>
+<!-- link given baseUrl -->
+<ng-template #baseUrlLink>
+	<a
+		mat-menu-item 
+		class="dropdown-item" 
+		target="_blank" 
+		href="{{baseUrl}}/{{navLink.link}}"
+	>
+		{{navLink.name}}
+	</a>
+</ng-template>

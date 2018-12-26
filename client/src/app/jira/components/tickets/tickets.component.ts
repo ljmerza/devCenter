@@ -82,7 +82,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
       this.ticketType = urlSegment[0].path || 'myopen';
       this.tableTitle = `${urlSegment[0].parameters.displayName || 'My Open'} Tickets`;
 
-      if (this.filteredTickets.length === 0) this.resetTable();
+      this.resetTable();
       this.getTickets();
     });
 
@@ -152,10 +152,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
    */
   resetTable(){
     // reset filter if has value
-    if (this.dataSource && this.dataSource.filter) {
-      this.dataSource.filter = '';
-      this.filterValue = ''
-    }
+    if(this.dataSource) this.dataSource.filter = '';
+    this.filterValue = ''
 
     // reset paginator
     this.paginator.pageIndex = 0;

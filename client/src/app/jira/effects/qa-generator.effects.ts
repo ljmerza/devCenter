@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -15,7 +15,7 @@ import { NotificationService } from '@app/core/notifications/notification.servic
 
 @Injectable()
 export class QaGeneratorEffects {
-    constructor(private actions$: Actions<Action>, private service: StatusService, private notifications: NotificationService) { }
+    constructor(public store: Store<{}>, private actions$: Actions<Action>, private service: StatusService, private notifications: NotificationService) { }
     
     @Effect()
     generateQa = () =>
@@ -37,6 +37,8 @@ export class QaGeneratorEffects {
      * @param action 
      */
     processGenerateQa(response, action) {
+        console.log({ response, action });
+        // this.store.dispatch(
         return new ActionStatusQaSaveSuccess(response.data);
     }
 
