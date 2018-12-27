@@ -4,3 +4,4 @@
 <mat-icon class='text-warning' title='Add Comment/Worklog' (click)="openLogModal()">add_circle_outline</mat-icon>
 <mat-icon class='text-success' title='View Comments' (click)="openCommentsModal()">storage</mat-icon>
 <mat-icon class='text-info' title='View Additional Ticket Data' (click)="openAdditionalDetails()">live_help</mat-icon>
+<dc-watchers [key]=ticket?.key [watchers]=ticket?.watchers></dc-watchers>

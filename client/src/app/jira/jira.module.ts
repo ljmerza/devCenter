@@ -10,13 +10,21 @@ import { EffectsModule } from '@ngrx/effects';
 import { JiraRoutingModule } from './jira-routing.module';
 import { PanelModule } from '@app/panel';
 
-import { TicketsEffects, BranchInfoEffects, CommentEffects, AdditionalDetailsEffects, StatusEffects, QaGeneratorEffects } from './effects';
-import { TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService, StatusService } from './services';
+import { 
+  TicketsEffects, BranchInfoEffects, CommentEffects,
+  AdditionalDetailsEffects, StatusEffects, QaGeneratorEffects 
+} from './effects';
+
+import { 
+  TicketsService, BranchInfoService, CommentsService, 
+  AdditionalDetailsService, StatusService, WatcherService 
+} from './services';
+
 import { jiraReducer } from './reducers';
 
 import {
   TicketsComponent, ActionsComponent, CommentsComponent, BranchInfoComponent, UserChatComponent, QaGeneratorBranchesComponent,
-  LoadingTableComponent, UserDetailsComponent, AddLogComponent, LoggedComponent, BranchInfoBodyComponent,
+  LoadingTableComponent, UserDetailsComponent, AddLogComponent, LoggedComponent, BranchInfoBodyComponent, WatchersComponent,
   PullRequestsComponent, TicketDetailsComponent, LoadingDetailsComponent, StatusComponent, QaGeneratorComponent
 } from './components';
 
@@ -40,11 +48,14 @@ import {
 
     JiraRoutingModule
   ],
-  providers: [TicketsService, BranchInfoService, CommentsService, AdditionalDetailsService, StatusService],
+  providers: [
+    TicketsService, BranchInfoService, CommentsService, 
+    AdditionalDetailsService, StatusService, WatcherService
+  ],
   declarations: [
     TicketsComponent, ActionsComponent, LoadingTableComponent, UserChatComponent, QaGeneratorComponent,
     UserDetailsComponent, PullRequestsComponent, TicketDetailsComponent, LoggedComponent, StatusComponent,
-    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent, QaGeneratorBranchesComponent
+    LoadingDetailsComponent, CommentsComponent, BranchInfoComponent, AddLogComponent, BranchInfoBodyComponent, QaGeneratorBranchesComponent, WatchersComponent
   ]
 })
 export class JiraModule {}

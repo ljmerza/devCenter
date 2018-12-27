@@ -7,7 +7,11 @@ class JiraComponent():
 
 	def _set_component(self, name, key, cred_hash):
 		json_data = {"update":{"components":[{"set":[{"name":name}]}]}}
-		return self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
+		response = self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
+
+		if not response.get('data', False):
+			response['data'] = {}
+		return response
 
 	def _set_components(self, names, key, cred_hash):
 		components = []
@@ -15,7 +19,11 @@ class JiraComponent():
 			components.append({"name":name})
 
 		json_data = {"update":{"components":[{"set":components}]}}
-		return self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
+		response = self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
+
+		if not response.get('data', False):
+			response['data'] = {}
+		return response
 
 	def _remove_component(self, name, key, cred_hash):
 		json_data = {"update":{"components":[{"remove":{"name":name}}]}}

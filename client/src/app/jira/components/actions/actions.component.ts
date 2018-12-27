@@ -88,5 +88,4 @@ export class ActionsComponent implements OnInit, OnDestroy {
 
     (<TicketDetailsComponent>this.detailsRef.instance).openModal();
   }
-
 }

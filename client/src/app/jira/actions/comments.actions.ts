@@ -18,7 +18,7 @@ export class ActionCommentSave implements Action {
     readonly type = CommentActionTypes.SAVE;
     constructor(readonly payload: any) {}
 }
-export class ActionCommentSaveSucess implements Action {
+export class ActionCommentSaveSuccess implements Action {
     readonly type = CommentActionTypes.SAVE_SUCCESS;
     constructor(readonly payload: any) { }
 }
@@ -54,7 +54,7 @@ export class ActionCommentDeleteError implements Action {
 }
 
 export type CommentActions = ActionCommentSave
-	| ActionCommentSaveSucess
+	| ActionCommentSaveSuccess
 	| ActionCommentSaveError
 	| ActionCommentEdit
 	| ActionCommentEditSuccess

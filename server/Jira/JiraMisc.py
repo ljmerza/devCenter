@@ -53,7 +53,11 @@ class JiraMisc():
 		'''sets the dev changes value of a Jira ticket
 		'''
 		json_data = {"fields":{"customfield_10138":dev_changes}}
-		return self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
+		response = self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
+		
+		if response['status']:
+			response['data'] = dev_changes
+		return response
 
 	def add_pr_to_dev_changes(self, pull_response, data):
 		'''add pull requests to dev chagnes field'''

@@ -10,7 +10,7 @@ import { NotificationService } from '@app/core/notifications/notification.servic
 import {
     StatusActionTypes, StatusActions,
     ActionStatusSave, ActionStatusSaveSuccess, ActionStatusSaveError,
-    ActionCommentSaveSucess, ActionCommentSaveError
+    ActionCommentSaveSuccess, ActionCommentSaveError
 } from '../actions';
 
 
@@ -222,7 +222,7 @@ export class StatusEffects {
         if (response.status) {
             // format for add log reducer
             const addLogResponse = { comment_response: response, key: response.data.key };
-            this.store.dispatch(new ActionCommentSaveSucess(addLogResponse));
+            this.store.dispatch(new ActionCommentSaveSuccess(addLogResponse));
             return `Added comment to ${response.data.key}<br><br>`;
 
         } else {

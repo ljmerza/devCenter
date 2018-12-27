@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import {
-    ActionCommentSave, ActionCommentSaveSucess, ActionCommentSaveError,
+    ActionCommentSave, ActionCommentSaveSuccess, ActionCommentSaveError,
     ActionCommentEdit, ActionCommentEditSuccess, ActionCommentEditError,
     ActionCommentDelete, ActionCommentDeleteSuccess, ActionCommentDeleteError,
     CommentActions, CommentActionTypes,
@@ -119,7 +119,7 @@ export class CommentEffects {
         }
 
         if (success_comment || success_log){
-            this.store.dispatch(new ActionCommentSaveSucess(response));
+            this.store.dispatch(new ActionCommentSaveSuccess(response));
         }
 
         if (response.conflict_response && response.conflict_response.status) {
