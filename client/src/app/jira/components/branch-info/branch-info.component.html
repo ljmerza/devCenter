@@ -2,21 +2,19 @@
 	<div class='modal-header'>{{key}} Branch Information</div>
 
 	<span class='modal-body'>
-		<dc-loading-details [loading]=loading>
-			<div class="container">
-				<div class='row'>
-					<section class="col-md-12">
-						<dc-branch-info-body
-							[sprint]=sprint
-							[branch]=branch
-							[commit]=commit
-							[key]=key
-							[epicLink]=epicLink
-						></dc-branch-info-body>
-					</section>
-				</div>
+		<div class="container">
+			<div class='row'>
+				<section class="col-md-12">
+					<dc-branch-info-body
+						[sprint]=sprint
+						[branch]=branch
+						[commit]=commit
+						[key]=key
+						[epicLink]=epicLink
+					></dc-branch-info-body>
+				</section>
 			</div>
-		</dc-loading-details>
+		</div>
 	</span>
 
 	<span class='modal-footer align-footer'>

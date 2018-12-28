@@ -7,5 +7,5 @@ export const environment = {
   test: false,
   apiUrl: devServer,
   devServer,
-  port: 5859
+  port: 5860
 };

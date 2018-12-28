@@ -1,3 +1,6 @@
+import { DropdownItem } from '../models';
+
+
 export function processJqlLinks(jqlLinks){
  	const projectIndex = jqlLinks.findIndex(link => link.name === 'PROJECT');
  	const projectJql = (jqlLinks.splice(projectIndex, 1)[0] || {}).query || '';
@@ -7,10 +10,12 @@ export function processJqlLinks(jqlLinks){
  		return link;
  	});
 
- 	const jqlNavbar = { 
+	const jqlNavbar: DropdownItem = { 
 		name: 'Ticket Lists',
 		items: _formatNavBarJqlLinks(jqlLinks)
-	 };
+	};
+
+	console.log({jqlNavbar, fullJqls});
 	return {fullJqls, jqlNavbar};
 }
 

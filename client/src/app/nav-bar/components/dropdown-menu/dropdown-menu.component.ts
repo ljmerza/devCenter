@@ -1,4 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { DropdownItem } from '../../models';
 
 @Component({
   selector: 'dc-dropdown-menu',
@@ -7,7 +8,8 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DropdownMenuComponent {
-  @Input() navLinks: Array<any> = [];
+  // @Input() navLinks: Array<DropdownItem> = []; // items is on array needs to be on object
+  @Input() navLinks:any = [];
 
   @Input() title: string = '';
   @Input() isSubMenu: boolean = false;

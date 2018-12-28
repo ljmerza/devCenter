@@ -12,7 +12,7 @@ import { selectProfile } from '@app/core/profile';
 import { PanelComponent } from '@app/panel';
 
 import { selectStatuses } from '../../selectors';
-import { ActionStatusSave } from '../../actions';
+import { ActionStatusSave, ActionCommentSave } from '../../actions';
 import { StatusTicket, StatusState } from '../../models';
 import { QaGeneratorComponent } from '../qa-generator/qa-generator.component';
 
@@ -43,7 +43,13 @@ export class StatusComponent implements OnDestroy, OnInit {
   borderColor: string = '';
   loading: boolean = false;
 
-  showBranchInfo;
+  showBranchInfo: boolean = false;
+  showAddComment: boolean = false;
+  showUctNotReady: boolean = false;
+
+  uctNotReady: boolean = false;
+  comment: string = '';
+
   qaGeneratorRef;
 
 
@@ -112,7 +118,11 @@ export class StatusComponent implements OnDestroy, OnInit {
     const matchingStatus: StatusesModel = this.statuses.find(allStatus => allStatus.status_code === event.value);
     if (matchingStatus) this.changedStatusName = matchingStatus.status_name || '';
 
+    // setup custom menus for dialog based on new state
+    this.showUctNotReady = this.changedStatusCode === 'releaseReady';
     this.showBranchInfo = this.changedStatusCode === 'uctReady';
+    this.showAddComment = ['qaFail', 'crFail', 'uctFail', 'uctPass'].includes(this.changedStatusCode);
+    
     this.modal.openModal();
   }
 
@@ -132,6 +142,28 @@ export class StatusComponent implements OnDestroy, OnInit {
       addCommits: this.changedStatusCode === 'uctReady',
       masterBranch: this.ticket.repoName
     }));
+
+    // if comment or uct not ready added then dispatch that now
+    if (this.comment || this.uctNotReady){
+      this.store.dispatch(new ActionCommentSave({
+        comment: this.comment,
+        uctNotReady: this.uctNotReady,
+        remove_conflict: false,
+        log_time: 0,
+        key: this.ticket.key,
+        master_branch: ''
+      }));
+
+      this.resetInputs();
+    }
+  }
+
+  /**
+   * resets all inputs
+   */
+  resetInputs(){
+    this.comment = '';
+    this.uctNotReady = false;
   }
 
   /**
@@ -140,6 +172,8 @@ export class StatusComponent implements OnDestroy, OnInit {
   confirmCancelStatus(){
     this.changedStatusCode = this.originalStatusCode;
     this.changedStatusName = this.originalStatusName;
+
+    this.resetInputs();
     this.modal.closeModal();
   }
 

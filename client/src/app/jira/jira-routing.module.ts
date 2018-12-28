@@ -5,7 +5,7 @@ import { TicketsComponent } from './components/tickets/tickets.component';
 
 const routes: Routes = [
     {
-        path: `:jql`,
+        path: `/:jql`,
         component: TicketsComponent,
         data: { title: 'Jira Tickets' }
     },

@@ -19,6 +19,18 @@
             [key]=key 
             [epicLink]=ticket?.epicLink
         ></dc-branch-info-body>
+
+        <mat-card class='mat-elevation-z8 status-mat-card-margin' *ngIf='showAddComment'>
+            <mat-form-field class='full-width'>
+                <mat-label>Comment</mat-label>
+                <textarea matInput rows=10 name='comment' [(ngModel)]="comment"></textarea>
+            </mat-form-field>
+        </mat-card>
+
+        <mat-card class='mat-elevation-z8 status-mat-card-margin' *ngIf='showUctNotReady'>
+            <mat-checkbox name='uctNotReady' [(ngModel)]="uctNotReady">UCT Not Ready</mat-checkbox>
+        </mat-card>
+
     </span>
 
     <span class='modal-footer align-footer'>

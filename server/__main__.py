@@ -27,8 +27,13 @@ merge_alerts = False
 if 'betanow' in sys.argv:
 	beta_stat_ping_now = True
 
-if 'prodhost' in sys.argv:
+if 'devui' in sys.argv:
 	host = '0.0.0.0'
+	port = 5859
+
+if 'betaui' in sys.argv:
+	host = '0.0.0.0'
+	port = 5860
 
 if 'prod' in sys.argv:
 	devdb = False

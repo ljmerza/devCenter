@@ -42,11 +42,12 @@ export class CommentEffects {
         this.actions$.pipe(
             ofType<CommentActions>(CommentActionTypes.EDIT),
             switchMap((action: ActionCommentEdit) => {
-                this.notifications.info(`Saving edited comment ${action.payload.comment_id} for ${action.payload.key}`);
+                console.log(action.payload)
+                this.notifications.info(`Saving edited comment ${action.payload.commentId} for ${action.payload.key}`);
                 
                 return this.service.editComment(action.payload).pipe(
                     map((response: any) => {
-                        this.notifications.success(`Successfully edited comment ${action.payload.comment_id} for ${action.payload.key}`);
+                        this.notifications.success(`Successfully edited comment ${action.payload.commentId} for ${action.payload.key}`);
                         return new ActionCommentEditSuccess(response.data);
                     }),
                     catchError(response => of(new ActionCommentEditError(response.data)))
@@ -129,7 +130,7 @@ export class CommentEffects {
         }
         
         if (response.merge_response && response.merge_response.status){
-            message += `Removed  Merge Code component<br>`;
+            message += `Removed Merge Code component<br>`;
             this.store.dispatch(new ActionStatusSaveSuccess(response.merge_response));
         }
         

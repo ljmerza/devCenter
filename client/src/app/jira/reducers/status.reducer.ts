@@ -96,7 +96,6 @@ function createStatusTickets(ticket): StatusTicket {
  * @param statusTickets 
  */
 function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): StatusTicket[] {
-    console.log({ newStatusTicket });
     
     return statusTickets.map((ticket: StatusTicket) => {
         if (newStatusTicket.key === ticket.key) {

@@ -98,6 +98,10 @@ export class TicketsComponent implements OnInit, OnDestroy {
     return (this.ticketColumnDefinitions || []).filter(cd => cd.display).map(cd => cd.name);
   }
 
+  set displayedColumns(value){
+    console.log({value});
+  }
+
   get ticketColumnDefinitions(){
     return ((this.settings || {}).ticketColumnDefinitions || []);
   }
@@ -192,7 +196,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
    * adds sort functionality
    * @param sort 
    */
-  sortData(sort: Sort, data) {
+  sortData(sort: Sort, data:any='') {
     data = data || this.dataSource.data.slice();
     if (!sort.active || sort.direction === '') return;
 

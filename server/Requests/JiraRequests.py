@@ -62,8 +62,6 @@ def set_status(data):
 	elif data['status_type'] == 'uctFail':
 		response = jira.set_uct_fail(key=data['key'], cred_hash=data['cred_hash'])
 
-	print(response)
-
 	# save key and get new status for response
 	if response['status']:
 		response['data']['key'] = data['key']
