@@ -1,23 +1,23 @@
-import { Component, Input, OnInit, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Store, select } from '@ngrx/store';
+import {Component, Input, OnInit, OnDestroy, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Store, select} from '@ngrx/store';
 
-import { PanelComponent } from '@app/panel/components/panel/panel.component';
-import { Subscription } from 'rxjs';
-import { map, tap, distinctUntilChanged } from 'rxjs/operators';
+import {PanelComponent} from '@app/panel/components/panel/panel.component';
+import {Subscription} from 'rxjs';
+import {map, tap, distinctUntilChanged} from 'rxjs/operators';
 
-import { selectSettings } from '@app/settings/settings.selectors';
+import {selectSettings} from '@app/settings/settings.selectors';
 
-import { selectComments } from '../../selectors/';
-import { ActionCommentEdit, ActionCommentDelete } from '../../actions';
-import { CommentState, CommentTicket } from '../../models';
+import {selectComments} from '../../selectors/';
+import {ActionCommentEdit, ActionCommentDelete} from '../../actions';
+import {CommentState, CommentTicket} from '../../models';
 
-import { MatAccordion } from '@angular/material/expansion';
+import {MatAccordion} from '@angular/material/expansion';
 
 @Component({
 	selector: 'dc-comments',
 	templateUrl: './comments.component.html',
 	styleUrls: ['./comments.component.scss'],
-    encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
 })
 export class CommentsComponent implements OnInit, OnDestroy {
 	ticket: CommentTicket;
@@ -25,9 +25,9 @@ export class CommentsComponent implements OnInit, OnDestroy {
 	loading: boolean = false;
 	isAllOpen: boolean = false;
 
-	commentEditingId:string = '';
-	commentEditingText: string = '';
-	deleteCommentId: string = '';
+	commentEditingId = '';
+	commentEditingText = '';
+	deleteCommentId = '';
 
 	settings = {};
 	settings$: Subscription;
@@ -38,21 +38,26 @@ export class CommentsComponent implements OnInit, OnDestroy {
 
 	@ViewChild(MatAccordion) matAccordion: MatAccordion;
 
-	constructor(public store: Store<{}>) { }
+	constructor(public store: Store<{}>) {}
 
 	ngOnInit() {
-		this.settings$ = this.store.pipe(select(selectSettings), distinctUntilChanged())
-			.subscribe(settings => this.settings = settings);
+		this.settings$ = this.store
+			.pipe(
+				select(selectSettings),
+				distinctUntilChanged()
+			)
+			.subscribe(settings => (this.settings = settings));
 
-		this.ticket$ = this.store.pipe(
-			select(selectComments),
-			tap(state => {
-				if(this.loading) this.loading = state.loading;
-			}),
-			map((state: CommentState) => state.tickets.find(ticket => ticket.key === this.key)),
-			distinctUntilChanged()
-		)
-			.subscribe((ticket: CommentTicket) => this.ticket = ticket);
+		this.ticket$ = this.store
+			.pipe(
+				select(selectComments),
+				tap(state => {
+					if (this.loading) this.loading = state.loading;
+				}),
+				map((state: CommentState) => state.tickets.find(ticket => ticket.key === this.key)),
+				distinctUntilChanged()
+			)
+			.subscribe((ticket: CommentTicket) => (this.ticket = ticket));
 	}
 
 	ngOnDestroy() {
@@ -64,8 +69,8 @@ export class CommentsComponent implements OnInit, OnDestroy {
 	 * toggle comment editing
 	 * @param {Comment} comment the comment to edit
 	 */
-	toggleEditing(comment){
-		if(this.commentEditingId === comment.id){
+	toggleEditing(comment) {
+		if (this.commentEditingId === comment.id) {
 			this.commentEditingId = '';
 			this.commentEditingText = '';
 		} else {
@@ -77,14 +82,16 @@ export class CommentsComponent implements OnInit, OnDestroy {
 	/**
 	 * saves the edited comment
 	 */
-	editComment(){
+	editComment() {
 		this.loading = true;
 
-		this.store.dispatch(new ActionCommentEdit({
-			comment: this.commentEditingText,
-			commentId: this.commentEditingId,
-			key: this.key
-		}));
+		this.store.dispatch(
+			new ActionCommentEdit({
+				comment: this.commentEditingText,
+				commentId: this.commentEditingId,
+				key: this.key,
+			})
+		);
 
 		this.commentEditingId = '';
 		this.commentEditingText = '';
@@ -94,7 +101,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
 	 * saves the comment id you want to delete then open confirm dialog
 	 * @param {string} commentId
 	 */
-	deleteComment(commentId){
+	deleteComment(commentId) {
 		this.deleteCommentId = commentId;
 		this.deleteModal.openModal();
 	}
@@ -102,7 +109,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
 	/**
 	 * opens confirmation dialog to delete a comment
 	 */
-	deleteCommentConfirm(){
+	deleteCommentConfirm() {
 		this.loading = true;
 		this.store.dispatch(new ActionCommentDelete({commentId: this.deleteCommentId, key: this.key}));
 		this.deleteModal.closeModal();
@@ -111,8 +118,8 @@ export class CommentsComponent implements OnInit, OnDestroy {
 	/**
 	 * toggles all comment panels open or closed
 	 */
-	toggleAllPanels(){
-		if(this.isAllOpen){
+	toggleAllPanels() {
+		if (this.isAllOpen) {
 			this.isAllOpen = false;
 			this.matAccordion.closeAll();
 		} else {
@@ -120,5 +127,4 @@ export class CommentsComponent implements OnInit, OnDestroy {
 			this.matAccordion.openAll();
 		}
 	}
-
 }

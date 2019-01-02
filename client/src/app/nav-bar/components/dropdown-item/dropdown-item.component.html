@@ -2,7 +2,7 @@
 <a 
 	mat-menu-item 
 	class="dropdown-item" 
-	[routerLink]="['/jira', navLink.name, {jql: navLink.query, displayName:navLink.display_name}]"
+	[routerLink]="['/jira/tickets', navLink.name, {jql: navLink.query, displayName:navLink.display_name}]"
 	*ngIf='navLink.query; else fullLink' 
 >
 	{{navLink.display_name}}

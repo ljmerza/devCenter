@@ -1,23 +1,17 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { TicketsComponent } from './components';
+import {NgModule} from '@angular/core';
+import {Routes, RouterModule} from '@angular/router';
+import {TicketsComponent} from './components';
 
 const routes: Routes = [
-    {
-        path: `:jql`,
-        component: TicketsComponent,
-        data: { title: 'Jira Tickets' }
-    },
-    {
-        path: '**',
-        redirectTo: `mytickets`
-    }
+	{
+		path: `tickets/:jql`,
+		component: TicketsComponent,
+		data: {title: 'Jira Tickets'},
+	},
 ];
 
 @NgModule({
-    imports: [
-        RouterModule.forChild(routes)
-    ],
-    exports: [RouterModule]
+	imports: [RouterModule.forChild(routes)],
+	exports: [RouterModule],
 })
-export class JiraRoutingModule { }
+export class JiraRoutingModule {}

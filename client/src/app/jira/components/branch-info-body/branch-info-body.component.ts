@@ -1,24 +1,22 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import {Component, ChangeDetectionStrategy, Input} from '@angular/core';
 
 @Component({
 	selector: 'dc-branch-info-body',
 	templateUrl: './branch-info-body.component.html',
 	styleUrls: ['./branch-info-body.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BranchInfoBodyComponent {
+	constructor() {}
 
-	constructor() { }
+	@Input() sprint = '';
+	@Input() branch = '';
+	@Input() commit = '';
+	@Input() key = '';
+	@Input() epicLink = '';
 
-	@Input() sprint:string = '';
-	@Input() branch:string = '';
-	@Input() commit:string = '';
-	@Input() key:string = '';
-	@Input() epicLink:string = '';
-
-	 get masterName(){
+	get masterName() {
 		if (this.sprint) return this.key.split('-')[0] + this.sprint;
 		else return '';
-	 }
-
+	}
 }
