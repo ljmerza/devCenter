@@ -36,8 +36,12 @@
             ],
             "styles": [
               "node_modules/jspanel4/dist/jspanel.min.css",
-              { "input": "src/styles-app-loading.scss" },
-              { "input": "src/styles.scss" }
+              {
+                "input": "src/styles-app-loading.scss"
+              },
+              {
+                "input": "src/styles.scss"
+              }
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -144,7 +148,12 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "dev-center:build"
+            "browserTarget": "dev-center:build",
+            "port": 18173,
+            "servePath": "/devcenter_dev/",
+            "baseHref": "/devcenter_dev/",
+            "deployUrl": "/devcenter_dev/",
+            "open": true
           },
           "configurations": {
             "production": {

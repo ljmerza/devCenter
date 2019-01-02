@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
-import { TicketsComponent } from './components/tickets/tickets.component';
+import { TicketsComponent } from './components';
 
 const routes: Routes = [
     {
-        path: `/:jql`,
+        path: `:jql`,
         component: TicketsComponent,
         data: { title: 'Jira Tickets' }
     },

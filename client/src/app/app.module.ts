@@ -11,6 +11,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { NavBarModule } from './nav-bar';
 import { AppComponent } from './app.component';
 
+import { ProfileGuard } from './profile-guard.service';
+
 @NgModule({
   imports: [
     // angular
@@ -30,7 +32,7 @@ import { AppComponent } from './app.component';
     AppRoutingModule
   ],
   declarations: [AppComponent],
-  providers: [],
+  providers: [ProfileGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

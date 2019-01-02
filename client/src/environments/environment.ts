@@ -1,10 +1,12 @@
 import { baseEnv, devServer } from './baseEnvironment';
 
-export const environment = {
+export let environment = {
   ...baseEnv,
   envName: 'DEV',
   production: false,
-  apiUrl: `${devServer}:5859/devcenter_dev`,
+  port: 5859,
   devServer,
-  test: false,
+  test: false
 };
+
+environment.apiUrl = `${environment.devServer}:${environment.port}/dev_center`;

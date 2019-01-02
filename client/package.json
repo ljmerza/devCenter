@@ -3,8 +3,8 @@
   "version": "12.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "ng serve --open --port 18173 --base-href devcenter_server/ --serve-path devcenter_server/",
-    "start:aot": "ng serve --aot --open --port 18173 --base-href devcenter_server/ --serve-path devcenter_server/",
+    "start": "ng serve",
+    "start:aot": "ng serve --aot",
     "build": "ng build",
     "build:prod": "ng build --prod --vendor-chunk",
     "build:beta": "ng build --configuration=beta --vendor-chunk --deploy-url devcenter_beta/",

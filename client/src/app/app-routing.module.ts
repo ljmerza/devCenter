@@ -3,28 +3,27 @@ import { Routes, RouterModule } from '@angular/router';
 import { environment as env } from '@env/environment';
 
 import { SettingsContainerComponent } from './settings';
-import { ProfileGuard } from './profile.guard'
+import { ProfileGuard } from './profile-guard.service';
 
 const routes: Routes = [
   {
-    path: `${env.baseRoute}`,
+    path: ``,
     redirectTo: 'jira',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
-    path: `${env.baseRoute}settings`,
+    path: `settings`,
     component: SettingsContainerComponent,
     data: { title: 'settings' }
   },
   {
-    path: `${env.baseRoute}jira`,
+    path: `jira`,
     loadChildren: 'app/jira/jira.module#JiraModule',
-		canActivate: [ProfileGuard]
+    canActivate: [ProfileGuard]
   },
   {
     path: '**',
-    redirectTo: `${env.baseRoute}jira`,
-    canActivate: [ProfileGuard]
+    redirectTo: `jira`
   }
 ];
 
