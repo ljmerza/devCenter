@@ -4,8 +4,7 @@ export const environment = {
   ...baseEnv,
   envName: 'PROD',
   production: true,
-  apiUrl: devServer,
+  apiUrl: `${devServer}:5858/devcenter`,
   devServer,
-  port: 5858,
   test: false,
 };

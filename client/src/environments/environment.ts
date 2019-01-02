@@ -4,7 +4,7 @@ export const environment = {
   ...baseEnv,
   envName: 'DEV',
   production: false,
-  test: false,
+  apiUrl: `${devServer}:5859/devcenter_dev`,
   devServer,
-  apiUrl: `${devServer}:5859/dev_center`
+  test: false,
 };
