@@ -1,0 +1,22 @@
+
+<button mat-menu-item (click)='modal.openModal()'>
+  Logout
+</button>
+
+<dc-panel>
+  <div class='modal-header'>Logout</div>
+
+  <span class='modal-body'>
+    Are you sure you want to logout?
+  </span>
+
+  <span class="modal-footer">
+    <button mat-raised-button color='warn' (click)="confirmLogout()">
+      Logout
+    </button>
+
+    <button mat-raised-button color='primary' (click)="modal.closeModal()">
+      Cancel
+    </button>
+  </span>
+</dc-panel>

@@ -4,3 +4,4 @@ export * from './dropdown-item/dropdown-item.component';
 export * from './search-bar/search-bar.component';
 export * from './log-time/log-time.component';
 export * from './profile-dropdown/profile-dropdown.component';
+export * from './logout/logout.component';

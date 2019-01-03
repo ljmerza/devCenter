@@ -156,11 +156,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	 * reset the mat table values
 	 */
 	resetTable() {
-		// reset filter if has value
-		if (this.dataSource) this.dataSource.filter = '';
 		this.filterValue = '';
-
-		// reset paginator
 		this.paginator.pageIndex = 0;
 	}
 

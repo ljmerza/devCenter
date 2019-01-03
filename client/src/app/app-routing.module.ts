@@ -5,7 +5,13 @@ import {environment as env} from '@env/environment';
 import {SettingsContainerComponent} from './settings';
 import {ProfileGuard} from './profile-guard.service';
 
-const routes: Routes = [
+export const routes: Routes = [
+	{
+		path: ``,
+		redirectTo: `jira/tickets/mytickets`,
+		pathMatch: 'full',
+		data: {title: 'Jira Tickets'},
+	},
 	{
 		path: `settings`,
 		component: SettingsContainerComponent,
@@ -16,10 +22,15 @@ const routes: Routes = [
 		loadChildren: 'app/jira/jira.module#JiraModule',
 		canActivate: [ProfileGuard],
 	},
+	{
+		path: `**`,
+		redirectTo: `jira/tickets/mytickets`,
+		data: {title: 'Jira Tickets'},
+	},
 ];
 
 @NgModule({
-	imports: [RouterModule.forRoot(routes, {useHash: true, scrollPositionRestoration: 'enabled'})],
+	imports: [RouterModule.forRoot(routes, {useHash: true})],
 	exports: [RouterModule],
 })
 export class AppRoutingModule {}

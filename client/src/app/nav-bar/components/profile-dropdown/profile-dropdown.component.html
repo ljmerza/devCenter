@@ -10,13 +10,15 @@
 
   <button mat-menu-item>User Metrics</button>
   <button mat-menu-item>About</button>
-  <button mat-menu-item (click)='logout()'>Logout</button>
+  <dc-logout></dc-logout>
+  
 </mat-menu>
 
 <dc-panel>
   <div class='modal-header'>User Settings</div>
-  
   <span class='modal-body'>
     <dc-settings (updateProfile)="modal.closeModal()"></dc-settings>
   </span>
 </dc-panel>
+
+
