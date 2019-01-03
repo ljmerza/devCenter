@@ -1,102 +1,99 @@
-import { OverlayContainer } from '@angular/cdk/overlay';
-import { Component, HostBinding, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivationEnd, Router, NavigationEnd } from '@angular/router';
-import { Store, select } from '@ngrx/store';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import {OverlayContainer} from '@angular/cdk/overlay';
+import {Component, HostBinding, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ActivationEnd, Router, NavigationEnd} from '@angular/router';
+import {Store, select} from '@ngrx/store';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {ToastContainerDirective, ToastrService} from 'ngx-toastr';
 
-import { ActionReposRetrieve } from '@app/core/repos';
+import {ActionReposRetrieve} from '@app/core/repos';
 
-import {
-  AnimationsService, routeAnimations,
-  TitleService, AppState, LocalStorageService
-} from '@app/core';
-import { environment as env } from '@env/environment';
+import {AnimationsService, routeAnimations, TitleService, AppState, LocalStorageService} from '@app/core';
+import {environment as env} from '@env/environment';
 
-import { selectSettings } from './settings/settings.selectors';
-import { SettingsState } from './settings/settings.model';
+import {selectSettings} from './settings/settings.selectors';
+import {SettingsState} from './settings/settings.model';
 
 @Component({
-  selector: 'dc-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  animations: [routeAnimations]
+	selector: 'dc-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.scss'],
+	animations: [routeAnimations],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  private unsubscribe$: Subject<void> = new Subject<void>();
+	private unsubscribe$: Subject<void> = new Subject<void>();
 
-  @HostBinding('class')
-  componentCssClass;
+	@HostBinding('class')
+	componentCssClass;
 
-  isProd = env.production;
-  envName = env.envName;
-  version = env.versions.app;
-  year = new Date().getFullYear();
+	isProd = env.production;
+	envName = env.envName;
+	version = env.versions.app;
+	year = new Date().getFullYear();
 
-  settings: SettingsState;
-  @ViewChild(ToastContainerDirective) toastContainer: ToastContainerDirective;
+	gottenRepos = false;
 
-  constructor(
-    public overlayContainer: OverlayContainer, private store: Store<AppState>, private router: Router,
-    private titleService: TitleService, private storageService: LocalStorageService, private toastrService: ToastrService
-  ) {}
+	settings: SettingsState;
+	@ViewChild(ToastContainerDirective) toastContainer: ToastContainerDirective;
 
-  ngOnInit(): void {
-    this.subscribeToSettings();
-    this.subscribeToRouterEvents();
-    this.storageService.testLocalStorage();
+	constructor(
+		public overlayContainer: OverlayContainer,
+		private store: Store<AppState>,
+		private router: Router,
+		private titleService: TitleService,
+		private storageService: LocalStorageService,
+		private toastrService: ToastrService
+	) {}
 
-    this.toastrService.overlayContainer = this.toastContainer;
+	ngOnInit(): void {
+		this.store
+			.pipe(
+				select(selectSettings),
+				takeUntil(this.unsubscribe$)
+			)
+			.subscribe(settings => {
+				this.settings = settings;
+				this.setTheme(settings);
 
-    // get init data
-    this.store.dispatch(new ActionReposRetrieve());
-  }
+				// if have user creds and haven't gotten repo list then get it
+				if (!this.gottenRepos && settings.username && settings.password) {
+					this.gottenRepos = true;
+					this.store.dispatch(new ActionReposRetrieve());
+				}
+			});
 
-  ngOnDestroy(): void {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
-  }
+		this.router.events.pipe(takeUntil(this.unsubscribe$)).subscribe(event => {
+			if (event instanceof ActivationEnd) {
+				this.titleService.setTitle(event.snapshot);
+			}
+		});
 
-  /**
-   * watch for settings changes to save the settings and set the theme
-   */
-  private subscribeToSettings() {
-    this.store.pipe(select(selectSettings), takeUntil(this.unsubscribe$))
-      .subscribe(settings => {
-        this.settings = settings;
-        this.setTheme(settings);
-      });
-  }
+		this.storageService.testLocalStorage();
+		this.toastrService.overlayContainer = this.toastContainer;
+	}
 
-  /**
-   * Changes the CSS theme by setting the body class
-   * @param settings 
-   */
-  private setTheme(settings: SettingsState) {
-    const { theme = '' } = settings;
+	ngOnDestroy(): void {
+		this.unsubscribe$.next();
+		this.unsubscribe$.complete();
+	}
 
-    const effectiveTheme = theme.toLowerCase();
-    this.componentCssClass = effectiveTheme;
+	/**
+	 * Changes the CSS theme by setting the body class
+	 * @param settings
+	 */
+	private setTheme(settings: SettingsState) {
+		const {theme = ''} = settings;
 
-    const classList = this.overlayContainer.getContainerElement().classList;
-    const toRemove = Array.from(classList).filter((item: string) => item.includes('-theme'));
+		const effectiveTheme = theme.toLowerCase();
+		this.componentCssClass = effectiveTheme;
 
-    if (toRemove.length) {
-      classList.remove(...toRemove);
-    }
+		const classList = this.overlayContainer.getContainerElement().classList;
+		const toRemove = Array.from(classList).filter((item: string) => item.includes('-theme'));
 
-    classList.add(effectiveTheme);
-  }
+		if (toRemove.length) {
+			classList.remove(...toRemove);
+		}
 
-  /**
-   * Watch for title changes from the router
-   */
-  private subscribeToRouterEvents() {
-    this.router.events.pipe(takeUntil(this.unsubscribe$)).subscribe(event => {
-      if (event instanceof ActivationEnd) {
-        this.titleService.setTitle(event.snapshot);
-      }
-    });
-  }
+		classList.add(effectiveTheme);
+	}
 }

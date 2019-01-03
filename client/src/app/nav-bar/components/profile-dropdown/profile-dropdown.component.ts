@@ -29,11 +29,13 @@ export class ProfileDropdownComponent implements OnInit {
 				select(selectSettings),
 				distinctUntilChanged((prev, next) => prev.username === next.username && prev.password === next.password)
 			)
-			.subscribe(() => {
-				this.store.dispatch(new ActionProfile());
-				this.store.dispatch(new ActionStatusRetrieve());
+			.subscribe(settings => {
+				if (settings.password && settings.username) {
+					this.store.dispatch(new ActionProfile());
+				}
 			});
 
+		this.store.dispatch(new ActionStatusRetrieve());
 		this.profile$ = this.store.pipe(select(selectProfile)).subscribe(profile => (this.profile = profile));
 	}
 

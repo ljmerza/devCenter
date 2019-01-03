@@ -4,6 +4,7 @@ import {environment as env} from '@env/environment';
 
 import {SettingsContainerComponent} from './settings';
 import {ProfileGuard} from './profile-guard.service';
+import {SettingsGuard} from './settings-guard.service';
 
 export const routes: Routes = [
 	{
@@ -16,6 +17,7 @@ export const routes: Routes = [
 		path: `settings`,
 		component: SettingsContainerComponent,
 		data: {title: 'settings'},
+		canActivate: [SettingsGuard],
 	},
 	{
 		path: `jira`,

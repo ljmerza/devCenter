@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 
-import { environment as env } from '@env/environment';
-import { Observable } from 'rxjs';
+import {environment as env} from '@env/environment';
+import {Observable} from 'rxjs';
 
 @Injectable()
 export class SettingsService {
-  constructor(private httpClient: HttpClient) {}
+	redirectUrl = '';
 
-  encryptPassword(password): Observable<any> {
-    return this.httpClient.post(`${env.apiUrl}/skipcreds/encrypt`, {
-      password
-    });
-  }
+	constructor(private httpClient: HttpClient) {}
+
+	encryptPassword(password): Observable<any> {
+		return this.httpClient.post(`${env.apiUrl}/skipcreds/encrypt`, {password});
+	}
 }

@@ -7,12 +7,11 @@ import {SettingsService} from '@app/settings/settings.service';
 import {map} from 'rxjs/operators';
 
 @Injectable()
-export class ProfileGuard implements CanActivate {
+export class SettingsGuard implements CanActivate {
 	constructor(private store: Store<{}>, private router: Router, private settingsService: SettingsService) {}
 
 	/**
-	 * check to make sure user is logged in before going to ticket route
-	 * save url for redirection after login
+	 * if we already have all settings we need then don't go to settings route
 	 * @param {ActivatedRouteSnapshot} route
 	 * @param {RouterStateSnapshot} state
 	 */
@@ -22,8 +21,11 @@ export class ProfileGuard implements CanActivate {
 		return this.store.pipe(
 			select(selectSettings),
 			map((settings: any) => {
-				if (!settings || !settings.username || !settings.password) {
-					this.router.navigate(['/settings']);
+				const hasCreds = settings.username && settings.password;
+				const hasUrls = settings.emberUrl && settings.teamUrl && settings.teamUrl;
+
+				if (hasCreds && hasUrls && settings.theme) {
+					this.router.navigateByUrl('/jira/tickets/mytickets');
 					return false;
 				}
 

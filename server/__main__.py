@@ -23,6 +23,8 @@ devbot = True
 time_shift = 0
 merge_alerts = False
 
+print(sys.argv)
+
 # ping beta stats now
 if 'betanow' in sys.argv:
 	beta_stat_ping_now = True
