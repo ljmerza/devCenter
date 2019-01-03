@@ -43,7 +43,6 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 			// if we found any values that don't match then set them on the form
 			// make sure its not a theme change only cause it'll over write all other values
 			const hasChanges = Object.keys(changed).length;
-			console.log({changed});
 			if (hasChanges) this.settingsForm.patchValue(changed);
 
 			// if we saved a redirect url from saving the settings then
