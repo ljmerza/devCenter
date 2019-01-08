@@ -169,7 +169,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 		this.filteredTickets = state.tickets.filter(ticket => ticket.ticketType === state.ticketType);
 
 		// create sorted material table array
-		this.sortData({active: 'Start Date', direction: 'asc'}, this.filteredTickets);
+		this.sortData({active: 'Start Date', direction: 'desc'}, this.filteredTickets);
 	}
 
 	/**

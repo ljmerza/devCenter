@@ -4,15 +4,18 @@ import sys
 import os
 import threading
 import datetime
+import logging
 
 import DevCenterServer
 from AutomationBot import AutomationBot
+
+logging.basicConfig(level=logging.INFO)
 
 sql_echo = False
 devflk = True
 devdb = True
 host = '127.0.0.1'
-port = 5859
+port = 0
 app_name = 'dev_center'
 dev_chat = True
 is_beta_week = False
@@ -22,8 +25,6 @@ no_pings = False
 devbot = True
 time_shift = 0
 merge_alerts = False
-
-print(sys.argv)
 
 # ping beta stats now
 if 'betanow' in sys.argv:
@@ -36,6 +37,8 @@ if 'devui' in sys.argv:
 if 'betaui' in sys.argv:
 	host = '0.0.0.0'
 	port = 5860
+	devdb = False
+	time_shift = 4
 
 if 'prod' in sys.argv:
 	devdb = False
@@ -69,6 +72,10 @@ if 'sql' in sys.argv:
 if 'prodChat' in sys.argv:
 	dev_chat = False
 
+logging.info('args:', sys.argv)
+if not port:
+	exit()
+
 def start_cron():
 	automationBot = AutomationBot(
 		is_beta_week=is_beta_week, beta_stat_ping_now=beta_stat_ping_now, no_pings=no_pings,
@@ -81,6 +88,9 @@ def start_cron():
 		d = datetime.datetime.now()
 		if d.hour in range(6+time_shift, 19+time_shift) and d.isoweekday() in range(1, 6):
 			response = automationBot.update_jira()
+
+			if not response['status']:
+				logging.info(response['data'])
 
 thr = threading.Thread(target=start_cron)
 thr.start()
