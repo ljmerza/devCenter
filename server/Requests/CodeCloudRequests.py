@@ -133,7 +133,8 @@ def add_qa_comment(data, pull_response=None):
 	return Jira().add_comment(
 		key=data['key'], 
 		cred_hash=data['cred_hash'], 
-		comment=qa_step_comment
+		comment=qa_step_comment,
+		private_comment: True
 	)
 
 def add_reviewer_to_pull_request(data):
