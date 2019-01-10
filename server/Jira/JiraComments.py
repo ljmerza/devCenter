@@ -9,7 +9,7 @@ class JiraComments():
 	def __init__(self, jira_api):
 		self.jira_api = jira_api
 
-	def add_comment(self, key, cred_hash, comment='', private_comment=True):
+	def add_comment(self, key, cred_hash, private_comment, comment=''):
 		json_data = self._set_json(comment=comment, private_comment=private_comment)
 		url=f'{self.jira_api.api_base}/issue/{key}/comment?expand=renderedBody'
 		response = self.jira_api.post_json(url=url, json_data=json_data, cred_hash=cred_hash)
@@ -22,7 +22,7 @@ class JiraComments():
 				'data':  format_comment(comment=response.get('data'), key=key)
 			}
 		
-	def edit_comment(self, key, comment_id, cred_hash, comment, private_comment=True):
+	def edit_comment(self, key, comment_id, cred_hash, private_comment, comment=''):
 		json_data = self._set_json(comment=comment, private_comment=private_comment)
 		url = f'{self.jira_api.api_base}/issue/{key}/comment/{comment_id}?expand=renderedBody'
 		response = self.jira_api.put_json(url=url, json_data=json_data, cred_hash=cred_hash)
@@ -45,6 +45,9 @@ class JiraComments():
 		json_data = {"body": comment}
 		if private_comment:
 			json_data['visibility'] = {'type': 'role', 'value': 'Developers'}
+		else:
+			json_data['visibility'] = {}
+
 		return json_data
 
 	def parse_comment(self, cred_hash, comment, key):

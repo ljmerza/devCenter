@@ -97,7 +97,8 @@ def add_comment(data):
 	response = Jira().add_comment(
 		key=data["key"], 
 		comment=data["comment"], 
-		cred_hash=data['cred_hash']
+		cred_hash=data['cred_hash'],
+		private_comment=data['private_comment']
 	)
 	return response
 
@@ -112,7 +113,8 @@ def edit_comment(data):
 		key=data["key"], 
 		comment=data["comment"], 
 		cred_hash=data['cred_hash'],
-		comment_id=data['comment_id']
+		comment_id=data['comment_id'],
+		private_comment=data['private_comment']
 	)
 
 def delete_comment(data):

@@ -59,7 +59,8 @@ class AutomationBot(object):
 			# get all open Jira tickets
 			jira_tickets = self.jira_obj.get_jira_tickets(
 				jql=self.jira_obj.jira_api.all_open_tickets, 
-				cred_hash=self.cred_hash
+				cred_hash=self.cred_hash,
+				fields=self.jira_obj.jira_api.cron_fields
 			)
 
 			# make sure we have Jira tickets

@@ -7,10 +7,9 @@
 				<mat-expansion-panel *ngFor='let comment of ticket?.comments; last as isLast' [expanded]='isLast'>
 					<mat-expansion-panel-header>
 						<mat-panel-title>
-							<dc-user-chat [username]=comment.username [displayName]=comment.display_name></dc-user-chat>
-							<span class="float-right">
-								{{comment.created | amDateFormat:'MM/D/YY h:mm A'}}
-							</span>
+							<div>{{comment.created | amDateFormat:'MM/D/YY h:mm A'}}</div>
+							<dc-user-chat class="right-end" [username]=comment.username [displayName]=comment.display_name></dc-user-chat>
+							<div class="text-warn right-end">{{comment.visibilityName}}</div>
 						</mat-panel-title>
 					</mat-expansion-panel-header>
 					
@@ -49,6 +48,9 @@
 							rows=20 
 							[(ngModel)]=commentEditingText
 						></textarea>
+
+						<mat-checkbox class='pull-right' name='commentEditingPrivate' [(ngModel)]="commentEditingPrivate">Developers Only</mat-checkbox>
+
 					</ng-template>
 				</mat-expansion-panel>
 			</mat-accordion>

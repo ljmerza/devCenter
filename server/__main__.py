@@ -72,9 +72,7 @@ if 'sql' in sys.argv:
 if 'prodChat' in sys.argv:
 	dev_chat = False
 
-logging.info('args:', sys.argv)
-if not port:
-	exit()
+logging.info(', '.join(sys.argv))
 
 def start_cron():
 	automationBot = AutomationBot(
@@ -92,8 +90,11 @@ def start_cron():
 			if not response['status']:
 				logging.info(response['data'])
 
-thr = threading.Thread(target=start_cron)
-thr.start()
+
+# only start cron if in prod
+if 'prod' in sys.argv:
+	thr = threading.Thread(target=start_cron)
+	thr.start()
 
 # start flask server
 DevCenterServer.start_server(

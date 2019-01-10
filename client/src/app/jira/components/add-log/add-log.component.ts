@@ -25,6 +25,7 @@ export class AddLogComponent implements OnInit, OnDestroy {
 
 	uctNotReady = false;
 	conflictCode = false;
+	privateComment = true;
 	comment = '';
 	logTime = {hour: 0, minute: 0};
 	hourStep = 1;
@@ -73,6 +74,7 @@ export class AddLogComponent implements OnInit, OnDestroy {
 		this.store.dispatch(
 			new ActionCommentSave({
 				comment,
+				private_comment: formObj.value.privateComment,
 				uctNotReady: formObj.value.uctNotReady,
 				remove_conflict: formObj.value.conflictCode,
 				log_time: logTime,
@@ -92,5 +94,6 @@ export class AddLogComponent implements OnInit, OnDestroy {
 		this.logTime = {hour: 0, minute: 0};
 		this.hourStep = 1;
 		this.minuteStep = 15;
+		this.privateComment = true;
 	}
 }

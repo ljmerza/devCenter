@@ -27,6 +27,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
 
 	commentEditingId = '';
 	commentEditingText = '';
+	commentEditingPrivate = false;
 	deleteCommentId = '';
 
 	settings = {};
@@ -73,9 +74,12 @@ export class CommentsComponent implements OnInit, OnDestroy {
 		if (this.commentEditingId === comment.id) {
 			this.commentEditingId = '';
 			this.commentEditingText = '';
+			this.commentEditingPrivate = false;
 		} else {
 			this.commentEditingId = comment.id;
 			this.commentEditingText = comment.raw_comment;
+			this.commentEditingText = comment.raw_comment;
+			this.commentEditingPrivate = comment.isVisible;
 		}
 	}
 
@@ -90,11 +94,13 @@ export class CommentsComponent implements OnInit, OnDestroy {
 				comment: this.commentEditingText,
 				commentId: this.commentEditingId,
 				key: this.key,
+				privateComment: this.commentEditingPrivate,
 			})
 		);
 
 		this.commentEditingId = '';
 		this.commentEditingText = '';
+		this.commentEditingPrivate = false;
 	}
 
 	/**

@@ -2,8 +2,7 @@ all_open_tickets = 'project in (AQE, "Auto QM", "Customer DB", "Manager DB", "Ta
 
 fields = 'customfield_10109,comment,status,customfield_10212,summary,assignee,components,timeoriginalestimate,customfield_10001,customfield_10002,label,fixVersions,duedate,created,updated,customfield_10108,customfield_10102,customfield_10175,customfield_10103,customfield_10602,timetracking,labels,attachment,issuelinks,issuetype,customfield_10810,environment,priority,customfield_10812,customfield_10300,description,customfield_10138,worklog,epic_link'
 
-cron_fields='customfield_10212,comment,status,summary,assignee,components,timeoriginalestimate,fixVersions,labels,customfield_10138,epic_link'
-
+cron_fields='customfield_10212,status,summary,assignee,components,timeoriginalestimate,fixVersions,labels,customfield_10138,epic_link'
 
 projects ='project in (AQE, "Taskmaster Dashboard", TeamDB, TQI, "Unified Desktop", UPM, WAM) '
 
