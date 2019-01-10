@@ -86,7 +86,7 @@ def qa_ready_transition(data):
 		key=data['key'], 
 		cred_hash=data['cred_hash'], 
 		comment='CR Pass',
-		private_comment: True
+		private_comment=True
 	)
 
 	return response
@@ -102,7 +102,7 @@ def qa_pass_transition(data):
 		key=data['key'], 
 		cred_hash=data['cred_hash'], 
 		comment='QA Pass',
-		private_comment: True
+		private_comment=True
 	)
 
 	return response
@@ -148,5 +148,5 @@ def _add_commit_comment(commit_ids, key, cred_hash):
 		key=key, 
 		comment=comment, 
 		cred_hash=cred_hash,
-		private_comment: True
+		private_comment=True
 	)
