@@ -38,7 +38,10 @@ export class CommentEffects {
 					map(response => {
 						this.processSaveLog(response.data, action);
 					}),
-					catchError(response => of(new ActionCommentSaveError(response.data)))
+					catchError(error => {
+						this.notifications.error(error);
+						return of(new ActionCommentSaveError(error.data))
+					})
 				);
 			})
 		);
@@ -55,7 +58,10 @@ export class CommentEffects {
 						this.notifications.success(`Successfully edited comment ${action.payload.commentId} for ${action.payload.key}`);
 						return new ActionCommentEditSuccess(response.data);
 					}),
-					catchError(response => of(new ActionCommentEditError(response.data)))
+					catchError(error => {
+						this.notifications.error(error);
+						return of(new ActionCommentEditError(error.data))
+					})
 				);
 			})
 		);
@@ -72,7 +78,10 @@ export class CommentEffects {
 						this.notifications.success(`Successfully deleted comment ${action.payload.comment_id} for ${action.payload.key}`);
 						return new ActionCommentDeleteSuccess(response.data);
 					}),
-					catchError(response => of(new ActionCommentDeleteError(response.data)))
+					catchError(error => {
+						this.notifications.error(error);
+						return of(new ActionCommentDeleteError(error.data))
+					})
 				);
 			})
 		);

@@ -12,18 +12,21 @@ import { NavBarSearchService } from '../services';
 
 @Injectable()
 export class NavBarSearchEffects {
-    constructor(private actions$: Actions<Action>, private service: NavBarSearchService, private notificationsService: NotificationService) { }
+    constructor(private actions$: Actions<Action>, private service: NavBarSearchService, private notifications: NotificationService) { }
 
     @Effect()
     searchJiraTicket = () =>
         this.actions$.pipe(
             ofType<ActionSearch>(NavBarSearchActionTypes.SEARCH),
             switchMap((action: ActionSearch) => {
-                this.notificationsService.info(`Looking up key for ticket MSRP ${action.payload}`);
+                this.notifications.info(`Looking up key for ticket MSRP ${action.payload}`);
 
                 return this.service.findJiraTicket(action.payload).pipe(
                     map((response: any) => new ActionOpenTicket(response.data)),
-                    catchError(error => of(new ActionSearchError(error)))
+                    catchError(error => {
+                        this.notifications.error(error);
+                        return of(new ActionSearchError(error))
+                    })
                 )
             })
         );
@@ -32,7 +35,7 @@ export class NavBarSearchEffects {
     openTicket = this.actions$.pipe(
         ofType<ActionOpenTicket>(NavBarSearchActionTypes.OPEN_TICKET),
         tap(action => {
-            this.notificationsService.success(`Opening ticket key ${action.payload}`);
+            this.notifications.success(`Opening ticket key ${action.payload}`);
             window.open(`${env.jiraUrl}/browse/${action.payload}`);
         })
     );

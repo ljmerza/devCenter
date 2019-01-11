@@ -30,7 +30,7 @@ import { ProfileService, ProfileEffects } from './profile';
     ToastrModule.forRoot({
       closeButton: true,
       enableHtml: true,
-      timeOut: 10000000
+      timeOut: 5000
     }),
 
     // ngrx

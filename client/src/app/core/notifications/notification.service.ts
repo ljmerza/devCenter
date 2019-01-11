@@ -1,9 +1,14 @@
 import {Injectable} from '@angular/core';
 import {ToastrService} from 'ngx-toastr';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class NotificationService {
-	constructor(private toastr: ToastrService) {}
+	toastr2;
+	constructor(private toastr: ToastrService) {
+		this.toastr2 = toastr;
+		console.log(toastr)
+	}
 
 	default(message: string) {
 		this.toastr.info(message);
@@ -21,8 +26,11 @@ export class NotificationService {
 		this.toastr.warning(message);
 	}
 
-	error(message: string = 'Unknown Error') {
-		console.log({error: message}); // intentionally left here
-		if (this.toastr) this.toastr.error(message, '', {timeOut: 10000});
+	error(error) {
+		if (error instanceof HttpErrorResponse) {
+			error = (error.error && error.error.data) || error.statusText;
+		}
+
+		if (this.toastr2) this.toastr2.error(error, '', {timeOut: 10000});
 	}
 }

@@ -1,4 +1,4 @@
-<mat-select [ngStyle]="{'border': borderColor}" name="ticket-status" [(ngModel)]="changedStatusCode"  (selectionChange)='changeStatus($event)'>
+<mat-select [ngStyle]="{'border': borderColor}" name="ticket-status" [(ngModel)]="changedStatusCode"  (selectionChange)='changeStatus($event)' [disabled]='loading'>
     <mat-option *ngFor="let select of transitions" [value]="select?.status_code">
         {{select?.status_name}}
     </mat-option>

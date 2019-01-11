@@ -16,10 +16,10 @@ export function StatusReducer(state: StatusState = initialStatusState, action: S
             return { ...state, tickets: processStatusTickets(action.payload, state.tickets, action.payload.ticketType) };
 
         case StatusActionTypes.SAVE:
-            return { ...state, loading: true };
+            return { ...state, loading: true, error: '' };
 
         case StatusActionTypes.SAVE_SUCCESS:
-            return { ...state, loading: false, tickets: updateTicketStatus(action.payload, state.tickets) };
+            return { ...state, error: '', loading: false, tickets: updateTicketStatus(action.payload, state.tickets) };
 
         case StatusActionTypes.SAVE_ERROR:
             return { ...state, loading: false, error: action.payload };

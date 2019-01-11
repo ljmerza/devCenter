@@ -6,10 +6,11 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { NavBarActionTypes, ActionNavBarRetrieve, ActionNavBarSuccess, ActionNavBarError } from '../actions';
 import { NavBarService } from '../services';
+import { NotificationService } from '@app/core/notifications/notification.service';
 
 @Injectable()
 export class NavBarEffects {
-    constructor(private actions$: Actions<Action>, private service: NavBarService) { }
+    constructor(private actions$: Actions<Action>, private service: NavBarService, private notifications: NotificationService) { }
 
     @Effect()
     retrieveNavBar = () =>
@@ -18,7 +19,10 @@ export class NavBarEffects {
             switchMap(() => {
                 return this.service.retrieveNavBar().pipe(
                     map((response: any) => new ActionNavBarSuccess(response.data)),
-                    catchError(error => of(new ActionNavBarError(error)))
+                    catchError(error => {
+                        this.notifications.error(error);
+                        return of(new ActionNavBarError(error))
+                    })
                 )
             })
         );

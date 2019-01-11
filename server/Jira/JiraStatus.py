@@ -12,6 +12,12 @@ class JiraStatus():
 			response['data'] = {}
 		return response
 
+	def set_backlog(self, key, cred_hash):
+		return self._set_status(key=key, transition_id=10101, cred_hash=cred_hash)
+
+	def set_in_sprint(self, key, cred_hash):
+		return self._set_status(key=key, transition_id=10104, cred_hash=cred_hash)
+
 	def set_in_dev(self, key, cred_hash):
 		return self._set_status(key=key, transition_id=51, cred_hash=cred_hash)
 

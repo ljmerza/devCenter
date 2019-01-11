@@ -32,7 +32,10 @@ export class QaGeneratorEffects {
 
 				return this.service.generateQa(action.payload).pipe(
 					map(response => this.processGenerateQa(response, action)),
-					catchError(error => of(new ActionStatusQaSaveError(error)))
+					catchError(error => {
+						this.notifications.error(error);
+						return of(new ActionStatusQaSaveError(error))
+					})
 				);
 			})
 		);

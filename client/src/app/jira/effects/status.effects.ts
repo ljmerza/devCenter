@@ -6,13 +6,11 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { NotificationService } from '@app/core/notifications/notification.service';
 
-
 import {
     StatusActionTypes, StatusActions,
     ActionStatusSave, ActionStatusSaveSuccess, ActionStatusSaveError,
     ActionCommentSaveSuccess, ActionCommentSaveError
 } from '../actions';
-
 
 import { StatusService } from '../services';
 
@@ -29,7 +27,10 @@ export class StatusEffects {
 
                 return this.service.updateStatus(action.payload).pipe(
                     map(response => this.processUpdateStatus(response, action)),
-                    catchError(error => of(new ActionStatusSaveError(error)))
+                    catchError(error => {
+                        this.notifications.error(error);
+                        return of(new ActionStatusSaveError(error))
+                    })
                 )
             })
         );

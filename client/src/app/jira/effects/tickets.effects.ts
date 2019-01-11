@@ -7,11 +7,12 @@ import { catchError, map, switchMap, takeUntil } from 'rxjs/operators';
 
 import { TicketsActionTypes, TicketsActions, ActionTicketsRetrieve, ActionTicketsSuccess, ActionTicketsError } from '../actions';
 import { TicketsService } from '../services';
+import { NotificationService } from '@app/core/notifications/notification.service';
 
 @Injectable()
 export class TicketsEffects {
     private unsubscribe$: Subject<void> = new Subject<void>();
-    constructor(private actions$: Actions<Action>, private service: TicketsService) {}
+    constructor(private actions$: Actions<Action>, private service: TicketsService, private notifications: NotificationService) {}
 
     @Effect()
     searchJiraTicket = () =>
@@ -24,7 +25,10 @@ export class TicketsEffects {
                         response.data.ticketType = action.payload.ticketType || '';
                         return new ActionTicketsSuccess(response.data);
                     }),
-                    catchError(error => of(new ActionTicketsError(error)))
+                    catchError(error => {
+                        this.notifications.error(error);
+                        return of(new ActionTicketsError(error))
+                    })
                 )
             )
         );

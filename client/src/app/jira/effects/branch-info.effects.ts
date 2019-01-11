@@ -11,10 +11,11 @@ import {
 } from '../actions';
 
 import { BranchInfoService } from '../services';
+import { NotificationService } from '@app/core/notifications/notification.service';
 
 @Injectable()
 export class BranchInfoEffects {
-    constructor(private actions$: Actions<Action>, private service: BranchInfoService) {}
+    constructor(private actions$: Actions<Action>, private service: BranchInfoService, private notifications: NotificationService) {}
 
     @Effect()
     sendPing = () =>
@@ -23,7 +24,10 @@ export class BranchInfoEffects {
             switchMap((action: ActionBranchInfoPing) => 
                 this.service.sendPing(action.payload).pipe(
                     map((response: any) => new ActionBranchInfoPingSuccess(response.data)),
-                    catchError(() => of(new ActionBranchInfoPingError()))
+                    catchError(error => {
+                        this.notifications.error(error);
+                        return of(new ActionBranchInfoPingError())
+                    })
                 )
             )
         );

@@ -18,6 +18,12 @@ def set_status(data):
 	response = {"status": False}
 	jira = Jira()
 
+	if data['status_type'] == 'backlog':
+		response = jira.set_backlog(key=data['key'], cred_hash=data['cred_hash'])
+
+	if data['status_type'] == 'inSprint':
+		response = jira.set_in_sprint(key=data['key'], cred_hash=data['cred_hash'])
+
 	if data['status_type'] == 'inDev':
 		response = jira.set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
 

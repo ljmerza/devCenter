@@ -67,6 +67,9 @@ export class StatusComponent implements OnDestroy, OnInit {
         select(selectStatuses), 
         tap(state => {
           if(this.loading) this.loading = state.loading;
+
+          // if error came back then reset status
+          if(state.error) this.confirmCancelStatus();
         }),
         map((state: StatusState): StatusTicket => state.tickets.find(ticket => ticket.key === this.key)), 
         distinctUntilChanged()
@@ -123,6 +126,7 @@ export class StatusComponent implements OnDestroy, OnInit {
     this.showBranchInfo = this.changedStatusCode === 'uctReady';
     this.showAddComment = ['qaFail', 'crFail', 'uctFail', 'uctPass'].includes(this.changedStatusCode);
     
+    this.loading = true;
     this.modal.openModal();
   }
 
@@ -162,6 +166,7 @@ export class StatusComponent implements OnDestroy, OnInit {
    * resets all inputs
    */
   resetInputs(){
+    this.loading = false;
     this.comment = '';
     this.uctNotReady = false;
   }

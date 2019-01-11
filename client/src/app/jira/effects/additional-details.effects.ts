@@ -11,10 +11,11 @@ import {
 } from '../actions';
 
 import { AdditionalDetailsService } from '../services';
+import { NotificationService } from '@app/core/notifications/notification.service';
 
 @Injectable()
 export class AdditionalDetailsEffects {
-    constructor(private actions$: Actions<Action>, private service: AdditionalDetailsService) {}
+    constructor(private actions$: Actions<Action>, private service: AdditionalDetailsService, private notifications: NotificationService) {}
 
     @Effect()
     getAdditionalDetails = () =>
@@ -23,7 +24,10 @@ export class AdditionalDetailsEffects {
             switchMap((action: ActionAdditionalDetailsRetrieve) => 
                 this.service.getAdditionalDetails(action.payload).pipe(
                     map((response: any) => new ActionAdditionalDetailsSuccess(response.data)),
-                    catchError(() => of(new ActionAdditionalDetailsError()))
+                    catchError(error => {
+                        this.notifications.error(error);
+                        return of(new ActionAdditionalDetailsError())
+                    })
                 )
             )
         );
