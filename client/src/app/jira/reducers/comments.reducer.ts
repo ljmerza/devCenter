@@ -147,7 +147,7 @@ function processAddLog(addLogResponse, tickets) {
 			if (ticket.key === addLogResponse.key) {
 				ticket = {...ticket};
 				ticket.comments = Array.from(ticket.comments);
-				const newComment = addLogResponse.comment_response.data;
+				const newComment = processComment(addLogResponse.comment_response.data);
 				ticket.comments.push(newComment);
 			}
 

@@ -209,14 +209,22 @@ export class TicketsComponent implements OnInit, OnDestroy {
 					return this.compare(a.summary, b.summary, isAsc);
 				case 'Status':
 					return this.compare(a.status, b.status, isAsc);
+
 				case 'Start Date':
 					return this.compare(a.dates.started, b.dates.started, isAsc);
 				case 'Due Date':
 					return this.compare(a.dates.duedate, b.dates.duedate, isAsc);
 				case 'Estimate':
-					return this.compare(a.dates.estimate_seconds, b.dates.estimate_seconds, isAsc);
+					return this.compare(a.dates.estimate, b.dates.estimate, isAsc);
+				case 'Last Update':
+					return this.compare(a.dates.updated, b.dates.updated, isAsc);
 				case 'Logged':
 					return this.compare(a.dates.logged_seconds, b.dates.logged_seconds, isAsc);
+				case 'Created':
+					return this.compare(a.dates.created, b.dates.created, isAsc);
+
+				case 'Sprint':
+					return this.compare(a.master_branch, b.master_branch, isAsc);
 				case 'Pull Requests':
 					return this.pullCompare(a.pullRequests || [], b.pullRequests || [], isAsc);
 				case 'Assignee':
