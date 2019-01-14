@@ -2,7 +2,7 @@ import { baseEnv, devServer } from './baseEnvironment';
 
 export const environment = {
   ...baseEnv,
-  envName: 'PROD',
+  envName: 'BETA',
   production: true,
   port: 5860,
   devServer,
