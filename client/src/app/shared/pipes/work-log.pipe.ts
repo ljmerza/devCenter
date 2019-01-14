@@ -22,7 +22,7 @@ export class WorkLogPipe implements PipeTransform {
 		days = days % 5;
 
 		let returnValue = '';
-		if(weeks) returnValue += `${hours}w`;
+		if(weeks) returnValue += `${weeks}w`;
 		if(weeks && days) returnValue += ' ';
 
 		if(days) returnValue += `${days}d`;
