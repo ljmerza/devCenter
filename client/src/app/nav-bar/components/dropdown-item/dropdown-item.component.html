@@ -1,13 +1,17 @@
-<!-- full link given -->
-<a 
-	mat-menu-item 
-	class="dropdown-item" 
-	[routerLink]="['/jira/tickets', navLink.name, {jql: navLink.query, displayName:navLink.display_name}]"
-	*ngIf='navLink.query; else fullLink' 
->
+
+<a mat-menu-item class="dropdown-item" [routerLink]="['/jira/tickets', navLink.name, {jql: navLink.query, displayName:navLink.display_name}]"
+ *ngIf='navLink.query; else customRoute'>
 	{{navLink.display_name}}
 </a>
 
+<!-- custom router link -->
+<ng-template #customRoute>
+	<a mat-menu-item class="dropdown-item" [routerLink]="[navLink.routerLink]" *ngIf='navLink.routerLink; else fullLink'>
+		{{navLink.display_name}}
+	</a>
+</ng-template>
+
+<!-- full link -->
 <ng-template #fullLink>
 	<a 
 		mat-menu-item 

@@ -9,6 +9,12 @@ export function processJqlLinks(jqlLinks) {
 		return link;
 	});
 
+	// add custom links
+	jqlLinks.push({
+		routerLink: 'orders/apollo',
+		display_name: 'Apollo Orders',
+	});
+
 	const jqlNavbar: DropdownItem = {
 		name: 'Ticket Lists',
 		items: _formatNavBarJqlLinks(jqlLinks),

@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {environment as env} from '@env/environment';
 
 import {SettingsContainerComponent} from './settings';
 import {ProfileGuard} from './profile-guard.service';
@@ -23,6 +22,10 @@ export const routes: Routes = [
 		path: `jira`,
 		loadChildren: 'app/jira/jira.module#JiraModule',
 		canActivate: [ProfileGuard],
+	},
+	{
+		path: `orders`,
+		loadChildren: 'app/orders/orders.module#OrdersModule',
 	},
 	{
 		path: `**`,

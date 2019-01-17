@@ -7,6 +7,7 @@ import { selectSettings } from '@app/settings/settings.selectors';
 
 import { selectNavBarItems, selectLinks } from '../../selectors';
 import { ActionNavBarRetrieve, ActionLinksRetrieve } from '../../actions';
+import { ProfileService } from '@app/core/profile';
 
 @Component({
   selector: 'dc-nav-bar',
@@ -25,7 +26,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   env = env;
   logo = require('@app/../assets/logo.png');
 
-  constructor(public store: Store<{}>) {}
+  constructor(public store: Store<{}>, public profileService: ProfileService) {}
 
   ngOnInit() {
     this.navBarItems$ = this.store.pipe(select(selectNavBarItems))
@@ -45,37 +46,5 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.navBarItems$.unsubscribe();
     this.settings$.unsubscribe();
     this.links$.unsubscribe();
-  }
-
-  public get devBaseUrl(): string {
-    return `http://${this.settings.devServer}.${env.rootDomain}:${
-      this.settings.port
-    }`;
-  }
-
-  public get emberBaseUrl(): string {
-    const isLocalUrl = this.settings.emberUrl === 'local';
-    const port = isLocalUrl ? '4200' : this.settings.port;
-    const hash = isLocalUrl ? '/#' : '';
-    const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
-    return `http://${server}:${port}/UD-ember${hash}`;
-  }
-
-  public get teamBaseUrl(): string {
-    const isLocalUrl = this.settings.teamUrl === 'local';
-    const port = isLocalUrl ? '4200' : this.settings.port;
-    const hash = isLocalUrl ? '/#' : '';
-    const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
-
-    return `http://${server}:${port}/teamdbgui${hash}`;
-  }
-
-  public get templateBaseUrl(): string {
-    const isLocalUrl = this.settings.tempUrl === 'local';
-    const port = isLocalUrl ? '4200' : this.settings.port;
-    const hash = isLocalUrl ? '/#' : '';
-    const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
-
-    return `http://${server}:${port}/templatetools{hash}`;
   }
 }

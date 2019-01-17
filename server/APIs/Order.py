@@ -4,6 +4,9 @@ import json
 
 class Order():
 
+	def __init__(self):
+		self.dir_path = os.path.dirname(os.path.realpath(__file__))
+
 	def get_orders(self):
 		return self.get_json(file_name='deep_order_data', file_type='Order')
 
@@ -12,8 +15,9 @@ class Order():
 
 	def get_json(self, file_name, file_type):
 		data = []
+
 		try:
-			with open(f'./server/APIs/data/{file_name}.json', encoding="utf8") as data_file:    
+			with open(f'{self.dir_path}/data/{file_name}.json', encoding="utf8") as data_file:    
 				data = json.load(data_file)
 			return {'status': True, 'data': data}
 

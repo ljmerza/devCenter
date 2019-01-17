@@ -12,6 +12,8 @@ export interface SettingsState {
   theme: string,
   isThemeChange: boolean,
   ticketColumnDefinitions: ColumnDefinition[]
+  apolloColumnDefinitions?: ColumnDefinition[]
+  atxColumnDefinitions?: ColumnDefinition[]
 }
 
 export interface ColumnDefinition {

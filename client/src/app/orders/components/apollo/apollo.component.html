@@ -1,0 +1,404 @@
+<dc-loading-table [loadingTable]=loading [loadingIcon]=loadingIcon [tableTitle]="'Apollo Orders'" (refreshData)='getOrders()'
+  (stopRefresh)='cancelGetOrders()'>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        <mat-form-field>
+          <mat-label>Filter Rows</mat-label>
+          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter" [(ngModel)]='filterValue'>
+        </mat-form-field>
+  
+        <mat-form-field class='seperate-inputs'>
+          <mat-label>Filter Columns</mat-label>
+          <mat-select name="fields-shown" (selectionChange)='changeShown($event)' multiple [(value)]=displayedColumns>
+            <mat-option *ngFor="let select of apolloColumnDefinitions" [value]="select?.name">
+              {{select?.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <mat-table [trackBy]='trackTableBy' [dataSource]="dataSource" matSort matSortDirection="asc"
+          (matSortChange)="sortData($event)" class="mat-elevation-z8" dcCopyInputBubble>
+
+
+          <!-- UNI -->
+          <ng-container matColumnDef="UNI CLO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI CLO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy UNI CLO to clipboard">note</i>
+                <span class='hidden'>{{orderItem.UNI[0].WfaClo}}</span>
+            
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/order/ethernet/{{orderItem.UNI[0].WfaClo}}" title='Open Order'>
+                  {{orderItem.UNI[0].WfaClo}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI Circuit">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI Circuit </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy Circuit to clipboard">note</i>
+                <span class='hidden'>{{orderItem.UNI[0].BpoCktId}}</span>
+
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/asset/history?asset={{orderItem.UNI[0].BpoCktId}}" title='Open Circuit'>
+                  {{orderItem.UNI[0].BpoCktId}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI Region">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI Region </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>{{orderItem.UNI[0].WfaRegion}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI OSSOI Order">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI OSSOI Order </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>{{orderItem.UNI[0].wfa_uni?.ORD}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI Open Events">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI Open Events </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>{{orderItem.UNI[0].wfa_uni?.open_events?.length}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI aseDB">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI aseDB </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy aseDB to clipboard">note</i>
+                <span class='hidden'>{{orderItem.UNI[0].AsedbSiteId}}</span>
+                
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/order/asedb/{{orderItem.UNI[0].AsedbSiteId}}" title='Open aseDB'>
+                  {{orderItem.UNI[0].AsedbSiteId}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI OMX/OCX?">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI OMX/OCX? </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>{{orderItem.UNI[0].OmxOrderId}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI Edge Forces">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI Edge Forces </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>{{orderItem.UNI[0].edge_uni?.length}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI PO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI PO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI_pos'>
+                <span>{{orderItem.UNI_pos.length}}</span> 
+                <div *ngFor='let po of orderItem.UNI_pos'>PO: {{po}}</div>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI TO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI TO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI_tos'>
+                <span>{{orderItem.UNI_tos.length}}</span> 
+                <div *ngFor='let to of orderItem.UNI_tos'>TO: {{to}}</div>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI ACTS?">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI ACTS? </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>{{orderItem.UNI[0].is_acts}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI EAN?">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI EAN? </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>{{orderItem.UNI[0].is_ean}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI Devices">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI Devices </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>
+                <div>EMUX: {{orderItem.UNI[0].canopi?.uni_to?.emuxName}}</div>
+                <div>IPAG: {{orderItem.UNI[0].canopi?.uni_to?.ipagRouterClli}}</div>
+                <div>NTE: {{orderItem.UNI[0].canopi?.uni_to?.nteClli}}</div>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="UNI PON">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> UNI PON </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.UNI'>{{orderItem.UNI[0].ExactPon || orderItem.database_info.PON}}</span>
+            </mat-cell>
+          </ng-container>
+
+          <!-- CNL -->
+          <ng-container matColumnDef="CNL CLO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CNL CLO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy CNL CLO to clipboard">note</i>
+                <span class='hidden'>{{orderItem.CNL[0].WfaClo}}</span>
+              
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/order/ethernet/{{orderItem.CNL[0].WfaClo}}" title='Open Order'>
+                  {{orderItem.CNL[0].WfaClo}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="CNL Circuit">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CNL Circuit </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy Circuit to clipboard">note</i>
+                <span class='hidden'>{{orderItem.CNL[0].BpoCktId}}</span>
+
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/asset/history?asset={{orderItem.CNL[0].BpoCktId}}" title='Open Circuit'>
+                  {{orderItem.CNL[0].BpoCktId}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="CNL Region">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CNL Region </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL'>{{orderItem.CNL[0].WfaRegion}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="CNL OSSOI Order">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CNL OSSOI Order </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL'>{{orderItem.CNL[0].wfa_cnl?.ORD}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="CNL Open Events">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CNL Open Events </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL'>{{orderItem.CNL[0].wfa_cnl?.open_events?.length}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="CNL aseDB">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CNL aseDB </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy aseDB to clipboard">note</i>
+                <span class='hidden'>{{orderItem.CNL[0].AsedbSiteId}}</span>
+              
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/order/asedb/{{orderItem.CNL[0].AsedbSiteId}}" title='Open aseDB'>
+                  {{orderItem.CNL[0].AsedbSiteId}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="CNL Edge Forces">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CNL Edge Forces </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL'>{{orderItem.CNL[0].edge_cnl?.length}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="CNL PO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CNL PO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL_pos'>
+                <span>{{orderItem.CNL_pos.length}}</span> 
+                <div *ngFor='let po of orderItem.CNL_pos'>PO: {{po}}</div>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="CNL TO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CNL TO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL_tos'>
+                <span>{{orderItem.CNL_tos.length}}</span> 
+                <div *ngFor='let to of orderItem.CNL_tos'>TO: {{to}}</div>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="CNL Devices">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> CNL Devices </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL'>
+                <div>EMUX: {{orderItem.CNL[0].canopi?.cnl_to?.emuxName}}</div>
+                <div>IPAG: {{orderItem.CNL[0].canopi?.cnl_to?.ipagRouterClli}}</div>
+                <div>NTE: {{orderItem.CNL[0].canopi?.cnl_to?.nteClli}}</div>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="CNL PON">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>CNL PON </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.CNL'>{{orderItem.CNL[0].ExactPon || orderItem.database_info.PON}}</span>
+            </mat-cell>
+          </ng-container>
+
+          <!-- EVC -->
+          <ng-container matColumnDef="EVC CLO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> EVC CLO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.EVC'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy EVC CLO to clipboard">note</i>
+                <span class='hidden'>{{orderItem.EVC[0].WfaClo}}</span>
+              
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/order/ethernet/{{orderItem.EVC[0].WfaClo}}" title='Open Order'>
+                  {{orderItem.EVC[0].WfaClo}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="EVC Circuit">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> EVC Circuit </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.EVC'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy Circuit to clipboard">note</i>
+                <span class='hidden'>{{orderItem.EVC[0].BpoCktId}}</span>
+
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/asset/history?asset={{orderItem.EVC[0].BpoCktId}}" title='Open Circuit'>
+                  {{orderItem.EVC[0].BpoCktId}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="EVC Region">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> EVC Region </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.EVC'>{{orderItem.EVC[0].WfaRegion}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="EVC OSSOI Order">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> EVC OSSOI Order </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.EVC'>{{orderItem.EVC[0].wfa_evc?.ORD}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="EVC Open Events">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> EVC Open Events </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.EVC'>{{orderItem.EVC[0].wfa_evc?.open_events?.length}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="EVC aseDB">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> EVC aseDB </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.EVC'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy aseDB to clipboard">note</i>
+                <span class='hidden'>{{orderItem.EVC[0].AsedbSiteId}}</span>
+              
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/order/asedb/{{orderItem.EVC[0].AsedbSiteId}}" title='Open aseDB'>
+                  {{orderItem.EVC[0].AsedbSiteId}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="EVC Edge Forces">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> EVC Edge Forces </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.EVC'>{{orderItem.EVC[0].edge_evc?.length}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="EVC PO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> EVC PO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.EVC_pos'>
+                <span>{{orderItem.EVC_pos.length}}</span>
+                <div *ngFor='let po of orderItem.EVC_pos'>PO: {{po}}</div>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="EVC TO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> EVC TO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.EVC_tos'>
+                <span>{{orderItem.EVC_tos.length}}</span> 
+                <div *ngFor='let to of orderItem.EVC_tos'>TO: {{to}}</div>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="EVC PON">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> EVC PON </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.EVC'>{{orderItem.EVC[0].ExactPon || orderItem.database_info.PON}}</span>
+            </mat-cell>
+          </ng-container>
+
+          <!-- ATX -->
+          <ng-container matColumnDef="ATX Site ID">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ATX Site ID </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.ATX'>{{orderItem.ATX[0].atx?.AsedbSiteId}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="ATX PON">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ATX PON </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.ATX'>{{orderItem.ATX[0].atx?.AtxUniPon}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="ATX USO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ATX USO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.ATX'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy Circuit to clipboard">note</i>
+                <span class='hidden'>{{orderItem.ATX[0].atx?.AtxUniUso}}</span>
+              
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/order/atx/usoNumber/{{orderItem.ATX[0].atx?.AtxUniUso}}" title='Open USO'>
+                  {{orderItem.ATX[0].atx?.AtxUniUso}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="ATX iCore">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ATX iCore </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.ATX'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy Icore Id to clipboard">note</i>
+                <span class='hidden'>{{orderItem.ATX[0].atx?.AtxUniUsoIcoreId}}</span>
+              </span>
+            </mat-cell>
+          </ng-container>
+
+          <!-- ADE -->
+          <ng-container matColumnDef="ADE CLO">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ADE CLO </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.ADE'>{{orderItem.ADE[0].WfaClo}}</span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="ADE Circuit">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ADE Circuit </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.ADE'>
+                <i class="material-icons pointer copy-input-dir copy-accent" title="Copy Circuit to clipboard">note</i>
+                <span class='hidden'>{{orderItem.ADE[0].BpoCktId}}</span>
+
+                <a target="_blank" href="{{profileService.emberBaseUrl}}/asset/history?asset={{orderItem.ADE[0].BpoCktId}}" title='Open Circuit'>
+                  {{orderItem.ADE[0].BpoCktId}}
+                </a>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="ADE Region">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ADE Region </mat-header-cell>
+            <mat-cell *matCellDef="let orderItem">
+              <span *ngIf='orderItem.ADE'>{{orderItem.ADE[0].WfaRegion}}</span>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        
+        </mat-table>
+        
+        <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+      </div>
+    </div>
+  </div>
+
+</dc-loading-table>

@@ -7,6 +7,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
 
+import { LoadingTableComponent } from './components';
+
 import {
   MatAutocompleteModule,
   MatBadgeModule,
@@ -108,7 +110,7 @@ library.add(
 
     FontAwesomeModule
   ],
-  declarations: [CopyInputDirective, CommentFormatPipe, SafehtmlPipe, WorkLogPipe, CopyInputsDirective],
+  declarations: [LoadingTableComponent, CopyInputDirective, CommentFormatPipe, SafehtmlPipe, WorkLogPipe, CopyInputsDirective],
   exports: [
     CommonModule,
     FormsModule,
@@ -161,6 +163,8 @@ library.add(
     CommentFormatPipe, 
     SafehtmlPipe,
     WorkLogPipe,
+
+    LoadingTableComponent
   ]
 })
 export class SharedModule {}

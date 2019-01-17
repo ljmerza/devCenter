@@ -1,0 +1,1 @@
+export * from './loading-table/loading-table.component';

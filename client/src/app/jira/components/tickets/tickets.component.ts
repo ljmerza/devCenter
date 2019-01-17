@@ -1,7 +1,6 @@
 import {Component, ViewChild, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
 import {Sort, MatTableDataSource, MatPaginator} from '@angular/material';
-import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Store, select} from '@ngrx/store';
 import {distinctUntilChanged} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
@@ -20,14 +19,7 @@ import {environment as env} from '@env/environment';
 @Component({
 	selector: 'dc-tickets',
 	templateUrl: './tickets.component.html',
-	styleUrls: ['./tickets.component.css'],
-	animations: [
-		trigger('detailExpand', [
-			state('collapsed', style({height: '0px', minHeight: '0', visibility: 'hidden'})),
-			state('expanded', style({height: '*', visibility: 'visible'})),
-			transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-		]),
-	],
+	styleUrls: ['./tickets.component.css']
 })
 export class TicketsComponent implements OnInit, OnDestroy {
 	constructor(private route: ActivatedRoute, public store: Store<{}>, private ticketEffects: TicketsEffects) {}
@@ -36,8 +28,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	columnDefinitions: ColumnDefinition[] = [];
 
 	dataSource: MatTableDataSource<any>;
-
-	isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
 	env = env;
 
 	@ViewChild(MatPaginator) paginator: MatPaginator;
@@ -48,13 +38,13 @@ export class TicketsComponent implements OnInit, OnDestroy {
 	settings: any;
 
 	filteredTickets: Array<JiraTicket> = [];
-	loading: boolean = false;
-	loadingIcon: boolean = false;
-	tableTitle: string = '';
-	ticketType: string = '';
+	loading = false;
+	loadingIcon = false;
+	tableTitle = '';
+	ticketType = '';
 
-	filterValue: string = '';
-	currentPage: number = 0;
+	filterValue = '';
+	currentPage = 0;
 
 	ngOnInit(): void {
 		// watch for ticket column changes
@@ -73,7 +63,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 			)
 			.subscribe(state => this.processTickets(state));
 
-		// watch for laoding changes from store
+		// watch for loading changes from store
 		this.loading$ = this.store.pipe(select(selectJiraLoading)).subscribe(loading => this.setLoading(loading));
 
 		// watch for route cahnges to fetch a different ticket list

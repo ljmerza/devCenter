@@ -5,11 +5,11 @@
 	<dc-dropdown-menu *ngIf='links?.jqlNavbar' [navLinks]=links.jqlNavbar></dc-dropdown-menu>
 
 	<dc-dropdown-menu 
-		*ngIf='this.settings.username && this.settings.port && navBarItems?.DevLinks'
+		*ngIf='settings.username && settings.port && navBarItems?.DevLinks'
 		[navLinks]=navBarItems?.DevLinks
-		[baseUrl]=devBaseUrl
-		[emberUrl]=emberBaseUrl
-		[teamUrl]=teamBaseUrl
+		[baseUrl]=profileService.devBaseUrl
+		[emberUrl]=profileService.emberBaseUrl
+		[teamUrl]=profileService.teamBaseUrl
 	></dc-dropdown-menu>
 
 	<dc-dropdown-menu *ngIf='navBarItems?.BetaLinks' [navLinks]=navBarItems?.BetaLinks ></dc-dropdown-menu>

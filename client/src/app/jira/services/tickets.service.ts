@@ -8,7 +8,7 @@ export class TicketsService {
     constructor(private httpClient: HttpClient) {}
 
     /**
-     * 
+     * gets a list of tickets given a jql and a list of fields for the tickets
      */
     getTickets({currentJql, fields=''}){
         const params = new HttpParams()
@@ -17,6 +17,4 @@ export class TicketsService {
 
         return this.httpClient.get(`${env.apiUrl}/jira/tickets`, {params});
     }
-
-
 }

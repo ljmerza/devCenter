@@ -22,4 +22,34 @@ export class ProfileService {
     getProfile(): Observable<any> {
         return this.httpClient.get(`${env.apiUrl}/jira/profile/${this.settings.username}`);
     }
+
+    public get devBaseUrl(): string {
+        return `http://${this.settings.devServer}.${env.rootDomain}:${this.settings.port}`;
+    }
+
+    public get emberBaseUrl(): string {
+        const isLocalUrl = this.settings.emberUrl === 'local';
+        const port = isLocalUrl ? '4200' : this.settings.port;
+        const hash = isLocalUrl ? '/#' : '';
+        const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
+        return `http://${server}:${port}/UD-ember${hash}`;
+    }
+
+    public get teamBaseUrl(): string {
+        const isLocalUrl = this.settings.teamUrl === 'local';
+        const port = isLocalUrl ? '4200' : this.settings.port;
+        const hash = isLocalUrl ? '/#' : '';
+        const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
+
+        return `http://${server}:${port}/teamdbgui${hash}`;
+    }
+
+    public get templateBaseUrl(): string {
+        const isLocalUrl = this.settings.tempUrl === 'local';
+        const port = isLocalUrl ? '4200' : this.settings.port;
+        const hash = isLocalUrl ? '/#' : '';
+        const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
+
+        return `http://${server}:${port}/templatetools{hash}`;
+    }
 }
