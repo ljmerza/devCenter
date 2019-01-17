@@ -356,6 +356,11 @@ sub get_atx {
 	my ($record, $data) = @_;
 
 	if(my $atx = $record->{Details}){
+
+		if($record->{Details}->{AtxUniUso}) {
+			$record->{Details}->{AtxUniUso} =~ s/[^0-9]*//g;
+		}
+		
 		$data->{atx} = $record->{Details};
 	}
 
