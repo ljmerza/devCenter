@@ -83,7 +83,6 @@ async function saveTicket(ticket){
                 updateType = 'UPDATE';
             }
 
-            console.log(`${updateType} ${ticket.key}`);
             connection.query(query, [assignee, timeTracking, histories, fixVersions, ticket.key], error => {
                 if (error) return reject(error);
                 return resolve();
@@ -133,6 +132,9 @@ function formatFixVersion(fixVersion){
 
 (async () => {
 
+    let numberOfTickets = 0;
+    console.log(`Ticket cron started at ${new Date()}`);
+    
     let startAt = keys.jiraTicketParams.startAt;
     let listIndexes = [0];
     while (startAt <= keys.endAt){
@@ -145,9 +147,10 @@ function formatFixVersion(fixVersion){
 
         try {
             const tickets = await getTickets(url);
-            console.log(`found ${tickets.length} tickets`);
 
+            numberOfTickets += tickets.length;
             if (tickets.length == 0) {
+                console.log(`${numberOfTickets} ticket synced`);
                 connection.end();
                 return;
             }
