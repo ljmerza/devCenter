@@ -3,6 +3,8 @@
 @mixin dc-qa-generator-component-theme($theme) {
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
+  $primary: map-get($theme, primary);
+  $foreground: map-get($theme, foreground);
 
   .qa-delete-icon {
     color: mat-color($warn);
@@ -10,5 +12,24 @@
 
   .qa-add-repo-icon {
     color: mat-color($accent);
+  }
+
+  .qa-gen-body {
+    textarea {
+      border: 1px solid #333;
+    }
+
+    .form-control {
+      background-color: inherit;
+      color: mat-color($foreground, text);
+    }
+
+    .chevron {
+      color: mat-color($primary);
+
+      &:hover {
+        color: mat-color($primary, lighter);
+      }
+    }
   }
 }

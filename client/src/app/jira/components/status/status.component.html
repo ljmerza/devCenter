@@ -9,7 +9,9 @@
     <div class='modal-header'>{{key}} Status</div>
 
     <span class='modal-body'>
-        Are you sure you want to change the ticket status for <span class='status-highlight'>{{key}}</span> from <span class='status-highlight'>{{originalStatusName}}</span> to <span class='status-highlight'>{{changedStatusName}}</span>?
+        <span class='status-change-confirm'>
+            Are you sure you want to change the ticket status for <span class='status-highlight'>{{key}}</span> from <span class='status-highlight'>{{originalStatusName}}</span> to <span class='status-highlight'>{{changedStatusName}}</span>?
+        </span>
         
         <dc-branch-info-body 
             *ngIf='showBranchInfo' 

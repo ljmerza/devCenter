@@ -2,3 +2,7 @@
 .section {
     margin-top: 10px;
 }
+
+textarea {
+    padding: 5px;
+}

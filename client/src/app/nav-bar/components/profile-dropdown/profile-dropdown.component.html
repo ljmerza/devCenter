@@ -1,5 +1,5 @@
 <button mat-menu-item [matMenuTriggerFor]="profileMenu" *ngIf='profile'>
-  <img src="{{profile?.avatar}}" alt=""> 
+  <img class='profile-image' src="{{profile?.avatar}}" alt=""> 
   {{profile?.displayName}}
   <fa-icon icon="caret-down"></fa-icon>
 </button>

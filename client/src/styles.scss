@@ -48,6 +48,7 @@
 @import 'themes/nature-theme.scss';
 
 @import 'themes/styles-reset.scss-theme';
+
 @import 'themes/notifications.component.scss-theme';
 @import 'themes/jspanel.component.scss-theme';
 @import 'themes/app.component.scss-theme';
@@ -56,6 +57,8 @@
 @import 'themes/settings.component.scss-theme';
 @import 'themes/comments.component.scss-theme';
 @import 'themes/qa-generator.component.scss-theme';
+@import 'themes/status.component.scss-theme';
+
 @import 'themes/nav-bar.module.scss-theme';
 @import 'themes/main-table.scss-theme';
 
@@ -71,6 +74,7 @@
   @include dc-jspanel-component-theme($theme);
   @include dc-loading-details-component-theme($theme);
   @include dc-qa-generator-component-theme($theme);
+  @include dc-status-component-theme($theme);
   @include main-table-theme($theme);
 }
 

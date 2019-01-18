@@ -147,8 +147,8 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
         repo.setControl('allBranchedFrom', this.fb.array(branches.data));
         repo.get('allBranchedFromChoice').setValue(this.defaultSelectBranchMessage);
       },
-      error => {
-        this.notifications.error(`Could not get repo branches: ${error.data}`);
+      response => {
+        this.notifications.error(`Could not get repo branches: ${response.error.data}`);
       }
     );
   }
@@ -161,9 +161,14 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
 
     // get all branches associated with this msrp
     this.getRepos$ = this.gitService.getTicketBranches(this.ticket.msrp).subscribe(
-      response => this.processBranches(response.data),
-      error => this.notifications.error(`Could not get ticket branches: ${error.data}`), 
-      () => this.loadingBranches = false
+      response => {
+        this.processBranches(response.data);
+        this.loadingBranches = false;
+      },
+      response => {
+        this.notifications.error(`Could not get ticket branches: ${response.error.data}`);
+        this.loadingBranches = false;
+      }
     );
   }
 
@@ -171,7 +176,7 @@ export class QaGeneratorBranchesComponent implements OnInit, OnDestroy {
    * cancels getting the ticket's branches
    */
   cancelGetTicketBrances(){
-    this.getRepos$.unsubscribe();
+    this.getRepos$ && this.getRepos$.unsubscribe();
     this.loadingBranches = false;
   }
 
