@@ -6,14 +6,15 @@ import {of} from 'rxjs';
 import {catchError, map, switchMap} from 'rxjs/operators';
 
 import {
-	StatusActionTypes,
-	StatusActions,
-	ActionStatusQaSave,
-	ActionStatusQaSaveSuccess,
-	ActionStatusQaSaveError,
 	ActionCommentSaveSuccess,
 	ActionStatusSaveSuccess,
 	ActionStatusSaveError,
+
+	QaGeneratorActions,
+	QaGeneratorActionTypes,
+	ActionStatusQaSave,
+	ActionStatusQaSaveSuccess,
+	ActionStatusQaSaveError,
 } from '../actions';
 
 import {StatusService} from '../services';
@@ -23,19 +24,15 @@ import {NotificationService} from '@app/core/notifications/notification.service'
 export class QaGeneratorEffects {
 	constructor(public store: Store<{}>, private actions$: Actions<Action>, private service: StatusService, private notifications: NotificationService) {}
 
-	@Effect()
+	@Effect({dispatch: false})
 	generateQa = () =>
 		this.actions$.pipe(
-			ofType<StatusActions>(StatusActionTypes.SAVE_QA),
+			ofType<QaGeneratorActions>(QaGeneratorActionTypes.SAVE_QA),
 			switchMap((action: ActionStatusQaSave) => {
 				this.savingNotification(action);
 
 				return this.service.generateQa(action.payload).pipe(
 					map(response => this.processGenerateQa(response, action)),
-					catchError(error => {
-						this.notifications.error(error);
-						return of(new ActionStatusQaSaveError(error))
-					})
 				);
 			})
 		);
@@ -50,7 +47,7 @@ export class QaGeneratorEffects {
 
 		if (!response.status) {
 			this.notifications.error(`Error generating QA workflow for ${key}: ${response.data}`);
-			return new ActionStatusQaSaveError(response.data);
+			return this.store.dispatch(new ActionStatusQaSaveError(response.data));
 		}
 
 		let success: string = '';
@@ -66,23 +63,22 @@ export class QaGeneratorEffects {
 
 		// check for pull response
 		if (response.data.pull_response && response.data.pull_response.status) {
-			const validPullRequests = [];
 			let pullRequestSuccesses = '';
 
 			response.data.pull_response.data.forEach(pullRequest => {
 				if (pullRequest.error) {
 					this.notifications.error(`Error creating pull request for ${key} for repo ${pullRequest.repo}: ${pullRequest.error}`);
 				} else {
-					validPullRequests.push(pullRequest);
 					pullRequestSuccesses += `<a href='${pullRequest.link}' target='_blank'>${pullRequest.repo}</a><br>`;
 				}
 			});
 
 			if (pullRequestSuccesses) {
-				response.data.pcr_response.pullRequests = validPullRequests;
-				response.data.cr_response.pullRequests = validPullRequests;
+				response.data.pull_response.key = key;
+				this.store.dispatch(new ActionStatusQaSaveSuccess(response.data.pull_response));
 				success += `Created pull requests for:<br>${pullRequestSuccesses}<br>`;
 			}
+
 		} else if (response.data.pull_response && action.payload.repos.length) {
 			this.notifications.error(`Error creating pull requests for ${key}: ${response.data.pull_response.data}`);
 		}
@@ -102,18 +98,34 @@ export class QaGeneratorEffects {
 
 		// check for status change response ->
 		// if both success, if cr only success, if pcr only success, if both fail
-		if (response.data.cr_response && response.data.cr_response.status && response.data.pcr_response && response.data.pcr_response.status) {
+		if (
+			response.data.cr_response && response.data.cr_response.status && 
+			response.data.pcr_response && response.data.pcr_response.status
+		) {
 			this.store.dispatch(new ActionStatusSaveSuccess(response.data.pcr_response));
 			success += `Transitioned to CR and added PCR Needed component<br>`;
-		} else if (response.data.cr_response && response.data.cr_response.status && response.data.pcr_response && !response.data.pcr_response.status && action.payload.autoPCR) {
+
+		} else if (
+			response.data.cr_response && response.data.cr_response.status && 
+			response.data.pcr_response && !response.data.pcr_response.status && action.payload.autoPCR
+		) {
 			this.store.dispatch(new ActionStatusSaveSuccess(response.data.cr_response));
 			this.notifications.error(`Error adding PCR component for ${key}: ${response.data.pcr_response.data}`);
 			success += `Transitioned to CR<br>`;
-		} else if (response.data.pcr_response && response.data.pcr_response.status && response.data.cr_response && !response.data.cr_response.status && action.payload.autoPCR) {
+
+		} else if (
+			response.data.pcr_response && response.data.pcr_response.status && 
+			response.data.cr_response && !response.data.cr_response.status && action.payload.autoPCR
+		) {
 			this.store.dispatch(new ActionStatusSaveSuccess(response.data.pcr_response));
 			this.notifications.error(`Error transitioning to Code Review status for ${key}: ${response.data.cr_response.data}`);
 			success += `Added PCR Needed component<br>`;
-		} else if (response.data.pcr_response && !response.data.pcr_response.status && response.data.cr_response && !response.data.cr_response.status && action.payload.autoPCR) {
+
+		} else if (
+			response.data.pcr_response && !response.data.pcr_response.status && 
+			response.data.cr_response && !response.data.cr_response.status && action.payload.autoPCR
+		) {
+
 			this.store.dispatch(new ActionStatusSaveError(response.data.pcr_response.data));
 			this.notifications.error(`Error changing status for ${key}: ${response.data.pcr_response.data} and ${response.data.cr_response.data}`);
 		}
@@ -126,7 +138,6 @@ export class QaGeneratorEffects {
 		}
 
 		if (success) this.notifications.success(`Successfully completed the following actions:<br>${success}`);
-		return new ActionStatusQaSaveSuccess(response.data);
 	}
 
 	/**

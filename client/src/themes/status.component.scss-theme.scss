@@ -1,0 +1,10 @@
+@import '~@angular/material/theming';
+
+@mixin dc-status-component-theme($theme) {
+  $primary: map-get($theme, primary);
+  $foreground: map-get($theme, foreground);
+
+  .status-change-confirm {
+    color: mat-color($foreground, text);
+  }
+}

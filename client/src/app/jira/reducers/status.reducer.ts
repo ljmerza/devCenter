@@ -1,4 +1,8 @@
-import { StatusActionTypes, StatusActions, TicketsActionTypes, TicketsActions } from '../actions';
+import { 
+    StatusActionTypes, StatusActions, TicketsActionTypes, TicketsActions ,
+    QaGeneratorActionTypes, QaGeneratorActions
+} from '../actions';
+
 import { StatusState, StatusTicket } from '../models';
 import { purgeOldTickets, processNewTicket } from './purge.tools';
 
@@ -9,24 +13,53 @@ export const initialStatusState: StatusState = {
     allStatuses: []
 };
 
-export function StatusReducer(state: StatusState = initialStatusState, action: StatusActions | TicketsActions): StatusState {
+export function StatusReducer(state: StatusState = initialStatusState, action: StatusActions | TicketsActions | QaGeneratorActions): StatusState {
+    
     switch (action.type) {
+
+        case QaGeneratorActionTypes.SAVE_QA:
+            return { ...state, loading: true, error: '' };
+        case QaGeneratorActionTypes.SAVE_QA_SUCCESS:
+            return { ...state, error: '', tickets: processPullRequests(action.payload, state.tickets) };
+        case QaGeneratorActionTypes.SAVE_QA_ERROR:
+            return { ...state, loading: false, error: action.payload };
+
 
         case TicketsActionTypes.RETRIEVE_SUCCESS:
             return { ...state, tickets: processStatusTickets(action.payload, state.tickets, action.payload.ticketType) };
 
         case StatusActionTypes.SAVE:
             return { ...state, loading: true, error: '' };
-
         case StatusActionTypes.SAVE_SUCCESS:
             return { ...state, error: '', loading: false, tickets: updateTicketStatus(action.payload, state.tickets) };
-
         case StatusActionTypes.SAVE_ERROR:
             return { ...state, loading: false, error: action.payload };
 
         default:
             return state;
     }
+}
+
+/**
+ * adds any pull requests to a ticket
+ * @param pullRequests the pull requests response
+ * @param oldTickets original ticket state
+ */
+function processPullRequests(pullRequests, oldTickets){
+    if (pullRequests.data.length === 0) return oldTickets;
+    
+    let newTicketState = <StatusTicket[]>Array.from(oldTickets);
+
+    newTicketState = newTicketState.map(ticket => {
+        if (ticket.key === pullRequests.key){
+            ticket = { ...ticket};
+            ticket.pullRequests = pullRequests.data;
+        }
+
+        return ticket;
+    });
+
+    return newTicketState;
 }
 
 /**

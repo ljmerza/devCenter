@@ -7,7 +7,6 @@ export class NotificationService {
 	toastr2;
 	constructor(private toastr: ToastrService) {
 		this.toastr2 = toastr;
-		console.log(toastr)
 	}
 
 	default(message: string) {
