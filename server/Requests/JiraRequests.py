@@ -6,7 +6,7 @@ from ServerUtils import build_commit_message, get_branch_name
 from Jira.Jira import Jira
 from CodeCloud.CodeCloud import CodeCloud
 
-from Requests.jira_status import pcr_complete_transition, pcr_pass_transition, pcr_working_transition, qa_ready_transition, qa_pass_transition, uct_ready_transition
+from Requests.jira_status import pcr_complete_transition, pcr_pass_transition, pcr_working_transition, qa_ready_transition, qa_pass_transition, uct_ready_transition, cr_pass_transition
 
 def set_status(data):
 	'''sets a Jira ticket's status
@@ -42,6 +42,8 @@ def set_status(data):
 
 	elif data['status_type'] == 'cr':
 		response = jira.set_code_review(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status_type'] == 'crPass':
+		response = cr_pass_transition(data)
 
 	elif data['status_type'] == 'qaReady':
 		response = qa_ready_transition(data)

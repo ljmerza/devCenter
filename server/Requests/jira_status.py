@@ -76,12 +76,15 @@ def pcr_working_transition(data):
 	
 	return response
 
-def qa_ready_transition(data):
-	''''''
+
+def cr_pass_transition(data):
+	'''tranistion to QA ready and add cr pass comment
+	'''
 	response = {'status': True, 'data': {}}
 	jira = Jira()
 
 	response['data']['qa_ready_response'] = jira.set_ready_for_qa(key=data['key'], cred_hash=data['cred_hash'])
+	
 	response['data']['comment_response'] = jira.add_comment(
 		key=data['key'], 
 		cred_hash=data['cred_hash'], 
@@ -89,6 +92,14 @@ def qa_ready_transition(data):
 		private_comment=True
 	)
 
+	return response
+
+def qa_ready_transition(data):
+	''''''
+	response = {'status': True, 'data': {}}
+	jira = Jira()
+
+	response['data']['qa_ready_response'] = jira.set_ready_for_qa(key=data['key'], cred_hash=data['cred_hash'])
 	return response
 
 def qa_pass_transition(data):

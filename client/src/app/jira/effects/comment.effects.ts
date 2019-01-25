@@ -75,7 +75,7 @@ export class CommentEffects {
 
 				return this.service.deleteComment(action.payload).pipe(
 					map((response: any) => {
-						this.notifications.success(`Successfully deleted comment ${action.payload.comment_id} for ${action.payload.key}`);
+						this.notifications.success(`Successfully deleted comment ${action.payload.commentId} for ${action.payload.key}`);
 						return new ActionCommentDeleteSuccess(response.data);
 					}),
 					catchError(error => {

@@ -144,7 +144,7 @@ export class StatusComponent implements OnDestroy, OnInit {
       repoName: this.ticket.repoName,
       pullRequests: this.ticket.pullRequests,
       addCommits: this.changedStatusCode === 'uctReady',
-      masterBranch: this.ticket.repoName
+      masterBranch: this.ticket.repoName,
     }));
 
     // if comment or uct not ready added then dispatch that now
