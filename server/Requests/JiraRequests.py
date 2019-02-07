@@ -106,7 +106,7 @@ def add_comment(data):
 		key=data["key"], 
 		comment=data["comment"], 
 		cred_hash=data['cred_hash'],
-		private_comment=data['private_comment']
+		private_comment=data.get('private_comment', True)
 	)
 	return response
 
