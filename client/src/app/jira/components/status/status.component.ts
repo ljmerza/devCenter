@@ -36,19 +36,19 @@ export class StatusComponent implements OnDestroy, OnInit {
 
   // keep track of valid transitions, the original values, and the values the user changed to
   transitions: StatusesModel[] = [];
-  originalStatusCode: string = '';
-  originalStatusName: string = '';
-  changedStatusCode: string = '';
-  changedStatusName: string = '';
-  borderColor: string = '';
-  loading: boolean = false;
+  originalStatusCode = '';
+  originalStatusName = '';
+  changedStatusCode = '';
+  changedStatusName = '';
+  borderColor = '';
+  loading = false;
+  privateComment = true;
 
-  showBranchInfo: boolean = false;
-  showAddComment: boolean = false;
-  showUctNotReady: boolean = false;
+  showBranchInfo = false;
+  showUctNotReady = false;
 
-  uctNotReady: boolean = false;
-  comment: string = '';
+  uctNotReady = false;
+  comment = '';
 
   qaGeneratorRef;
 
@@ -124,7 +124,6 @@ export class StatusComponent implements OnDestroy, OnInit {
     // setup custom menus for dialog based on new state
     this.showUctNotReady = this.changedStatusCode === 'releaseReady';
     this.showBranchInfo = this.changedStatusCode === 'uctReady';
-    this.showAddComment = ['qaFail', 'crFail', 'uctFail', 'uctPass'].includes(this.changedStatusCode);
     
     this.loading = true;
     this.modal.openModal();
@@ -155,7 +154,8 @@ export class StatusComponent implements OnDestroy, OnInit {
         remove_conflict: false,
         log_time: 0,
         key: this.ticket.key,
-        master_branch: ''
+        master_branch: '',
+        private_comment: this.privateComment,
       }));
 
       this.resetInputs();
