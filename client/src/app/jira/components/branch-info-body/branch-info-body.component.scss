@@ -10,6 +10,14 @@
 
 .mat-list-base .mat-list-item, .mat-list-base .mat-list-option {
     height: inherit;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.hidden {
+    display: hidden;
+}
+
+.col-md-3, .col-md-9 {
+    padding: 0 !important;
 }

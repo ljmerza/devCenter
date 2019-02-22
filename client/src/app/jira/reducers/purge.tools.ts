@@ -7,7 +7,7 @@
   * @param ticketType 
   */
 export function purgeOldTickets(newTickets, newTicketState, ticketType) {
-    console.log({init: [...newTickets]})
+    // console.log({init: [...newTickets]})
 
     // get all tickets we need to purge
     const purgedTickets = newTicketState
@@ -21,7 +21,7 @@ export function purgeOldTickets(newTickets, newTicketState, ticketType) {
             newTicketState.splice(leftOverTicketIndex, 1)
         });
         
-    console.log({purgedTickets, newTicketState})
+    // console.log({purgedTickets, newTicketState})
     return newTicketState;
 }
 

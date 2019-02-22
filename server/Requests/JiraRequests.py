@@ -92,6 +92,7 @@ def get_new_component(response, key, cred_hash):
 	response['data']['new_status'] = {
 		'component': new_ticket['data'].get('component', ''),
 		'status': new_ticket['data'].get('status', ''),
+		'key': key
 	}
 	return response
 

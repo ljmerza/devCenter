@@ -7,9 +7,11 @@
 					Master Branch
 				</div>
 				<div class="col-md-9">
-			 		<i class="material-icons pointer copy-input-dir copy-accent" title="Copy sprint to clipboard">note</i>
+			 		<i class="material-icons pointer copy-input-dir copy-accent" title="Copy to clipboard">note</i>
 					<span>{{masterName}}</span>
 				</div>
+
+				
 			</div>
 		</mat-list-item>
 
@@ -21,9 +23,11 @@
 					Branch
 				</div>
 				<div class="col-md-9">
-					<i class="material-icons pointer copy-input-dir copy-accent" title="Copy branch to clipboard">note</i>
+					<i class="material-icons pointer copy-input-dir copy-accent" title="Copy to clipboard">note</i>
 					<span>{{branch}}</span>
 				</div>
+
+				
 			</div>
 		</mat-list-item>
 
@@ -35,8 +39,34 @@
 					Commit
 				</div>
 				<div class="col-md-9">
-					<i class="material-icons pointer copy-input-dir copy-accent" title="Copy commit to clipboard">note</i>
+					<i class="material-icons pointer copy-input-dir copy-accent" title="Copy to clipboard">note</i>
 					<span>{{commit}}</span>
+				</div>
+			</div>
+		</mat-list-item>
+		<mat-divider></mat-divider>
+		
+		<mat-list-item>
+			<div class="row full-width">
+				<div class="col-md-3">
+					<span>Merge Script</span>
+					<i class="material-icons pointer copy-input-dir copy-accent" title="{{mergeScriptCommand}}">note</i>
+					<span class='hidden'>{{mergeScriptCommand}}</span>
+				</div>
+				<div class="col-md-3">
+					<span>Update Branch</span>
+					<i class="material-icons pointer copy-input-dir copy-accent" title="{{updateBranchCommand}}">note</i>
+					<span class='hidden'>{{updateBranchCommand}}</span>
+				</div>
+				<div class="col-md-3">
+					<span>Merge Commit</span>
+					<i class="material-icons pointer copy-input-dir copy-accent" title="{{mergeCommitCommand}}">note</i>
+					<span class='hidden'>{{mergeCommitCommand}}</span>
+				</div>
+				<div class="col-md-3">
+					<span>New Branch</span>
+					<i class="material-icons pointer copy-input-dir copy-accent" title="{{createNewCommand}}">note</i>
+					<span class='hidden'>{{createNewCommand}}</span>
 				</div>
 			</div>
 		</mat-list-item>

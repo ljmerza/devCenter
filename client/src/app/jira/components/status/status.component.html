@@ -9,32 +9,42 @@
     <div class='modal-header'>{{key}} Status</div>
 
     <span class='modal-body'>
-        <span class='status-change-confirm'>
-            Are you sure you want to change the ticket status for <span class='status-highlight'>{{key}}</span> from <span class='status-highlight'>{{originalStatusName}}</span> to <span class='status-highlight'>{{changedStatusName}}</span>?
-        </span>
-        
-        <dc-branch-info-body 
-            *ngIf='showBranchInfo' 
-            [sprint]=ticket?.sprint 
-            [branch]=ticket?.branch 
-            [commit]=ticket?.commit
-            [key]=key 
-            [epicLink]=ticket?.epicLink
-        ></dc-branch-info-body>
+        <div class="container status-extra-container">
 
-        <mat-card class='mat-elevation-z8 status-mat-card-margin'>
-            <mat-form-field class='full-width'>
-                <mat-label>Comment</mat-label>
-                <textarea matInput rows=10 name='commen`t' [(ngModel)]="comment"></textarea>
-            </mat-form-field>
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                        Are you sure you want to change the ticket status for <span class='status-highlight'>{{key}}</span> from <span class='status-highlight'>{{originalStatusName}}</span> to <span class='status-highlight'>{{changedStatusName}}</span>?
+                    </p>
+                </div>
+            </div>
 
-            <mat-checkbox name='privateComment' [(ngModel)]="privateComment">Developers Only</mat-checkbox>
-        </mat-card>
+            <div class='row'>
+                <section class="col-md-12">
+                    <dc-branch-info-body 
+                        *ngIf='showBranchInfo' 
+                        [sprint]=ticket?.sprint 
+                        [branch]=ticket?.branch 
+                        [commit]=ticket?.commit
+                        [key]=key 
+                        [epicLink]=ticket?.epicLink
+                    ></dc-branch-info-body>
 
-        <mat-card class='mat-elevation-z8 status-mat-card-margin' *ngIf='showUctNotReady'>
-            <mat-checkbox name='uctNotReady' [(ngModel)]="uctNotReady">UCT Not Ready</mat-checkbox>
-        </mat-card>
+                    <mat-card class='mat-elevation-z8 status-mat-card-margin'>
+                        <mat-form-field class='full-width'>
+                            <mat-label>Comment</mat-label>
+                            <textarea matInput rows=5 name='comment' [(ngModel)]="comment"></textarea>
+                        </mat-form-field>
 
+                        <mat-checkbox name='privateComment' [(ngModel)]="privateComment">Developers Only</mat-checkbox>
+                    </mat-card>
+
+                    <mat-card class='mat-elevation-z8 status-mat-card-margin' *ngIf='showUctNotReady'>
+                        <mat-checkbox name='uctNotReady' [(ngModel)]="uctNotReady">UCT Not Ready</mat-checkbox>
+                    </mat-card>
+                </section>
+            </div>
+        </div>
     </span>
 
     <span class='modal-footer align-footer'>

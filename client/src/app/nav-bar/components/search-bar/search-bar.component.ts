@@ -107,14 +107,12 @@ export class SearchBarComponent implements OnInit {
 
     const input = (this.formValues.inputValue || '').trim();
     this.formValues.inputValue = '';
-
     if (isNaN(parseInt(input))){
       this.store.dispatch(new ActionOpenTicket(input));
 
     } else {
       this.store.dispatch(new ActionSearch(input));
     }
-
   }
 
   /**
@@ -126,12 +124,16 @@ export class SearchBarComponent implements OnInit {
       return;
     }
 
+    const workitemId = (this.formValues.inputValue || '').trim();
+
     // add second url if given
     const secondaryUrl = this.formValues.secondSearchType ?  `/${this.formValues.secondSearchType}` : '';
-    const link = `${this.emberBaseUrl}/${this.selectedSearchOption.url}${secondaryUrl}/${this.formValues.inputValue}`;
+    const link = `${this.emberBaseUrl}/${this.selectedSearchOption.url}${secondaryUrl}/${workitemId}`;
 
+    // add query params if given
     const queryAddition = link.includes('?') ? '&' : '?';
-    const fullUrl = `${link}${queryAddition}cache=${this.settings.cache ? 1 : ''}`;
+    const fullUrl = this.settings.cache ? link : `${link}${queryAddition}cache=${this.settings.cache}`;
+    
     window.open(fullUrl);
     this.formValues.inputValue = '';
   }

@@ -129,9 +129,8 @@ function createStatusTickets(ticket): StatusTicket {
  * @param statusTickets 
  */
 function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): StatusTicket[] {
-    
     return statusTickets.map((ticket: StatusTicket) => {
-        if (newStatusTicket.key === ticket.key) {
+        if (newStatusTicket.new_status.key === ticket.key) {
             ticket = { ...ticket };
             ticket.status = newStatusTicket.new_status.status;
             ticket.component = newStatusTicket.new_status.component;
