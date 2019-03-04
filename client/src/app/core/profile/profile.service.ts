@@ -41,7 +41,7 @@ export class ProfileService {
         const hash = isLocalUrl ? '/#' : '';
         const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
 
-        return `http://${server}:${port}/${hash}`;
+        return `http://${server}:${port}/teamdb/${hash}`;
     }
 
     public get templateBaseUrl(): string {
