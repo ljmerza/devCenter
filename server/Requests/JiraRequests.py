@@ -42,6 +42,8 @@ def set_status(data):
 
 	elif data['status_type'] == 'cr':
 		response = jira.set_code_review(key=data['key'], cred_hash=data['cred_hash'])
+	elif data['status_type'] == 'crWorking':
+		response = jira.set_code_review_working(data)
 	elif data['status_type'] == 'crPass':
 		response = cr_pass_transition(data)
 
