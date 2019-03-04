@@ -41,7 +41,7 @@ export class ProfileService {
         const hash = isLocalUrl ? '/#' : '';
         const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
 
-        return `http://${server}:${port}/teamdbgui${hash}`;
+        return `http://${server}:${port}/${hash}`;
     }
 
     public get templateBaseUrl(): string {
@@ -50,6 +50,6 @@ export class ProfileService {
         const hash = isLocalUrl ? '/#' : '';
         const server = isLocalUrl ? 'localhost' : `${this.settings.devServer}.${env.rootDomain}`;
 
-        return `http://${server}:${port}/templatetools{hash}`;
+        return `http://${server}:${port}/templatetools/${hash}`;
     }
 }
