@@ -46,6 +46,6 @@ export class BranchInfoBodyComponent {
 	}
 
 	get updateBranchCommand(){
-		return `git fetch origin ${this.masterName};git merge ${this.masterName};`;
+		return `git pull origin ${this.masterName};git merge ${this.masterName};`;
 	}
 }

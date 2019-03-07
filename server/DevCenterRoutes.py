@@ -20,11 +20,21 @@ def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no
 	key = os.environ['ENCRYPT_KEY']
 	cypher = AESCipher(key=key)
 
-	JiraRoutes_define_routes(app=app, app_name=app_name, g=g)
-	CodeCloudRoutes_define_routes(app=app, app_name=app_name, g=g)
-	ChatRoutes_define_routes(app=app, app_name=app_name, g=g, devdb=devdb, sql_echo=sql_echo, dev_chat=dev_chat, no_pings=no_pings)
-	UserRoutes_define_routes(app=app, app_name=app_name, g=g, devdb=devdb, sql_echo=sql_echo)
-	ApiRoutes_define_routes(app=app, app_name=app_name)
+	route_args = {
+		'app': app,
+		'app_name': app_name,
+		'g': g,
+		'devdb': devdb,
+		'sql_echo': sql_echo,
+		'dev_chat': dev_chat,
+		'no_pings': no_pings,
+	}
+
+	JiraRoutes_define_routes(**route_args)
+	CodeCloudRoutes_define_routes(**route_args)
+	ChatRoutes_define_routes(**route_args)
+	UserRoutes_define_routes**route_args)
+	ApiRoutes_define_routes(**route_args)
 
 	@app.route(f"/{app_name}/socket_tickets", methods=['POST'])
 	@cross_origin()

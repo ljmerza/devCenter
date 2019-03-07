@@ -46,14 +46,14 @@ export function StatusReducer(state: StatusState = initialStatusState, action: S
  * @param oldTickets original ticket state
  */
 function processPullRequests(pullRequests, oldTickets){
-    if (pullRequests.data.length === 0) return oldTickets;
+    if (pullRequests.length === 0) return oldTickets;
     
     let newTicketState = <StatusTicket[]>Array.from(oldTickets);
 
     newTicketState = newTicketState.map(ticket => {
         if (ticket.key === pullRequests.key){
             ticket = { ...ticket};
-            ticket.pullRequests = pullRequests.data;
+            ticket.pullRequests = pullRequests;
         }
 
         return ticket;

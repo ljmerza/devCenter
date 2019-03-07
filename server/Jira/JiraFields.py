@@ -42,7 +42,7 @@ def get_status(issue):
 	all_components = get_component(issue)
 
 	# get components and set status on certain components
-	if 'Code Review - Working' in all_components and status == 'In Code Review':
+	if 'Code Review - Working' in all_components and status == 'Code Review':
 		status = 'Code Review - Working'
 	elif 'Merge Code' in all_components:
 		status = 'Merge Code'
@@ -50,7 +50,7 @@ def get_status(issue):
 		status = 'PCR - Working'
 	elif 'PCR - Needed' in all_components:
 		status = 'PCR - Needed'
-	elif 'PCR - Completed' in all_components and status == 'In Code Review':
+	elif 'PCR - Completed' in all_components and status == 'Code Review':
 		status = 'PCR - Completed'
 
 	# if merge conflict then overwrite everything

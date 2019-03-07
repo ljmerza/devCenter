@@ -78,7 +78,15 @@ export class ApolloComponent implements OnInit, OnDestroy {
    * saves order data and configures the UI table
    */
   processOrders(){
-    this.orders = this.apolloService.cachedApolloOrders;
+    
+    this.orders = this.apolloService.cachedApolloOrders.map(order => {
+      if (order.ATX && order.ATX.length && order.ATX[0].atx && order.ATX[0].atx.AtxUniUso){
+        const uso = order.ATX[0].atx.AtxUniUso;
+        order.ATX[0].atx.AtxUniUso = uso.substring(0, uso.length - 2);
+      }
+
+      return order
+    });
 
     this.loading = false;
     this.loadingIcon = false;
@@ -242,7 +250,6 @@ export class ApolloComponent implements OnInit, OnDestroy {
       case 'ATX PON':
         return this.compare(a.ATX && a.ATX[0].atx && a.ATX[0].atx.AtxUniPon, b.ATX && b.ATX[0].atx && b.ATX[0].atx.AtxUniPon, isAsc);
       case 'ATX USO':
-          if (a.ATX && b.ATX) console.log(a.ATX[0].atx.AtxUniUso, b.ATX[0].atx.AtxUniUso);
         return this.compare(a.ATX && a.ATX[0].atx && a.ATX[0].atx.AtxUniUso, b.ATX && b.ATX[0].atx && b.ATX[0].atx.AtxUniUso, isAsc);
       case 'ATX iCore':
         return this.compare(a.ATX && a.ATX[0].atx && a.ATX[0].atx.AtxUniUsoIcoreId, b.ATX && b.ATX[0].atx && b.ATX[0].atx.AtxUniUsoIcoreId, isAsc);
@@ -270,6 +277,9 @@ export class ApolloComponent implements OnInit, OnDestroy {
 	 * @param isAsc
 	 */
   compare(a: number | string, b: number | string, isAsc: boolean) {
+    if (a && !b) return (isAsc ? 1 : -1);
+    if (b && !a) return (isAsc ? -1 : 1);
+    
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
