@@ -5,7 +5,10 @@ from flask_cors import cross_origin
 
 from Requests.JiraRequests import get_jira_tickets, find_key_by_msrp, edit_comment, add_work_log, set_status, add_comment, set_status, modify_watchers, parse_comment, delete_comment, get_active_sprints
 
-def define_routes(app, app_name, g):
+def define_routes(app, app_name, g, **kwargs):
+
+
+
 	@app.route(f'/{app_name}/jira/tickets')
 	@cross_origin()
 	def jiraTickets():

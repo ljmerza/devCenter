@@ -5,7 +5,7 @@ from flask_cors import cross_origin
 
 from Requests.ChatRequests import send_ping, set_user_pings, send_custom_ping, send_pcr_comments
 
-def define_routes(app, app_name, g, devdb, sql_echo, dev_chat, no_pings):
+def define_routes(app, app_name, g, devdb, sql_echo, dev_chat, no_pings, **kwargs):
 	
 	@app.route(f'/{app_name}/chat/send_ping', methods=['POST'])
 	@cross_origin()

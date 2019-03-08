@@ -5,7 +5,7 @@ from flask_cors import cross_origin
 
 from Requests.ApiRequests import get_orders, get_atx
 
-def define_routes(app, app_name):
+def define_routes(app, app_name, **kwargs):
 	
 	@app.route(f'/{app_name}/skipcreds/json_api/orders')
 	@cross_origin()

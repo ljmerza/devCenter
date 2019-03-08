@@ -74,7 +74,7 @@ export class QaGeneratorEffects {
 			});
 
 			if (pullRequestSuccesses) {
-				response.data.pull_response.key = key;
+				response.data.pull_response.data.key = key;
 				this.store.dispatch(new ActionStatusQaSaveSuccess(response.data.pull_response.data));
 				success += `Created pull requests for:<br>${pullRequestSuccesses}<br>`;
 			}
@@ -102,14 +102,14 @@ export class QaGeneratorEffects {
 			response.data.cr_response && response.data.cr_response.status && 
 			response.data.pcr_response && response.data.pcr_response.status
 		) {
-			this.store.dispatch(new ActionStatusSaveSuccess(response.data.pcr_response.data.new_status));
+			this.store.dispatch(new ActionStatusSaveSuccess(response.data.pcr_response.data));
 			success += `Transitioned to CR and added PCR Needed component<br>`;
 
 		} else if (
 			response.data.cr_response && response.data.cr_response.status && 
 			response.data.pcr_response && !response.data.pcr_response.status && action.payload.autoPCR
 		) {
-			this.store.dispatch(new ActionStatusSaveSuccess(response.data.cr_response.data.new_status));
+			this.store.dispatch(new ActionStatusSaveSuccess(response.data.cr_response.data));
 			this.notifications.error(`Error adding PCR component for ${key}: ${response.data.pcr_response.data}`);
 			success += `Transitioned to CR<br>`;
 
@@ -117,7 +117,7 @@ export class QaGeneratorEffects {
 			response.data.pcr_response && response.data.pcr_response.status && 
 			response.data.cr_response && !response.data.cr_response.status && action.payload.autoPCR
 		) {
-			this.store.dispatch(new ActionStatusSaveSuccess(response.data.pcr_response.data.new_status));
+			this.store.dispatch(new ActionStatusSaveSuccess(response.data.pcr_response.data));
 			this.notifications.error(`Error transitioning to Code Review status for ${key}: ${response.data.cr_response.data}`);
 			success += `Added PCR Needed component<br>`;
 

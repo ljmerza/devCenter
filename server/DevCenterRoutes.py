@@ -33,7 +33,7 @@ def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no
 	JiraRoutes_define_routes(**route_args)
 	CodeCloudRoutes_define_routes(**route_args)
 	ChatRoutes_define_routes(**route_args)
-	UserRoutes_define_routes**route_args)
+	UserRoutes_define_routes(**route_args)
 	ApiRoutes_define_routes(**route_args)
 
 	@app.route(f"/{app_name}/socket_tickets", methods=['POST'])
