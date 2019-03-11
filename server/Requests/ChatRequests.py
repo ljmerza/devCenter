@@ -93,9 +93,10 @@ def send_custom_ping(data, dev_chat, no_pings):
 		chat_obj.send_pcr_needed(
 			key=response.get('data').get('key'), 
 			msrp=response.get('data').get('msrp'), 
-			sprint=response.get('data').get('sprint'), 
-			label=response.get('data').get('label'), 
-			pcr_estimate=response.get('data').get('pcr_estimate'),
+			sprint=response.get('data').get('sprint', ''), 
+			label=response.get('data').get('label', ''), 
+			pcr_estimate=response.get('data').get('pcr_estimate', ''),
+			epic_link=response.get('data').get('epic_link', ''),
 			override=True
 		)
 	else:

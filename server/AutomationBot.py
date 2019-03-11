@@ -266,7 +266,8 @@ class AutomationBot(object):
 				'msrp':msrp, 
 				'sprint':sprint, 
 				'label':label, 
-				'pcr_estimate':pcr_estimate
+				'pcr_estimate':pcr_estimate,
+				'epic_link':epic_link
 			})
 			thr.start()
 			# reset ping settings if needed
@@ -278,7 +279,13 @@ class AutomationBot(object):
 		elif("Ready for QA" in status and not pings.qa_ping):
 			thr = threading.Thread(
 				target=self.chat_obj.send_qa_needed, 
-				kwargs={'key':key, 'msrp':msrp, 'sprint':sprint, 'label':label}
+				kwargs={
+					'key':key, 
+					'msrp':msrp, 
+					'sprint':sprint, 
+					'label':label,
+					'epic_link':epic_link,
+				}
 			)
 			thr.start()
 			# reset ping settings if needed
