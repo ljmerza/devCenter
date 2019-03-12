@@ -216,8 +216,7 @@ class AutomationBot(object):
 			# self.ping_dev_center(key=key, summary=summary, username=username, pingType='New Ticket')
 
 	def ping_dev_center(self, key:str, summary:str, username:str, pingType):
-		'''pings the dev center chat about a ticket
-		'''
+		"""Pings the dev center chat about a ticket."""
 		thr = threading.Thread(
 			target=self.chat_obj.send_dev_center_ticket_info, 
 			kwargs={'key':key, 'summary':summary, 'username':username, 'ping_message':pingType}
@@ -226,14 +225,7 @@ class AutomationBot(object):
 
 
 	def check_for_status_pings(self, jira_ticket):
-		'''checks Jira ticket component/status for pings needed
-
-		Args:
-			jira_ticket (dict) a formatted Jira ticket object
-
-		Returns:
-			None
-		'''
+		"""Checks Jira ticket component/status for pings needed."""
 		# get ticket data
 		username = jira_ticket['username']
 		story_point = jira_ticket['story_point']
@@ -267,7 +259,7 @@ class AutomationBot(object):
 				'sprint':sprint, 
 				'label':label, 
 				'pcr_estimate':pcr_estimate,
-				'epic_link':epic_link
+				'summary':summary
 			})
 			thr.start()
 			# reset ping settings if needed
@@ -284,7 +276,7 @@ class AutomationBot(object):
 					'msrp':msrp, 
 					'sprint':sprint, 
 					'label':label,
-					'epic_link':epic_link,
+					'summary':summary
 				}
 			)
 			thr.start()
