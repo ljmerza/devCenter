@@ -27,11 +27,12 @@ class ChatPcrQa():
 		if label is not None and 'BETA' in label:
 			message += 'BETA '
 
-		summary = (summary[:20] + '...') if len(summary) > 20 else summary
-		message += f"[{key}] {summary}: <a href='{self.chat_api.jira_ticket_base}/{key}'>{msrp}</a>"
+		message += f"<a href='{self.chat_api.jira_ticket_base}/{key}'>{msrp}/{key}</a>"
 
 		if sprint:
 			message += f" {sprint}"
+
+		message += f" {summary}"
 
 		chatroom = self.chat_api.dev_center_chat
 		if self.send_pings_to_team or override:
