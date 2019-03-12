@@ -207,13 +207,13 @@ class AutomationBot(object):
 			dev_center_pinged = self.sql_object.get_ping(key=key, field='me_ping')
 
 			# ping me if i havent been pinged of this new ticket
-			if(username != self.username and not dev_center_pinged):
-				self.ping_dev_center(key=key, summary=summary, username=username, pingType='New Ticket')
+			# if(username != self.username and not dev_center_pinged):
+			# 	self.ping_dev_center(key=key, summary=summary, username=username, pingType='New Ticket')
 
 		# else user doesn't want ping so update new ping and send dev center the ticket
 		else:
 			self.sql_object.update_ping(key=key, field='new_ping', value=1)
-			self.ping_dev_center(key=key, summary=summary, username=username, pingType='New Ticket')
+			# self.ping_dev_center(key=key, summary=summary, username=username, pingType='New Ticket')
 
 	def ping_dev_center(self, key:str, summary:str, username:str, pingType):
 		'''pings the dev center chat about a ticket
@@ -368,6 +368,6 @@ class AutomationBot(object):
 			)
 			thr.start()
 		
-		self.ping_dev_center(key=key, summary=summary, username=username, pingType=ping_message)
+		# self.ping_dev_center(key=key, summary=summary, username=username, pingType=ping_message)
 		self.sql_object.reset_pings(ping_type=ping_type, key=key)
 		self.sql_object.update_ping(key=key, field=ping_type, value=1)
