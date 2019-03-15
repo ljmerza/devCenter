@@ -16,7 +16,11 @@ class ChatPcrQa():
 	def send_qa_needed(self, key, sprint, msrp, label, summary, override=False):
 		"""Send a qa needed ping to the chat server."""
 		message = 'QA Needed '
-		return self.send_action_needed_ping(message=message, sprint=sprint, key=key, msrp=msrp, override=override, label=label, summary=summary)
+
+		if self.send_pings_to_team or override:
+			return self.send_action_needed_ping(message=message, sprint=sprint, key=key, msrp=msrp, override=override, label=label, summary=summary)
+		else:
+			return {'status': True}
 
 	def send_action_needed_ping(self, message, sprint, key, msrp, override, label, summary=''):
 		"""Generate an action ping to send to the chat."""
@@ -27,7 +31,7 @@ class ChatPcrQa():
 		if label is not None and 'BETA' in label:
 			message += 'BETA '
 
-		message += f"<a href='{self.chat_api.jira_ticket_base}/{key}'>{msrp}/{key}</a>"
+		message += f"[{msrp}] <a href='{self.chat_api.jira_ticket_base}/{key}'>{key}</a>"
 
 		if sprint:
 			message += f" {sprint}"
