@@ -7,8 +7,6 @@ import os
 class ChatAPI():	
 	def __init__(self, debug, no_pings):
 		
-		self.crucible_url = os.environ['CRUCIBLE_URL']
-		self.crucible_ticket_base = f'{self.crucible_url}/cru'
 		self.jira_url = os.environ['JIRA_URL']
 		self.jira_ticket_base = f'{self.jira_url}/browse'
 		##########################################################

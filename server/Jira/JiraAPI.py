@@ -15,8 +15,6 @@ class JiraAPI(DevCenterAPI):
 		self.jira_ticket = f'{self.jira_url}/browse'
 		self.jira_search_url = f'{self.jira_url}/rest/api/2/search'
 
-		self.crucible_url = os.environ['CRUCIBLE_URL']
-		self.crcible_review = f'{self.crucible_url}/cru/'
 		self.api_base = f'{self.jira_url}/rest/api/2'
 		self.api_agile_base = f'{self.jira_url}/rest/agile/1.0'
 

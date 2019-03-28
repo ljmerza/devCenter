@@ -11,9 +11,6 @@ jira_url = os.environ['JIRA_URL']
 jira_ticket_base = f'{jira_url}/browse'
 
 
-crucible_url = os.environ['CRUCIBLE_URL']
-crucible_ticket_base = f'{crucible_url}/cru'
-
 def get_branch_name(username, msrp, summary):
 	branch = summary.translate(trantab)
 	branch = re.sub(r" +", '-', branch)
