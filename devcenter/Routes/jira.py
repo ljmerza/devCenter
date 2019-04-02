@@ -95,7 +95,7 @@ def define_routes(app, app_name, g, **kwargs):
 			'master_branch': post_data.get('masterBranch', ''),
 			'pull_requests': post_data.get('pullRequests', []),
 			'repo_name': post_data.get('repoName', ''),
-			'add_component': post_data.get('addComponent', ''),
+			'change_component': post_data.get('changeComponent', ''),
 			'dev_changes': post_data.get('devChanges', '')
 		}
 

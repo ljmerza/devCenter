@@ -11,11 +11,7 @@ def pass_pull_requests(data):
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	code_cloud = CodeCloud()
-
-	responses = {
-		'status': True,
-		'data': []
-	}
+	response = {'status': True, 'data': []}
 
 	for pull_request in data['pull_requests']:
 		pass_response = code_cloud.pass_pull_request_review(
@@ -26,11 +22,11 @@ def pass_pull_requests(data):
 		)
 
 		if not pass_response['status']:
-			responses['status'] = False
+			response['status'] = False
 
 		response['data'].append(pass_response) 
 
-	return responses
+	return response
 
 
 def add_reviewer_all_pull_requests(data):

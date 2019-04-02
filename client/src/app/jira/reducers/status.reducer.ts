@@ -113,7 +113,6 @@ function createStatusTicket(ticket): StatusTicket {
         pcrCountLeft,
         component: ticket.component,
         status: ticket.status,
-        fullStatus: ticket.full_status,
         key: ticket.key,
         msrp: ticket.msrp,
         repoName: ticket.master_branch,

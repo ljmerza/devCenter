@@ -20,35 +20,33 @@ def set_status(data):
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	status_name = data.get('status', {}).get('name', '')
-	status_id = data.get('status', {}).get('id', '')
 	jira = Jira()
 	response = {'status': True, 'data': {}}
 
-	# if we are trying to add a componen then do that
-	# else if were given a status id then we are changing status
-	# or if not given status id and not pcr pass then we are removing component
-	if data['add_component']:
-		response['data']['status_response'] = jira.remove_component(name=data['add_component'], key=data['key'], cred_hash=data['cred_hash'])
-	elif status_id:
-		response['data']['status_response'] = jira.set_status(key=data['key'], transition_id=status_id, cred_hash=data['cred_hash'])
-	elif status_name != 'PCR Pass':
-		remove_component = status_name.replace('Remove ', '')
-		response['data']['status_response'] = jira.remove_component(name=remove_component, key=data['key'], cred_hash=data['cred_hash'])
+	status_name = data.get('status', {}).get('name', '')
+	status_id = data.get('status', {}).get('id', '')
 
+	# if we are removing componen then just send empty string
+	change_component = data['change_component']
+	if 'Remove ' in change_component:
+		change_component = ''
+
+	# always set component either to given value or empty
+	response['data']['status_response'] = jira.set_component(name=change_component, key=data['key'], cred_hash=data['cred_hash'])
+
+	if status_id:
+		response['data']['status_response'] = jira.set_status(key=data['key'], transition_id=status_id, cred_hash=data['cred_hash'])
+	
 	# do any special actions for certain status changes
-	if status_name == 'In PCR':
+	if status_name == 'In PCR' or change_component == 'PCR - Working':
 		response['data']['pr_add_response'] = add_reviewer_all_pull_requests(data=data)
-	elif status_name == 'PCR Pass': # go to pcr ready
+	elif status_name == 'PCR Pass' or change_component == 'PCR - Needed':
 		response['data']['pr_pass_response'] = pass_pull_requests(data=data)
-		response['data']['status_response'] = jira.set_status(key=data['key'], transition_id=471, cred_hash=data['cred_hash'])
-	elif status_name == 'PCR Complete': # go to cr ready
-		response['data']['pr_pass_response'] = pass_pull_requests(data=data)
-		response['data']['status_response'] = jira.set_status_by_name(key=data['key'], transition_id=0, cred_hash=data['cred_hash'])
 	elif status_name == 'CR Pass':
 		response['data']['comment_response'] = add_cr_pass_comment(data)
-	elif status_name == 'QA Ready':
+	elif status_name == 'QA Pass':
 		response['data']['comment_response'] = add_qa_pass_comment(data)
+		jira.set_component(name='Merge Code', key=data['key'], cred_hash=data['cred_hash'])
 	if data.get('add_commits', False):
 		commit_response = add_commits_table_comment(data)
 		response['data'] = { **response['data'], **commit_response['data'] }
@@ -68,9 +66,12 @@ def get_new_component(key, cred_hash):
 		return response
 
 	return {
-		'component': new_ticket['data'].get('component', ''),
-		'status': new_ticket['data'].get('status', ''),
-		'key': key
+		'status': True,
+		'data': {
+			'component': new_ticket['data'].get('component', ''),
+			'status': new_ticket['data'].get('status', ''),
+			'key': key
+		}
 	}
 
 

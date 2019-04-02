@@ -72,7 +72,7 @@ export class StatusEffects {
         }
 
         // finally get the status change result and return action triggered based on that
-        const { success, actionDispatched } = this.newStatus(response.status_response, response.new_response);
+        const { success, actionDispatched } = this.newStatus(response.data.status_response, response.data.new_response);
         successMessage += success;
 
         if (successMessage) this.notifications.success(successMessage);
@@ -134,10 +134,9 @@ export class StatusEffects {
         let success = '';
         let actionDispatched;
 
-        if (status_response.status && new_response.status){
-            success = `Successfully updated ${status_response.data.key} status to ${new_response.data.status}`;
+        if (status_response.status){
+            success = `Successfully updated ${new_response.data.key} status to ${new_response.data.status}`;
             actionDispatched = new ActionStatusSaveSuccess(new_response.data);
-        
         } else {
             const error = `Failed to update status:<br>${new_response.data}`;
             this.notifications.error(error);

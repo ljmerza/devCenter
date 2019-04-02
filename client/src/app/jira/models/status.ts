@@ -2,8 +2,7 @@
 
 export interface StatusTicket {
     component: string,
-    status: String,
-    fullStatus: Status,
+    status: string,
     key: string,
     msrp: string,
     pcrCountLeft: string,
@@ -17,11 +16,6 @@ export interface StatusTicket {
     storyPoint: string,
     summary: string,
     transitions: Transition[],
-}
-
-export interface Status {
-    status: Transition,
-    components: Transition[]
 }
 
 export interface Transition {

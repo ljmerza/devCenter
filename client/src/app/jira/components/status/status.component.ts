@@ -96,12 +96,11 @@ export class StatusComponent implements OnDestroy, OnInit {
     this.originalStatus = '';
     let isComponent = false;
 
-    if (ticket.fullStatus && ticket.fullStatus.components.length){
-      this.originalStatus = ticket.fullStatus.components[0].name;
+    if (ticket.component){
+      this.originalStatus = ticket.component;
       isComponent = true;
-
-    } else if (ticket.fullStatus) {
-      this.originalStatus = ticket.fullStatus.status.name;
+    } else {
+      this.originalStatus = ticket.status;
       isComponent = false;
     }
 
@@ -123,11 +122,17 @@ export class StatusComponent implements OnDestroy, OnInit {
       this.transitions.unshift(`Remove ${this.currentStatus}`);
     }
 
-    // if we are in pcr based statuses we need other custom components
-    if (['PCR READY', 'PCR - Needed', 'PCR - Working'].includes(this.currentStatus)) {
-      if (!this.transitions.includes('PCR - Working')) this.transitions.unshift('PCR - Working');
-      if (!this.transitions.includes('PCR - Needed')) this.transitions.unshift('PCR - Needed');
+    // states we can transiton back to pcr needed
+    if (['In PCR'].includes(this.currentStatus)) {
+      this.transitions.unshift('PCR - Needed');
     }
+
+    if (['PCR - Needed'].includes(this.currentStatus)) {
+      this.transitions.unshift('PCR - Working');
+    }
+
+    // always add merge conflict to bottom
+    this.transitions.push('Merge Conflict');
 
     // add the current status on top
     if (!this.transitions.includes(this.currentStatus)) this.transitions.unshift(this.currentStatus);
@@ -157,6 +162,9 @@ export class StatusComponent implements OnDestroy, OnInit {
    * persists the status change for this ticket
    */
   confirmChangeStatus(){
+    const Validcomponents = ['PCR - Needed', 'PCR - Working', 'Merge Conflict', 'Merge Code'];
+    const components = [...Validcomponents, ...Validcomponents.map(component => `Remove ${component}`)]
+
     this.modal.closeModal();
     const newStatus = this.ticket.transitions.find(transition => transition.name === this.currentStatus)
       || { id: '', name: this.currentStatus };
@@ -165,7 +173,7 @@ export class StatusComponent implements OnDestroy, OnInit {
       username: this.profile.name, 
       key: this.ticket.key, 
       status: newStatus,
-      addComponent: ['PCR - Needed', 'PCR - Working'].find(transition => transition === this.currentStatus),
+      changeComponent: components.find(transition => transition === this.currentStatus) || '',
       repoName: this.ticket.repoName,
       pullRequests: this.ticket.pullRequests,
       addCommits: ['Remove Merge Code'].includes(this.currentStatus),

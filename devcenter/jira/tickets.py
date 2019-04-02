@@ -86,7 +86,6 @@ class JiraTickets():
 		ticket['summary'] = get_summary(issue)
 		ticket['component'] = get_component(issue)
 		ticket['status'] = get_status(issue)
-		ticket['full_status'] = get_full_status(issue)
 		ticket['story_point'] = get_story_point(issue)
 
 		ticket['sprint'] = get_sprint(issue)
