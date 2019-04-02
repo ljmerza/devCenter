@@ -25,16 +25,25 @@ def set_status(data):
 
 	status_name = data.get('status', {}).get('name', '')
 	status_id = data.get('status', {}).get('id', '')
+	is_removing_status = data['is_removing_status']
 
-	# if we are removing componen then just send empty string
+	# if we are removing component the strip remove so we have a valid component name
 	change_component = data['change_component']
 	if 'Remove ' in change_component:
-		change_component = ''
+		change_component = change_component.replace('Remove ', '')
+		is_removing_status = True
 
-	# always set component either to given value or empty
-	response['data']['status_response'] = jira.set_component(name=change_component, key=data['key'], cred_hash=data['cred_hash'])
+	original_status = data['original_status']
+	if 'Remove ' in original_status:
+		original_status = original_status.replace('Remove ', '')
+		is_removing_status = True
 
-	if status_id:
+	if data['is_removing_status']:
+		response['data']['status_response'] = jira.remove_component(name=data['original_status'], key=data['key'], cred_hash=data['cred_hash'])
+	
+	if change_component:
+		response['data']['status_response'] = jira.set_component(name=change_component, key=data['key'], cred_hash=data['cred_hash'])
+	elif status_id:
 		response['data']['status_response'] = jira.set_status(key=data['key'], transition_id=status_id, cred_hash=data['cred_hash'])
 	
 	# do any special actions for certain status changes

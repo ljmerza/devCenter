@@ -118,7 +118,7 @@ export class StatusComponent implements OnDestroy, OnInit {
     // reset transitions and add current status to top
     this.transitions = ticket.transitions.map(transition => transition.name);
 
-    if(isComponent){
+    if (isComponent){
       this.transitions.unshift(`Remove ${this.currentStatus}`);
     }
 
@@ -173,6 +173,8 @@ export class StatusComponent implements OnDestroy, OnInit {
       username: this.profile.name, 
       key: this.ticket.key, 
       status: newStatus,
+      originalStatus: this.originalStatus,
+      isRemovingStatus: components.includes(this.originalStatus),
       changeComponent: components.find(transition => transition === this.currentStatus) || '',
       repoName: this.ticket.repoName,
       pullRequests: this.ticket.pullRequests,

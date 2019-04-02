@@ -130,9 +130,12 @@ export class SearchBarComponent implements OnInit {
     const secondaryUrl = this.formValues.secondSearchType ?  `/${this.formValues.secondSearchType}` : '';
     const link = `${this.emberBaseUrl}/${this.selectedSearchOption.url}${secondaryUrl}/${workitemId}`;
 
-    // add query params if given
-    const queryAddition = link.includes('?') ? '&' : '?';
-    const fullUrl = this.settings.cache ? link : `${link}${queryAddition}cache=${this.settings.cache}`;
+    let fullUrl = link;
+
+    if (this.settings.cache){
+      const queryAddition = fullUrl.includes('?') ? '&' : '?';
+      fullUrl = `${fullUrl}${queryAddition}cache=1`;
+    }
     
     window.open(fullUrl);
     this.formValues.inputValue = '';
