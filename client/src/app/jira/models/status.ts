@@ -3,6 +3,7 @@
 export interface StatusTicket {
     component: string,
     status: string,
+    fullStatus: Status,
     key: string,
     msrp: string,
     pcrCountLeft: string,
@@ -27,6 +28,11 @@ export interface PullRequest {
     repo: string,
     link: string,
     requestId: string,
+}
+
+export interface Status {
+    id: string,
+    namer: string
 }
 
 

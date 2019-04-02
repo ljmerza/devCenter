@@ -111,9 +111,9 @@ class AutomationBot():
 		"""Gets beta week stats and pings them."""
 		stat_results = {}
 		# for each beta filter get total number of tickets
-		for filter_name,jql in self.jira_obj.jira_api.filters.items():
+		for filter_name, jql in self.jira_obj.jira_api.filters.items():
 			jira_tickets = self.jira_obj.get_jira_tickets(cred_hash=self.cred_hash, jql=jql)
-			stat_results[filter_name] = jira_tickets
+			stat_results[filter_name] = jira_tickets['total_tickets']
 
 		# create kwargs for pinging beta stats and ping stats
 		self.chat_obj.beta_statistics(**stat_results)

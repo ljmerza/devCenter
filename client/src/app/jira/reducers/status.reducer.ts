@@ -113,6 +113,7 @@ function createStatusTicket(ticket): StatusTicket {
         pcrCountLeft,
         component: ticket.component,
         status: ticket.status,
+        fullStatus: ticket.full_status,
         key: ticket.key,
         msrp: ticket.msrp,
         repoName: ticket.master_branch,
@@ -138,6 +139,8 @@ function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): Sta
             ticket = { ...ticket };
             ticket.status = newStatusTicket.status;
             ticket.component = newStatusTicket.component;
+            ticket.fullStatus = newStatusTicket.full_status;
+            ticket.transitions = newStatusTicket.transitions || [];
             
             if (newStatusTicket.pullRequests){
                 ticket.pullRequests = newStatusTicket.pullRequests;

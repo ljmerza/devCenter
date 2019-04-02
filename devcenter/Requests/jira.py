@@ -69,6 +69,8 @@ def get_new_component(key, cred_hash):
 		'status': True,
 		'data': {
 			'component': new_ticket['data'].get('component', ''),
+			'transitions': new_ticket['data'].get('transitions', []),
+			'full_status': new_ticket['data'].get('full_status', {}),
 			'status': new_ticket['data'].get('status', ''),
 			'key': key
 		}

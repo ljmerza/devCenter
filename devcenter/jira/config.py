@@ -8,8 +8,8 @@ projects ='project in (AQE, "Taskmaster Dashboard", TeamDB, TQI, "Unified Deskto
 
 filters = {
 	'beta': projects+' AND status != closed AND labels = BETA', 
-	'qa':projects+' AND status in ("QA Ready", "In QA")', 
-	'cr':projects+' AND Status = "CR Ready"', 
-	'uct':projects+' AND status = "UAT READY"', 
-	'pcr': projects+' AND (component in ("PCR - Needed") OR Status in ("PCR READY"))'
+	'qa':projects+' AND status in ("QA Ready")', 
+	'cr':projects+' AND status in ("CR Ready")', 
+	'uct':projects+' AND status in ("UAT READY")', 
+	'pcr': projects+' AND (status in ("PCR READY") OR status in ("In PCR") AND component in ("PCR - Needed"))'
 }
