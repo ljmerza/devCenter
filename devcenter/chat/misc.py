@@ -96,19 +96,19 @@ class ChatMisc():
 			Beta Statistics: <br> \
 				<table style='{table_style}'> \
 					<tr> \
-						<td style='{td_style}'>UCT ready</td> \
+						<td style='{td_style}'>UAT ready</td> \
 						<td style='{td_style}'>{uct}</td> \
 					</tr> \
 					<tr> \
-						<td style='{td_style} {td_alt_style}'>PCR needed</td> \
+						<td style='{td_style} {td_alt_style}'>PCR Ready</td> \
 						<td style='{td_style} {td_alt_style}'>{pcr}</td> \
 					</tr> \
 					<tr> \
-						<td style='{td_style}'>QA needed</td> \
+						<td style='{td_style}'>QA Ready</td> \
 						<td style='{td_style}'>{qa}</td> \
 					</tr> \
 					<tr> \
-						<td style='{td_style} {td_alt_style}'>CR Needed/Working</td> \
+						<td style='{td_style} {td_alt_style}'>CR Ready</td> \
 						<td style='{td_style} {td_alt_style}'>{cr}</td> \
 					</tr> \
 					<tr> \

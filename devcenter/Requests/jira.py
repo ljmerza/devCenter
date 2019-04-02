@@ -58,10 +58,8 @@ def set_status(data):
 
 def get_new_component(key, cred_hash):
 	"""Gets the new status for a ticket."""
-
-	# get new ticket data so we can get new component
-	jira = Jira()
-	new_ticket = jira.get_ticket_field_values(key=key, cred_hash=cred_hash, fields='components,status', get_expanded=False)
+	fields = 'components,status,transitions'
+	new_ticket = Jira().get_ticket_field_values(key=key, cred_hash=cred_hash, fields=fields, get_expanded=True)
 	if(not new_ticket['status']):
 		return response
 
