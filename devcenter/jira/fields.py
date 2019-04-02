@@ -20,28 +20,26 @@ def get_msrp(issue):
 	return issue.get('fields', {}).get('customfield_10212', 0)
 
 
+def get_full_status(issue):
+	"""Get all statuses/components name and id."""
+	all_components = list(filter(lambda x: x.get('name').upper() != 'BETA',
+							issue.get('fields', {}).get('components', [])))
+
+	return {
+		'status': issue.get('fields', {}).get('status', {}),
+		'components': all_components
+	}
+
+
 def get_status(issue):
-	"""Gets an issue's status"""
-	status = issue.get('fields', {}).get('status', {}).get('name', '')
-	all_components = get_component(issue)
+	"""Get the combined string status."""
+	full_status = get_full_status(issue)
+	status = full_status.get('status')
 
-	# get components and set status on certain components
-	if 'Code Review - Working' in all_components and status == 'Code Review':
-		status = 'Code Review - Working'
-	elif 'Merge Code' in all_components:
-		status = 'Merge Code'
-	elif 'PCR - Working' in all_components:
-		status = 'PCR - Working'
-	elif 'PCR - Needed' in all_components:
-		status = 'PCR - Needed'
-	elif 'PCR - Completed' in all_components and status == 'Code Review':
-		status = 'PCR - Completed'
+	if len( full_status.get('components') ):
+		status = full_status.get('components')[0]
 
-	# if merge conflict then overwrite everything
-	if 'Merge Conflict' in all_components:
-		status = 'Merge Conflict'
-
-	return status
+	return status.get('name', '')
 
 
 def get_summary(issue):
@@ -131,56 +129,10 @@ def get_master_branch(sprint, key):
 	return key_items[0] + sprint
 
 
-def get_epic_link(issue):
+def get_epic_link(issue, epic_links):
 	"""Gets an issue's epic link in readable format."""
-	epic_link = ''
-	# get epic link
-	epic_link = issue.get('fields', {}).get('customfield_10002', '')
-
-	if epic_link == 'UD-2421':
-		epic_link = 'Apollo'
-
-	elif epic_link == 'UD-1':
-		epic_link = 'Gamma'
-
-	elif epic_link == 'UD-3532':
-		epic_link = 'Ember Upgrades'
-
-	elif epic_link == 'UD-3':
-		epic_link = 'Magellan'
-
-	elif epic_link == 'UD-4714':
-		epic_link = 'UTM'
-
-	elif epic_link == 'UD-656':
-		epic_link = 'US GCSC'
-
-	elif epic_link == 'UD-9387':
-		epic_link = 'TRNS-5001'
-
-	elif epic_link == 'UD-9183':
-		epic_link = 'GD&A'
-
-	elif epic_link == 'UD-9175':
-		epic_link = 'Technical Debt'
-
-	elif epic_link == 'UD-8426':
-		epic_link = 'TIO-5357'
-
-	elif epic_link == 'UD-9174':
-		epic_link = 'Break/Fix'
-
-	elif epic_link == 'UD-10275':
-		epic_link = 'ROCC-5693'
-
-	elif epic_link == 'UD-10274':
-		epic_link = 'ROCC-5692'
-
-	elif epic_link == 'BPO-3066':
-		epic_link = 'Starship'
-
-	# return epic link found
-	return epic_link
+	epic_link_name = issue.get('fields', {}).get('customfield_10002', '')
+	return epic_links.get(epic_link_name, '')
 
 
 def get_label(issue):
@@ -377,3 +329,15 @@ def get_history(issue):
 	# sort by created date
 	formatted_history['status'] = sorted(formatted_history['status'], key=lambda k: k['created']) 
 	return formatted_history
+
+
+def get_transitions(issue):
+	"""Get all transitions for an issue."""
+	transitions = issue.get('transitions', [])
+	return [
+		{
+			'name': transition.get('name', ''),
+			'id': transition.get('id', ''),
+		}
+		for transition in transitions
+	]

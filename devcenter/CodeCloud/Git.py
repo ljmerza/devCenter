@@ -1,19 +1,22 @@
-#!/usr/bin/python3
+"""Handle all Git related actions for code cloud."""
+from devcenter.sql.sql import DevCenterSQL
 
-from SQL.DevCenterSQL import DevCenterSQL
 
 class Git():
+    """Handle all Git related actions for code cloud."""
+    
     def __init__(self, code_cloud_api):
+        """Setup code cloud api config."""
         self.code_cloud_api = code_cloud_api
 
     def get_repos(self):
+        """Get all repos for a project."""
         dcSql = DevCenterSQL(devdb=0, sql_echo=0)
         repos = dcSql.get_repos()
         return {'status': True, 'data': repos}
 
     def find_branch(self, repo_name, msrp, cred_hash):
-        '''
-        '''
+        """Find a branch given an msrp and repo."""
         returned_branches = []
         response = self.get_branches(repo_name=repo_name, cred_hash=cred_hash)
         if not response['status']:
@@ -29,6 +32,7 @@ class Git():
             return {'status': False, 'data': f'No branches found with MSRP {msrp}'}
 
     def ticket_branches(self, msrp, cred_hash):
+        """Get all branches for a Jira ticket."""
         branches = []
         repos = self.get_repos()
         if not repos['status']:
@@ -45,6 +49,7 @@ class Git():
             return {'status': False, 'data': f'No branches found with MSRP {msrp}'}
 
     def get_branches(self, repo_name, cred_hash):
+        """Get all branches for a repo."""
         branch_names = []
 
         url = f'{self.code_cloud_api.branch_api}/{repo_name}/branches?start=0&limit=30'
@@ -58,6 +63,7 @@ class Git():
         return {'status': True, 'data': branch_names}
 
     def get_commit_ids(self, key, pull_requests, master_branch, cred_hash):
+        """Get commit ids for a pull request and Jira ticket."""
         commit_ids = []
         status = True
 
@@ -82,6 +88,7 @@ class Git():
         return {'status': status, 'data': commit_ids}
 
     def _get_commit_id(self, repo_name, master_branch, key, cred_hash):
+        """Get a commit id for a repo and Jira ticket."""
         commit_id = ''
 
         url = f'{self.code_cloud_api.branch_api}/{repo_name}/commits?until=refs%2Fheads%2F{master_branch}&limit=50'
@@ -98,8 +105,7 @@ class Git():
         return {'status': bool(commit_id), 'data': commit_id}
 
     def create_pull_requests(self, repos, key, msrp, summary, cred_hash, qa_title):
-        '''submits pull requests for a list of branches
-        '''
+        """Submits pull requests for a list of branches."""
         response = {'status': True, 'data': []}
 
         for repo in repos:

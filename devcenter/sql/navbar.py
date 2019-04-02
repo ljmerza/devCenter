@@ -1,10 +1,12 @@
-#!/usr/bin/python3
-from .SQLModels import NavbarItems
-from .SQLModels import JqlLinks
+"""Actions for navbar in the DB."""
+from .models import NavbarItems, JqlLinks
+
 
 class SQLNavBar():
+	"""Actions for navbar in the DB."""
 
 	def get_navbar_items(self):
+		"""Gets all navbar items from DB."""
 		session = self.login()
 		items = session.query(NavbarItems)
 		response = []
@@ -16,6 +18,7 @@ class SQLNavBar():
 		return response
 
 	def get_jql_links(self):
+		"""Gets all JQL links for the DB."""
 		session = self.login()
 		items = session.query(JqlLinks)
 		response = []
@@ -27,6 +30,7 @@ class SQLNavBar():
 		return response
 
 	def set_navbar_item(self, item):
+		"""Sets a navbar item's data."""
 		session = self.login()
 		response = {'status': False, 'data': 'Unable to save item'}
 		row = session.query(NavbarItems).filter(NavbarItems.id == item['id']).first()

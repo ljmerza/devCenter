@@ -1,14 +1,12 @@
-#!/usr/bin/python3
-
-from FlaskUtils import missing_parameters
-from Jira.Jira import Jira
-from Chat.Chat import Chat
-from SQL.DevCenterSQL import DevCenterSQL
+"""Handle all chat based requests."""
+from devcenter.server_utils import missing_parameters
+from devcenter.jira.jira import Jira
+from devcenter.chat.chat import Chat
+from devcenter.sql.sql import DevCenterSQL
 
 
 def send_ping(data, dev_chat, no_pings):
-	'''sends a ping to the chatroom
-	'''
+	"""Sends a ping to the chatroom."""
 	missing_params = missing_parameters(params=data, required=['username', 'ping_type','cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -51,9 +49,9 @@ def send_ping(data, dev_chat, no_pings):
 	else:
 		return {"data": "Ping reset not implemented", "status": False}
 	
+
 def set_user_pings(data, devdb, sql_echo):
-	'''sets a user's ping settings
-	'''
+	"""Sets a user's ping settings."""
 	missing_params = missing_parameters(params=data, required=['username', 'fields'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -66,9 +64,9 @@ def set_user_pings(data, devdb, sql_echo):
 
 	return response
 
+
 def send_custom_ping(data, dev_chat, no_pings):
-	'''send a custom ping to chatroom or a generated one from a ticket status transition
-	'''
+	"""Send a custom ping to chatroom or a generated one from a ticket status transition."""
 	missing_params = missing_parameters(params=data, required=['ping_type', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -106,8 +104,7 @@ def send_custom_ping(data, dev_chat, no_pings):
 
 
 def _get_jira_ticket_for_ping(data):
-	'''gets required Jira information for a ping message generation
-	'''
+	"""Gets required Jira information for a ping message generation."""
 	missing_params = missing_parameters(params=data, required=['cred_hash', 'key'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -123,7 +120,9 @@ def _get_jira_ticket_for_ping(data):
 
 	return {"data": data, "status": True}
 
+
 def send_pcr_comments(data, dev_chat, no_pings):
+	"""Send a PCR comments needing addressed to a user."""
 	missing_params = missing_parameters(params=data, required=['fromName', 'toUsername', 'pullLinks', 'key'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}

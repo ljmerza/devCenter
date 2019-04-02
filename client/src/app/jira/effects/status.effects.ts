@@ -36,47 +36,43 @@ export class StatusEffects {
         );
 
     /**
-     * 
-     * @param response 
+     * Handles all responses from update status
+     * Possible responses (from set_status):
+	 *		pr_add_response, status_response, comment_response, new_response
+	 *			commit_ids, commit_comment (from add_commits_table_comment)
+     * @param response  
      * @param action 
      */
     processUpdateStatus(response, action){
         let successMessage = '';
 
-        if (response.data.add_reviewer) {
-            const success = this.addReviewer(response.data);
+        if (response.data.pr_add_response) {
+            const success = this.addReviewer(response.data.pr_add_response);
             successMessage += success;
-        }
 
-        if (response.data.add_comment) {
-            const success = this.addPullComment(response.data);
-            successMessage += success;
-        }
-
-        if (response.data.pass_response) {
-            const success = this.passResponse(response.data);
-            successMessage += success;
-        }
-
-        if (response.data.commit_comment && response.data.commit_ids) {
-            const success = this.commitResponse(response.data);
-            successMessage += success;
-        }
-
-        // open each pull request
-        if (response.data.set_pcr_working) {
+            // open PRs in new window
             action.payload.pullRequests.forEach(pullRequest => {
                 window.open(pullRequest.link);
             });
         }
         
+        if (response.data.pr_pass_response && response.data.pr_pass_response.data) {
+            const success = this.prPassResponse(response.data.pr_pass_response);
+            successMessage += success;
+        }
+
+        if (response.data.commit_ids && response.data.commit_comment) {
+            const success = this.commitResponse(response.data.commit_ids, response.data.commit_comment);
+            successMessage += success;
+        }
+        
         if (response.data.comment_response){
-            const success = this.commentResponse(response.data);
+            const success = this.commentResponse(response.data.comment_response);
             successMessage += success;
         }
 
         // finally get the status change result and return action triggered based on that
-        const { success, actionDispatched } = this.newStatus(response);
+        const { success, actionDispatched } = this.newStatus(response.status_response, response.new_response);
         successMessage += success;
 
         if (successMessage) this.notifications.success(successMessage);
@@ -85,26 +81,46 @@ export class StatusEffects {
     }
 
     /**
+     * 
+     * @param response 
+     */
+    addComment(response){
+        let success = ''
+
+        if (response.status){
+            success = `Added comment to Jira ticket<br><br>`;
+
+        } else if(response.data){
+            this.notifications.error(`Failed to added comment:<br>${response.data}`);
+        }
+
+        return success;
+    }
+
+    /**
      * process adding as reviewer to each pull request
      * @param response 
      */
     addReviewer(response){
         let success = ''
-        let error='';
+        let error = '';
 
-        response.add_reviewer.forEach(pullRequest => {
-            if (pullRequest.status){
-                success += `&#09;${pullRequest.data.repo_name}<br>`;
-            } else {
-                error += `&#09;${pullRequest.data.repo_name}<br>`;
-            }
-        });
+        if (response.status){
+            response.data.forEach(pullRequest => {
+                if (pullRequest.status) {
+                    success += `&#09;${pullRequest.data.repo_name}<br>`;
+                } else {
+                    error += `&#09;${pullRequest.data.repo_name}<br>`;
+                }
+            });
+        } else {
+            error = response.data;
+        }
 
         if (success) success = `Added you as a reviewer to pull requests:<br>${success}<br><br>`;
 
         if (error) {
-            error = `Failed to added as reviewer to pull requests:<br>${error}`;
-            this.notifications.error(error);
+            this.notifications.error(`Failed to added as reviewer to pull requests:<br>${error}`);
         }
 
         return success;
@@ -114,16 +130,16 @@ export class StatusEffects {
      * 
      * @param response 
      */
-    newStatus(response) {
+    newStatus(status_response, new_response) {
         let success = '';
         let actionDispatched;
 
-        if(response.status){
-            success = `Successfully updated ${response.data.key} status to ${response.data.new_status.status}`;
-            actionDispatched = new ActionStatusSaveSuccess(response.data);
-
+        if (status_response.status && new_response.status){
+            success = `Successfully updated ${status_response.data.key} status to ${new_response.data.status}`;
+            actionDispatched = new ActionStatusSaveSuccess(new_response.data);
+        
         } else {
-            const error = `Failed to update status:<br>${response.data}`;
+            const error = `Failed to update status:<br>${new_response.data}`;
             this.notifications.error(error);
             actionDispatched = new ActionStatusSaveError(error);
         }
@@ -132,29 +148,26 @@ export class StatusEffects {
     }
 
     /**
-     * 
+     * get commit ids and commit jira comment response
      * @param response 
      */
-    commitResponse(data){
+    commitResponse(commit_ids, commit_comment){
         let success = '';
 
-        if (data.commit_ids.status){
+        if (commit_ids.status){
             success += `The following commits have been found:<br>`
-            data.commit_ids.data.forEach(commit => {
+            commit_ids.data.forEach(commit => {
                 success += `${commit.repo_name}: ${commit.commit_id}<br>`;
             });
 
         } else {
-            const error = `Failed to add commits to Jira:<br>${data.commit_ids.data}`;
-            this.notifications.error(error);
+            this.notifications.error(`Failed to get commits:<br>${commit_ids.data}`);
         }
 
-        if (data.commit_comment.status) {
-            success += this.commentResponse(data.commit_comment);
-
+        if (commit_comment.status){
+            success += `Added commits comment to Jira:<br>`
         } else {
-            const error = `Failed to add commits comment to Jira:<br>${data.commit_comment.data}`;
-            this.notifications.error(error);
+            this.notifications.error(`Failed to add commits comment to Jira:<br>${commit_comment.data}`);
         }
 
         return success;
@@ -189,25 +202,27 @@ export class StatusEffects {
     }
 
     /**
-     * 
+     * process pull request pass response
      * @param response 
      */
-    passResponse(response) {
+    prPassResponse(response) {
         let success = ''
         let error = '';
 
-        response.pass_response.forEach(pass => {
-            if (pass.status) {
-                success += `&#09;${pass.data.repo_name}<br>`;
-            } else {
-                error += `&#09;${pass.data.repo_name}<br>`;
-            }
-        });
+        if (response.status){
+            response.data.forEach(pass => {
+                if (pass.status) {
+                    success += `&#09;${pass.data.repo_name}<br>`;
+                } else {
+                    error += `&#09;${pass.data.repo_name}<br>`;
+                }
+            });
 
-        if (success) success = `Successfully approved the following pull request repos:<br>${success}<br><br>`;
-
-        if (error) {
-            error = `Failed to approve the following pull request repos:<br>${error}`;
+            if (success) success = `Successfully approved the following pull request repos:<br>${success}<br><br>`;
+        } 
+        
+        if(error || !response.status){
+            error = `Failed to approve the following pull request repos:<br>${response.data} ${error}`;
             this.notifications.error(error);
         }
 
@@ -215,8 +230,8 @@ export class StatusEffects {
     }
 
     /**
-     * 
-     * @param response 
+     * Process an added comment to the Jira ticket.
+     * @param response
      */
     commentResponse(response){
 

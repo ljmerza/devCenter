@@ -1,11 +1,12 @@
-#!/usr/bin/python3
+"""Actions for getting ticket history."""
+from .models import TicketHistory as TicketHistoryModel
 
-from .SQLModels import TicketHistory as TicketHistoryModel
 
 class TicketHistory():
+	"""Actions for getting ticket history."""
 
 	def get_ticket_history(self):
-
+		"""Get ticket history."""
 		session = self.login()
 		items = session.query(TicketHistoryModel)
 

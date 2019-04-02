@@ -22,7 +22,7 @@
 	          <mat-header-cell *matHeaderCellDef mat-sort-header> Key </mat-header-cell>
 	          <mat-cell *matCellDef="let ticket">
 							<i class="material-icons pointer copy-input-dir copy-warn" title="Copy Jira key to clipboard">note</i>
-							<span class='hidden'>{{env.jiraUrl}}/browse/{{ticket.key}}</span>
+							<span class='hidden'>{{ticket.key}}</span>
 							
 							<i class="material-icons pointer copy-input-dir copy-accent" title="Copy Jira link to clipboard">note</i>
 							<a target="_blank" href="{{env.jiraUrl}}/browse/{{ticket.key}}" title='Open in Jira' dcInputToCopy>

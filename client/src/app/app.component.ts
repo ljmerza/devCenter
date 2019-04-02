@@ -8,7 +8,7 @@ import {ToastContainerDirective, ToastrService} from 'ngx-toastr';
 
 import {ActionReposRetrieve} from '@app/core/repos';
 
-import {AnimationsService, routeAnimations, TitleService, AppState, LocalStorageService} from '@app/core';
+import { routeAnimations, TitleService, AppState, LocalStorageService } from '@app/core';
 import {environment as env} from '@env/environment';
 
 import {selectSettings} from './settings/settings.selectors';

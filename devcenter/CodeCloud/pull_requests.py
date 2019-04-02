@@ -1,13 +1,17 @@
-#!/usr/bin/python3
+"""Handle creating pull requests."""
+
 
 class PullRequests():
+	"""Handle creating pull requests."""
 
 	def __init__(self, code_cloud_api):
+		"""Setup code cloud APIO config."""
 		self.code_cloud_api = code_cloud_api
 		self.qa_begin = "h3. ==== QA Steps ===="
 		self.qa_end = "h3. ==============="
 
 	def generate_qa_template(self, qa_steps, repos, pull_response):
+		"""Generate a table for QA steps."""
 		repo_table = self.generate_repo_table(repos, pull_response)
 		
 		return """
@@ -21,7 +25,7 @@ class PullRequests():
 	"""
 
 	def generate_repo_table(self, repos, pull_response):
-		'''generates a QA step Jira comment with pull requests'''
+		"""Generate a table row for a repo."""
 		table_data = self.create_qa_header(pull_response=pull_response)
 
 		for repo in repos:
@@ -30,7 +34,7 @@ class PullRequests():
 		return table_data
 
 	def create_qa_header(self, pull_response):
-		'''generate the QA step table header'''
+		"""Create the header for QA steps."""
 		return "|| Repo || Branch || Branched From || Pull Requests ||"
 
 	def create_qa_table_row(self, repo, pull_response):
@@ -51,7 +55,7 @@ class PullRequests():
 		return table_data
 
 	def _create_qa_td(self, repository_name, links):
-		'''creates table box for a diff'''
+		"""Creates table box for a diff."""
 		matching_link = [x for x in links['data'] if repository_name in x['repo']]
 
 		if len(matching_link) and matching_link[0].get('link', False):
@@ -62,7 +66,7 @@ class PullRequests():
 			return 'ERROR|'
 
 	def get_pull_request_link(self, pull_response, repository_name):
-		'''gets pull request link from a pull request response object'''
+		"""Gets pull request link from a pull request response object."""
 		pull_request_link = ''
 
 		if pull_response.get('status', False):

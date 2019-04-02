@@ -8,10 +8,10 @@ from .fields import *
 class JiraTickets():
 	"""Modify Jira Tickets."""
 
-	def __init__(self, jira_api):
+	def __init__(self, jira_api, epic_links):
 		"""Set the Jira API this class will use."""
 		self.jira_api = jira_api
-
+		self.epic_links = epic_links
 
 	def get_filter_url(self, filter_number, cred_hash):
 		"""Generate the Jira filter URL"""
@@ -39,7 +39,7 @@ class JiraTickets():
 
 		full_url = f'{url}&startAt=0&maxResults=1000&fields={fields}'
 		if get_expanded:
-			full_url += '&expand=names,renderedFields,changelog'
+			full_url += '&expand=names,renderedFields,changelog,transitions.fields'
 
 		response = self.jira_api.get(url=full_url, cred_hash=cred_hash)
 		if not response['status']:
@@ -86,13 +86,14 @@ class JiraTickets():
 		ticket['summary'] = get_summary(issue)
 		ticket['component'] = get_component(issue)
 		ticket['status'] = get_status(issue)
+		ticket['full_status'] = get_full_status(issue)
 		ticket['story_point'] = get_story_point(issue)
 
 		ticket['sprint'] = get_sprint(issue)
 		if ticket['sprint']:
 			ticket['master_branch'] = get_master_branch(ticket['sprint'], ticket['key'])
 
-		ticket['epic_link'] = get_epic_link(issue)
+		ticket['epic_link'] = get_epic_link(issue, self.epic_links)
 		ticket['label'] = get_label(issue)
 
 		ticket['comments'] = get_comments(issue)
@@ -111,6 +112,7 @@ class JiraTickets():
 		ticket['description'] = get_description(issue)
 		ticket['history'] = get_history(issue)
 		ticket['dev_changes'] = get_dev_changes(issue)
+		ticket['transitions'] = get_transitions(issue)
 
 		return ticket
 

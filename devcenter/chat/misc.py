@@ -9,7 +9,7 @@ from devcenter.server_utils import (
 class ChatMisc():
 	"""Miscellaneous chat actions."""
 
-	def __init__(self, chat_api, merge_alerts):'
+	def __init__(self, chat_api, merge_alerts):
 		"""Set chat config."""
 		self.chat_api = chat_api
 		self.merge_alerts = merge_alerts

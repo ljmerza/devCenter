@@ -9,8 +9,8 @@ import threading
 
 from .jira.fields import *
 from .jira.jira import Jira
-from .SQL.DevCenterSQL import DevCenterSQL
-from .Chat.Chat import Chat
+from .sql.sql import DevCenterSQL
+from .chat.chat import Chat
 from .reminders import reminders
 
 
@@ -220,7 +220,7 @@ class AutomationBot():
 			return False
 		
 		# if pcr needed and has not been pinged - update db and send ping
-		if("PCR - Needed" in component and not pings.pcr_ping):
+		if("PCR READY" in status and not pings.pcr_ping):
 			# get PCR estimate
 			pcr_estimate = self.jira_obj.get_pcr_estimate(story_point=story_point)
 			# send ping
@@ -241,7 +241,7 @@ class AutomationBot():
 			self.sql_object.update_ping(key=key, field='pcr_ping', value=1)
 
 		# if qa needed and has not been pinged - update db and send ping
-		elif("Ready for QA" in status and not pings.qa_ping):
+		elif("QA Ready" in status and not pings.qa_ping):
 			thr = threading.Thread(
 				target=self.chat_obj.send_qa_needed, 
 				kwargs={
@@ -275,7 +275,7 @@ class AutomationBot():
 			self.ping_jira_status(msrp=msrp, ping_type='cr_fail_ping', username=username, key=key, summary=summary, ping_message='Code Review - Failed', epic_link=epic_link)
 		
 		# if ready in uct, has no merge code component, ticket has already been pinged for merge code and hasnt been pinged for code merged then ping
-		elif("Ready for UCT" in status and "Merge Code" not in component and pings.merge_ping and not pings.uct_ping):
+		elif("UCT Ready" in status and "Merge Code" not in component and pings.merge_ping and not pings.uct_ping):
 			# notify of repo update
 			# repos_merged = self.crucible_obj.get_repos_of_review(cred_hash=self.cred_hash)
 			# if repos_merged['status']:

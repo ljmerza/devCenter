@@ -37,25 +37,37 @@ def get_arguments() -> argparse.Namespace:
 	parser.add_argument('--version', action='version', version=__version__)
 
 	parser.add_argument('--betanow', 
-		help='Makes ping for beta week stats now')
+		help='Makes ping for beta week stats now', 
+		action='store_true')
 	parser.add_argument('--devui', 
-		help='Start in development mode')
+		help='Start in development mode', 
+		action='store_true')
 	parser.add_argument('--betaui', 
-		help='Start in beta mode')
+		help='Start in beta mode', 
+		action='store_true')
 	parser.add_argument('--prod', 
-		help='Start in production mode')
+		help='Start in production mode', 
+		action='store_true')
+	parser.add_argument('--prodflk', 
+		help='Start in prod flask mode', 
+		action='store_true')
 	parser.add_argument('--nopings', 
-		help='Disable all pings')
+		help='Disable all pings', 
+		action='store_true')
 	parser.add_argument('--prodserver', 
-		help='Start server in production mode')
+		help='Start server in production mode', 
+		action='store_true')
 	parser.add_argument('--beta', 
 		help='Start in beta week mode')
 	parser.add_argument('--merge', 
-		help='Allow merge alert pings to chatroom')
+		help='Allow merge alert pings to chatroom', 
+		action='store_true')
 	parser.add_argument('--sql', 
-		help='Enables echoing of SQL')
+		help='Enables echoing of SQL', 
+		action='store_true')
 	parser.add_argument('--prodChat', 
-		help='Enable production chat messages')
+		help='Enable production chat messages', 
+		action='store_true')
 
 	arguments = parser.parse_args()
 	return arguments
@@ -63,23 +75,25 @@ def get_arguments() -> argparse.Namespace:
 
 def set_argument_groups() -> None:
 	"""Sets arguments groups for starting dev center."""
+	global host, port, devdb, time_shift, devserver, dev_chat, devbot, prodmode, no_pings, is_qa_pcr, is_beta_week, merge_alerts, sql_echo
+
 	arguments = get_arguments()
 
-	if 'betanow' in arguments:
+	if arguments.betanow:
 		beta_stat_ping_now = True
 
-	if 'devui' in arguments:
+	if arguments.devui:
 		host = '0.0.0.0'
 		port = 5859
 		logging.basicConfig(level=logging.INFO)
 
-	if 'betaui' in arguments:
+	if arguments.betaui:
 		host = '0.0.0.0'
 		port = 5860
 		devdb = False
 		time_shift = 4
 
-	if 'prod' in arguments:
+	if arguments.prod:
 		devdb = False
 		host = '0.0.0.0'
 		port = 5858
@@ -89,23 +103,23 @@ def set_argument_groups() -> None:
 		devbot = False
 		prodmode= True
 
-	if 'nopings' in arguments:
+	if arguments.nopings:
 		no_pings = True
 
-	if 'prodflk' in arguments:
+	if arguments.prodflk:
 		devserver = False
 
-	if 'beta' in arguments:
+	if arguments.beta:
 		is_qa_pcr = True
 		is_beta_week = True
 
-	if 'merge' in arguments:
+	if arguments.merge:
 		merge_alerts = True
 
-	if 'sql' in arguments:
+	if arguments.sql:
 		sql_echo = True
 
-	if 'prodChat' in arguments:
+	if arguments.prodChat:
 		dev_chat = False
 
 
@@ -136,6 +150,8 @@ def main() -> None:
 	if prodmode:
 		thr = threading.Thread(target=start_cron)
 		thr.start()
+
+	print(f"{host}:{port}")
 
 	start_server(
 		devflk=devserver, host=host, port=port, 

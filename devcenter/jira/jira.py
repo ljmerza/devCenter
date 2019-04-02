@@ -6,6 +6,7 @@ from .misc import JiraMisc
 from .status import JiraStatus
 from .tickets import JiraTickets
 from .watchers import JiraWatchers
+from devcenter.sql.sql import DevCenterSQL
 
 
 class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments, JiraWatchers):
@@ -15,9 +16,12 @@ class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments, JiraW
 		"""Setup the Jira submodules."""
 		self.jira_api = JiraAPI()
 
+		dcSql = DevCenterSQL(devdb=0, sql_echo=0)
+		self.epic_links = dcSql.get_epic_links()
+
 		JiraComponent.__init__(self, self.jira_api)
 		JiraStatus.__init__(self, self.jira_api)
 		JiraMisc.__init__(self, self.jira_api)
-		JiraTickets.__init__(self, self.jira_api)
+		JiraTickets.__init__(self, self.jira_api, self.epic_links)
 		JiraComments.__init__(self, self.jira_api)
 		JiraWatchers.__init__(self, self.jira_api)

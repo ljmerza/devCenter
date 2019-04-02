@@ -39,6 +39,11 @@ export class QaGeneratorEffects {
 
 	/**
 	 *
+	 * Possible responses:
+	 *		pull_response, dev_change_response, qa_comment_response, qa_info_response, log_response
+	 *		from set_status:
+	 *			pr_add_response, status_response, comment_response, new_response
+	 *				commit_ids, commit_comment (from add_commits_table_comment)
 	 * @param response
 	 * @param action
 	 */
@@ -52,12 +57,12 @@ export class QaGeneratorEffects {
 
 		let success: string = '';
 
-		// check for add comment response
+		// check for qa add comment response
 		const addLogResponse = {key, comment_response: false, log_response: false};
-		if (response.data.comment_response && response.data.comment_response.status) {
-			addLogResponse.comment_response = response.data.comment_response;
+		if (response.data.qa_comment_response && response.data.qa_comment_response.status) {
+			addLogResponse.comment_response = response.data.qa_comment_response;
 			success += `Added QA comment<br>`;
-		} else if (response.data.comment_response && action.payload.qa_steps) {
+		} else if (response.data.qa_comment_response && action.payload.qa_steps) {
 			this.notifications.error(`Error adding QA steps for ${key}: ${response.data.comment_response.data}`);
 		}
 
@@ -96,45 +101,28 @@ export class QaGeneratorEffects {
 			this.store.dispatch(new ActionCommentSaveSuccess(addLogResponse));
 		}
 
-		// check for status change response ->
-		// if both success, if cr only success, if pcr only success, if both fail
-		if (
-			response.data.cr_response && response.data.cr_response.status && 
-			response.data.pcr_response && response.data.pcr_response.status
-		) {
-			this.store.dispatch(new ActionStatusSaveSuccess(response.data.pcr_response.data));
-			success += `Transitioned to CR and added PCR Needed component<br>`;
+		// check for status change response
+		if (response.data.status_response && response.data.status_response.status) {
+			this.store.dispatch(new ActionStatusSaveSuccess(response.data.new_response.data));
+			success += `Transitioned to PCR Ready<br>`;
 
-		} else if (
-			response.data.cr_response && response.data.cr_response.status && 
-			response.data.pcr_response && !response.data.pcr_response.status && action.payload.autoPCR
-		) {
-			this.store.dispatch(new ActionStatusSaveSuccess(response.data.cr_response.data));
-			this.notifications.error(`Error adding PCR component for ${key}: ${response.data.pcr_response.data}`);
-			success += `Transitioned to CR<br>`;
-
-		} else if (
-			response.data.pcr_response && response.data.pcr_response.status && 
-			response.data.cr_response && !response.data.cr_response.status && action.payload.autoPCR
-		) {
-			this.store.dispatch(new ActionStatusSaveSuccess(response.data.pcr_response.data));
-			this.notifications.error(`Error transitioning to Code Review status for ${key}: ${response.data.cr_response.data}`);
-			success += `Added PCR Needed component<br>`;
-
-		} else if (
-			response.data.pcr_response && !response.data.pcr_response.status && 
-			response.data.cr_response && !response.data.cr_response.status && action.payload.autoPCR
-		) {
-
-			this.store.dispatch(new ActionStatusSaveError(response.data.pcr_response.data));
-			this.notifications.error(`Error changing status for ${key}: ${response.data.pcr_response.data} and ${response.data.cr_response.data}`);
+		} else if (response.data.status_response) {
+			this.store.dispatch(new ActionStatusSaveError(response.data.status_response.data));
+			this.notifications.error(`Error changing status for ${key}: ${response.data.status_response.data}`);
 		}
 
 		// check dev changes
-		if (response.data.dev_change_response && response.data.dev_change_response) {
-			success += `Added dev chnages pull requests`;
+		if (response.data.dev_change_response && response.data.dev_change_response.status) {
+			success += `Added pull requests to dev changes`;
 		} else if (response.data.dev_change_response) {
 			this.notifications.error(`Error adding dev changes notes for ${key}: ${response.data.dev_change_response.data}`);
+		}
+
+		// check qa additonal info changes
+		if (response.data.qa_info_response && response.data.qa_info_response.status) {
+			success += `Added QA additional info`;
+		} else if (response.data.qa_info_response) {
+			this.notifications.error(`Error adding QA additional info for ${key}: ${response.data.qa_info_response.data}`);
 		}
 
 		if (success) this.notifications.success(`Successfully completed the following actions:<br>${success}`);

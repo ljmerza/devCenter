@@ -10,20 +10,19 @@ from .tickets import SQLTickets
 from .users import SQLUsers
 from .navbar import SQLNavBar
 from .statuses import Statuses
-from .ticket_history import TicketHistory
+from .history import TicketHistory
 from .models import ErrorLogs
 from .misc import Misc
+from .epic_links import EpicLinks
 
-
-class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistory):
+class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistory, EpicLinks):
 	"""Interact with a SQL database."""
 
 	def __init__(self, devdb, sql_echo):
 		"""Setup config for SQL database connection."""
-		self.project_managers = os.environ['PM'].split(',')
 		
 		SQLTickets.__init__(self)
-		SQLUsers.__init__(self, self.project_managers)
+		SQLUsers.__init__(self)
 		SQLNavBar.__init__(self)
 		Misc.__init__(self)
 

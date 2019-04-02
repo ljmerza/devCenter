@@ -1,11 +1,14 @@
-#!/usr/bin/python3
-
+"""Handles raw API request to Code Cloud API."""
 import os
-from Common.DevCenterAPI import DevCenterAPI
+
+from devcenter.common.api import DevCenterAPI
+
 
 class CodeCloudAPI(DevCenterAPI):
+	"""Handles raw API request to Code Cloud API."""
 
 	def __init__(self):
+		"""Setup Code Cloud API config."""
 		DevCenterAPI.__init__(self)
 		self.project_name = 'ST_M5DTI'
 		self.code_cloud_api = os.environ['CODE_CLOUD_URL']
@@ -15,6 +18,7 @@ class CodeCloudAPI(DevCenterAPI):
 		self.code_cloud_path2 = 'compare/diff'
 
 	def post(self, url, cred_hash, data='', json_data=None):
+		"""Makes a POST request."""
 		if json_data:
 			response = super(CodeCloudAPI, self).post_json(url=url, json_data=json_data, cred_hash=cred_hash)
 		else:
@@ -22,6 +26,7 @@ class CodeCloudAPI(DevCenterAPI):
 		return self._process_response(response)
 
 	def put(self, url, cred_hash, data='', json_data=None):
+		"""Makes a PUT request."""
 		if json_data:
 			response = super(CodeCloudAPI, self).put_json(url=url, json_data=json_data, cred_hash=cred_hash)
 		else:
@@ -29,14 +34,17 @@ class CodeCloudAPI(DevCenterAPI):
 		return self._process_response(response)
 
 	def delete(self, url, cred_hash, data=''):
+		"""Makes a DELETE request."""
 		response = super(CodeCloudAPI, self).delete(url=url, cred_hash=cred_hash)
 		return self._process_response(response)
 
 	def get(self, url, cred_hash):
+		"""Makes a GET request."""
 		response = super(CodeCloudAPI, self).get(url=url, cred_hash=cred_hash)
 		return self._process_response(response)
 
 	def _process_response(self, response):
+		"""Processes the raw response from code cloud API."""
 		if 'status' not in response:
 			return {"status": False, "data": 'There was no status given'}
 

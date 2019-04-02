@@ -42,7 +42,7 @@ export class BranchInfoBodyComponent {
 	}
 
 	get mergeScriptCommand(){
-		return `bash merge_ticket.sh "${this.profile.displayName}" REPOS "${this.commit}" ${this.masterName} ${this.branch} /c/merge_code ${this.profile.name};`;
+		return `bash merge_ticket.sh "${this.profile.displayName}" REPOS "${this.commit}" ${this.masterName} ${this.branch} /opt/${this.profile.name}/merge_code ${this.profile.name};`;
 	}
 
 	get updateBranchCommand(){

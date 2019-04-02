@@ -1,127 +1,89 @@
-#!/usr/bin/python3
+"""Jira status change based actions."""
+from devcenter.server_utils import missing_parameters
+from devcenter.jira.jira import Jira
+from devcenter.codecloud.codecloud import CodeCloud
 
-from FlaskUtils import missing_parameters
-from Jira.Jira import Jira
-from CodeCloud.CodeCloud import CodeCloud
 
-def pcr_complete_transition(data):
-	missing_params = missing_parameters(params=data, required=['cred_hash','username'])
+def pass_pull_requests(data):
+	"""Pass all pull request objects given."""
+	missing_params = missing_parameters(params=data, required=['pull_requests'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	response = {'status': True, 'data': {}}
-	response['data']['set_pcr_complete'] =  Jira().set_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
-	
-	if(data.get('pull_requests', False)):
-		response = _pass_pull_requests(data=data, response=response, comment='PCR Complete')
+	code_cloud = CodeCloud()
 
-	return response
-
-def pcr_pass_transition(data):
-	missing_params = missing_parameters(params=data, required=['cred_hash', 'username'])
-	if missing_params:
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
-	response = {'status': True, 'data': {'add_comment': []}}
-	response['data']['set_pcr_needed'] = Jira().set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
-
-	if(data.get('pull_requests', False)):
-		response = _pass_pull_requests(data=data, response=response, comment='PCR Pass')
-
-	return response
-
-def _pass_pull_requests(data, response, comment):
-	'''add'''
-	cc = CodeCloud()
-	response['data']['add_comment'] = []
-	response['data']['pass_response'] = []
+	responses = {
+		'status': True,
+		'data': []
+	}
 
 	for pull_request in data['pull_requests']:
-		pull_response = cc.add_comment_to_pull_request(
-			repo_name=pull_request['repo'], 
-			pull_request_id=pull_request['requestId'], 
-			comment=comment, 
-			cred_hash=data['cred_hash']
-		)
-
-		pass_response = cc.pass_pull_request_review(
+		pass_response = code_cloud.pass_pull_request_review(
 			username=data['username'], 
 			repo_name=pull_request['repo'], 
 			pull_request_id=pull_request['requestId'], 
 			cred_hash=data['cred_hash']
 		)
 
-		response['data']['add_comment'].append(pull_response) 
-		response['data']['pass_response'].append(pass_response) 
+		if not pass_response['status']:
+			responses['status'] = False
 
-	return response
+		response['data'].append(pass_response) 
 
-def pcr_working_transition(data):
+	return responses
+
+
+def add_reviewer_all_pull_requests(data):
+	"""Adds as reviews to all given pull requests."""
 	missing_params = missing_parameters(params=data, required=['username'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	response = {'status': True, 'data': {'add_reviewer':[]}}
-	response['data']['set_pcr_working'] = Jira().set_pcr_working(key=data['key'], cred_hash=data['cred_hash'])
+	code_cloud = CodeCloud()
+	responses = {'status': True, 'data': []}
 
-	cc = CodeCloud()
 	for request in data.get('pull_requests', []):
-		pull_response = cc.add_reviewer_to_pull_request(
+		pull_response = code_cloud.add_reviewer_to_pull_request(
 			username=data['username'], 
 			repo_name=request['repo'], 
 			pull_request_id=request['requestId'], 
 			cred_hash=data['cred_hash']
 		)
-		response['data']['add_reviewer'].append(pull_response)
+
+		if not pull_response['status']:
+			responses['status'] = False
+
+		responses['data'].append(pull_response)
 	
-	return response
+	return responses
 
 
-def cr_pass_transition(data):
-	'''tranistion to QA ready and add cr pass comment
-	'''
-	response = {'status': True, 'data': {}}
-	jira = Jira()
-
-	response['data']['qa_ready_response'] = jira.set_ready_for_qa(key=data['key'], cred_hash=data['cred_hash'])
-	
-	response['data']['comment_response'] = jira.add_comment(
+def add_cr_pass_comment(data):
+	"""Adds CR pass comment to Jira Ticket."""
+	return Jira().add_comment(
 		key=data['key'], 
 		cred_hash=data['cred_hash'], 
 		comment='CR Pass',
 		private_comment=True
 	)
 
-	return response
 
-def qa_ready_transition(data):
-	''''''
-	response = {'status': True, 'data': {}}
-	jira = Jira()
-
-	response['data']['qa_ready_response'] = jira.set_ready_for_qa(key=data['key'], cred_hash=data['cred_hash'])
-	return response
-
-def qa_pass_transition(data):
-	''''''
-	response = {'status': True, 'data': {}}
-	jira = Jira()
-
-	response['data']['qa_pass'] = jira.set_qa_pass(key=data['key'], cred_hash=data['cred_hash'])
-	response['data']['merge_code'] = jira.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-	response['data']['comment_response'] = jira.add_comment(
+def add_qa_pass_comment(data):
+	"""Add QA Pass comment."""
+	return Jira().add_comment(
 		key=data['key'], 
 		cred_hash=data['cred_hash'], 
 		comment='QA Pass',
 		private_comment=True
 	)
 
-	return response
 
-def uct_ready_transition(data):
-	''''''
+def add_commits_table_comment(data):
+	"""Adds all commit ids to a jira comment.
+		Possible responses: 
+			commit_ids, commit_comment
+	"""
 	response = {'status': True, 'data': {}}
-	response['data']['uct_pass'] = Jira().remove_merge_code(key=data['key'], cred_hash=data['cred_hash'])
 
 	if data.get('add_commits', False):
 		missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'pull_requests', 'master_branch'])
@@ -145,9 +107,9 @@ def uct_ready_transition(data):
 
 	return response
 
+
 def _add_commit_comment(commit_ids, key, cred_hash):
-	'''add a Jira comment with the list of committed branches related to this ticket
-	'''
+	"""Add a Jira comment with the list of committed branches related to this ticket."""
 	comment = 'The following branches have been committed:\n || Repo || Branch || SHA-1 ||\n'
 	for commit in commit_ids.get('data', []):
 		repo_name = commit.get('repo_name')

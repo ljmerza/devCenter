@@ -1,47 +1,45 @@
-#!/usr/bin/python3
+"""Handles all user based requests."""
+from devcenter.sql.sql import DevCenterSQL
 
-from FlaskUtils import missing_parameters
-from SQL.DevCenterSQL import DevCenterSQL
 
 def get_navbar_items(devdb, sql_echo):
-	'''gets all navbar items
-	'''
+	"""Gets all navbar items."""
 	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
 	return {
 		'status': True,
 		'data': sql_obj.get_navbar_items()
 	}
 
+
 def get_statuses(devdb, sql_echo):
-	'''gets all navbar items
-	'''
+	"""Gets all navbar items."""
 	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
 	return {
 		'status': True,
 		'data': sql_obj.get_statuses()
 	}
 
+
 def get_ticket_history(devdb, sql_echo):
-	'''gets all navbar items
-	'''
+	"""Gets all navbar items."""
 	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
 	return {
 		'status': True,
 		'data': sql_obj.get_ticket_history()
 	}
 
+
 def get_jql_links(devdb, sql_echo):
-	'''gets all navbar items
-	'''
+	"""Gets all navbar items."""
 	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
 	return {
 		'status': True,
 		'data': sql_obj.get_jql_links()
 	}
 
+
 def set_navbar_item(data):
-	'''sets a new navbar item or edits a current one
-	'''
+	"""Sets a new navbar item or edits a current one."""
 	item = {
 		'id': data.get('id', ''),
 		'name': data.get('name', ''),

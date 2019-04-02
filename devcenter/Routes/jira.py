@@ -1,14 +1,18 @@
-#!/usr/bin/python3
-
+"""Creates all jira based routes."""
 from flask import request, Response
 from flask_cors import cross_origin
 
-from Requests.JiraRequests import get_jira_tickets, find_key_by_msrp, edit_comment, add_work_log, set_status, add_comment, set_status, modify_watchers, parse_comment, delete_comment, get_active_sprints
+from devcenter.requests.jira import (
+	get_jira_tickets, find_key_by_msrp, edit_comment, 
+	add_work_log, set_status, add_comment, set_status,
+	modify_watchers, parse_comment, delete_comment, 
+	get_active_sprints
+)
+
 
 def define_routes(app, app_name, g, **kwargs):
-
-
-
+	"""Define all  Jira Routes."""
+	
 	@app.route(f'/{app_name}/jira/tickets')
 	@cross_origin()
 	def jiraTickets():
@@ -54,7 +58,7 @@ def define_routes(app, app_name, g, **kwargs):
 				log_response = add_work_log(data=data)
 				
 			if data.get('remove_conflict', False):
-				data['status_type'] = 'removeMergeConflict'
+				data['status'] = 'Remove Merge Conflict'
 				conflict_response = set_status(data=data)
 
 			if data.get('comment', False):
@@ -85,12 +89,13 @@ def define_routes(app, app_name, g, **kwargs):
 		data = {
 			'cred_hash': g.cred_hash,
 			'key': post_data.get('key', ''),
-			'status_type': post_data.get('statusType', ''),
+			'status': post_data.get('status', {}),
 			'username': post_data.get('username', ''),
 			'add_commits': post_data.get('addCommits', False),
 			'master_branch': post_data.get('masterBranch', ''),
 			'pull_requests': post_data.get('pullRequests', []),
 			'repo_name': post_data.get('repoName', ''),
+			'add_component': post_data.get('addComponent', ''),
 			'dev_changes': post_data.get('devChanges', '')
 		}
 

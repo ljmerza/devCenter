@@ -1,89 +1,65 @@
-#!/usr/bin/python3
+"""Processes all Jira Requesats."""
 import os
 
-from FlaskUtils import missing_parameters
-from ServerUtils import build_commit_message, get_branch_name
-from Jira.Jira import Jira
-from CodeCloud.CodeCloud import CodeCloud
+from devcenter.server_utils import build_commit_message, get_branch_name, missing_parameters
+from devcenter.jira.jira import Jira
+from devcenter.codecloud.codecloud import CodeCloud
+from .jira_status import (
+	pass_pull_requests, add_reviewer_all_pull_requests, add_cr_pass_comment,
+	add_qa_pass_comment, add_commits_table_comment
+)
 
-from Requests.jira_status import pcr_complete_transition, pcr_pass_transition, pcr_working_transition, qa_ready_transition, qa_pass_transition, uct_ready_transition, cr_pass_transition
 
 def set_status(data):
-	'''sets a Jira ticket's status
-	'''
-	missing_params = missing_parameters(params=data, required=['cred_hash','key','status_type'])
+	"""Sets a Jira ticket's status.
+		Possible responses: 
+			pr_add_response, status_response, comment_response, new_response
+			commit_ids, commit_comment (from add_commits_table_comment)
+	"""
+	missing_params = missing_parameters(params=data, required=['cred_hash','key','status'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	response = {"status": False}
+	status_name = data.get('status', {}).get('name', '')
+	status_id = data.get('status', {}).get('id', '')
 	jira = Jira()
+	response = {'status': True, 'data': {}}
 
-	if data['status_type'] == 'backlog':
-		response = jira.set_backlog(key=data['key'], cred_hash=data['cred_hash'])
+	# if we are trying to add a componen then do that
+	# else if were given a status id then we are changing status
+	# or if not given status id and not pcr pass then we are removing component
+	if data['add_component']:
+		response['data']['status_response'] = jira.remove_component(name=data['add_component'], key=data['key'], cred_hash=data['cred_hash'])
+	elif status_id:
+		response['data']['status_response'] = jira.set_status(key=data['key'], transition_id=status_id, cred_hash=data['cred_hash'])
+	elif status_name != 'PCR Pass':
+		remove_component = status_name.replace('Remove ', '')
+		response['data']['status_response'] = jira.remove_component(name=remove_component, key=data['key'], cred_hash=data['cred_hash'])
 
-	if data['status_type'] == 'inSprint':
-		response = jira.set_in_sprint(key=data['key'], cred_hash=data['cred_hash'])
+	# do any special actions for certain status changes
+	if status_name == 'In PCR':
+		response['data']['pr_add_response'] = add_reviewer_all_pull_requests(data=data)
+	elif status_name == 'PCR Pass': # go to pcr ready
+		response['data']['pr_pass_response'] = pass_pull_requests(data=data)
+		response['data']['status_response'] = jira.set_status(key=data['key'], transition_id=471, cred_hash=data['cred_hash'])
+	elif status_name == 'PCR Complete': # go to cr ready
+		response['data']['pr_pass_response'] = pass_pull_requests(data=data)
+		response['data']['status_response'] = jira.set_status_by_name(key=data['key'], transition_id=0, cred_hash=data['cred_hash'])
+	elif status_name == 'CR Pass':
+		response['data']['comment_response'] = add_cr_pass_comment(data)
+	elif status_name == 'QA Ready':
+		response['data']['comment_response'] = add_qa_pass_comment(data)
+	if data.get('add_commits', False):
+		commit_response = add_commits_table_comment(data)
+		response['data'] = { **response['data'], **commit_response['data'] }
 
-	if data['status_type'] == 'inDev':
-		response = jira.set_in_dev(key=data['key'], cred_hash=data['cred_hash'])
-
-	elif data['status_type'] == 'pcrNeeded':
-		response = jira.set_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'removePcrNeeded':
-		response = jira.remove_pcr_needed(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'pcrWorking':
-		response = pcr_working_transition(data=data)
-	elif data['status_type'] == 'pcrPass':
-		response = pcr_pass_transition(data=data)
-	elif data['status_type'] == 'pcrCompleted':
-		response = pcr_complete_transition(data=data)
-	elif data['status_type'] == 'removePcrCompleted':
-		response = jira.remove_pcr_complete(key=data['key'], cred_hash=data['cred_hash'])
-
-	elif data['status_type'] == 'cr':
-		response = jira.set_code_review(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'crWorking':
-		response = jira.set_code_review_working(data)
-	elif data['status_type'] == 'crPass':
-		response = cr_pass_transition(data)
-
-	elif data['status_type'] == 'qaReady':
-		response = qa_ready_transition(data)
-	elif data['status_type'] == 'inQa':
-		response = jira.set_in_qa(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'qaFail':
-		response = jira.set_qa_fail(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'qaPass':
-		response = qa_pass_transition(data)
-
-	elif data['status_type'] == 'mergeCode':
-		response = jira.set_merge_code(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'mergeConflict':
-		response = jira.set_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'removeMergeConflict':
-		response = jira.remove_merge_conflict(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'uctReady':
-		response = uct_ready_transition(data)
-
-	elif data['status_type'] == 'inUct':
-		response = jira.set_in_uct(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'uctPass':
-		response = jira.set_uct_pass(key=data['key'], cred_hash=data['cred_hash'])
-	elif data['status_type'] == 'uctFail':
-		response = jira.set_uct_fail(key=data['key'], cred_hash=data['cred_hash'])
-
-	# save key and get new status for response
-	if response['status']:
-		response['data']['key'] = data['key']
-		response = get_new_component(response=response, key=data['key'], cred_hash=data['cred_hash'])
+	# get new status for ticket
+	response['data']['new_response'] = get_new_component(key=data['key'], cred_hash=data['cred_hash'])
 	return response
 
-def get_new_component(response, key, cred_hash):
-	'''gets the new component for a ticket if the status transition worked
-	'''
-	# if we didnt create a data prop then create one
-	if(not response.get('data', False)):
-		response['data'] = {}
+
+def get_new_component(key, cred_hash):
+	"""Gets the new status for a ticket."""
 
 	# get new ticket data so we can get new component
 	jira = Jira()
@@ -91,16 +67,15 @@ def get_new_component(response, key, cred_hash):
 	if(not new_ticket['status']):
 		return response
 
-	response['data']['new_status'] = {
+	return {
 		'component': new_ticket['data'].get('component', ''),
 		'status': new_ticket['data'].get('status', ''),
 		'key': key
 	}
-	return response
+
 
 def add_comment(data):
-	'''Add a Jira comment to a ticket
-	'''
+	"""Add a Jira comment to a ticket."""
 	missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'comment'])
 	if missing_params:
 		return {"data": missing_params, "status": False}
@@ -113,9 +88,9 @@ def add_comment(data):
 	)
 	return response
 
+
 def edit_comment(data):
-	'''Edits a Jira comment
-	'''
+	"""Edits a Jira comment."""
 	missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'comment_id', 'comment'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -128,9 +103,9 @@ def edit_comment(data):
 		private_comment=data['private_comment']
 	)
 
+
 def delete_comment(data):
-	'''deletes a jira comment
-	'''
+	"""Deletes a jira comment."""
 	missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'comment_id'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -141,18 +116,18 @@ def delete_comment(data):
 		comment_id=data['comment_id']
 	)
 
+
 def add_work_log(data):
-	'''add work time to a ticket
-	'''
+	"""Add work time to a ticket."""
 	missing_params = missing_parameters(params=data, required=['key', 'log_time', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return Jira().add_work_log(key=data["key"], time=data['log_time'], cred_hash=data['cred_hash'])
 
+
 def get_jira_tickets(data):
-	'''gets all jira tickets by given filter number or JQL
-	'''
+	"""Gets all jira tickets by given filter number or JQL."""
 	missing_params = missing_parameters(params=data, required=['cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -178,18 +153,18 @@ def get_jira_tickets(data):
 
 	return jira_data
 
+
 def find_key_by_msrp(data):
-	'''find a Jira key by it's MSRP
-	'''
+	"""Find a Jira key by it's MSRP."""
 	missing_params = missing_parameters(params=data, required=['cred_hash','msrp'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return Jira().find_key_by_msrp(msrp=data['msrp'], cred_hash=data['cred_hash'])
 
+
 def get_profile(data):
-	'''get a Jira user's profile data
-	'''
+	"""Get a Jira user's profile data."""
 	missing_params = missing_parameters(params=data, required=['username', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -201,18 +176,18 @@ def get_profile(data):
 	jira_response['data']['is_admin'] = os.environ['USER'] == data['username']
 	return jira_response
 
+
 def parse_comment(data):
-	'''parse out a Jira comment
-	'''
+	"""Parse out a Jira comment."""
 	missing_params = missing_parameters(params=data, required=['cred_hash', 'comment', 'key'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
 	return Jira().parse_comment(cred_hash=data['cred_hash'], comment=data['comment'], key=data['key'])
 
+
 def modify_watchers(data):
-	'''add, remove, or get all Jira ticket watchers
-	'''
+	"""Add, remove, or get all Jira ticket watchers."""
 	missing_params = missing_parameters(params=data, required=['type_of_modify', 'key', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -239,7 +214,9 @@ def modify_watchers(data):
 		'data': f'Invalid type of watcher modify: {type_of_modify}'
 	}
 
+
 def get_active_sprints(data):
+	"""Get all actrive sprints."""
 	missing_params = missing_parameters(params=data, required=['cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}

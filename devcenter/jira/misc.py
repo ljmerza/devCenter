@@ -14,7 +14,7 @@ class JiraMisc():
 
 	def find_key_by_msrp(self, msrp, cred_hash):
 		"""Find a ticket's key by MSRP number."""
-		url = f'{self.jira_api.api_base}/search?jql=MSRP_Number~{msrp}&fields=key'
+		url = f'{self.jira_api.api_base}/search?jql=cf[10212]~{msrp}&fields=key'
 		response = self.jira_api.get(url=url, cred_hash=cred_hash)
 
 		if not response['status']:
@@ -54,12 +54,21 @@ class JiraMisc():
 			return response
 
 	def set_dev_changes(self, dev_changes, key, cred_hash):
-		"""Sets the dev changes value of a Jira ticket."""
+		"""Sets the dev changes field of a Jira ticket."""
 		json_data = {"fields":{"customfield_10138":dev_changes}}
 		response = self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
 		
 		if response['status']:
 			response['data'] = dev_changes
+		return response
+	
+	def set_additional_qa(self, comment, key, cred_hash):
+		"""Sets the QA Test additional Info field of a Jira ticket."""
+		json_data = {"fields":{"customfield_10118":comment}}
+		response = self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
+		
+		if response['status']:
+			response['data'] = comment
 		return response
 
 	def add_pr_to_dev_changes(self, pull_response, data):

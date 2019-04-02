@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+"""Creates all routes for devcenter."""
 import json
 import os
 from base64 import b64encode
@@ -7,15 +7,16 @@ from flask import request, Response, g, abort
 from flask_cors import cross_origin
 import requests
 
-from AESCipher import AESCipher
-from Routes.JiraRoutes import define_routes as JiraRoutes_define_routes
-from Routes.ChatRoutes import define_routes as ChatRoutes_define_routes
-from Routes.UserRoutes import define_routes as UserRoutes_define_routes
-from Routes.ApiRoutes import define_routes as ApiRoutes_define_routes
-from Routes.CodeCloudRoutes import define_routes as CodeCloudRoutes_define_routes
+from .AESCipher import AESCipher
+from .routes.jira import define_routes as JiraRoutes_define_routes
+from .routes.chat import define_routes as ChatRoutes_define_routes
+from .routes.user import define_routes as UserRoutes_define_routes
+from .routes.api import define_routes as ApiRoutes_define_routes
+from .routes.codecloud import define_routes as CodeCloudRoutes_define_routes
 
 
 def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no_pings):
+	"""Creates all routes for devcenter."""
 
 	key = os.environ['ENCRYPT_KEY']
 	cypher = AESCipher(key=key)

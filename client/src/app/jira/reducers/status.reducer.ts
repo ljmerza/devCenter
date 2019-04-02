@@ -73,10 +73,13 @@ function processStatusTickets(tickets, oldTickets, ticketType): StatusTicket[] {
 
     newTickets.forEach(newTicket => {
         const matchingOldTicketIndex = newTicketState.findIndex((oldTicket: StatusTicket) => oldTicket.key === newTicket.key);
-        newTicket = createStatusTickets(newTicket);
+        const newStatusTicket = createStatusTicket(newTicket);
 
-        if (matchingOldTicketIndex !== -1) newTicketState[matchingOldTicketIndex] = newTicket;
-        else newTicketState.push(newTicket);
+        if (matchingOldTicketIndex !== -1) {
+            newTicketState[matchingOldTicketIndex] = newStatusTicket;
+        } else {
+            newTicketState.push(newStatusTicket);
+        }
     });
 
     return purgeOldTickets(newTickets, newTicketState, ticketType);
@@ -86,7 +89,7 @@ function processStatusTickets(tickets, oldTickets, ticketType): StatusTicket[] {
  * creates a new status ticket
  * @param tickets 
  */
-function createStatusTickets(ticket): StatusTicket {
+function createStatusTicket(ticket): StatusTicket {
     ticket = { ...ticket };
 
     const devChangeWords = (ticket.dev_changes || ticket.description || '').split(/\n|(\n\r)| /g);
@@ -110,6 +113,7 @@ function createStatusTickets(ticket): StatusTicket {
         pcrCountLeft,
         component: ticket.component,
         status: ticket.status,
+        fullStatus: ticket.full_status,
         key: ticket.key,
         msrp: ticket.msrp,
         repoName: ticket.master_branch,
@@ -120,6 +124,7 @@ function createStatusTickets(ticket): StatusTicket {
         ticketType: ticket.ticketType,
         storyPoint: ticket.story_point,
         summary: ticket.summary,
+        transitions: ticket.transitions
     };
 }
 
@@ -130,10 +135,10 @@ function createStatusTickets(ticket): StatusTicket {
  */
 function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): StatusTicket[] {
     return statusTickets.map((ticket: StatusTicket) => {
-        if (newStatusTicket.new_status.key === ticket.key) {
+        if (newStatusTicket.key === ticket.key) {
             ticket = { ...ticket };
-            ticket.status = newStatusTicket.new_status.status;
-            ticket.component = newStatusTicket.new_status.component;
+            ticket.status = newStatusTicket.status;
+            ticket.component = newStatusTicket.component;
             
             if (newStatusTicket.pullRequests){
                 ticket.pullRequests = newStatusTicket.pullRequests;

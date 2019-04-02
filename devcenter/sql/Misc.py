@@ -1,9 +1,11 @@
-#!/usr/bin/python3
-from .SQLModels import Repos
+"""Miscellaneous SQL actions."""
+from .models import Repos
 
 class Misc():
+	"""Miscellaneous SQL actions."""
 
 	def get_repos(self):
+		"""Get a list of repos."""
 		session = self.login()
 		items = session.query(Repos)
 		response = []

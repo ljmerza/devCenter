@@ -1,13 +1,13 @@
-#!/usr/bin/python3
-
+"""Starts the Dev Center Server."""
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_cors import CORS
 
-from DevCenterRoutes import define_routes
+from .DevCenterRoutes import define_routes
 
 
 def start_server(devflk, host, port, app_name, devdb, sql_echo, dev_chat, no_pings):
+	"""Starts the Dev Center Server."""
 	app = Flask(__name__)
 	cors = CORS(app)
 	socketio = SocketIO(app)

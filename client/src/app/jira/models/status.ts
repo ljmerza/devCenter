@@ -2,11 +2,12 @@
 
 export interface StatusTicket {
     component: string,
-    status: string,
+    status: String,
+    fullStatus: Status,
     key: string,
     msrp: string,
     pcrCountLeft: string,
-    pullRequests: Array<PullRequest>,
+    pullRequests: PullRequest[],
     repoName: string,
     sprint: string,
     branch: string,
@@ -15,6 +16,17 @@ export interface StatusTicket {
     ticketType?: string,
     storyPoint: string,
     summary: string,
+    transitions: Transition[],
+}
+
+export interface Status {
+    status: Transition,
+    components: Transition[]
+}
+
+export interface Transition {
+    name: string,
+    id: string
 }
 
 export interface PullRequest {

@@ -1,12 +1,16 @@
-#!/usr/bin/python3
-
+"""Creates all user based routes."""
 from flask import Response, request
 from flask_cors import cross_origin
 
-from Requests.UserRequests import set_navbar_item, get_navbar_items, get_jql_links, get_statuses, get_ticket_history
-from Requests.JiraRequests import get_profile
+from devcenter.requests.user import (
+	set_navbar_item, get_navbar_items,
+	get_jql_links, get_statuses, get_ticket_history
+)
+from devcenter.requests.jira import get_profile
+
 
 def define_routes(app, app_name, g, devdb, sql_echo, **kwargs):
+	"""Creates all user based routes."""
 
 	@app.route(f'/{app_name}/jira/profile/<username>')
 	@cross_origin()

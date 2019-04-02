@@ -1,12 +1,10 @@
-#!/usr/bin/python3
-
-from FlaskUtils import missing_parameters
-from Crucible.Crucible import Crucible
+"""Handles Crucible requests."""
+from devcenter.server_utils import missing_parameters
+from devcenter.Crucible.Crucible import Crucible
 
 
 def crucible_create_review(data, pull_response):
-	'''creates a crucbile review
-	'''
+	"""Creates a crucbile review."""
 	missing_params = missing_parameters(params=data, required=['key', 'msrp', 'username', 'password', 'repos','cred_hash']):
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}

@@ -7,5 +7,6 @@ export interface StatusesModel {
     transitions?: StatusesModel[],
     auto_transition?: string
     constant?: string,
-    color?:string,
+    color?: string,
+    transitionId?: string,
 }

@@ -1,11 +1,12 @@
-#!/usr/bin/python3
-
+"""Creates all api based routes."""
 from flask import Response
 from flask_cors import cross_origin
 
-from Requests.ApiRequests import get_orders, get_atx
+from devcenter.requests.api import get_orders, get_atx
+
 
 def define_routes(app, app_name, **kwargs):
+	"""Creates all api based routes."""
 	
 	@app.route(f'/{app_name}/skipcreds/json_api/orders')
 	@cross_origin()

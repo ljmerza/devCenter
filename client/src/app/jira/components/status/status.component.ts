@@ -35,11 +35,11 @@ export class StatusComponent implements OnDestroy, OnInit {
   ticket: StatusTicket;
 
   // keep track of valid transitions, the original values, and the values the user changed to
-  transitions: StatusesModel[] = [];
-  originalStatusCode = '';
-  originalStatusName = '';
-  changedStatusCode = '';
-  changedStatusName = '';
+  transitions: String[] = [];
+
+  currentStatus = '';
+  originalStatus = '';
+
   borderColor = '';
   loading = false;
   privateComment = true;
@@ -86,28 +86,51 @@ export class StatusComponent implements OnDestroy, OnInit {
   }
 
   /**
-   * 
+   * get new ticket status and update UI dropdown
    */
   processNewStatus([ticket, statuses]: [StatusTicket, StatusesModel[]]){
     if (!ticket) return;
-
-    this.ticket = ticket;
     this.statuses = statuses;
-    
-    // get matching status object - fall back on component so we at least also show something
-    const status: string = ticket.status || ticket.component;
-    const matchingStatus: StatusesModel = { ...this.statuses.find(allStatus => allStatus.status_name === status) };
-    
-    // reset all status values
-    this.originalStatusCode = matchingStatus.status_code || '';
-    this.originalStatusName = matchingStatus.status_name || '';
-    this.changedStatusCode = matchingStatus.status_code || '';
-    this.changedStatusName = matchingStatus.status_name || '';
-    this.borderColor = matchingStatus.color ? `solid 2px ${matchingStatus.color}` : '';
+    this.ticket = ticket;
+
+    this.originalStatus = '';
+    let isComponent = false;
+
+    if (ticket.fullStatus && ticket.fullStatus.components.length){
+      this.originalStatus = ticket.fullStatus.components[0].name;
+      isComponent = true;
+
+    } else if (ticket.fullStatus) {
+      this.originalStatus = ticket.fullStatus.status.name;
+      isComponent = false;
+    }
+
+    this.currentStatus = this.originalStatus;
+        
+    // if we found a matching db status then get props from there
+    const matchingDbStatus: StatusesModel = this.statuses.find(allStatus => allStatus.status_name === this.currentStatus);
+
+    if (matchingDbStatus){
+      this.borderColor = matchingDbStatus.color ? `solid 2px ${matchingDbStatus.color}` : '';
+    } else {
+      this.borderColor = '';
+    }
 
     // reset transitions and add current status to top
-    this.transitions = Array.from(matchingStatus.transitions || []);
-    this.transitions.unshift({ status_code: this.originalStatusCode, status_name: this.originalStatusName });
+    this.transitions = ticket.transitions.map(transition => transition.name);
+
+    if(isComponent){
+      this.transitions.unshift(`Remove ${this.currentStatus}`);
+    }
+
+    // if we are in pcr based statuses we need other custom components
+    if (['PCR READY', 'PCR - Needed', 'PCR - Working'].includes(this.currentStatus)) {
+      if (!this.transitions.includes('PCR - Working')) this.transitions.unshift('PCR - Working');
+      if (!this.transitions.includes('PCR - Needed')) this.transitions.unshift('PCR - Needed');
+    }
+
+    // add the current status on top
+    if (!this.transitions.includes(this.currentStatus)) this.transitions.unshift(this.currentStatus);
   }
 
   /**
@@ -115,16 +138,17 @@ export class StatusComponent implements OnDestroy, OnInit {
    * @param event 
    */
   changeStatus(event){
-    this.changedStatusCode = event.value;
-    if (event.value === 'pcrNeeded' && this.changedStatusCode !== 'pcrWorking') return this.openQaGenerator();
+    this.currentStatus = event.value;
 
-    const matchingStatus: StatusesModel = this.statuses.find(allStatus => allStatus.status_code === event.value);
-    if (matchingStatus) this.changedStatusName = matchingStatus.status_name || '';
+    if (['PCR Ready'].includes(this.currentStatus) && ['In Development'].includes(this.originalStatus)) {
+      this.openQaGenerator();
+      return;
+    }
 
     // setup custom menus for dialog based on new state
-    this.showUctNotReady = this.changedStatusCode === 'releaseReady';
-    this.showBranchInfo = this.changedStatusCode === 'uctReady';
-    
+    this.showUctNotReady = ['Ready for Release'].includes(this.currentStatus);
+    this.showBranchInfo = ['UCT Ready'].includes(this.currentStatus);
+
     this.loading = true;
     this.modal.openModal();
   }
@@ -134,15 +158,17 @@ export class StatusComponent implements OnDestroy, OnInit {
    */
   confirmChangeStatus(){
     this.modal.closeModal();
-
+    const newStatus = this.ticket.transitions.find(transition => transition.name === this.currentStatus)
+      || { id: '', name: this.currentStatus };
+    
     this.store.dispatch(new ActionStatusSave({ 
       username: this.profile.name, 
       key: this.ticket.key, 
-      statusType: this.changedStatusCode,
-      status: this.changedStatusName,
+      status: newStatus,
+      addComponent: ['PCR - Needed', 'PCR - Working'].find(transition => transition === this.currentStatus),
       repoName: this.ticket.repoName,
       pullRequests: this.ticket.pullRequests,
-      addCommits: this.changedStatusCode === 'uctReady',
+      addCommits: ['Remove Merge Code'].includes(this.currentStatus),
       masterBranch: this.ticket.repoName,
     }));
 
@@ -175,9 +201,7 @@ export class StatusComponent implements OnDestroy, OnInit {
    * reset the selected status and close the confirm modal
    */
   confirmCancelStatus(){
-    this.changedStatusCode = this.originalStatusCode;
-    this.changedStatusName = this.originalStatusName;
-
+    this.currentStatus = this.originalStatus;
     this.resetInputs();
     this.modal.closeModal();
   }
