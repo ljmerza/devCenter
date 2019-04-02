@@ -2,28 +2,43 @@ module.exports = {
   apps: [
     {
       name: 'dev-center-dev',
-      script: '/opt/app/lm240n/www/devcenter_dev/devcenter/__main__.py',
-      args: ['devui']
+      cwd: '/opt/app/lm240n/www/devcenter_dev',
+      script: 'python -m devcenter --devui',
+      env: {
+
+      }
     },
     {
       name: 'dev-center-beta',
-      script: '/opt/app/lm240n/www/devcenter_beta/devcenter/__main__.py',
-      args: ['betaui']
+      cwd: '/opt/app/lm240n/www/devcenter_beta',
+      script: 'python -m devcenter --betaui',
+      env: {
+
+      }
     },
     {
       name: 'dev-center-prod',
-      script: '/opt/app/lm240n/www/devcenter/devcenter/__main__.py',
-      args: ['prod']
+      cwd: '/opt/app/lm240n/www/devcenter',
+      script: 'python -m devcenter --prod',
+      env: {
+
+      }
     },
     {
       name: 'dev-center-prod-beta',
-      script: '/opt/app/lm240n/www/devcenter/devcenter/__main__.py',
-      args: ['prod', 'beta']
+      cwd: '/opt/app/lm240n/www/devcenter',
+      script: 'python -m devcenter --prod --beta',
+      env: {
+
+      }
     },
     {
       name: 'dev-center-prod-betanow',
-      script: '/opt/app/lm240n/www/devcenter/devcenter/__main__.py',
-      args: ['prod', 'beta', 'betanow']
+      script: '/opt/app/lm240n/www/devcenter',
+      script: 'python -m devcenter --prod --beta --betanow',
+      env: {
+
+      }
     },
   ]
 };
