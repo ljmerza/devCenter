@@ -120,6 +120,7 @@ function createStatusTicket(ticket): StatusTicket {
         sprint: ticket.sprint,
         branch: ticket.branch,
         commit: ticket.commit,
+        username: ticket.username,
         epicLink: ticket.epicLink,
         ticketType: ticket.ticketType,
         storyPoint: ticket.story_point,
@@ -158,9 +159,10 @@ function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): Sta
  */
 function processTransitions(transitions = [], status='', component=''){
     let newTransitions = transitions.filter(transition => {
-        if(['Closed', 'On Hold', 'UAT', 'Backlog'].includes(transition.name)) return false;
+        if(['Closed', 'On Hold', 'UAT', 'Backlog', 'PCR Fail'].includes(transition.name)) return false;
         if (status === 'In Development' && ['CR Ready', 'In Sprint'].includes(transition.name)) return false;
         if (status === 'Merge Code' && ['In UAT'].includes(transition.name)) return false;
+        if (status === 'PCR - Working' && ['PCR Ready'].includes(transition.name)) return false;
         
         return true;
     });
@@ -180,7 +182,7 @@ function processTransitions(transitions = [], status='', component=''){
     }
 
     // if current status is component then add remove component status
-    if (!!component) {
+    if (['PCR - Working', 'Merge Code', 'Merge Conflict'].includes(currentStatus)) {
         newTransitions.unshift({ name: `Remove ${currentStatus}` });
     }
 

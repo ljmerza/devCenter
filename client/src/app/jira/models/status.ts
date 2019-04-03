@@ -5,6 +5,7 @@ export interface StatusTicket {
     status: string,
     fullStatus: Status,
     key: string,
+    username: string,
     msrp: string,
     pcrCountLeft: string,
     pullRequests: PullRequest[],
