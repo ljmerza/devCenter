@@ -18,7 +18,7 @@ from .epic_links import EpicLinks
 class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistory, EpicLinks):
 	"""Interact with a SQL database."""
 
-	def __init__(self, devdb, sql_echo):
+	def __init__(self,):
 		"""Setup config for SQL database connection."""
 		
 		SQLTickets.__init__(self)
@@ -26,20 +26,14 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistor
 		SQLNavBar.__init__(self)
 		Misc.__init__(self)
 
-		drivername = 'mysql+pymysql'
 		username = os.environ['USER']
 		password = os.environ['SQL_PASSWORD']
 		host = os.environ['SQL_HOST']
-		port = 3306
+		SQL_ECHO  = os.environ['SQL_ECHO']
+		DB_TABLE  = os.environ['DB_TABLE']
 
-		# default dev DB unless debug false
-		database = 'dev_center_dev'
-		if not devdb:
-			database = 'dev_center'
-
-		charset = 'utf8'
-		url = f'{drivername}://{username}:{password}@{host}:{port}/{database}?charset={charset}'
-		self.engine = create_engine(url, echo=sql_echo, pool_size=20)
+		url = f'mysql+pymysql://{username}:{password}@{host}:3306/{DB_TABLE}?charset=utf8'
+		self.engine = create_engine(url, echo=SQL_ECHO, pool_size=20)
 
 	def login(self):	
 		Session = sessionmaker(bind=self.engine, autoflush=False)

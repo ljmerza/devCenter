@@ -124,7 +124,7 @@ function createStatusTicket(ticket): StatusTicket {
         ticketType: ticket.ticketType,
         storyPoint: ticket.story_point,
         summary: ticket.summary,
-        transitions: ticket.transitions
+        transitions: processTransitions(ticket.transitions, ticket.status, ticket.component)
     };
 }
 
@@ -140,7 +140,7 @@ function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): Sta
             ticket.status = newStatusTicket.status;
             ticket.component = newStatusTicket.component;
             ticket.fullStatus = newStatusTicket.full_status;
-            ticket.transitions = newStatusTicket.transitions || [];
+            ticket.transitions = processTransitions(newStatusTicket.transitions, newStatusTicket.status, newStatusTicket.component);
             
             if (newStatusTicket.pullRequests){
                 ticket.pullRequests = newStatusTicket.pullRequests;
@@ -149,6 +149,46 @@ function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): Sta
 
         return ticket;
     });
+}
+
+/**
+ * customize a ticket's transitions
+ * @param {Transition[]} transitions
+ * @return {Transition[]}
+ */
+function processTransitions(transitions = [], status='', component=''){
+    let newTransitions = transitions.filter(transition => {
+        if(['Closed', 'On Hold', 'UAT', 'Backlog'].includes(transition.name)) return false;
+        if (status === 'In Development' && ['CR Ready', 'In Sprint'].includes(transition.name)) return false;
+        if (status === 'Merge Code' && ['In UAT'].includes(transition.name)) return false;
+        
+        return true;
+    });
+
+    const currentStatus = component || status;
+
+    if (['In PCR'].includes(currentStatus)) {
+        newTransitions.unshift({ name: 'PCR - Needed' });
+    }
+
+    if (['PCR - Needed'].includes(currentStatus)) {
+        newTransitions.unshift({ name: 'PCR - Working' });
+    }
+
+    if (['In QA', 'In PCR'].includes(currentStatus)) {
+        newTransitions.push({ name: 'Merge Conflict' });
+    }
+
+    // if current status is component then add remove component status
+    if (!!component) {
+        newTransitions.unshift({ name: `Remove ${currentStatus}` });
+    }
+
+    if (['API Defect'].includes(currentStatus)) {
+        newTransitions = [];
+    }
+
+    return newTransitions;
 }
 
 /**

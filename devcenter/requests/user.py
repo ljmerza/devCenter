@@ -2,36 +2,36 @@
 from devcenter.sql.sql import DevCenterSQL
 
 
-def get_navbar_items(devdb, sql_echo):
+def get_navbar_items():
 	"""Gets all navbar items."""
-	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
+	sql_obj = DevCenterSQL()
 	return {
 		'status': True,
 		'data': sql_obj.get_navbar_items()
 	}
 
 
-def get_statuses(devdb, sql_echo):
+def get_statuses():
 	"""Gets all navbar items."""
-	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
+	sql_obj = DevCenterSQL()
 	return {
 		'status': True,
 		'data': sql_obj.get_statuses()
 	}
 
 
-def get_ticket_history(devdb, sql_echo):
+def get_ticket_history():
 	"""Gets all navbar items."""
-	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
+	sql_obj = DevCenterSQL()
 	return {
 		'status': True,
 		'data': sql_obj.get_ticket_history()
 	}
 
 
-def get_jql_links(devdb, sql_echo):
+def get_jql_links():
 	"""Gets all navbar items."""
-	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
+	sql_obj = DevCenterSQL()
 	return {
 		'status': True,
 		'data': sql_obj.get_jql_links()

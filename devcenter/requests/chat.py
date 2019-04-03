@@ -5,13 +5,13 @@ from devcenter.chat.chat import Chat
 from devcenter.sql.sql import DevCenterSQL
 
 
-def send_ping(data, dev_chat, no_pings):
+def send_ping(data):
 	"""Sends a ping to the chatroom."""
 	missing_params = missing_parameters(params=data, required=['username', 'ping_type','cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	
-	chat_obj = Chat(debug=dev_chat, no_pings=no_pings)
+	chat_obj = Chat()
 	jira_obj = Jira()
 
 	# we dont have enough ticket info so get that from Jira now
@@ -50,13 +50,13 @@ def send_ping(data, dev_chat, no_pings):
 		return {"data": "Ping reset not implemented", "status": False}
 	
 
-def set_user_pings(data, devdb, sql_echo):
+def set_user_pings(data):
 	"""Sets a user's ping settings."""
 	missing_params = missing_parameters(params=data, required=['username', 'fields'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 	
-	sql_obj = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
+	sql_obj = DevCenterSQL()
 	response = sql_obj.set_user_pings(
 		username=data['username'],
 		fields=data['fields']
@@ -65,13 +65,13 @@ def set_user_pings(data, devdb, sql_echo):
 	return response
 
 
-def send_custom_ping(data, dev_chat, no_pings):
+def send_custom_ping(data):
 	"""Send a custom ping to chatroom or a generated one from a ticket status transition."""
 	missing_params = missing_parameters(params=data, required=['ping_type', 'cred_hash'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	chat_obj = Chat(debug=dev_chat, no_pings=no_pings)
+	chat_obj = Chat()
 
 	if(data['ping_type'] == 'user'):
 		missing_params = missing_parameters(params=data, required=['username', 'message'])
@@ -121,13 +121,13 @@ def _get_jira_ticket_for_ping(data):
 	return {"data": data, "status": True}
 
 
-def send_pcr_comments(data, dev_chat, no_pings):
+def send_pcr_comments(data):
 	"""Send a PCR comments needing addressed to a user."""
 	missing_params = missing_parameters(params=data, required=['fromName', 'toUsername', 'pullLinks', 'key'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
-	chat_obj = Chat(debug=dev_chat, no_pings=no_pings)
+	chat_obj = Chat()
 	
 	return chat_obj.send_pcr_comments(
 		fromName=data['fromName'], 

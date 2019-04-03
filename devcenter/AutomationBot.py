@@ -17,25 +17,26 @@ from .reminders import reminders
 class AutomationBot():
 	"""Cron to keep track of Jira tickets."""
 
-	def __init__(self, is_beta_week, beta_stat_ping_now, devbot, is_qa_pcr, merge_alerts, devdb, sql_echo, no_pings):
+	def __init__(self):
 		"""Setup cron config."""
 		self.username = os.environ['USER']
 		self.password = os.environ['PASSWORD']
 
 		# create DB object and connect
-		self.sql_object = DevCenterSQL(devdb=devdb, sql_echo=sql_echo)
+		self.sql_object = DevCenterSQL()
 		self.jira_obj = Jira()
-		self.chat_obj = Chat(debug=devbot, is_qa_pcr=is_qa_pcr, merge_alerts=merge_alerts, no_pings=no_pings)
+		
+		self.chat_obj = Chat()
 		self.reminders = reminders(chat_obj=self.chat_obj)
 
 		self.beta_wait_time = 300 # how many times to wait for beta message
 		 # how many times we've waited for beta message - start off with a message
-		if beta_stat_ping_now:
+		if int(os.environ['BETA_STAT_PING_NOW']):
 			self.beta_wait_count = self.beta_wait_time
 		else:
 			self.beta_wait_count = 0
 		self.beta_stats = []
-		self.is_beta_week = is_beta_week
+		self.is_beta_week = int(os.environ['IS_BETA_WEEK'])
 
 		# cred hash creation
 		username = os.environ['USER']

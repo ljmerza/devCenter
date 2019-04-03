@@ -8,13 +8,13 @@ from requests.auth import HTTPBasicAuth
 class ChatAPI():
 	"""API for interacting with chat system."""
 
-	def __init__(self, debug, no_pings):
+	def __init__(self):
 		"""Setup chat variables."""
 		self.jira_url = os.environ['JIRA_URL']
 		self.jira_ticket_base = f'{self.jira_url}/browse'
 		self.username = os.environ['USER']
-		self.debug = debug
-		self.no_pings = no_pings
+		self.debug = int(os.environ['DEV_BOT'])
+		self.no_pings = int(os.environ['NO_PINGS'])
 		self.bot_name = os.environ['BOT_NAME']
 		self.dev_center_chat = os.environ['CHAT_DEV_CENTER']
 		self.bot_password = os.environ['BOT_PASSWORD']

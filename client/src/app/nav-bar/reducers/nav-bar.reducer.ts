@@ -54,8 +54,9 @@ export function navBarReducer(state: NavBarState = initialState, action: Action)
 	}
 }
 
+
 /**
- * for each status map valid tranisiotn objects
+ * for each status map valid transition objects
  * @param statuses 
  */
 function processStatuses(statuses){
@@ -68,6 +69,7 @@ function processStatuses(statuses){
 		status.transitions.split(',').forEach(transition => {
 			const matchingTransition = statuses.find(status => status.id === transition);
 			if (matchingTransition) transitions.push(matchingTransition);
+
 		});
 		status.transitions = transitions;
 

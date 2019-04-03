@@ -93,48 +93,19 @@ export class StatusComponent implements OnDestroy, OnInit {
     this.statuses = statuses;
     this.ticket = ticket;
 
-    this.originalStatus = '';
-    let isComponent = false;
-
-    if (ticket.component){
-      this.originalStatus = ticket.component;
-      isComponent = true;
-    } else {
-      this.originalStatus = ticket.status;
-      isComponent = false;
-    }
-
+    this.originalStatus = ticket.component || ticket.status || '';
     this.currentStatus = this.originalStatus;
         
     // if we found a matching db status then get props from there
     const matchingDbStatus: StatusesModel = this.statuses.find(allStatus => allStatus.status_name === this.currentStatus);
-
     if (matchingDbStatus){
       this.borderColor = matchingDbStatus.color ? `solid 2px ${matchingDbStatus.color}` : '';
     } else {
       this.borderColor = '';
     }
 
-    // reset transitions and add current status to top
+    // get all transition names and add current status to top if its not there
     this.transitions = ticket.transitions.map(transition => transition.name);
-
-    if (isComponent){
-      this.transitions.unshift(`Remove ${this.currentStatus}`);
-    }
-
-    // states we can transiton back to pcr needed
-    if (['In PCR'].includes(this.currentStatus)) {
-      this.transitions.unshift('PCR - Needed');
-    }
-
-    if (['PCR - Needed'].includes(this.currentStatus)) {
-      this.transitions.unshift('PCR - Working');
-    }
-
-    // always add merge conflict to bottom
-    this.transitions.push('Merge Conflict');
-
-    // add the current status on top
     if (!this.transitions.includes(this.currentStatus)) this.transitions.unshift(this.currentStatus);
   }
 

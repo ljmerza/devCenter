@@ -10,10 +10,11 @@ from devcenter.requests.jira import (
 )
 
 
-def define_routes(app, app_name, g, **kwargs):
+def define_routes(app, g):
 	"""Define all  Jira Routes."""
+	APP_NAME = os.environ['APP_NAME']
 	
-	@app.route(f'/{app_name}/jira/tickets')
+	@app.route(f'/{APP_NAME}/jira/tickets')
 	@cross_origin()
 	def jiraTickets():
 		data = get_jira_tickets(data={
@@ -24,7 +25,7 @@ def define_routes(app, app_name, g, **kwargs):
 		})
 		return Response(data, mimetype='application/json')
 
-	@app.route(f'/{app_name}/jira/getkey/<msrp>')
+	@app.route(f'/{APP_NAME}/jira/getkey/<msrp>')
 	@cross_origin()
 	def getKey(msrp):
 		data = find_key_by_msrp(data={
@@ -33,7 +34,7 @@ def define_routes(app, app_name, g, **kwargs):
 		})
 		return Response(data, mimetype='application/json')
 
-	@app.route(f'/{app_name}/jira/comment', methods=['PUT', 'DELETE', 'POST'])
+	@app.route(f'/{APP_NAME}/jira/comment', methods=['PUT', 'DELETE', 'POST'])
 	@cross_origin()
 	def jira_comment():
 		response = {'status':True, 'data': {}}
@@ -82,7 +83,7 @@ def define_routes(app, app_name, g, **kwargs):
 		return Response(response, mimetype='application/json')
 
 
-	@app.route(f'/{app_name}/jira/status', methods=['POST'])
+	@app.route(f'/{APP_NAME}/jira/status', methods=['POST'])
 	@cross_origin()
 	def change_status():
 		post_data = request.get_json()
@@ -104,16 +105,15 @@ def define_routes(app, app_name, g, **kwargs):
 		status_response = set_status(data=data)
 		return Response(status_response, mimetype='application/json')
 
-	@app.route(f'/{app_name}/jira/parse_comment', methods=['POST'])
+	@app.route(f'/{APP_NAME}/jira/parse_comment', methods=['POST'])
 	@cross_origin()
 	def parse_comment_route(key):
 		data=request.get_json()
 		data['cred_hash'] = g.cred_hash
-
 		data = parse_comment(data=data)
 		return Response(data, mimetype='application/text')
 
-	@app.route(f'/{app_name}/jira/watchers/<key>/<username>', methods=['POST', 'DELETE', 'GET'])
+	@app.route(f'/{APP_NAME}/jira/watchers/<key>/<username>', methods=['POST', 'DELETE', 'GET'])
 	@cross_origin()
 	def modify_watchers_route(key, username):
 		response = {'status': False, 'data': {}}
@@ -148,7 +148,7 @@ def define_routes(app, app_name, g, **kwargs):
 
 		return Response(response, mimetype='application/json')
 
-	@app.route(f'/{app_name}/jira/active_sprints', methods=['GET'])
+	@app.route(f'/{APP_NAME}/jira/active_sprints', methods=['GET'])
 	@cross_origin()
 	def active_sprints_route():
 		response = get_active_sprints(data={'cred_hash': g.cred_hash})

@@ -8,5 +8,7 @@ client/src/environments/baseEnvironment.ts
 ticket_history/node_modules/
 ticket_history/keys.js
 
+ecosystem.config.js
+
 dist/
 distBeta/

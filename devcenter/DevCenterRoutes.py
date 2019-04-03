@@ -15,35 +15,27 @@ from .routes.api import define_routes as ApiRoutes_define_routes
 from .routes.codecloud import define_routes as CodeCloudRoutes_define_routes
 
 
-def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no_pings):
+def define_routes(app, socketio):
 	"""Creates all routes for devcenter."""
 
 	key = os.environ['ENCRYPT_KEY']
 	cypher = AESCipher(key=key)
 
-	route_args = {
-		'app': app,
-		'app_name': app_name,
-		'g': g,
-		'devdb': devdb,
-		'sql_echo': sql_echo,
-		'dev_chat': dev_chat,
-		'no_pings': no_pings,
-	}
+	JiraRoutes_define_routes(app=app, g=g)
+	CodeCloudRoutes_define_routes(app=app, g=g)
+	ChatRoutes_define_routes(app=app, g=g)
+	UserRoutes_define_routes(app=app, g=g)
+	ApiRoutes_define_routes(app=app, g=g)
 
-	JiraRoutes_define_routes(**route_args)
-	CodeCloudRoutes_define_routes(**route_args)
-	ChatRoutes_define_routes(**route_args)
-	UserRoutes_define_routes(**route_args)
-	ApiRoutes_define_routes(**route_args)
+	APP_NAME = os.environ['APP_NAME']
 
-	@app.route(f"/{app_name}/socket_tickets", methods=['POST'])
+	@app.route(f"/{APP_NAME}/socket_tickets", methods=['POST'])
 	@cross_origin()
 	def socket_tickets():
 		socketio.emit('update_tickets', request.get_json())
 		return Response(status=200)
 
-	@app.route(f"/{app_name}/skipcreds/encrypt", methods=['POST'])
+	@app.route(f"/{APP_NAME}/skipcreds/encrypt", methods=['POST'])
 	@cross_origin()
 	def encrypt_token():
 		post_data = request.get_json()
@@ -60,7 +52,7 @@ def define_routes(app, devflk, socketio, app_name, devdb, sql_echo, dev_chat, no
 
 	@app.before_request
 	def get_cred_hash():
-		if devflk:
+		if int(os.environ['DEV_SERVER']):
 			print(request.url)
 
 		# if web sockets or encrypting password then ignore
