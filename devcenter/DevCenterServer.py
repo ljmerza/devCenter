@@ -1,4 +1,6 @@
 """Starts the Dev Center Server."""
+import os
+
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_cors import CORS
@@ -15,7 +17,7 @@ def start_server():
 	app.config['CORS_HEADERS'] = 'Content-Type'
 	
 	DEV_SERVER = int(os.environ['DEV_SERVER'])
-	HOST = os.environ['HOST'])
+	HOST = os.environ['HOST']
 	PORT = int(os.environ['PORT'])
 
 	# set debug if we want it

@@ -1,11 +1,13 @@
 """Creates all api based routes."""
+import os
+
 from flask import Response
 from flask_cors import cross_origin
 
 from devcenter.requests.api import get_orders, get_atx
 
 
-def define_routes(**kwargs):
+def define_routes(app, g):
 	"""Creates all api based routes."""
 	APP_NAME = os.environ['APP_NAME']
 	

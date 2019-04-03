@@ -26,13 +26,18 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistor
 		SQLNavBar.__init__(self)
 		Misc.__init__(self)
 
-		username = os.environ['USER']
-		password = os.environ['SQL_PASSWORD']
-		host = os.environ['SQL_HOST']
-		SQL_ECHO  = os.environ['SQL_ECHO']
-		DB_TABLE  = os.environ['DB_TABLE']
+		USER = os.environ['USER']
+		SQL_PASSWORD = os.environ['SQL_PASSWORD']
+		SQL_HOST = os.environ['SQL_HOST']
+		DB_TABLE = os.environ['DB_TABLE']
 
-		url = f'mysql+pymysql://{username}:{password}@{host}:3306/{DB_TABLE}?charset=utf8'
+		SQL_ECHO = int(os.environ['SQL_ECHO'])
+		if SQL_ECHO:
+			SQL_ECHO = True
+		else:
+			SQL_ECHO = False
+
+		url = f'mysql+pymysql://{USER}:{SQL_PASSWORD}@{SQL_HOST}:3306/{DB_TABLE}?charset=utf8'
 		self.engine = create_engine(url, echo=SQL_ECHO, pool_size=20)
 
 	def login(self):	

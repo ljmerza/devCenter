@@ -35,13 +35,10 @@ def start_cron():
 
 def main() -> None:
 	"""Start Dev Center."""
-	set_argument_groups()
-
 	if PROD_MODE:
 		thr = threading.Thread(target=start_cron)
 		thr.start()
 
 	start_server()
 
-if __name__ == "__main__":
-	main()
+main()

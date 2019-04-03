@@ -1,4 +1,6 @@
 """Creates all user based routes."""
+import os
+
 from flask import Response, request
 from flask_cors import cross_origin
 

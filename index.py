@@ -1,3 +1,1 @@
 import devcenter
-
-print(devcenter)

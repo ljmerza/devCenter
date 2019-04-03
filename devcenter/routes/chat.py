@@ -1,4 +1,6 @@
 """Creates all chat based routes."""
+import os
+
 from flask import request, Response
 from flask_cors import cross_origin
 

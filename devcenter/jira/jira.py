@@ -16,7 +16,7 @@ class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments, JiraW
 		"""Setup the Jira submodules."""
 		self.jira_api = JiraAPI()
 
-		dcSql = DevCenterSQL(devdb=0, sql_echo=0)
+		dcSql = DevCenterSQL()
 		self.epic_links = dcSql.get_epic_links()
 
 		JiraComponent.__init__(self, self.jira_api)

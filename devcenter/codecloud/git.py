@@ -11,7 +11,7 @@ class Git():
 
     def get_repos(self):
         """Get all repos for a project."""
-        dcSql = DevCenterSQL(devdb=0, sql_echo=0)
+        dcSql = DevCenterSQL()
         repos = dcSql.get_repos()
         return {'status': True, 'data': repos}
 
