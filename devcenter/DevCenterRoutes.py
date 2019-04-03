@@ -52,7 +52,7 @@ def define_routes(app, socketio):
 
 	@app.before_request
 	def get_cred_hash():
-		if int(os.environ['DEV_SERVER']):
+		if int(os.environ['PRINT_ROUTES']):
 			print(request.url)
 
 		# if web sockets or encrypting password then ignore

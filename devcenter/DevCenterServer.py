@@ -16,14 +16,8 @@ def start_server():
 
 	app.config['CORS_HEADERS'] = 'Content-Type'
 	
-	DEV_SERVER = int(os.environ['DEV_SERVER'])
 	HOST = os.environ['HOST']
 	PORT = int(os.environ['PORT'])
-
-	# set debug if we want it
-	if DEV_SERVER:
-		# app.config['DEBUG'] = True
-		app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 	define_routes(app=app, socketio=socketio)
 	socketio.run(app, host=HOST, port=PORT)

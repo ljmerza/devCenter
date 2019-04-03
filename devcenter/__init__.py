@@ -14,7 +14,7 @@ from devcenter.DevCenterServer import start_server
 
 _LOGGER = logging.getLogger(__name__)
 TIME_SHIFT = int(os.environ['TIME_SHIFT'])
-PROD_MODE = int(os.environ['PROD_MODE'])
+ENABLE_CRON = int(os.environ['ENABLE_CRON'])
 
 def start_cron():
 	"""Start the Jira cron."""
@@ -35,7 +35,7 @@ def start_cron():
 
 def main() -> None:
 	"""Start Dev Center."""
-	if PROD_MODE:
+	if ENABLE_CRON:
 		thr = threading.Thread(target=start_cron)
 		thr.start()
 
