@@ -159,10 +159,15 @@ function updateTicketStatus(newStatusTicket, statusTickets: StatusTicket[]): Sta
  */
 function processTransitions(transitions = [], status='', component=''){
     let newTransitions = transitions.filter(transition => {
-        if(['Closed', 'On Hold', 'UAT', 'Backlog', 'PCR Fail'].includes(transition.name)) return false;
+        if(['Closed', 'On Hold', 'UAT', 'PCR Fail'].includes(transition.name)) return false;
         if (status === 'In Development' && ['CR Ready', 'In Sprint'].includes(transition.name)) return false;
         if (status === 'Merge Code' && ['In UAT'].includes(transition.name)) return false;
         if (status === 'PCR - Working' && ['PCR Ready'].includes(transition.name)) return false;
+
+        if (transition.name == 'Backlog'){
+            if (status == 'Triage') return true;
+            else return false;
+        }
         
         return true;
     });

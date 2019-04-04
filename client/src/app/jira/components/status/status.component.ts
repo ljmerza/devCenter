@@ -133,20 +133,20 @@ export class StatusComponent implements OnDestroy, OnInit {
    * persists the status change for this ticket
    */
   confirmChangeStatus(){
-    const Validcomponents = ['PCR - Needed', 'PCR - Working', 'Merge Conflict', 'Merge Code'];
-    const components = [...Validcomponents, ...Validcomponents.map(component => `Remove ${component}`)]
+    const validComponents = ['PCR - Needed', 'PCR - Working', 'Merge Conflict', 'Merge Code'];
+    const validRemoveComponents = validComponents.map(component => `Remove ${component}`);
 
     this.modal.closeModal();
     const newStatus = this.ticket.transitions.find(transition => transition.name === this.currentStatus)
-      || { id: '', name: this.currentStatus };
+      || { id: '', name: this.currentStatus.replace(/^Remove /, '') };
     
     this.store.dispatch(new ActionStatusSave({ 
       username: this.profile.name, 
       key: this.ticket.key, 
       status: newStatus,
-      originalStatus: this.originalStatus,
-      isRemovingStatus: components.includes(this.originalStatus),
-      changeComponent: components.find(transition => transition === this.currentStatus) || '',
+      originalStatus: this.originalStatus.replace(/^Remove /, ''),
+      isAddingComponent: !!newStatus.id,
+      isRemovingComponent: validRemoveComponents.includes(this.currentStatus) || validComponents.includes(this.originalStatus),
       repoName: this.ticket.repoName,
       pullRequests: this.ticket.pullRequests,
       addCommits: ['Remove Merge Code'].includes(this.currentStatus),

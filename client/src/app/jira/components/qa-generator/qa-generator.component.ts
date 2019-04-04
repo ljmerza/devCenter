@@ -73,7 +73,6 @@ export class QaGeneratorComponent {
     const { logTime={}, qaSteps='', repos=[] } = this.qaForm.value;
 
     const payload = {
-      pcr_ready: true,
       key: this.ticket.key,
       log_time: (logTime.hour || 0) * 60 + (logTime.minute || 0),
       logTime,

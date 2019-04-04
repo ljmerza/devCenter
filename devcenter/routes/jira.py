@@ -93,14 +93,14 @@ def define_routes(app, g):
 			'cred_hash': g.cred_hash,
 			'key': post_data.get('key', ''),
 			'status': post_data.get('status', {}),
+			'original_status': post_data.get('originalStatus', {}),
+			'is_adding_component': post_data.get('isAddingComponent', ''),
+			'is_removing_component': post_data.get('isRemovingComponent', ''),
 			'username': post_data.get('username', ''),
 			'add_commits': post_data.get('addCommits', False),
 			'master_branch': post_data.get('masterBranch', ''),
 			'pull_requests': post_data.get('pullRequests', []),
 			'repo_name': post_data.get('repoName', ''),
-			'change_component': post_data.get('changeComponent', ''),
-			'is_removing_status': post_data.get('isRemovingStatus', ''),
-			'original_status': post_data.get('originalStatus', ''),
 			'dev_changes': post_data.get('devChanges', '')
 		}
 

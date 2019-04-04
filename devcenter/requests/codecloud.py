@@ -12,7 +12,7 @@ def transition_to_pcr(data):
 				pr_add_response, status_response, comment_response, new_response
 					commit_ids, commit_comment (from add_commits_table_comment)
 	"""
-	missing_params =missing_parameters(params=data, required=['cred_hash', 'msrp', 'key'])
+	missing_params = missing_parameters(params=data, required=['cred_hash', 'msrp', 'key'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
 
@@ -20,13 +20,13 @@ def transition_to_pcr(data):
 	response = {'status': True, 'data': {}}
 	
 	# if repos given and transitioning to PCR then create pull requests
-	if len(data['repos']) and data['pcr_ready'] and not data['skip_pulls']:
+	if len(data['repos']) and not data['skip_pulls']:
 		response['data']['pull_response'] = create_pull_requests(data)
 		missing_params = missing_parameters(params=data, required=['story_point'])
 		if missing_params:
-			response['dev_change_response'] = {"data": f"Missing required parameters: {missing_params}", "status": False}
+			response['data']['dev_change_response'] = {"data": f"Missing required parameters: {missing_params}", "status": False}
 		else:
-			response['dev_change_response'] = jira.add_pr_to_dev_changes(pull_response=response['data']['pull_response'], data=data)
+			response['data']['dev_change_response'] = jira.add_pr_to_dev_changes(pull_response=response['data']['pull_response'], data=data)
 
 	if data['qa_steps']:
 		response['data']['qa_comment_response'] = add_qa_comment(data=data, pull_response=response['data'].get('pull_response'))
@@ -35,10 +35,9 @@ def transition_to_pcr(data):
 	if data['log_time']:
 		response['data']['log_response'] = jira.add_work_log(time=data['log_time'], key=data['key'], cred_hash=data['cred_hash'])
 
-	if data['pcr_ready']:
-		data['status'] = {'name': 'PCR Ready', 'id': 471}
-		status_response = set_status(data=data)
-		response['data'] = {**response['data'], **status_response['data']}
+	data['status'] = {'name': 'PCR Ready', 'id': 451}
+	status_response = set_status(data=data)
+	response['data'] = {**response['data'], **status_response['data']}
 
 	return response 
 

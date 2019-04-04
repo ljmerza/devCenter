@@ -11,7 +11,7 @@ jira_url = os.environ['JIRA_URL']
 jira_ticket_base = f'{jira_url}/browse'
 
 
-def get_branch_name(username, msrp, summary):
+def get_branch_name(username='', msrp='', summary=''):
 	branch = summary.translate(trantab)
 	branch = re.sub(r" +", '-', branch)
 	branch = re.sub(r"\"", '', branch)
@@ -24,6 +24,8 @@ def get_branch_name(username, msrp, summary):
 	if branch.endswith('-'):
 		branch = branch[:-1]
 
+	branch = '' if branch is None else branch
+
 	# create branch name and make sure over 30 chars
 	branch_name = f"{username}-{msrp}-{branch}"
 	if len(branch_name) < 30:
@@ -33,7 +35,7 @@ def get_branch_name(username, msrp, summary):
 	return branch_name
 
 
-def build_commit_message(key, msrp, summary, epic_link):
+def build_commit_message(key='', msrp='', summary='', epic_link=''):
 	commit = f"[{key}] Ticket #{msrp}" 
 
 	if epic_link:

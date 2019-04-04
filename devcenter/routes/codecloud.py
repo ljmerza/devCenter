@@ -47,7 +47,6 @@ def define_routes(app, g):
 			"key": post_data.get('key', ''),
 			"repos": post_data.get('repos', []),
 			"qa_steps": post_data.get('qa_steps', ''),
-			"pcr_ready": post_data.get('pcr_ready', False),
 			"log_time": post_data.get('log_time', 0),
 			"msrp": post_data.get('msrp', ''),
 			"story_point": post_data.get('story_point', ''),

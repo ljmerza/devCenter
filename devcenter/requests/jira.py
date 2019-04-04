@@ -25,37 +25,28 @@ def set_status(data):
 
 	status_name = data.get('status', {}).get('name', '')
 	status_id = data.get('status', {}).get('id', '')
-	is_removing_status = data.get('is_removing_status', False)
 
-	# if we are removing component the strip remove so we have a valid component name
-	change_component = data.get('change_component', '')
-	if 'Remove ' in change_component:
-		change_component = change_component.replace('Remove ', '')
-		is_removing_status = True
-
-	original_status = data.get('original_status', '')
-	if 'Remove ' in original_status:
-		original_status = original_status.replace('Remove ', '')
-		is_removing_status = True
-
-	if is_removing_status:
-		response['data']['status_response'] = jira.remove_component(name=original_status, key=data['key'], cred_hash=data['cred_hash'])
+	if data.get('is_removing_component', False):
+		response['data']['status_response'] = jira.remove_component(name=data.get('original_status'), key=data['key'], cred_hash=data['cred_hash'])
 	
-	if change_component:
-		response['data']['status_response'] = jira.set_component(name=change_component, key=data['key'], cred_hash=data['cred_hash'])
-	elif status_id:
+	if data.get('is_adding_component', False):
+		response['data']['status_response'] = jira.set_component(name=status_name, key=data['key'], cred_hash=data['cred_hash'])
+
+	if status_id:
 		response['data']['status_response'] = jira.set_status(key=data['key'], transition_id=status_id, cred_hash=data['cred_hash'])
 	
 	# do any special actions for certain status changes
-	if status_name == 'In PCR' or change_component == 'PCR - Working':
+	if status_name in ['In PCR', 'PCR - Working']:
 		response['data']['pr_add_response'] = add_reviewer_all_pull_requests(data=data)
-	elif status_name == 'PCR Pass' or change_component == 'PCR - Needed':
+	elif status_name in ['PCR Pass', 'PCR - Needed']:
 		response['data']['pr_pass_response'] = pass_pull_requests(data=data)
 	elif status_name == 'CR Pass':
 		response['data']['comment_response'] = add_cr_pass_comment(data)
 	elif status_name == 'QA Pass':
 		response['data']['comment_response'] = add_qa_pass_comment(data)
 		jira.set_component(name='Merge Code', key=data['key'], cred_hash=data['cred_hash'])
+	
+	# add commits jira comment
 	if data.get('add_commits', False):
 		commit_response = add_commits_table_comment(data)
 		response['data'] = { **response['data'], **commit_response['data'] }
