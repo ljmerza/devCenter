@@ -26,10 +26,10 @@ def transition_to_pcr(data):
 		if missing_params:
 			response['dev_change_response'] = {"data": f"Missing required parameters: {missing_params}", "status": False}
 		else:
-			response['dev_change_response'] = jira.add_pr_to_dev_changes(pull_response=pull_response, data=data)
+			response['dev_change_response'] = jira.add_pr_to_dev_changes(pull_response=response['data']['pull_response'], data=data)
 
 	if data['qa_steps']:
-		response['data']['qa_comment_response'] = add_qa_comment(data=data, pull_response=pull_response)
+		response['data']['qa_comment_response'] = add_qa_comment(data=data, pull_response=response['data'].get('pull_response'))
 		response['data']['qa_info_response'] = jira.set_additional_qa(comment=data['qa_steps'], key=data['key'], cred_hash=data['cred_hash'])
 
 	if data['log_time']:
@@ -39,8 +39,6 @@ def transition_to_pcr(data):
 		data['status'] = {'name': 'PCR Ready', 'id': 471}
 		status_response = set_status(data=data)
 		response['data'] = {**response['data'], **status_response['data']}
-
-	
 
 	return response 
 

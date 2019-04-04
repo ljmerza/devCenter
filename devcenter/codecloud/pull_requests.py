@@ -26,21 +26,17 @@ class PullRequests():
 
 	def generate_repo_table(self, repos, pull_response):
 		"""Generate a table row for a repo."""
-		table_data = self.create_qa_header(pull_response=pull_response)
+		table_data = "|| Repo || Branch || Branched From || Pull Requests ||"
 
 		for repo in repos:
 			table_data += self.create_qa_table_row(repo, pull_response)
 
 		return table_data
 
-	def create_qa_header(self, pull_response):
-		"""Create the header for QA steps."""
-		return "|| Repo || Branch || Branched From || Pull Requests ||"
-
 	def create_qa_table_row(self, repo, pull_response):
-		base_branch = repo['baseBranch']
-		repository_name = repo['repositoryName']
-		reviewed_branch = repo['reviewedBranch']
+		base_branch = repo.get('baseBranch', '')
+		repository_name = repo.get('repositoryName', '')
+		reviewed_branch = repo.get('reviewedBranch', '')
 
 		# build table row
 		table_data = """
