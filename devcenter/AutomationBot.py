@@ -87,14 +87,19 @@ class AutomationBot():
 			end_inactive = time.time()
 			logging.info('Set Inactive Tickets: {:.4}'.format(end_inactive-start_commit))		
 			
-			# if we want to add beta stuff and enough time has passed then show beta stats
-			if self.is_beta_week and (self.beta_wait_time == self.beta_wait_count):
-				start_beta = time.time()
-				thr = threading.Thread(target=self.beta_week_stats)
-				thr.start()
-				end_beta = time.time()
+			# if we want to add beta stuff then increment counter
+			print('self.is_beta_week', self.is_beta_week)
+			if self.is_beta_week:
 				self.beta_wait_count = self.beta_wait_count + 1
-				logging.info('Beta processing: {:.4}'.format(end_beta-start_beta))
+				print('self.beta_wait_count', self.beta_wait_count)
+				# if enough time has passed then show beta stats
+				if self.beta_wait_time >= self.beta_wait_count:
+					start_beta = time.time()
+					thr = threading.Thread(target=self.beta_week_stats)
+					thr.start()
+					end_beta = time.time()
+					self.beta_wait_count = 0
+					logging.info('Beta processing: {:.4}'.format(end_beta-start_beta))
 
 			# print cron runtime 
 			end_cron = time.time()
@@ -115,6 +120,8 @@ class AutomationBot():
 		for filter_name, jql in self.jira_obj.jira_api.filters.items():
 			jira_tickets = self.jira_obj.get_jira_tickets(cred_hash=self.cred_hash, jql=jql)
 			stat_results[filter_name] = jira_tickets['total_tickets']
+		
+		print('stat_results', stat_results)
 
 		# create kwargs for pinging beta stats and ping stats
 		self.chat_obj.beta_statistics(**stat_results)
