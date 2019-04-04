@@ -11,7 +11,8 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 class DevCenterAPI():
 	"""Over all API for Dev Center."""
 	
-	def get(self, url, cred_hash='', cookies={}):
+	def get(self, url, cred_hash='', cookies=None):
+		cookies = cookies if cookies is None else {}
 		"""Make a get request and return JSON."""
 		session_obj = requests.session()
 		try:

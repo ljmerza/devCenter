@@ -219,8 +219,11 @@ def get_estimate_string(story_point):
 	return story_point
 
 
-def check_parameters(params=[], required=[], one_required=[]):
+def check_parameters(params=None, required=None, one_required=None):
 	missing = ''
+	params = params if params is None else []
+	required = required if required is None else []
+	one_required = one_required if one_required is None else []
 
 	# get any missing required keys
 	missing_keys = [x for x in required if not params.get(x)]
@@ -241,8 +244,11 @@ def check_parameters(params=[], required=[], one_required=[]):
 	return missing
 
 
-def missing_parameters(params=[], required=[], one_required=[]):
+def missing_parameters(params=None, required=None, one_required=None):
 	missing = ''
+	params = params if params is None else []
+	required = required if required is None else []
+	one_required = one_required if one_required is None else []
 
 	# get any missing required keys
 	missing_keys = [x for x in required if not params.get(x)]
