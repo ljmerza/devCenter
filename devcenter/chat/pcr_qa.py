@@ -1,12 +1,14 @@
 """Handle Chat communication for QA and PCR notifications."""
+import os
+
 
 class ChatPcrQa():
 	"""Handle Chat communication for QA and PCR notifications."""
 
-	def __init__(self, chat_api, is_qa_pcr):
+	def __init__(self, chat_api):
 		"""Save the API to send chat pings and if sent to dc chat or team chat."""
 		self.chat_api = chat_api
-		self.send_pings_to_team = is_qa_pcr
+		self.send_pings_to_team = int(os.environ['IS_QA_PCR'])
 
 	def send_pcr_needed(self, pcr_estimate, key, msrp, sprint, label, summary, override=False):
 		"""Send a pcr needed ping to the chat server."""

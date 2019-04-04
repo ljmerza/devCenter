@@ -9,10 +9,10 @@ from devcenter.server_utils import (
 class ChatMisc():
 	"""Miscellaneous chat actions."""
 
-	def __init__(self, chat_api, merge_alerts):
+	def __init__(self, chat_api):
 		"""Set chat config."""
 		self.chat_api = chat_api
-		self.merge_alerts = merge_alerts
+		self.merge_alerts = int(os.environ['MERGE_ALERTS'])
 
 	def send_new_ticket(self, key, msrp, summary, username, story_point, pcr_estimate, epic_link):
 		"""Send a new Jira ticket to a user."""
@@ -96,7 +96,7 @@ class ChatMisc():
 			Beta Statistics: <br> \
 				<table style='{table_style}'> \
 					<tr> \
-						<td style='{td_style}'>UAT ready</td> \
+						<td style='{td_style}'>UAT Ready</td> \
 						<td style='{td_style}'>{uct}</td> \
 					</tr> \
 					<tr> \

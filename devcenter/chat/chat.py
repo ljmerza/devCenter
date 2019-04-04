@@ -8,12 +8,12 @@ from .pcr_qa import ChatPcrQa
 class Chat(ChatMisc, ChatPcrQa, ChatAPI):
 	"""Overall Chat class."""
 
-	def __init__(self, debug:bool, no_pings:bool, is_qa_pcr:bool=False, merge_alerts:bool=False):
+	def __init__(self):
 		"""Setup chat config."""
-		self.chat_api = ChatAPI(debug=debug, no_pings=no_pings)
+		self.chat_api = ChatAPI()
 
-		ChatMisc.__init__(self, chat_api=self.chat_api, merge_alerts=merge_alerts)
-		ChatPcrQa.__init__(self, chat_api=self.chat_api, is_qa_pcr=is_qa_pcr)
+		ChatMisc.__init__(self, chat_api=self.chat_api)
+		ChatPcrQa.__init__(self, chat_api=self.chat_api)
 
 	def send_dev_center_ticket_info(self, key:str, summary:str, username:str, ping_message:str):
 		"""Send a message to the devcenter chatroom."""

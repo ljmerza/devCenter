@@ -20,12 +20,12 @@ def start_cron():
 	"""Start the Jira cron."""
 	_LOGGER.info("Starting cron...")
 
-	automation_bot = AutomationBot.AutomationBot()
+	automation_bot = AutomationBot()
 
 	while True:
 		# if between 6am-7pm monday-friday EST then update tickets else wait a minute
 		# prod server is in GMT so time shift if we are in prod mode
-		d = datetime.datetime.nowuct()
+		d = datetime.datetime.utcnow()
 		if d.hour in range(6+TIME_SHIFT, 19+TIME_SHIFT) and d.isoweekday() in range(1, 6):
 			response = automation_bot.update_jira()
 

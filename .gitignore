@@ -10,5 +10,5 @@ ticket_history/keys.js
 
 ecosystem.config.js
 
-dist/
-distBeta/
+client/dist/
+client/distBeta/
