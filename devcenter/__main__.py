@@ -8,8 +8,8 @@ import sys
 import threading
 
 from devcenter.const import __version__
-from devcenter.AutomationBot import AutomationBot
-from devcenter.DevCenterServer import start_server
+from devcenter.automation_bot import AutomationBot
+from devcenter.devcenter_server import start_server
 
 
 _LOGGER = logging.getLogger(__name__)

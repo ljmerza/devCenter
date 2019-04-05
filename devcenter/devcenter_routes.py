@@ -7,7 +7,7 @@ from flask import request, Response, g, abort
 from flask_cors import cross_origin
 import requests
 
-from .AESCipher import AESCipher
+from .aes_cipher import AESCipher
 from .routes.jira import define_routes as JiraRoutes_define_routes
 from .routes.chat import define_routes as ChatRoutes_define_routes
 from .routes.user import define_routes as UserRoutes_define_routes
