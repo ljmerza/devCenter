@@ -9,9 +9,8 @@ from devcenter.server_utils import (
 class ChatMisc():
 	"""Miscellaneous chat actions."""
 
-	def __init__(self, chat_api):
-		"""Set chat config."""
-		self.chat_api = chat_api
+	def __init__(self):
+		"""Set Miscellaneous config."""
 		self.merge_alerts = int(os.environ['MERGE_ALERTS'])
 
 	def send_new_ticket(self, key, msrp, summary, username, story_point, pcr_estimate, epic_link):

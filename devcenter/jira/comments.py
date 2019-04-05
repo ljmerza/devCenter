@@ -8,10 +8,6 @@ from .fields import format_comment
 class JiraComments():
 	"""Modify a Jira Ticket's Comments."""
 
-	def __init__(self, jira_api):
-		"""Save The JIRA API we are using."""
-		self.jira_api = jira_api
-
 	def add_comment(self, key, cred_hash, private_comment, comment=''):
 		"""Add a new comment to a Jira ticket."""
 		json_data = self._set_json(comment=comment, private_comment=private_comment)

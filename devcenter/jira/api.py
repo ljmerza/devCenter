@@ -20,6 +20,7 @@ class JiraAPI(DevCenterAPI):
 
 		self.api_base = f'{self.jira_url}/rest/api/2'
 		self.api_agile_base = f'{self.jira_url}/rest/agile/1.0'
+		self.component_url = f'{self.api_base}/issue'
 
 		self.all_open_tickets = urllib.parse.quote(all_open_tickets)
 		self.fields = fields

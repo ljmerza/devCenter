@@ -1,5 +1,7 @@
 """Miscellaneous SQL actions."""
 from .models import Repos
+from devcenter.server_utils import row2dict
+
 
 class Misc():
 	"""Miscellaneous SQL actions."""
@@ -8,10 +10,7 @@ class Misc():
 		"""Get a list of repos."""
 		session = self.login()
 		items = session.query(Repos)
-		response = []
-
-		for item in items:
-			response.append( self.row2dict(item) )
+		response = [row2dict(item) for item in items]
 
 		self.logout(session)
 		return response

@@ -8,9 +8,21 @@ from .fields import *
 class JiraMisc():
 	"""Miscellaneous actions for Jira."""
 
-	def __init__(self, jira_api):
-		"""Set the Jira API this class will use."""
-		self.jira_api = jira_api
+	@classmethod
+	def build_qa_title(cls, key, msrp, summary):
+		"""Build the title for a QA."""
+		return f"[{key}] Ticket #{msrp} - {summary}"
+
+	@classmethod
+	def get_pcr_estimate(cls, story_point):
+		"""Figure out the PCR estimate."""
+		pcr_estimate = 1
+		if(story_point > 1):
+			pcr_estimate = int(math.ceil(story_point / 2))
+		# max 2 always
+		if pcr_estimate > 2:
+			pcr_estimate = 2
+		return pcr_estimate	
 
 	def find_key_by_msrp(self, msrp, cred_hash):
 		"""Find a ticket's key by MSRP number."""
@@ -88,20 +100,6 @@ class JiraMisc():
 	def add_dev_changes(self, dev_changes, cred_hash, key):
 		"""Add text to dev changes field."""
 		return self.set_dev_changes(dev_changes=dev_changes, cred_hash=cred_hash, key=key)
-
-	def build_qa_title(self, key, msrp, summary):
-		"""Build the title for a QA."""
-		return f"[{key}] Ticket #{msrp} - {summary}"
-
-	def get_pcr_estimate(self, story_point):
-		"""Figure out the PCR estimate."""
-		pcr_estimate = 1
-		if(story_point > 1):
-			pcr_estimate = int(math.ceil(story_point / 2))
-		# max 2 always
-		if pcr_estimate > 2:
-			pcr_estimate = 2
-		return pcr_estimate	
 
 	def get_active_sprints(self, cred_hash):
 		"""Get all currently active sprints."""

@@ -2,6 +2,7 @@
 import os
 
 from .models import Users, Tickets
+from devcenter.server_utils import row2dict
 
 
 class SQLUsers():
@@ -48,7 +49,7 @@ class SQLUsers():
 		row = session.query(Users).filter(Users.username == username).first()
 
 		if row is not None:
-			response = {'status': True, 'data':  self.row2dict(row)}
+			response = {'status': True, 'data':  row2dict(row)}
 		else:
 			response = {'status': False, 'data': row}
 

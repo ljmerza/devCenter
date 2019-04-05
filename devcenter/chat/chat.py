@@ -9,11 +9,10 @@ class Chat(ChatMisc, ChatPcrQa, ChatAPI):
 	"""Overall Chat class."""
 
 	def __init__(self):
-		"""Setup chat config."""
+		"""Setup Chat config."""
 		self.chat_api = ChatAPI()
-
-		ChatMisc.__init__(self, chat_api=self.chat_api)
-		ChatPcrQa.__init__(self, chat_api=self.chat_api)
+		ChatMisc.__init__(self)
+		ChatPcrQa.__init__(self)
 
 	def send_dev_center_ticket_info(self, key:str, summary:str, username:str, ping_message:str):
 		"""Send a message to the devcenter chatroom."""

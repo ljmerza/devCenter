@@ -1,5 +1,6 @@
 """Actions for getting ticket history."""
 from .models import TicketHistory as TicketHistoryModel
+from devcenter.server_utils import row2dict
 
 
 class TicketHistory():
@@ -10,10 +11,7 @@ class TicketHistory():
 		session = self.login()
 		items = session.query(TicketHistoryModel)
 
-		tickets = []
-		for item in items:
-			tickets.append( self.row2dict(item) )
-
+		tickets = [row2dict(item) for item in items]
 		self.logout(session)
 		return tickets
 

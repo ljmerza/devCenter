@@ -11,6 +11,12 @@ jira_url = os.environ['JIRA_URL']
 jira_ticket_base = f'{jira_url}/browse'
 
 
+def row2dict(self, row):
+	d = {}
+	for column in row.__table__.columns:
+		d[column.name] = str(getattr(row, column.name))
+	return d
+
 def get_branch_name(username='', msrp='', summary=''):
 	branch = summary.translate(trantab)
 	branch = re.sub(r" +", '-', branch)

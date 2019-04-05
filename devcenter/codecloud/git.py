@@ -5,11 +5,8 @@ from devcenter.sql.sql import DevCenterSQL
 class Git():
     """Handle all Git related actions for code cloud."""
     
-    def __init__(self, code_cloud_api):
-        """Setup code cloud api config."""
-        self.code_cloud_api = code_cloud_api
-
-    def get_repos(self):
+    @classmethod
+    def get_repos(cls):
         """Get all repos for a project."""
         dcSql = DevCenterSQL()
         repos = dcSql.get_repos()

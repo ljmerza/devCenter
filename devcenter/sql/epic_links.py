@@ -1,5 +1,6 @@
 """Actions for a Epic Link in the DB."""
 from .models import EpicLinks as EpicLinksModel
+from devcenter.server_utils import row2dict
 
 
 class EpicLinks():
@@ -12,7 +13,7 @@ class EpicLinks():
 
 		epic_links = {}
 		for item in items:
-			row = self.row2dict(item)
+			row = row2dict(item)
 			epic_links[ row['epic_link'] ] = row['epic_word']
 
 		self.logout(session)

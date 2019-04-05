@@ -13,7 +13,3 @@ class CodeCloud(Git, Reviewers, PullRequests, Comments):
 		"""Setup the code cloud API."""
 		self.code_cloud_api = CodeCloudAPI()
 		
-		Git.__init__(self, self.code_cloud_api)
-		Reviewers.__init__(self, self.code_cloud_api)
-		PullRequests.__init__(self, self.code_cloud_api)
-		Comments.__init__(self, self.code_cloud_api)

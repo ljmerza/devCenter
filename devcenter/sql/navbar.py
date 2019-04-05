@@ -1,6 +1,6 @@
 """Actions for navbar in the DB."""
 from .models import NavbarItems, JqlLinks
-
+from devcenter.server_utils import row2dict
 
 class SQLNavBar():
 	"""Actions for navbar in the DB."""
@@ -9,11 +9,7 @@ class SQLNavBar():
 		"""Gets all navbar items from DB."""
 		session = self.login()
 		items = session.query(NavbarItems)
-		response = []
-
-		for item in items:
-			response.append( self.row2dict(item) )
-
+		response = [row2dict(item) for item in items]
 		self.logout(session)
 		return response
 
@@ -21,11 +17,7 @@ class SQLNavBar():
 		"""Gets all JQL links for the DB."""
 		session = self.login()
 		items = session.query(JqlLinks)
-		response = []
-
-		for item in items:
-			response.append(self.row2dict(item))
-
+		response = [row2dict(item) for item in items]
 		self.logout(session)
 		return response
 

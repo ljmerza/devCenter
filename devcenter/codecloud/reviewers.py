@@ -4,10 +4,6 @@
 class Reviewers():
 	"""Handles reviewer's actions on Code Cloud."""
 
-	def __init__(self, code_cloud_api):
-		"""Setup the code cloud API config."""
-		self.code_cloud_api = code_cloud_api
-
 	def add_reviewer_to_pull_request(self, username, repo_name, pull_request_id, cred_hash):
 		"""Add a reviewer to a pull request."""
 		url = f'{self.code_cloud_api.branch_api}/{repo_name}/pull-requests/{pull_request_id}/participants'

@@ -1,17 +1,15 @@
 """Modify Jira Tickets."""
-
 import os
 
 from .fields import *
-
+from devcenter.sql.sql import DevCenterSQL
 
 class JiraTickets():
 	"""Modify Jira Tickets."""
 
-	def __init__(self, jira_api, epic_links):
+	def __init__(self):
 		"""Set the Jira API this class will use."""
-		self.jira_api = jira_api
-		self.epic_links = epic_links
+		self.epic_links = DevCenterSQL().get_epic_links()
 
 	def get_filter_url(self, filter_number, cred_hash):
 		"""Generate the Jira filter URL"""

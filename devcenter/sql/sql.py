@@ -20,11 +20,7 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistor
 
 	def __init__(self,):
 		"""Setup config for SQL database connection."""
-		
-		SQLTickets.__init__(self)
 		SQLUsers.__init__(self)
-		SQLNavBar.__init__(self)
-		Misc.__init__(self)
 
 		USER = os.environ['USER']
 		SQL_PASSWORD = os.environ['SQL_PASSWORD']
@@ -41,14 +37,16 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistor
 		self.engine = create_engine(url, echo=SQL_ECHO, pool_size=20)
 
 	def login(self):	
+		"""Log into DB session."""
 		Session = sessionmaker(bind=self.engine, autoflush=False)
 		return Session()
 
 	def logout(self, session):
+		"""Logout of DB session."""
 		session.close()
 
 	def log_error(self, message):
-		# try to get existing Jira ticket
+		"""Lopg an error to the DB."""
 		try:
 			session = self.login()
 			row = session.query(ErrorLogs).filter(ErrorLogs.message == message).first()
@@ -59,13 +57,9 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistor
 			else:
 				row.timestamp = datetime.datetime.now()
 			session.commit()
+
 		except SQLAlchemyError as e:
 			print('ERROR: COuld not log error: ', message)
 			exit(1)
-		self.logout(session=session)
 
-	def row2dict(self, row):
-		d = {}
-		for column in row.__table__.columns:
-			d[column.name] = str(getattr(row, column.name))
-		return d
+		self.logout(session=session)
