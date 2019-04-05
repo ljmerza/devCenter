@@ -296,7 +296,7 @@ class ChatMisc():
 
 	def send_jira_update(self, key, msrp, summary, username, ping_message, sprint, epic_link):
 		"""Send a Jira ticket update to a user."""
-		if ping_message in ['Merge Conflict','Code Review - Failed','UCT - Failed','UCT - Failed','QA - Failed']:
+		if ping_message in ['Merge Conflict','Code Review - Failed','UAT - Failed','UAT - Failed','QA - Failed']:
 			self._send_fail(key=key, msrp=msrp, summary=summary, username=username, type_comp=ping_message)
 		elif ping_message == 'Merge Code':
 			self.send_merge_needed(key=key, msrp=msrp, summary=summary, username=username, sprint=sprint, epic_link=epic_link)

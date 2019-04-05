@@ -107,8 +107,8 @@ export class CommentEffects {
 			message += `Removing merge conflict component<br>`;
 		}
 
-		if (action.payload.uctNotReady) {
-			message += `Adding UCT not ready to comment<br>`;
+		if (action.payload.uatNotReady) {
+			message += `Adding UAT not ready to comment<br>`;
 		}
 
 		this.notifications.info(message);

@@ -45,7 +45,7 @@ for jira_ticket in jira_tickets['data']:
 		print(" {0:20} {1:30} {2}".format(msrp, status, summary))
 	elif status in ['On Hold', 'Backlog']:
 		print(" {0:20} {1:35} {2}".format(msrp, status, summary))
-	elif status in ['Triage', 'In QA', 'In UCT']:
+	elif status in ['Triage', 'In QA', 'In UAT']:
 		print(" {0:20} {1:36} {2}".format(msrp, status, summary))
 	elif status in ['In Sprint']:
 		print(" {0:20} {1:37} {2}".format(msrp, status, summary))
@@ -72,7 +72,7 @@ Code Review - Working     senior developer is looking at code
 QA Needed                        waiting for testing
 In QA                                 currently being tested
 Merge Code                       waiting for developer to add code to beta
-Ready for UCT                   waiting for next beta update
+Ready for UAT                   waiting for next beta update
 Ready for Release             has been tested in beta
 On Hold                              ticket is on hold
 

@@ -23,7 +23,7 @@ export class AddLogComponent implements OnInit, OnDestroy {
 	state$: Subscription;
 	loading = false;
 
-	uctNotReady = false;
+	uatNotReady = false;
 	conflictCode = false;
 	privateComment = true;
 	comment = '';
@@ -67,8 +67,8 @@ export class AddLogComponent implements OnInit, OnDestroy {
 		let comment = formObj.value.comment || '';
 		
 		this.loading = true;
-		if (formObj.value.uctNotReady) {
-			comment += `\n\n{color:red}UCT not ready as of ${new Date()}{color}`;
+		if (formObj.value.uatNotReady) {
+			comment += `\n\n{color:red}UAT not ready as of ${new Date()}{color}`;
 		}
 
 		this.store.dispatch(
@@ -87,7 +87,7 @@ export class AddLogComponent implements OnInit, OnDestroy {
 	 * reset the form
 	 */
 	resetForm() {
-		this.uctNotReady = false;
+		this.uatNotReady = false;
 		this.conflictCode = false;
 		this.comment = '';
 		this.logTime = {hour: 0, minute: 0};

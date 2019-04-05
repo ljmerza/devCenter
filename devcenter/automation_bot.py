@@ -254,15 +254,15 @@ class AutomationBot():
 			self.ping_jira_status(msrp=msrp, ping_type='conflict_ping', username=username, key=key, summary=summary, ping_message='Merge Conflict', epic_link=epic_link)
 		
 		# if uct fail and has not been pinged - update db and send ping	
-		elif("UCT - Failed" in component and not pings.uct_fail_ping):
-			self.ping_jira_status(msrp=msrp, ping_type='uct_fail_ping', username=username, key=key, summary=summary, ping_message='UCT - Failed', epic_link=epic_link)
+		elif("UAT - Failed" in component and not pings.uct_fail_ping):
+			self.ping_jira_status(msrp=msrp, ping_type='uct_fail_ping', username=username, key=key, summary=summary, ping_message='UAT - Failed', epic_link=epic_link)
 		
 		# if cr fail and has not been pinged - update db and send ping
 		elif("Code Review - Failed" in component and not pings.cr_fail_ping):
 			self.ping_jira_status(msrp=msrp, ping_type='cr_fail_ping', username=username, key=key, summary=summary, ping_message='Code Review - Failed', epic_link=epic_link)
 		
 		# if ready in uct, has no merge code component, ticket has already been pinged for merge code and hasnt been pinged for code merged then ping
-		elif("UCT Ready" in status and "Merge Code" not in component and pings.merge_ping and not pings.uct_ping):
+		elif("UAT Ready" in status and "Merge Code" not in component and pings.merge_ping and not pings.uct_ping):
 			self.sql_object.update_ping(key=key, field='uct_ping', value=1)
 
 		# if in dev and already uct pinged then it's a uct fail

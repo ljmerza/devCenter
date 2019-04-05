@@ -9,7 +9,7 @@ export class CommentsService {
 
 	/**
 	 * Updates a ticket's work log. (Can add comment, log time, update merge/conflict statuses
-	 * and add UCT not ready).
+	 * and add UAT not ready).
 	 * @param {Object} postData contains properties of what actions the user wants to take.
 	 * @return {Observable} the http observable
 	 */

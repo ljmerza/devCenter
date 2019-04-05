@@ -45,9 +45,9 @@ export class StatusComponent implements OnDestroy, OnInit {
   privateComment = true;
 
   showBranchInfo = false;
-  showUctNotReady = false;
+  showUatNotReady = false;
 
-  uctNotReady = false;
+  uatNotReady = false;
   comment = '';
 
   qaGeneratorRef;
@@ -122,7 +122,7 @@ export class StatusComponent implements OnDestroy, OnInit {
     }
 
     // setup custom menus for dialog based on new state
-    this.showUctNotReady = ['Remove Merge Code'].includes(this.currentStatus);
+    this.showUatNotReady = ['Remove Merge Code'].includes(this.currentStatus);
     this.showBranchInfo = ['Remove Merge Code', 'In Development'].includes(this.currentStatus);
 
     this.loading = true;
@@ -153,9 +153,9 @@ export class StatusComponent implements OnDestroy, OnInit {
       masterBranch: this.ticket.repoName,
     }));
 
-    // if comment or uct not ready added then dispatch that now
-    if (this.uctNotReady) {
-      this.comment += `\n\n{color:red}UCT not ready as of ${new Date()}{color}`;
+    // if comment or UAT not ready added then dispatch that now
+    if (this.uatNotReady) {
+      this.comment += `\n\n{color:red}UAT not ready as of ${new Date()}{color}`;
     }
 
     if (this.comment){
@@ -179,7 +179,7 @@ export class StatusComponent implements OnDestroy, OnInit {
   resetInputs(){
     this.loading = false;
     this.comment = '';
-    this.uctNotReady = false;
+    this.uatNotReady = false;
   }
 
   /**
