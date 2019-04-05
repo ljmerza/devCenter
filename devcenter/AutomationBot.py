@@ -11,44 +11,37 @@ from .jira.fields import *
 from .jira.jira import Jira
 from .sql.sql import DevCenterSQL
 from .chat.chat import Chat
-from .reminders import reminders
 
 
 class AutomationBot():
 	"""Cron to keep track of Jira tickets."""
 
+	username = os.environ['USER']
+	password = os.environ['PASSWORD']
+	beta_wait_time = 300 # how many times to wait for beta message
+	is_beta_week = int(os.environ['IS_BETA_WEEK'])
+
 	def __init__(self):
 		"""Setup cron config."""
-		self.username = os.environ['USER']
-		self.password = os.environ['PASSWORD']
-
-		# create DB object and connect
 		self.sql_object = DevCenterSQL()
 		self.jira_obj = Jira()
-		
 		self.chat_obj = Chat()
-		self.reminders = reminders(chat_obj=self.chat_obj)
 
-		self.beta_wait_time = 300 # how many times to wait for beta message
 		 # how many times we've waited for beta message - start off with a message
 		if int(os.environ['BETA_STAT_PING_NOW']):
 			self.beta_wait_count = self.beta_wait_time
 		else:
 			self.beta_wait_count = 0
 		self.beta_stats = []
-		self.is_beta_week = int(os.environ['IS_BETA_WEEK'])
 
 		# cred hash creation
-		username = os.environ['USER']
-		password = os.environ['PASSWORD']
-		header_value = f'{username}:{password}'
+		header_value = f'{AutomationBot.username}:{AutomationBot.password}'
 		encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
 		self.cred_hash = f'Basic {encoded_header}'
 		
 	def update_jira(self):
 		"""Gets Jira tickets, updates DB, and pings users on updates."""
 		try:
-			self.reminders.calc_messages()
 			start_get = time.time()
 
 			# get all open Jira tickets
@@ -270,17 +263,6 @@ class AutomationBot():
 		
 		# if ready in uct, has no merge code component, ticket has already been pinged for merge code and hasnt been pinged for code merged then ping
 		elif("UCT Ready" in status and "Merge Code" not in component and pings.merge_ping and not pings.uct_ping):
-			# notify of repo update
-			# repos_merged = self.crucible_obj.get_repos_of_review(cred_hash=self.cred_hash)
-			# if repos_merged['status']:
-			# 	self.chat_obj.send_merge_alert(
-			# 	key=key, msrp=msrp, sprint=sprint, 
-			# 	username=username, repos_merged=repos_merged['data'], 
-			# 	summary=summary
-			# )
-			# else:
-			# 	self.sql_object.log_error(message='Could not retrieve repos for repo update ping: '+repos_merged['data'])
-			# update DB
 			self.sql_object.update_ping(key=key, field='uct_ping', value=1)
 
 		# if in dev and already uct pinged then it's a uct fail
@@ -290,7 +272,6 @@ class AutomationBot():
 		# if in dev but QA pinged then then it's a QA fail
 		elif( "In Development" in status and pings.qa_ping):
 			self.ping_jira_status(msrp=msrp, ping_type='qa_fail_ping', username=username, key=key, summary=summary, ping_message='QA - Failed', epic_link=epic_link)
-
 
 	def ping_jira_status(self, msrp, ping_type, username, key, summary, ping_message, sprint='', epic_link=''):
 		"""Pings a Jira ticket status to a user if they are setup to get pings."""	

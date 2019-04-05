@@ -20,8 +20,6 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistor
 
 	def __init__(self,):
 		"""Setup config for SQL database connection."""
-		SQLUsers.__init__(self)
-
 		USER = os.environ['USER']
 		SQL_PASSWORD = os.environ['SQL_PASSWORD']
 		SQL_HOST = os.environ['SQL_HOST']

@@ -3,6 +3,7 @@ import os
 
 trantab = "".maketrans(",!.;:/\\()@#$%^&*[]'<>|~`", "------------------------")
 
+
 def row2dict(row):
 	"""converts data to a dictionary."""
 	d = {}

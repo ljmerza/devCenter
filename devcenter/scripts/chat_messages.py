@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 import sys
 
-from Chat.ChatAPI import ChatAPI
-chat = ChatAPI(0, 0)
+from devcenter.chat.api import ChatAPI
+chat = ChatAPI()
 
 message = ''
 meeting_room = ''

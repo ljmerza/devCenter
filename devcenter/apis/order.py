@@ -5,10 +5,7 @@ import os
 
 class Order():
 	"""Gets order data."""
-
-	def __init__(self):
-		"""Get path to order data."""
-		self.dir_path = os.path.dirname(os.path.realpath(__file__))
+	dir_path = os.path.dirname(os.path.realpath(__file__))
 
 	def get_orders(self):
 		"""Get all orders saved."""

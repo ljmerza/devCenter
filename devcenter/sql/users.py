@@ -7,10 +7,8 @@ from devcenter.server_utils import row2dict
 
 class SQLUsers():
 	"""Actions to get user data from DB."""
-
-	def __init__(self):
-		"""Set config for users retrieval."""
-		self.project_managers = os.environ['PM'].split(',')
+	
+	project_managers = os.environ['PM'].split(',')
 
 	def get_user_ping_value(self, username, field):
 		"""Gets a user's ping value.
