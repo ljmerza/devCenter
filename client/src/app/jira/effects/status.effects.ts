@@ -159,12 +159,16 @@ export class StatusEffects {
                 success += `${commit.repo_name}: ${commit.commit_id}<br>`;
             });
 
+            success += '<br>';
+
         } else {
             this.notifications.error(`Failed to get commits:<br>${commit_ids.data}`);
         }
 
         if (commit_comment.status){
-            success += `Added commits comment to Jira:<br>`
+            success += `Added commits comment to Jira<br>`
+            this.store.dispatch(new ActionCommentSaveSuccess(commit_comment.data));
+            
         } else {
             this.notifications.error(`Failed to add commits comment to Jira:<br>${commit_comment.data}`);
         }

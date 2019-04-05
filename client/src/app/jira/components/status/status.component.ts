@@ -122,8 +122,8 @@ export class StatusComponent implements OnDestroy, OnInit {
     }
 
     // setup custom menus for dialog based on new state
-    this.showUctNotReady = ['Ready for Release'].includes(this.currentStatus);
-    this.showBranchInfo = ['UCT Ready'].includes(this.currentStatus);
+    this.showUctNotReady = ['Remove Merge Code'].includes(this.currentStatus);
+    this.showBranchInfo = ['Remove Merge Code', 'In Development'].includes(this.currentStatus);
 
     this.loading = true;
     this.modal.openModal();
@@ -154,10 +154,13 @@ export class StatusComponent implements OnDestroy, OnInit {
     }));
 
     // if comment or uct not ready added then dispatch that now
-    if (this.comment || this.uctNotReady){
+    if (this.uctNotReady) {
+      this.comment += `\n\n{color:red}UCT not ready as of ${new Date()}{color}`;
+    }
+
+    if (this.comment){
       this.store.dispatch(new ActionCommentSave({
         comment: this.comment,
-        uctNotReady: this.uctNotReady,
         remove_conflict: false,
         log_time: 0,
         key: this.ticket.key,
@@ -165,6 +168,7 @@ export class StatusComponent implements OnDestroy, OnInit {
         private_comment: this.privateComment,
       }));
 
+      
       this.resetInputs();
     }
   }

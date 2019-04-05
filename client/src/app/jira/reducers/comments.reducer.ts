@@ -140,20 +140,18 @@ function replaceEditedComment(newComment, tickets) {
  */
 function processAddLog(addLogResponse, tickets) {
 	let newTickets: CommentTicket[] = Array.from(tickets);
+	const commentResponse = (addLogResponse.comment_response && addLogResponse.comment_response.data) || addLogResponse;
 
-	// add new comment if successful
-	if (addLogResponse.comment_response && addLogResponse.comment_response.status) {
-		newTickets = newTickets.map((ticket: CommentTicket) => {
-			if (ticket.key === addLogResponse.key) {
-				ticket = {...ticket};
-				ticket.comments = Array.from(ticket.comments);
-				const newComment = processComment(addLogResponse.comment_response.data);
-				ticket.comments.push(newComment);
-			}
+	newTickets = newTickets.map((ticket: CommentTicket) => {
+		if (ticket.key === commentResponse.key) {
+			ticket = {...ticket};
+			ticket.comments = Array.from(ticket.comments);
+			const newComment = processComment(commentResponse);
+			ticket.comments.push(newComment);
+		}
 
-			return ticket;
-		});
-	}
+		return ticket;
+	});
 
 	// add work-log if successful
 	if (addLogResponse.log_response && addLogResponse.log_response.status) {

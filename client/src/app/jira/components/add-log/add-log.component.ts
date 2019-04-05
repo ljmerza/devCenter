@@ -64,18 +64,17 @@ export class AddLogComponent implements OnInit, OnDestroy {
 		if (!formObj) return;
 
 		const logTime = formObj.value.logTime.hour * 60 + formObj.value.logTime.minute;
-
-		let comment = formObj.value.comment;
+		let comment = formObj.value.comment || '';
+		
+		this.loading = true;
 		if (formObj.value.uctNotReady) {
 			comment += `\n\n{color:red}UCT not ready as of ${new Date()}{color}`;
 		}
 
-		this.loading = true;
 		this.store.dispatch(
 			new ActionCommentSave({
 				comment,
 				private_comment: formObj.value.privateComment,
-				uctNotReady: formObj.value.uctNotReady,
 				remove_conflict: formObj.value.conflictCode,
 				log_time: logTime,
 				key: this.ticket.key,
