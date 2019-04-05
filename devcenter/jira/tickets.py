@@ -6,10 +6,8 @@ from devcenter.sql.sql import DevCenterSQL
 
 class JiraTickets():
 	"""Modify Jira Tickets."""
-
-	def __init__(self):
-		"""Set the Jira API this class will use."""
-		self.epic_links = DevCenterSQL().get_epic_links()
+	
+	epic_links = DevCenterSQL().get_epic_links()
 
 	def get_filter_url(self, filter_number, cred_hash):
 		"""Generate the Jira filter URL"""

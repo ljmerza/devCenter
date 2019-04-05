@@ -9,9 +9,5 @@ from .watchers import JiraWatchers
 
 
 class Jira(JiraComponent, JiraStatus, JiraMisc, JiraTickets, JiraComments, JiraWatchers):
-	"""Interact with the Jira API."""
-	
-	def __init__(self):
-		"""Setup the Jira submodules."""
-		self.jira_api = JiraAPI()
-		JiraTickets.__init__(self)
+	"""Wrapper for the Jira API."""
+	jira_api = JiraAPI()
