@@ -138,7 +138,7 @@ export class StatusEffects {
             success = `Successfully updated ${new_response.data.key} status to ${new_response.data.status}`;
             actionDispatched = new ActionStatusSaveSuccess(new_response.data);
         } else {
-            const error = `Failed to update status:<br>${new_response.data}`;
+            const error = `Failed to update status:<br>${status_response.data}`;
             this.notifications.error(error);
             actionDispatched = new ActionStatusSaveError(error);
         }
