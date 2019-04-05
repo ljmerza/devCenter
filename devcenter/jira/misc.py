@@ -68,7 +68,7 @@ class JiraMisc():
 	def set_dev_changes(self, dev_changes, key, cred_hash):
 		"""Sets the dev changes field of a Jira ticket."""
 		json_data = {"fields":{"customfield_10138":dev_changes}}
-		response = self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
+		response = self.jira_api.put_json(url=f'{self.jira_api.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
 		
 		if response['status']:
 			response['data'] = dev_changes
@@ -77,7 +77,7 @@ class JiraMisc():
 	def set_additional_qa(self, comment, key, cred_hash):
 		"""Sets the QA Test additional Info field of a Jira ticket."""
 		json_data = {"fields":{"customfield_10118":comment}}
-		response = self.jira_api.put_json(url=f'{self.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
+		response = self.jira_api.put_json(url=f'{self.jira_api.component_url}/{key}', json_data=json_data, cred_hash=cred_hash)
 		
 		if response['status']:
 			response['data'] = comment
