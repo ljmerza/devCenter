@@ -1,8 +1,6 @@
 import re
 import os
 
-trantab = "".maketrans(",!.;:/\\()@#$%^&*[]'<>|~`", "------------------------")
-
 
 def row2dict(row):
 	"""converts sql data to a dictionary."""
@@ -16,7 +14,7 @@ def get_branch_name(username='', msrp='', summary=''):
 	"""Creates a branch name."""
 
 	if summary:
-		branch = summary.translate(trantab)
+		branch = re.sub(r'[^\x00-\x7F]+','', summary)
 		branch = re.sub(r" +", '-', branch)
 		branch = re.sub(r"\"", '', branch)
 		branch = re.sub(r"\'", '', branch)
@@ -27,8 +25,8 @@ def get_branch_name(username='', msrp='', summary=''):
 			branch = branch[1:]
 		if branch.endswith('-'):
 			branch = branch[:-1]
-
-	branch = '' if branch is None else branch
+	else:
+		branch = ''
 
 	# create branch name and make sure over 30 chars
 	branch_name = f"{username}-{msrp}-{branch}"
@@ -46,18 +44,20 @@ def build_commit_message(key='', msrp='', summary='', epic_link=''):
 	if epic_link:
 		commit +=f" - {epic_link} -"
 
-	summary = re.sub(r"\"", '', summary)
-	summary = re.sub(r"\'", '', summary)
-	commit += f" {summary}"
+	if summary:
+		summary = re.sub(r"\"", '', summary)
+		summary = re.sub(r"\'", '', summary)
+		commit += f" {summary}"
+
 	return commit
 
 
 def missing_parameters(params=None, required=None, one_required=None):
-	"""Checks for mnissing parameters."""
+	"""Checks for missing parameters."""
 	missing = ''
-	params = params if params is None else []
-	required = required if required is None else []
-	one_required = one_required if one_required is None else []
+	params = [] if params is None else params
+	required = [] if required is None else required
+	one_required = [] if one_required is None else one_required
 
 	# get any missing required keys
 	missing_keys = [x for x in required if not params.get(x)]

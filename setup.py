@@ -12,11 +12,23 @@ PROJECT_PACKAGE_NAME = 'devcenter'
 PROJECT_AUTHOR = 'Leonardo Merza'
 PROJECT_EMAIL = 'ljmerza@gmail.com'
 MIN_PY_VERSION = '.'.join(map(str, REQUIRED_PYTHON_VER))
-REQUIRES = []
+
+REQUIRES = [
+    "SQLAlchemy==1.3.2",
+    "requests==2.21.0",
+    "Flask==1.0.2",
+    "Flask-Cors==3.0.7",
+    "flask-socketio==3.3.2",
+    "PyMySQL==0.9.3",
+    "gevent-websocket==0.10.1",
+    "gevent==1.4.0",
+    "gunicorn==19.9.0",
+    "PyCrypto==2.6.1"
+]
 
 setup(
     name=PROJECT_PACKAGE_NAME,
-    version=hass_const.__version__,
+    version=__version__,
     author=PROJECT_AUTHOR,
     author_email=PROJECT_EMAIL,
     include_package_data=True,

@@ -1,11 +1,13 @@
-#!/usr/bin/python3
-
+"""Creates reminder messages."""
 import datetime
 
-class reminders(object):
+from devcenter.chat import Chat
 
-	def __init__(self, chat_obj):
-		self.chat_obj = chat_obj
+class reminders():
+	"""Creates reminder messages."""
+
+	def __init__(self):
+		self.chat_obj = Chat()
 		self.bluejeans_nine = False
 		self.log_timesheet_four = False
 		self.log_timesheet_nine = False
@@ -64,12 +66,6 @@ class reminders(object):
 		else:
 			return False
 
-	def is_bluejeans_nine(self):
-		if( self.is_friday() and self.is_nine() and not self.bluejeans_nine):
-			return True
-		else:
-			return False
-
 	def calc_messages(self):
 		self.get_now()
 
@@ -84,8 +80,3 @@ class reminders(object):
 		if self.is_timesheet_nine():
 			self.log_timesheet_nine = True
 			self.chat_obj.send_meeting_message(message=self.timesheet_message, chatroom=self.chat_obj.chat_api.apex_chat)
-
-		if self.is_bluejeans_nine():
-			self.bluejeans_nine = True
-			message = """<a href='https://bluejeans.com/9196665226'>Bluejeans</a>"""
-			self.chat_obj.send_meeting_message(message=message, chatroom=self.chat_obj.chat_api.apex_chat)

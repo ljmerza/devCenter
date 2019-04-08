@@ -6,7 +6,7 @@ from Crypto import Random
 from Crypto.Cipher import AES
 
 
-class AESCipher(object):
+class AESCipher():
     """Creates AES based encryption."""
 
     def __init__(self, key): 
