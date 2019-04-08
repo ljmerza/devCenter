@@ -11,7 +11,12 @@ class CodeCloudAPI(DevCenterAPI):
 		"""Setup Code Cloud API config."""
 		DevCenterAPI.__init__(self)
 		self.project_name = 'ST_M5DTI'
-		self.code_cloud_api = os.environ['CODE_CLOUD_URL']
+
+		try:
+			self.code_cloud_api = os.environ['CODE_CLOUD_URL']
+		except KeyError:
+			self.code_cloud_api = ''
+			
 		self.branch_api = f'{self.code_cloud_api}/rest/api/1.0/projects/{self.project_name}/repos'
 		
 		self.code_cloud_path = f'{self.code_cloud_api}/projects/{self.project_name}/repos'

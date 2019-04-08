@@ -9,6 +9,11 @@ from .jira_status import (
 	add_qa_pass_comment, add_commits_table_comment
 )
 
+try:
+	USER = os.environ['USER']
+except:
+	USER = ''
+
 
 def set_status(data):
 	"""Sets a Jira ticket's status.
@@ -174,7 +179,7 @@ def get_profile(data):
 	if not jira_response['status']:
 		return {'status': False, 'data': f'Could not get user profile:'+ jira_response.get('data', '') }
 
-	jira_response['data']['is_admin'] = os.environ['USER'] == data['username']
+	jira_response['data']['is_admin'] = USER == data['username']
 	return jira_response
 
 

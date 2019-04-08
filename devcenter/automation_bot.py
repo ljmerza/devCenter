@@ -16,19 +16,28 @@ from .chat.chat import Chat
 class AutomationBot():
 	"""Cron to keep track of Jira tickets."""
 
-	username = os.environ['USER']
-	password = os.environ['PASSWORD']
-	beta_wait_time = 300 # how many times to wait for beta message
-	is_beta_week = int(os.environ['IS_BETA_WEEK'])
-
 	def __init__(self):
 		"""Setup cron config."""
+
+		try:
+			username = os.environ['USER']
+			password = os.environ['PASSWORD']
+			is_beta_week = int(os.environ['IS_BETA_WEEK'])
+			beta_stat_ping_now = int(os.environ['BETA_STAT_PING_NOW'])
+		except KeyError:
+			username = ''
+			password = ''
+			is_beta_week = 0
+			beta_stat_ping_now = 0
+
+		beta_wait_time = 300 # how many times to wait for beta message
+
 		self.sql_object = DevCenterSQL()
 		self.jira_obj = Jira()
 		self.chat_obj = Chat()
 
 		 # how many times we've waited for beta message - start off with a message
-		if int(os.environ['BETA_STAT_PING_NOW']):
+		if beta_stat_ping_now:
 			self.beta_wait_count = self.beta_wait_time
 		else:
 			self.beta_wait_count = 0

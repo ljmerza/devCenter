@@ -17,8 +17,15 @@ from .routes.codecloud import define_routes as CodeCloudRoutes_define_routes
 
 def define_routes(app, socketio):
 	"""Creates all routes for devcenter."""
+	try:
+		key = os.environ['ENCRYPT_KEY']
+		APP_NAME = os.environ['APP_NAME']
+		print_routes = int(os.environ['PRINT_ROUTES'])
+	except KeyError:
+		key = ''
+		APP_NAME = ''
+		print_routes = 0
 
-	key = os.environ['ENCRYPT_KEY']
 	cypher = AESCipher(key=key)
 
 	JiraRoutes_define_routes(app=app, g=g)
@@ -27,7 +34,6 @@ def define_routes(app, socketio):
 	UserRoutes_define_routes(app=app, g=g)
 	ApiRoutes_define_routes(app=app, g=g)
 
-	APP_NAME = os.environ['APP_NAME']
 
 	@app.route(f"/{APP_NAME}/socket_tickets", methods=['POST'])
 	@cross_origin()
@@ -52,7 +58,7 @@ def define_routes(app, socketio):
 
 	@app.before_request
 	def get_cred_hash():
-		if int(os.environ['PRINT_ROUTES']):
+		if print_routes:
 			print(request.url)
 
 		# if web sockets or encrypting password then ignore

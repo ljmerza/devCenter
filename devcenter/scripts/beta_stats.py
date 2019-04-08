@@ -8,8 +8,14 @@ from devcenter.jira.jira import Jira
 jira_obj = Jira()
 
 # create auth header
-username = os.environ['USER']
-password = os.environ['PASSWORD']
+
+try:
+	username = os.environ['USER']
+	password = os.environ['PASSWORD']
+except KeyError:
+	username = ''
+	password = ''
+
 header_value = f'{username}:{password}'
 encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
 cred_hash = f'Basic {encoded_header}'

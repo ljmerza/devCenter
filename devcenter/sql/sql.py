@@ -20,12 +20,20 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistor
 
 	def __init__(self,):
 		"""Setup config for SQL database connection."""
-		USER = os.environ['USER']
-		SQL_PASSWORD = os.environ['SQL_PASSWORD']
-		SQL_HOST = os.environ['SQL_HOST']
-		DB_TABLE = os.environ['DB_TABLE']
+		try:
+			USER = os.environ['USER']
+			SQL_PASSWORD = os.environ['SQL_PASSWORD']
+			SQL_HOST = os.environ['SQL_HOST']
+			DB_TABLE = os.environ['DB_TABLE']
+			SQL_ECHO = int(os.environ['SQL_ECHO'])
 
-		SQL_ECHO = int(os.environ['SQL_ECHO'])
+		except KeyError:
+			USER = ''
+			SQL_PASSWORD = ''
+			SQL_HOST = ''
+			DB_TABLE = ''
+			SQL_ECHO = 0
+
 		if SQL_ECHO:
 			SQL_ECHO = True
 		else:

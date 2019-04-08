@@ -18,7 +18,10 @@ from devcenter.requests.jira import (
 
 def define_routes(app, g):
 	"""Define API routes for code cloud."""
-	APP_NAME = os.environ['APP_NAME']
+	try:
+		APP_NAME = os.environ['APP_NAME']
+	except KeyError:
+		APP_NAME = ''
 
 	@app.route(f'/{APP_NAME}/git/repos')
 	@cross_origin()

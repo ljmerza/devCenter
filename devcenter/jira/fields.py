@@ -6,7 +6,11 @@ import os
 qa_regex_begin = re.compile(r"h3\. ==== QA Steps ====")
 qa_regex_end = re.compile(r"h3\. ===============")
 qa_step_regex = re.compile("qa step", flags=re.IGNORECASE)
-code_cloud_api = os.environ['CODE_CLOUD_URL']
+
+try:
+	code_cloud_api = os.environ['CODE_CLOUD_URL']
+except KeyError:
+	code_cloud_api = ''
 
 
 def get_key(issue):

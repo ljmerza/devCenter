@@ -5,7 +5,10 @@ import os
 class ChatPcrQa():
 	"""Handle Chat communication for QA and PCR notifications."""
 
-	send_pings_to_team = int(os.environ['IS_QA_PCR'])
+	try:
+		send_pings_to_team = int(os.environ['IS_QA_PCR'])
+	except KeyError:
+		send_pings_to_team = 0
 
 	def send_pcr_needed(self, pcr_estimate, key, msrp, sprint, label, summary, override=False):
 		"""Send a pcr needed ping to the chat server."""

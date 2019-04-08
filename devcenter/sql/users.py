@@ -8,7 +8,10 @@ from devcenter.server_utils import row2dict
 class SQLUsers():
 	"""Actions to get user data from DB."""
 	
-	project_managers = os.environ['PM'].split(',')
+	try:
+		project_managers = os.environ['PM'].split(',')
+	except KeyError:
+		project_managers = []
 
 	def get_user_ping_value(self, username, field):
 		"""Gets a user's ping value.

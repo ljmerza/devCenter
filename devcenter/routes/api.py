@@ -9,7 +9,10 @@ from devcenter.requests.api import get_orders, get_atx
 
 def define_routes(app, g):
 	"""Creates all api based routes."""
-	APP_NAME = os.environ['APP_NAME']
+	try:
+		APP_NAME = os.environ['APP_NAME']
+	except KeyError:
+		APP_NAME = ''
 	
 	@app.route(f'/{APP_NAME}/skipcreds/json_api/orders')
 	@cross_origin()

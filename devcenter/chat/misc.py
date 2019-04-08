@@ -10,7 +10,12 @@ class ChatMisc():
 	td_style = "border: 1px solid #dddddd;padding: 8px;"
 	td_alt_style = "background-color: #dddddd;"
 	table_style = "border-collapse: collapse;"
-	jira_url = os.environ['JIRA_URL']
+
+	try:
+		jira_url = os.environ['JIRA_URL']
+	except KeyError:
+		jira_url = ''
+		
 	jira_ticket_base = f'{jira_url}/browse'
 
 	@classmethod

@@ -13,7 +13,10 @@ from devcenter.requests.jira import get_profile
 
 def define_routes(app, g):
 	"""Creates all user based routes."""
-	APP_NAME = os.environ['APP_NAME']
+	try:
+		APP_NAME = os.environ['APP_NAME']
+	except KeyError:
+		APP_NAME = ''
 
 	@app.route(f'/{APP_NAME}/jira/profile/<username>')
 	@cross_origin()

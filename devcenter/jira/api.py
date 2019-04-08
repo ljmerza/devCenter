@@ -14,7 +14,11 @@ class JiraAPI(DevCenterAPI):
 		"""Setup base URLs."""
 		DevCenterAPI.__init__(self)
 		
-		self.jira_url = os.environ['JIRA_URL']
+		try:
+			self.jira_url = os.environ['JIRA_URL']
+		except KeyError:
+			self.jira_url = ''
+
 		self.jira_ticket = f'{self.jira_url}/browse'
 		self.jira_search_url = f'{self.jira_url}/rest/api/2/search'
 

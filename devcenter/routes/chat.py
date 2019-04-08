@@ -9,7 +9,10 @@ from devcenter.requests.chat import send_ping, set_user_pings, send_custom_ping,
 
 def define_routes(app, g):
 	"""Creates all chat based routes."""
-	APP_NAME = os.environ['APP_NAME']
+	try:
+		APP_NAME = os.environ['APP_NAME']
+	except KeyError:
+		APP_NAME = ''
 	
 	@app.route(f'/{APP_NAME}/chat/send_ping', methods=['POST'])
 	@cross_origin()

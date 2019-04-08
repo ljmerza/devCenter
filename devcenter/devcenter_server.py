@@ -16,8 +16,12 @@ def start_server():
 
 	app.config['CORS_HEADERS'] = 'Content-Type'
 	
-	HOST = os.environ['HOST']
-	PORT = int(os.environ['PORT'])
+	try:
+		HOST = os.environ['HOST']
+		PORT = int(os.environ['PORT'])
+	except:
+		HOST = ''
+		PORT = 0
 
 	define_routes(app=app, socketio=socketio)
 	socketio.run(app, host=HOST, port=PORT)
