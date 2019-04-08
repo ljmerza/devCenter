@@ -12,3 +12,5 @@ ecosystem.config.js
 
 client/dist/
 client/distBeta/
+
+venv/

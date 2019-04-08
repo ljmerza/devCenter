@@ -5,7 +5,7 @@ trantab = "".maketrans(",!.;:/\\()@#$%^&*[]'<>|~`", "------------------------")
 
 
 def row2dict(row):
-	"""converts data to a dictionary."""
+	"""converts sql data to a dictionary."""
 	d = {}
 	for column in row.__table__.columns:
 		d[column.name] = str(getattr(row, column.name))
@@ -14,17 +14,19 @@ def row2dict(row):
 
 def get_branch_name(username='', msrp='', summary=''):
 	"""Creates a branch name."""
-	branch = summary.translate(trantab)
-	branch = re.sub(r" +", '-', branch)
-	branch = re.sub(r"\"", '', branch)
-	branch = re.sub(r"\'", '', branch)
-	branch = re.sub(r"-+", '-', branch)
 
-	# if summary starts/ends with a dash then get rid of it
-	if branch.startswith('-'):
-		branch = branch[1:]
-	if branch.endswith('-'):
-		branch = branch[:-1]
+	if summary:
+		branch = summary.translate(trantab)
+		branch = re.sub(r" +", '-', branch)
+		branch = re.sub(r"\"", '', branch)
+		branch = re.sub(r"\'", '', branch)
+		branch = re.sub(r"-+", '-', branch)
+
+		# if summary starts/ends with a dash then get rid of it
+		if branch.startswith('-'):
+			branch = branch[1:]
+		if branch.endswith('-'):
+			branch = branch[:-1]
 
 	branch = '' if branch is None else branch
 
