@@ -31,19 +31,18 @@ class DevCenterAPI():
 		except:
 			return {'status': False, 'data': 'Could not decode credentials.'}
 
-		url = f"{self.jira_url}/jira/rest/auth/1/session"
+		url = f"{self.jira_url}/rest/auth/1/session"
 		data = {
-			'username': username,
-			'password': password
+			"username": username,
+			"password": password
 		}
+		data = json.dumps(data)
 		headers = { 'Content-Type': 'application/json' }
 		session_obj = requests.session()
 		try:
 			response = session_obj.post(url=url, data=data, headers=headers, verify=False)
-			print(response.text, url, response.status_code)
-
 			if response.status_code in [200,201,204]:
-				return {'status': True, 'data': response.text}
+				return {'status': True, 'data': session_obj}
 			else:
 				return {'status': False, 'data': response.text}
 		except ProxyError:
