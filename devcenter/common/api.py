@@ -49,7 +49,6 @@ class DevCenterAPI():
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 
-
 	def get(self, url, cred_hash='', cookies=None):
 		"""Make a get request and return JSON."""
 		cookies = cookies if cookies is None else {}
