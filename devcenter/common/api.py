@@ -18,6 +18,7 @@ class DevCenterAPI():
 		jira_url = ''
 
 	def get_session(self, cred_hash):
+		"""Converts basic authentication (legacy) to cookie sessions."""
 		basic, *creds = cred_hash.split(' ')
 		if not creds:
 			return {'status': False, 'data': 'No credentials found.'}
@@ -50,8 +51,8 @@ class DevCenterAPI():
 
 
 	def get(self, url, cred_hash='', cookies=None):
-		cookies = cookies if cookies is None else {}
 		"""Make a get request and return JSON."""
+		cookies = cookies if cookies is None else {}
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
