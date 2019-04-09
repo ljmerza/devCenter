@@ -19,7 +19,7 @@ class ChatMisc():
 	jira_ticket_base = f'{jira_url}/browse'
 
 	@classmethod
-	def get_estimate_string(story_point):
+	def get_estimate_string(cls, story_point):
 		if(story_point):
 			if(story_point < 1):
 				story_point = str(int(8*story_point)) + ' hours'
