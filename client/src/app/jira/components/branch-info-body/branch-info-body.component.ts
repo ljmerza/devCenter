@@ -48,4 +48,8 @@ export class BranchInfoBodyComponent {
 	get updateBranchCommand(){
 		return `git pull origin ${this.masterName};git merge ${this.masterName};`;
 	}
+
+	get updateServerCommand() {
+		return `code UD_api;gchk ${this.masterName};gpll;code modules;gchk ${this.masterName};gpll`;
+	}
 }

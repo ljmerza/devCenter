@@ -1,5 +1,7 @@
 """Over all API for Dev Center."""
+from base64 import b64decode
 import json
+import os
 
 import requests
 from requests.exceptions import ProxyError
@@ -7,45 +9,90 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-
 class DevCenterAPI():
-	"""Over all API for Dev Center."""
-	
+	"""Overall API for Dev Center."""
+
+	try:
+		jira_url = os.environ['JIRA_URL']
+	except KeyError:
+		jira_url = ''
+
+	def get_session(self, cred_hash):
+		basic, *creds = cred_hash.split(' ')
+		if not creds:
+			return {'status': False, 'data': 'No credentials found.'}
+
+		creds = creds[0]
+		username = ''
+		password =  ''
+		try:
+			creds = b64decode(creds).decode("utf-8")
+			username, password = creds.split(':')
+		except:
+			return {'status': False, 'data': 'Could not decode credentials.'}
+
+		url = f"{self.jira_url}/jira/rest/auth/1/session"
+		data = {
+			'username': username,
+			'password': password
+		}
+		headers = { 'Content-Type': 'application/json' }
+		session_obj = requests.session()
+		try:
+			response = session_obj.post(url=url, data=data, headers=headers, verify=False)
+			print(response.text, url, response.status_code)
+
+			if response.status_code in [200,201,204]:
+				return {'status': True, 'data': response.text}
+			else:
+				return {'status': False, 'data': response.text}
+		except ProxyError:
+			return { "status": False, 'data': "Proxy error 407" }
+
+
 	def get(self, url, cred_hash='', cookies=None):
 		cookies = cookies if cookies is None else {}
 		"""Make a get request and return JSON."""
-		session_obj = requests.session()
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
 		try:
-			filter_data = session_obj.get(url=url, headers={ 'Authorization': cred_hash }, verify=False, cookies=cookies)
+			filter_data = session_obj.get(url=url, verify=False, cookies=cookies)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
 
 	def get_raw(self, url, cred_hash=''):
 		"""Make a GET request and return the raw response."""
-		session_obj = requests.session()
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
 		try:
-			filter_data = session_obj.get(url=url, headers={ 'Authorization': cred_hash }, verify=False)
+			filter_data = session_obj.get(url=url, verify=False)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return filter_data
 
 	def post(self, url, data='', cred_hash=''):
 		"""Make a POST request and return JSON."""
-		session_obj = requests.session()
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
 		try:
 			if data:
-				filter_data = session_obj.post(url=url, data=data, headers={ 'Authorization': cred_hash }, verify=False)
+				filter_data = session_obj.post(url=url, data=data, verify=False)
 			else:
-				filter_data = session_obj.post(url=url, headers={ 'Authorization': cred_hash }, verify=False)
+				filter_data = session_obj.post(url=url, verify=False)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
 
 	def post_json(self, url, json_data, cred_hash=''):
 		"""Make a POST request with JSON body and return JSON."""
-		session_obj = requests.session()
-		headers = { 'Content-Type': 'application/json', 'Authorization': cred_hash }
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
+		headers = { 'Content-Type': 'application/json' }
 		try:
 			filter_data = session_obj.post(url, json=json_data, headers=headers, verify=False)
 		except ProxyError:
@@ -54,20 +101,24 @@ class DevCenterAPI():
 
 	def put(self, url, data='', cred_hash=''):
 		"""Make a PUT request and return JSON."""
-		session_obj = requests.session()
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
 		try:
 			if data:
-				filter_data = session_obj.put(url=url, data=data, headers={ 'Authorization': cred_hash }, verify=False)
+				filter_data = session_obj.put(url=url, data=data, verify=False)
 			else:
-				filter_data = session_obj.put(url=url, headers={ 'Authorization': cred_hash }, verify=False)
+				filter_data = session_obj.put(url=url, verify=False)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
 
 	def put_json(self, url, json_data, cred_hash=''):
 		"""Make a PUT request with JSON body and return JSON."""
-		session_obj = requests.session()
-		headers = { 'Content-Type': 'application/json', 'Authorization': cred_hash }
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
+		headers = { 'Content-Type': 'application/json' }
 		try:
 			filter_data = session_obj.put(url, json=json_data, headers=headers, verify=False)
 		except ProxyError:
@@ -76,9 +127,11 @@ class DevCenterAPI():
 
 	def delete(self, url, cred_hash=''):
 		"""Make a DELETE request and return JSON."""
-		session_obj = requests.session()
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
 		try:
-			filter_data = session_obj.delete(url, headers={ 'Authorization': cred_hash }, verify=False)
+			filter_data = session_obj.delete(url, verify=False)
 		except ProxyError:
 			return { "status": False, 'data': "Proxy error 407" }
 		return self._process_json(filter_data=filter_data)
