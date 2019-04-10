@@ -44,7 +44,6 @@ class CodeCloudAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-
 		headers = {'Authorization': cred_hash}
 		try:
 			filter_data = session_obj.get(url=url, cookies=cookies, headers=headers)
@@ -73,7 +72,6 @@ class CodeCloudAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-
 		headers = {'Authorization': cred_hash}
 		try:
 			if data:
@@ -89,7 +87,6 @@ class CodeCloudAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-
 		headers = {'Authorization': cred_hash}
 		try:
 			filter_data = session_obj.delete(url, headers=headers)
@@ -102,8 +99,7 @@ class CodeCloudAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-
-		headers = { 'Content-Type': 'application/json' }
+		headers = { 'Content-Type': 'application/json', 'Authorization': cred_hash }
 		try:
 			filter_data = session_obj.post(url, json=json_data, headers=headers)
 		except (ProxyError, SSLError, OSError) as e:

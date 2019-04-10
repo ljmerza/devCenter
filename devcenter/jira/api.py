@@ -60,7 +60,7 @@ class JiraAPI(DevCenterAPI):
 		headers = { 'Content-Type': 'application/json' }
 		session_obj = requests.session()
 		session_obj.verify = False
-
+		
 		try:
 			response = session_obj.post(url=url, data=data, headers=headers)
 			if response.status_code in [200,201,204]:
@@ -76,10 +76,8 @@ class JiraAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-		
-		headers = { }
 		try:
-			filter_data = session_obj.get(url=url, cookies=cookies, headers=headers)
+			filter_data = session_obj.get(url=url, cookies=cookies)
 		except (ProxyError, SSLError, OSError) as e:
 			return { "status": False, 'data': f"get error:  {e}" }
 		return self._process_response( self._process_json(filter_data=filter_data) )
@@ -89,8 +87,6 @@ class JiraAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-
-		headers = { }
 		try:
 			filter_data = session_obj.get(url=url)
 		except (ProxyError, SSLError, OSError) as e:
@@ -102,13 +98,11 @@ class JiraAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-
-		headers = { }
 		try:
 			if data:
-				filter_data = session_obj.post(url=url, data=data, headers=headers)
+				filter_data = session_obj.post(url=url, data=data)
 			else:
-				filter_data = session_obj.post(url=url, headers=headers)
+				filter_data = session_obj.post(url=url)
 		except (ProxyError, SSLError, OSError) as e:
 			return { "status": False, 'data': f"post error: {e}" }
 		return self._process_response( self._process_json(filter_data=filter_data) )
@@ -118,7 +112,6 @@ class JiraAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-
 		headers = { 'Content-Type': 'application/json' }
 		try:
 			filter_data = session_obj.post(url, json=json_data, headers=headers)
@@ -131,13 +124,11 @@ class JiraAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-
-		headers = { }
 		try:
 			if data:
-				filter_data = session_obj.put(url=url, data=data, headers=headers)
+				filter_data = session_obj.put(url=url, data=data)
 			else:
-				filter_data = session_obj.put(url=url, headers=headers)
+				filter_data = session_obj.put(url=url)
 		except (ProxyError, SSLError, OSError) as e:
 			return { "status": False, 'data': f"put error: {e}" }
 		return self._process_response( self._process_json(filter_data=filter_data) )
@@ -147,7 +138,6 @@ class JiraAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-
 		headers = { 'Content-Type': 'application/json' }
 		try:
 			filter_data = session_obj.put(url=url, json=json_data, headers=headers)
@@ -160,10 +150,8 @@ class JiraAPI(DevCenterAPI):
 		session_obj = self.get_session(cred_hash=cred_hash)
 		if not session_obj['status']: return session_obj
 		session_obj = session_obj['data']
-
-		headers = { }
 		try:
-			filter_data = session_obj.delete(url=url, headers=headers)
+			filter_data = session_obj.delete(url=url)
 		except (ProxyError, SSLError, OSError) as e:
 			return { "status": False, 'data': f"delete error: {e}" }
 		return self._process_response( self._process_json(filter_data=filter_data) )
