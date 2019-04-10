@@ -1,8 +1,14 @@
 """Handles raw API request to Code Cloud API."""
 import os
 
+import requests
+from requests.exceptions import ProxyError
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
 from devcenter.common.api import DevCenterAPI
 
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class CodeCloudAPI(DevCenterAPI):
 	"""Handles raw API request to Code Cloud API."""
@@ -22,33 +28,90 @@ class CodeCloudAPI(DevCenterAPI):
 		self.code_cloud_path = f'{self.code_cloud_api}/projects/{self.project_name}/repos'
 		self.code_cloud_path2 = 'compare/diff'
 
-	def post(self, url, cred_hash, data='', json_data=None):
-		"""Makes a POST request."""
-		if json_data:
-			response = super(CodeCloudAPI, self).post_json(url=url, json_data=json_data, cred_hash=cred_hash)
-		else:
-			response = super(CodeCloudAPI, self).post(url=url, data=data, cred_hash=cred_hash)
-		return self._process_response(response)
+	@classmethod
+	def get_session(cls, cred_hash=''):
+		"""Create a browser session."""
+		session = requests.session()
+		session.verify = False
+		return {
+			'status': True,
+			'data': session
+		}
 
-	def put(self, url, cred_hash, data='', json_data=None):
-		"""Makes a PUT request."""
-		if json_data:
-			response = super(CodeCloudAPI, self).put_json(url=url, json_data=json_data, cred_hash=cred_hash)
-		else:
-			response = super(CodeCloudAPI, self).put(url=url, data=data, cred_hash=cred_hash)
-		return self._process_response(response)
+	def get(self, url, cred_hash='', cookies=None):
+		"""Make a get request and return JSON."""
+		cookies = cookies if cookies is None else {}
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
 
-	def delete(self, url, cred_hash, data=''):
-		"""Makes a DELETE request."""
-		response = super(CodeCloudAPI, self).delete(url=url, cred_hash=cred_hash)
-		return self._process_response(response)
+		headers = {'Authorization': cred_hash}
+		try:
+			filter_data = session_obj.get(url=url, cookies=cookies, headers=headers)
+		except ProxyError:
+			return { "status": False, 'data': "Proxy error 407" }
+		return self._process_response( self._process_json(filter_data=filter_data) )
 
-	def get(self, url, cred_hash):
-		"""Makes a GET request."""
-		response = super(CodeCloudAPI, self).get(url=url, cred_hash=cred_hash)
-		return self._process_response(response)
+	def post(self, url, data='', cred_hash=''):
+		"""Make a POST request and return JSON."""
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
 
-	def _process_response(self, response):
+		headers = {'Authorization': cred_hash}
+		try:
+			if data:
+				filter_data = session_obj.post(url=url, data=data, headers=headers)
+			else:
+				filter_data = session_obj.post(url=url, headers=headers)
+		except ProxyError:
+			return { "status": False, 'data': "Proxy error 407" }
+		return self._process_response( self._process_json(filter_data=filter_data) )
+
+	def put(self, url, data='', cred_hash=''):
+		"""Make a PUT request and return JSON."""
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
+
+		headers = {'Authorization': cred_hash}
+		try:
+			if data:
+				filter_data = session_obj.put(url=url, data=data, headers=headers)
+			else:
+				filter_data = session_obj.put(url=url, headers=headers)
+		except ProxyError:
+			return { "status": False, 'data': "Proxy error 407" }
+		return self._process_response( self._process_json(filter_data=filter_data) )
+
+	def delete(self, url, cred_hash=''):
+		"""Make a DELETE request and return JSON."""
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
+
+		headers = {'Authorization': cred_hash}
+		try:
+			filter_data = session_obj.delete(url, headers=headers)
+		except ProxyError:
+			return { "status": False, 'data': "Proxy error 407" }
+		return self._process_response( self._process_json(filter_data=filter_data) )
+
+	def post_json(self, url, json_data, cred_hash=''):
+		"""Make a POST request with JSON body and return JSON."""
+		session_obj = self.get_session(cred_hash=cred_hash)
+		if not session_obj['status']: return session_obj
+		session_obj = session_obj['data']
+
+		headers = { 'Content-Type': 'application/json' }
+		try:
+			filter_data = session_obj.post(url, json=json_data, headers=headers)
+		except (ProxyError, SSLError, OSError) as e:
+			return { "status": False, 'data': f"post_json error: {e}" }
+		return self._process_response( self._process_json(filter_data=filter_data) )
+
+	@classmethod
+	def _process_response(cls, response):
 		"""Processes the raw response from code cloud API."""
 		if 'status' not in response:
 			return {"status": False, "data": 'There was no status given'}

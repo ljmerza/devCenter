@@ -50,6 +50,6 @@ export class BranchInfoBodyComponent {
 	}
 
 	get updateServerCommand() {
-		return `code UD_api;gchk ${this.masterName};gpll;code modules;gchk ${this.masterName};gpll`;
+		return `code UD_api;gchk ${this.masterName};gpll;code modules;gchk ${this.masterName};gpll;code ud_ember`;
 	}
 }

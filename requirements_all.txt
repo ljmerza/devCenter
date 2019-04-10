@@ -8,3 +8,4 @@ gevent-websocket==0.10.1
 gevent==1.4.0
 gunicorn==19.9.0
 PyCrypto==2.6.1
+certifi==2019.3.9
