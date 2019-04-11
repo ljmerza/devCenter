@@ -12,7 +12,7 @@ from .config import fields, cron_fields, filters, all_open_tickets
 from devcenter.atlassian.api import AtlassianApi
 
 
-class JiraAPI(AtlassianApi):
+class JiraApi(AtlassianApi):
 	"""Wrapper to call JIRA API endpoints."""
 
 	def __init__(self):
@@ -71,7 +71,7 @@ class JiraAPI(AtlassianApi):
 
 	def process_response(self, response):
 		"""Processes the JIRA API response."""
-		response = super(JiraAPI, self).process_response(response=response)
+		response = super(JiraApi, self).process_response(response=response)
 
 		if not response['status']:
 			errors = []

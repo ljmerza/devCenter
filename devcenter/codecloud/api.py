@@ -11,7 +11,7 @@ from devcenter.atlassian.api import AtlassianApi
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
-class CodeCloudAPI(AtlassianApi):
+class CodeCloudApi(AtlassianApi):
 	"""Wrapper to call CodeCloud API endpoints."""
 
 	def __init__(self):
