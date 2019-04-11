@@ -77,7 +77,6 @@ export class StatusEffects {
 
         if (successMessage) this.notifications.success(successMessage);
         return actionDispatched;
-        
     }
 
     /**

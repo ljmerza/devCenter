@@ -3,27 +3,24 @@ from base64 import b64decode
 import json
 import os
 import re
-import ssl
 import urllib.parse
 
-import certifi
 import requests
 from requests.exceptions import ProxyError, SSLError
 
-from .config import *
-from devcenter.common.api import DevCenterAPI
+from .config import fields, cron_fields, filters, all_open_tickets
+from devcenter.atlassian.api import AtlassianApi
 
 
-class JiraAPI(DevCenterAPI):
-	"""Wrapper to call API endpoints."""
+class JiraAPI(AtlassianApi):
+	"""Wrapper to call JIRA API endpoints."""
 
 	def __init__(self):
 		"""Setup base URLs."""
-		DevCenterAPI.__init__(self)
 
 		self.dir_path = os.path.dirname(os.path.realpath(__file__))
-		
 		self.jira_url = os.environ.get('JIRA_URL', '')
+
 		self.jira_ticket = f'{self.jira_url}/browse'
 		self.jira_search_url = f'{self.jira_url}/rest/api/2/search'
 
@@ -59,6 +56,8 @@ class JiraAPI(DevCenterAPI):
 		data = json.dumps(data)
 		headers = { 'Content-Type': 'application/json' }
 		session_obj = requests.session()
+
+		cert_path = f"{self.dir_path}/allcerts.pem"
 		session_obj.verify = False
 		
 		try:
@@ -70,95 +69,9 @@ class JiraAPI(DevCenterAPI):
 		except (ProxyError, SSLError, OSError) as e:
 			return { "status": False, 'data': f"get_session error: {e}" }
 
-	def get(self, url, cred_hash='', cookies=None):
-		"""Make a get request and return JSON."""
-		cookies = cookies if cookies is None else {}
-		session_obj = self.get_session(cred_hash=cred_hash)
-		if not session_obj['status']: return session_obj
-		session_obj = session_obj['data']
-		try:
-			filter_data = session_obj.get(url=url, cookies=cookies)
-		except (ProxyError, SSLError, OSError) as e:
-			return { "status": False, 'data': f"get error:  {e}" }
-		return self._process_response( self._process_json(filter_data=filter_data) )
-
-	def get_raw(self, url, cred_hash=''):
-		"""Make a GET request and return the raw response."""
-		session_obj = self.get_session(cred_hash=cred_hash)
-		if not session_obj['status']: return session_obj
-		session_obj = session_obj['data']
-		try:
-			filter_data = session_obj.get(url=url)
-		except (ProxyError, SSLError, OSError) as e:
-			return { "status": False, 'data': f"get_raw error: {e}" }
-		return filter_data
-
-	def post(self, url, data='', cred_hash=''):
-		"""Make a POST request and return JSON."""
-		session_obj = self.get_session(cred_hash=cred_hash)
-		if not session_obj['status']: return session_obj
-		session_obj = session_obj['data']
-		try:
-			if data:
-				filter_data = session_obj.post(url=url, data=data)
-			else:
-				filter_data = session_obj.post(url=url)
-		except (ProxyError, SSLError, OSError) as e:
-			return { "status": False, 'data': f"post error: {e}" }
-		return self._process_response( self._process_json(filter_data=filter_data) )
-
-	def post_json(self, url, json_data, cred_hash=''):
-		"""Make a POST request with JSON body and return JSON."""
-		session_obj = self.get_session(cred_hash=cred_hash)
-		if not session_obj['status']: return session_obj
-		session_obj = session_obj['data']
-		headers = { 'Content-Type': 'application/json' }
-		try:
-			filter_data = session_obj.post(url, json=json_data, headers=headers)
-		except (ProxyError, SSLError, OSError) as e:
-			return { "status": False, 'data': f"post_json error: {e}" }
-		return self._process_response( self._process_json(filter_data=filter_data) )
-
-	def put(self, url, data='', cred_hash=''):
-		"""Make a PUT request and return JSON."""
-		session_obj = self.get_session(cred_hash=cred_hash)
-		if not session_obj['status']: return session_obj
-		session_obj = session_obj['data']
-		try:
-			if data:
-				filter_data = session_obj.put(url=url, data=data)
-			else:
-				filter_data = session_obj.put(url=url)
-		except (ProxyError, SSLError, OSError) as e:
-			return { "status": False, 'data': f"put error: {e}" }
-		return self._process_response( self._process_json(filter_data=filter_data) )
-
-	def put_json(self, url, json_data, cred_hash=''):
-		"""Make a PUT request with JSON body and return JSON."""
-		session_obj = self.get_session(cred_hash=cred_hash)
-		if not session_obj['status']: return session_obj
-		session_obj = session_obj['data']
-		headers = { 'Content-Type': 'application/json' }
-		try:
-			filter_data = session_obj.put(url=url, json=json_data, headers=headers)
-		except (ProxyError, SSLError, OSError) as e:
-			return { "status": False, 'data': f"put_json error: {e}" }
-		return self._process_response( self._process_json(filter_data=filter_data) )
-
-	def delete(self, url, cred_hash=''):
-		"""Make a DELETE request and return JSON."""
-		session_obj = self.get_session(cred_hash=cred_hash)
-		if not session_obj['status']: return session_obj
-		session_obj = session_obj['data']
-		try:
-			filter_data = session_obj.delete(url=url)
-		except (ProxyError, SSLError, OSError) as e:
-			return { "status": False, 'data': f"delete error: {e}" }
-		return self._process_response( self._process_json(filter_data=filter_data) )
-
-	def _process_response(self, response):
+	def process_response(self, response):
 		"""Processes the JIRA API response."""
-		response = super(JiraAPI, self)._process_response(response=response)
+		response = super(JiraAPI, self).process_response(response=response)
 
 		if not response['status']:
 			errors = []

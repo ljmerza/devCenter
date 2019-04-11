@@ -21,9 +21,7 @@ def pass_pull_requests(data):
 			cred_hash=data['cred_hash']
 		)
 
-		if not pass_response['status']:
-			response['status'] = False
-
+		if not pass_response['status']: response['status'] = False
 		response['data'].append(pass_response) 
 
 	return response
@@ -46,9 +44,7 @@ def add_reviewer_all_pull_requests(data):
 			cred_hash=data['cred_hash']
 		)
 
-		if not pull_response['status']:
-			responses['status'] = False
-
+		if not pull_response['status']: responses['status'] = False
 		responses['data'].append(pull_response)
 	
 	return responses

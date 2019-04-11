@@ -139,13 +139,16 @@ export class StatusComponent implements OnDestroy, OnInit {
     this.modal.closeModal();
     const newStatus = this.ticket.transitions.find(transition => transition.name === this.currentStatus)
       || { id: '', name: this.currentStatus.replace(/^Remove /, '') };
+
+    console.log({ newStatus, new: this.originalStatus });
+    
     
     this.store.dispatch(new ActionStatusSave({ 
       username: this.profile.name, 
       key: this.ticket.key, 
       status: newStatus,
       originalStatus: this.originalStatus.replace(/^Remove /, ''),
-      isAddingComponent: !!newStatus.id,
+      isAddingComponent: !newStatus.id,
       isRemovingComponent: validRemoveComponents.includes(this.currentStatus) || validComponents.includes(this.originalStatus),
       repoName: this.ticket.repoName,
       pullRequests: this.ticket.pullRequests,

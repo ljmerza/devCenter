@@ -14,7 +14,8 @@ class Reviewers():
 			},
 			'role': 'REVIEWER'
 		}
-		response = self.code_cloud_api.post(url=url, json_data=post_data, cred_hash=cred_hash)
+		response = self.code_cloud_api.post(url=url, data=post_data, cred_hash=cred_hash)
+		if not response['status']: return response
 		response['data']['repo_name'] = repo_name
 		return response
 
@@ -27,6 +28,7 @@ class Reviewers():
 			cred_hash=cred_hash, 
 			status='APPROVED'
 		)
+		if not response['status']: return response
 		response['data']['repo_name'] = repo_name
 		return response
 
@@ -39,6 +41,7 @@ class Reviewers():
 			cred_hash=cred_hash, 
 			status='NEEDS_WORK'
 		)
+		if not response['status']: return response
 		response['data']['repo_name'] = repo_name
 		return response
 
@@ -46,6 +49,7 @@ class Reviewers():
 		"""Changes a pull request's status for a user."""
 		url = f'{self.code_cloud_api.branch_api}/{repo_name}/pull-requests/{pull_request_id}/participants/{username}'
 		post_data = {'status': status}
-		response = self.code_cloud_api.put(url=url, json_data=post_data, cred_hash=cred_hash)
+		response = self.code_cloud_api.put_json(url=url, json_data=post_data, cred_hash=cred_hash)
+		if not response['status']: return response
 		response['data']['repo_name'] = repo_name
 		return response
