@@ -145,8 +145,8 @@ def test_get_story_point():
     points = get_story_point(issue)
     assert points == 2
 
-    points = get_story_point({})
-    assert points == 0
-
     points = get_story_point({'fields':{'timeoriginalestimate':1*60*60*8}})
     assert points == 1
+
+    points = get_story_point({})
+    assert points == 0
