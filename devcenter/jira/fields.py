@@ -46,34 +46,17 @@ def get_summary(issue):
 
 def get_username(issue):	
 	"""Gets an issue's username."""
-	# get username if exists
-	if ('assignee' in issue.get('fields')) and (issue['fields']['assignee'] is not None):
-		return issue['fields']['assignee'].get('name', '')
-	else:
-		return ''
+	return issue.get('fields', {}).get('assignee', {}).get('name', '')
 
 
 def get_display_name(issue):	
 	"""Gets an issue's display name."""
-	# get username if exists
-	if ('assignee' in issue.get('fields')) and (issue['fields']['assignee'] is not None):
-		return issue['fields']['assignee'].get('displayName', '')
-	else:
-		return ''
+	return issue.get('fields', {}).get('assignee', {}).get('displayName', '')
 
 
 def get_user_details(issue):	
 	"""Gets a user's details."""
-	# try to get name only instead of username with it
 	assignee_data = issue.get('fields', {}).get('assignee', {})
-
-	if not assignee_data:
-		assignee_data = {
-			'name': '',
-			'emailAddress': '',
-			'displayName': ''
-		}
-
 	return {
 		'username': assignee_data.get('name', ''),
 		'email_address': assignee_data.get('emailAddress', ''),
