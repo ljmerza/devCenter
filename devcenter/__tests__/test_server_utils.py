@@ -3,19 +3,17 @@ import pytest
 
 from devcenter.server_utils import (
     row2dict, get_branch_name, generate_cred_hash,
-    build_commit_message, missing_parameters
+    build_commit_message, missing_parameters,
+    verify_parameters
 )
 
 
-username = 'username'
-password = 'password'
-
-
 def test_generate_cred_hash():
+    """Test creating a credential hash."""
     cred_hash = generate_cred_hash()
     assert cred_hash == 'Basic Og=='
 
-    cred_hash = generate_cred_hash(username=username, password=password)
+    cred_hash = generate_cred_hash(username='username', password='password')
     assert cred_hash == 'Basic dXNlcm5hbWU6cGFzc3dvcmQ='
 
 
@@ -24,13 +22,13 @@ def test_get_branch_name():
     branch = get_branch_name(username='', msrp='', summary='')
     assert branch == '-'*30
 
-    branch = get_branch_name(username=username, msrp='', summary='')
+    branch = get_branch_name(username='username', msrp='', summary='')
     assert branch == 'username----------------------'
 
-    branch = get_branch_name(username=username, msrp='msrp', summary='')
+    branch = get_branch_name(username='username', msrp='msrp', summary='')
     assert branch == 'username-msrp--msrp-msrp-msrp-msrp'
 
-    branch = get_branch_name(username=username, msrp='msrp', summary="summary test's the \"date\"")
+    branch = get_branch_name(username='username', msrp='msrp', summary="summary test's the \"date\"")
     assert branch == 'username-msrp-summary-tests-the-date'
 
 
@@ -46,6 +44,20 @@ def test_build_commit_message():
     assert commit_message == '[TS-12345] Ticket #12345 - TS-5000 - testing the summary'
 
 
+def test_verify_parameters():
+    """Tests the verify parameters decorator."""
+    @verify_parameters('test testing')
+    def fake_request(data):
+        return 'success'
+
+    data = {'test': 'test', 'testing': 'testing'}
+    assert 'success' == fake_request(data)
+
+    result = fake_request({})
+    assert not result['status']
+    assert result['data'] == 'Missing the following required args: test, testing' 
+
+
 def test_missing_parameters_required():
     """Tests missing_parameters for required parameters."""
     params = {'req': 'test'}
@@ -58,20 +70,4 @@ def test_missing_parameters_required():
 
     params = {'req': 'test', 'missing': 'test'}
     missing = missing_parameters(params=params, required=['req', 'missing'])
-    assert not missing
-
-
-def test_missing_parameters_one_required():
-    """Tests missing_parameters for one required parameters."""
-    params = {}
-    missing = missing_parameters(params=params, one_required=['one_req', 'missing'])
-    assert missing == 'Missing at least one of the following optional args: one_req, missing'
-
-    params = {}
-    missing = missing_parameters(params=params, required=['req'], one_required=['one_req', 'missing'])
-    assert missing == "Missing the following required args: req, and at least one of the following optional args: one_req, missing"
-
-    missing = missing_parameters(params=params, required=['req'], one_required=['one_req', 'missing'])
-    params = {'req': 'test', 'one_req': 'test'}
-    missing = missing_parameters(params=params, required=['req'], one_required=['one_req', 'missing'])
     assert not missing
