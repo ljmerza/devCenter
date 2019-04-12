@@ -4,7 +4,7 @@ import copy
 from devcenter.jira.fields import (
     get_key, get_msrp, get_full_status, get_status,
     get_summary, get_username, get_display_name,
-    get_user_details
+    get_user_details, _get_display_name
 )
 
 
@@ -118,3 +118,14 @@ def test_get_user_details():
     assert user_details['username'] == ''
     assert user_details['display_name'] == ''
     assert user_details['email_address'] == ''
+
+
+def test_get_display_name():
+    name = _get_display_name('test (testname)')
+    assert name == 'test'
+
+    name = _get_display_name('')
+    assert name == ''
+
+    name = _get_display_name('test')
+    assert name == 'test'
