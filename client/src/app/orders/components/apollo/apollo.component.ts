@@ -80,10 +80,10 @@ export class ApolloComponent implements OnInit, OnDestroy {
   processOrders(){
     
     this.orders = this.apolloService.cachedApolloOrders.map(order => {
-      if (order.ATX && order.ATX.length && order.ATX[0].atx && order.ATX[0].atx.AtxUniUso){
-        const uso = order.ATX[0].atx.AtxUniUso;
-        order.ATX[0].atx.AtxUniUso = uso.substring(0, uso.length - 2);
-      }
+      // if (order.ATX && order.ATX.length && order.ATX[0].atx && order.ATX[0].atx.AtxUniUso){
+      //   const uso = order.ATX[0].atx.AtxUniUso;
+      //   order.ATX[0].atx.AtxUniUso = uso.substring(0, uso.length - 2);
+      // }
 
       return order
     });

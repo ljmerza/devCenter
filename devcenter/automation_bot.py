@@ -22,7 +22,7 @@ class AutomationBot():
 		self.jira_obj = Jira()
 		self.chat_obj = Chat()
 
-		beta_wait_time = 300 # how many times to wait for beta message
+		self.beta_wait_time = 300 # how many times to wait for beta message
 
 		# how many times we've waited for beta message - start off with a message
 		self.is_beta_week = int(os.environ.get('IS_BETA_WEEK', 0))

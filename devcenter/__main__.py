@@ -13,12 +13,8 @@ from devcenter.devcenter_server import start_server
 
 
 _LOGGER = logging.getLogger(__name__)
-try:
-	TIME_SHIFT = int(os.environ['TIME_SHIFT'])
-	ENABLE_CRON = int(os.environ['ENABLE_CRON'])
-except KeyError:
-	TIME_SHIFT = 4
-	ENABLE_CRON = 0
+TIME_SHIFT = int(os.environ.get('TIME_SHIFT', 0))
+ENABLE_CRON = int(os.environ.get('ENABLE_CRON', 0))
 
 def start_cron():
 	"""Start the Jira cron."""

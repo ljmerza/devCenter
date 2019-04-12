@@ -4,15 +4,13 @@ import os
 from devcenter.server_utils import get_branch_name
 
 
+td_style = "border: 1px solid #dddddd;padding: 8px;"
+td_alt_style = "background-color: #dddddd;"
+table_style = "border-collapse: collapse;"
+
+
 class ChatMisc():
 	"""Miscellaneous chat actions."""
-
-	td_style = "border: 1px solid #dddddd;padding: 8px;"
-	td_alt_style = "background-color: #dddddd;"
-	table_style = "border-collapse: collapse;"
-
-	jira_url = os.environ.get('JIRA_URL', '')
-	jira_ticket_base = f'{jira_url}/browse'
 
 	@classmethod
 	def get_estimate_string(cls, story_point):

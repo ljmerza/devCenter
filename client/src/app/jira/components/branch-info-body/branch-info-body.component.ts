@@ -34,11 +34,11 @@ export class BranchInfoBodyComponent {
 	}
 
 	get createNewCommand(){
-		return `git checkout -b ${this.branch}; git push -u;`;
+		return `git checkout -b ${this.branch} && git push -u`;
 	}
 
 	get mergeCommitCommand(){
-		return `git merge --squash ${this.branch}; git commit -m "${this.commit}";`;
+		return `git merge --squash ${this.branch} && git commit -m "${this.commit}"`;
 	}
 
 	get mergeScriptCommand(){
@@ -46,10 +46,10 @@ export class BranchInfoBodyComponent {
 	}
 
 	get updateBranchCommand(){
-		return `git pull origin ${this.masterName};git merge ${this.masterName};`;
+		return `git pull origin ${this.masterName} && git merge ${this.masterName}`;
 	}
 
 	get updateServerCommand() {
-		return `code UD_api;gchk ${this.masterName};gpll;code modules;gchk ${this.masterName};gpll;code ud_ember`;
+		return `code UD_api && gchk ${this.masterName} && gpll && code modules && gchk ${this.masterName} && gpll && code ud_ember`;
 	}
 }
