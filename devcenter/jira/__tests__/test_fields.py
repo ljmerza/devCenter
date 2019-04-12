@@ -9,7 +9,17 @@ from devcenter.jira.fields import (
 )
 
 
-issue = {
+USER_ISSUE = {
+    'fields':{
+        'assignee': {
+            'name': 'username',
+            'displayName': 'displayName',
+            'emailAddress': 'emailAddress'
+        }
+    }
+}
+
+STATUS_ISSUE = {
     'fields':{
         'components': [
             {'name':'comp1'},
@@ -18,12 +28,7 @@ issue = {
         'status': {
             'name': 'status',
             'id': 1
-        },
-        'assignee': {
-            'name': 'username',
-            'displayName': 'displayName',
-            'emailAddress': 'emailAddress'
-        },
+        }
     }
     
 }
@@ -49,16 +54,16 @@ def test_get_msrp():
 
 
 def test_get_full_status():
-    extracted_status = get_full_status(issue)
-    assert extracted_status['status'] == issue['fields']['status']
-    assert extracted_status['components'][0]['name'] == issue['fields']['components'][0]['name']
-    assert extracted_status['components'][1]['name'] == issue['fields']['components'][1]['name']
+    extracted_status = get_full_status(STATUS_ISSUE)
+    assert extracted_status['status'] == STATUS_ISSUE['fields']['status']
+    assert extracted_status['components'][0]['name'] == STATUS_ISSUE['fields']['components'][0]['name']
+    assert extracted_status['components'][1]['name'] == STATUS_ISSUE['fields']['components'][1]['name']
 
     extracted_status = get_full_status({})
     assert not len(extracted_status['components'])
     assert extracted_status['status'] == {}
 
-    issue_copy = copy.deepcopy(issue)
+    issue_copy = copy.deepcopy(STATUS_ISSUE)
     issue_copy['fields']['components'].append({'name':'BETA'})
     extracted_status = get_full_status(issue_copy)
     components = extracted_status['components']
@@ -67,10 +72,12 @@ def test_get_full_status():
 
 
 def test_get_status():
-    extracted_status = get_status(issue)
-    assert extracted_status == issue['fields']['components'][0]['name']
+    extracted_status = get_status(STATUS_ISSUE)
+    assert extracted_status == STATUS_ISSUE['fields']['components'][0]['name']
 
-    issue_copy = {'fields': {'status': {'name': 'testname'}}}
+    issue_copy = copy.deepcopy(STATUS_ISSUE)
+    del issue_copy['fields']['components']
+    issue_copy['fields']['status']['name'] = 'testname'
     extracted_status = get_status(issue_copy)
     assert extracted_status == 'testname'
 
@@ -87,26 +94,26 @@ def test_get_summary():
 
 
 def test_get_username():
-    username = get_username(issue)
-    assert username == issue['fields']['assignee']['name']
+    username = get_username(USER_ISSUE)
+    assert username == USER_ISSUE['fields']['assignee']['name']
 
     username = get_username({})
     assert username == ''
 
 
 def test_get_display_name():
-    name = get_display_name(issue)
-    assert name == issue['fields']['assignee']['displayName']
+    name = get_display_name(USER_ISSUE)
+    assert name == USER_ISSUE['fields']['assignee']['displayName']
 
     name = get_display_name({})
     assert name == ''
 
 
 def test_get_user_details():
-    user_details = get_user_details(issue)
-    assert user_details['username'] == issue['fields']['assignee']['name']
-    assert user_details['display_name'] == issue['fields']['assignee']['displayName']
-    assert user_details['email_address'] == issue['fields']['assignee']['emailAddress']
+    user_details = get_user_details(USER_ISSUE)
+    assert user_details['username'] == USER_ISSUE['fields']['assignee']['name']
+    assert user_details['display_name'] == USER_ISSUE['fields']['assignee']['displayName']
+    assert user_details['email_address'] == USER_ISSUE['fields']['assignee']['emailAddress']
 
     user_details = get_user_details({})
     assert user_details['username'] == ''
@@ -126,7 +133,7 @@ def test_get_display_name():
 
 
 def test_get_component():
-    components = get_component(issue)
+    components = get_component(STATUS_ISSUE)
     assert components == 'comp1 comp2'
 
     components = get_component({})
