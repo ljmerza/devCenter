@@ -74,24 +74,20 @@ def _get_display_name(display_name):
 
 def get_component(issue):
 	"""Gets an issue's components in a space delimited string."""
-	all_components = []
-	# for each component add to list to join then on return
-	for component in issue.get('fields', {}).get('components', []):
-		all_components.append(component['name'])
-	return ' '.join(all_components)
+	all_components = issue.get('fields', {}).get('components', [])
+	return ' '.join([x['name'] for x in all_components])
 
 
 def get_story_point(issue):
 	"""Gets an issue's story points."""
-	# if exists then return else return 0
-	if 'timeoriginalestimate' in issue['fields']:
-		points = issue['fields']['timeoriginalestimate']
-		if points is not None:
-			return int(points/60/60/8);
-		else:
-			return 0
-	else:
-		return 0
+	if 'timeoriginalestimate' not in issue.get('fields', {}): return 0
+
+	points = issue['fields']['timeoriginalestimate']
+	if points is None: return 0
+
+	points = int(points/60/60/8)
+	if points > 2: points = 2 # only allow max 2 points
+	return points
 
 
 def get_sprint(issue):

@@ -4,7 +4,8 @@ import copy
 from devcenter.jira.fields import (
     get_key, get_msrp, get_full_status, get_status,
     get_summary, get_username, get_display_name,
-    get_user_details, _get_display_name, get_component
+    get_user_details, _get_display_name, get_component,
+    get_story_point
 )
 
 
@@ -25,7 +26,8 @@ issue = {
             'name': 'username',
             'displayName': 'displayName',
             'emailAddress': 'emailAddress'
-        }
+        },
+        'timeoriginalestimate': 4*60*60*8
     }
     
 }
@@ -137,3 +139,14 @@ def test_get_component():
 
     components = get_component({})
     assert components == ''
+
+
+def test_get_story_point():
+    points = get_story_point(issue)
+    assert points == 2
+
+    points = get_story_point({})
+    assert points == 0
+
+    points = get_story_point({'fields':{'timeoriginalestimate':1*60*60*8}})
+    assert points == 1
