@@ -4,6 +4,8 @@ import math
 from time import gmtime, strftime
 
 from .fields import *
+from devcenter.server_utils import generate_cred_hash
+
 
 class JiraMisc():
 	"""Miscellaneous actions for Jira."""
@@ -24,7 +26,8 @@ class JiraMisc():
 			pcr_estimate = 2
 		return pcr_estimate	
 
-	def find_key_by_msrp(self, msrp, cred_hash):
+	def find_key_by_msrp(self, msrp='', cred_hash=''):
+		cred_hash = generate_cred_hash()
 		"""Find a ticket's key by MSRP number."""
 		url = f'{self.jira_api.api_base}/search?jql=cf[10212]~{msrp}&fields=key'
 		response = self.jira_api.get(url=url, cred_hash=cred_hash)
@@ -101,8 +104,9 @@ class JiraMisc():
 		"""Add text to dev changes field."""
 		return self.set_dev_changes(dev_changes=dev_changes, cred_hash=cred_hash, key=key)
 
-	def get_active_sprints(self, cred_hash):
+	def get_active_sprints(self, cred_hash=''):
 		"""Get all currently active sprints."""
+		cred_hash = generate_cred_hash()
 		url = f'{self.jira_api.api_agile_base}/board/179/sprint'
 		response = self.jira_api.get(url=url, cred_hash=cred_hash)
 		if not response['status']:

@@ -9,10 +9,7 @@ from .jira_status import (
 	add_qa_pass_comment, add_commits_table_comment
 )
 
-try:
-	USER = os.environ['USER']
-except:
-	USER = ''
+USER = os.environ.get('USER', '')
 
 
 def set_status(data):

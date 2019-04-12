@@ -3,6 +3,7 @@ import os
 
 from .fields import *
 from devcenter.sql.sql import DevCenterSQL
+from devcenter.server_utils import generate_cred_hash
 
 class JiraTickets():
 	"""Modify Jira Tickets."""
@@ -43,12 +44,14 @@ class JiraTickets():
 
 		return {'status': True, 'data': response['data']['issues']}
 
-	def get_full_ticket(self, key, cred_hash):
+	def get_full_ticket(self, key, cred_hash=''):
 		"""Get one unprocessed Jira ticket."""
+		cred_hash = generate_cred_hash()
 		return self.get_jira_tickets(cred_hash=cred_hash, jql=f"key%3D%27{key}%27", fields=self.jira_api.fields)
 
-	def get_ticket_field_values(self, key, cred_hash, fields, get_expanded=True):
+	def get_ticket_field_values(self, key='', cred_hash='', fields='', get_expanded=True):
 		"""Gets a list of ticket values for a single ticket."""
+		cred_hash = generate_cred_hash()
 		response = self.get_jira_tickets(cred_hash=cred_hash, jql=f"key%3D%27{key}%27", fields=fields, get_expanded=get_expanded)
 		if not response['status']:
 			return response
@@ -60,8 +63,9 @@ class JiraTickets():
 		response['data'] = response['data'][0]
 		return response
 
-	def get_ticket_dev_changes(self, key, cred_hash):
+	def get_ticket_dev_changes(self, key, cred_hash=''):
 		"""Get a ticket's dev changes field."""
+		cred_hash = generate_cred_hash()
 		return self.get_jira_tickets(cred_hash=cred_hash, jql=f"key%3D%27{key}%27", fields='customfield_10138')
 
 	def get_ticket_fields(self, issue, fields):
@@ -116,6 +120,10 @@ class JiraTickets():
 		"""Get a list of processsed Jira tickets."""
 		if not fields or fields is None:
 			fields = self.jira_api.fields
+
+		# if not getting a user based ticket list use global user
+		if 'currentUser' not in jql:
+			cred_hash = generate_cred_hash()
 
 		response = self.get_raw_jira_tickets(filter_number=filter_number, cred_hash=cred_hash, fields=fields, jql=jql, get_expanded=get_expanded)
 		if not response['status']:

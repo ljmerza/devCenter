@@ -9,12 +9,8 @@ jira_obj = Jira()
 
 # create auth header
 
-try:
-	username = os.environ['USER']
-	password = os.environ['PASSWORD']
-except KeyError:
-	username = ''
-	password = ''
+username = os.environ.get('DC_USER', '')
+password = os.environ.get('PASSWORD', '')
 
 header_value = f'{username}:{password}'
 encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')

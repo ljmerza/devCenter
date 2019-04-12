@@ -10,21 +10,24 @@ class ChatAPI():
 
 	def __init__(self):
 		"""Setup chat variables."""
-		self.jira_url = os.environ['JIRA_URL']
+		self.jira_url = os.environ.get('JIRA_URL', '')
 		self.jira_ticket_base = f'{self.jira_url}/browse'
-		self.username = os.environ['USER']
-		self.debug = int(os.environ['DEV_BOT'])
-		self.no_pings = int(os.environ['NO_PINGS'])
-		self.bot_name = os.environ['BOT_NAME']
-		self.dev_center_chat = os.environ['CHAT_DEV_CENTER']
-		self.bot_password = os.environ['BOT_PASSWORD']
-		self.apex_chat = os.environ['CHAT_APEX']
-		self.dti_chat = os.environ['CHAT_DTI']
-		self.chat_url = os.environ['CHAT_URL']
+		
+		self.username = os.environ.get('USER', '')
+		self.debug = int(os.environ('DEV_BOT', ''))
+		self.no_pings = int(os.environ('NO_PINGS', ''))
+		self.bot_name = os.environ('BOT_NAME', '')
+		self.dev_center_chat = os.environ('CHAT_DEV_CENTER', '')
+		self.bot_password = os.environ('BOT_PASSWORD', '')
+		self.apex_chat = os.environ('CHAT_APEX', '')
+		self.dti_chat = os.environ('CHAT_DTI', '')
+
+		self.chat_url = os.environ('CHAT_URL', '')
 		self.chat_api = f'{self.chat_url}/push'
 		self.chat_api_chatroom = f'{self.chat_api}/meeting:'
 		self.chat_api_menu = f'{self.chat_api}/menu/'
-		self.project_managers = os.environ['PM'].split(',')
+
+		self.project_managers = os.environ('PM', '').split(',')
 
 	def send_message(self, message, username):
 		"""Send a message to a user."""

@@ -20,26 +20,15 @@ class DevCenterSQL(SQLTickets, SQLUsers, SQLNavBar, Misc, Statuses, TicketHistor
 
 	def __init__(self,):
 		"""Setup config for SQL database connection."""
-		try:
-			USER = os.environ['USER']
-			SQL_PASSWORD = os.environ['SQL_PASSWORD']
-			SQL_HOST = os.environ['SQL_HOST']
-			DB_TABLE = os.environ['DB_TABLE']
-			SQL_ECHO = int(os.environ['SQL_ECHO'])
+		SQL_USER = os.environ.get('SQL_USER', '')
+		SQL_PASSWORD = os.environ.get('SQL_PASSWORD', '')
+		SQL_HOST = os.environ.get('SQL_HOST', '')
+		DB_TABLE = os.environ.get('DB_TABLE', '')
+		SQL_ECHO = int(os.environ.get('SQL_ECHO', 0))
 
-		except KeyError:
-			USER = ''
-			SQL_PASSWORD = ''
-			SQL_HOST = ''
-			DB_TABLE = ''
-			SQL_ECHO = 0
+		SQL_ECHO = True if SQL_ECHO else False
 
-		if SQL_ECHO:
-			SQL_ECHO = True
-		else:
-			SQL_ECHO = False
-
-		url = f'mysql+pymysql://{USER}:{SQL_PASSWORD}@{SQL_HOST}:3306/{DB_TABLE}?charset=utf8'
+		url = f'mysql+pymysql://{SQL_USER}:{SQL_PASSWORD}@{SQL_HOST}:3306/{DB_TABLE}?charset=utf8'
 		self.engine = create_engine(url, echo=SQL_ECHO, pool_size=20)
 
 	def login(self):	

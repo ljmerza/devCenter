@@ -1,5 +1,4 @@
 """Cron to keep track of Jira tickets."""
-import base64
 import datetime
 import logging
 import os
@@ -11,6 +10,7 @@ from .jira.fields import *
 from .jira.jira import Jira
 from .sql.sql import DevCenterSQL
 from .chat.chat import Chat
+from .server_utils import generate_cred_hash
 
 
 class AutomationBot():
@@ -18,35 +18,18 @@ class AutomationBot():
 
 	def __init__(self):
 		"""Setup cron config."""
-
-		try:
-			username = os.environ['USER']
-			password = os.environ['PASSWORD']
-			is_beta_week = int(os.environ['IS_BETA_WEEK'])
-			beta_stat_ping_now = int(os.environ['BETA_STAT_PING_NOW'])
-		except KeyError:
-			username = ''
-			password = ''
-			is_beta_week = 0
-			beta_stat_ping_now = 0
-
-		beta_wait_time = 300 # how many times to wait for beta message
-
 		self.sql_object = DevCenterSQL()
 		self.jira_obj = Jira()
 		self.chat_obj = Chat()
 
-		 # how many times we've waited for beta message - start off with a message
-		if beta_stat_ping_now:
-			self.beta_wait_count = self.beta_wait_time
-		else:
-			self.beta_wait_count = 0
-		self.beta_stats = []
+		beta_wait_time = 300 # how many times to wait for beta message
 
-		# cred hash creation
-		header_value = f'{AutomationBot.username}:{AutomationBot.password}'
-		encoded_header = base64.b64encode( header_value.encode() ).decode('ascii')
-		self.cred_hash = f'Basic {encoded_header}'
+		# how many times we've waited for beta message - start off with a message
+		self.is_beta_week = int(os.environ.get('IS_BETA_WEEK', 0))
+		beta_stat_ping_now = int(os.environ.get('BETA_STAT_PING_NOW', 0))
+		self.beta_wait_count = 0 if beta_stat_ping_now else self.beta_wait_time
+
+		self.cred_hash = generate_cred_hash()
 		
 	def update_jira(self):
 		"""Gets Jira tickets, updates DB, and pings users on updates."""

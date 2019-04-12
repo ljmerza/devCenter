@@ -1,5 +1,15 @@
+import base64
 import re
 import os
+
+
+def generate_cred_hash():
+	"""Generates the global cred hash."""
+	username = os.environ.get('DC_USER', '')
+	password = os.environ.get('PASSWORD', '')
+	encoded_header_value = f'{username}:{password}'.encode()
+	encoded_header = base64.b64encode(encoded_header_value).decode('ascii')
+	return f'Basic {encoded_header}'
 
 
 def row2dict(row):
