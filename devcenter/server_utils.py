@@ -71,7 +71,7 @@ def verify_parameters(function, required=[]):
     def return_result(data):
 		missing_params = missing_parameters(params=data, required=required)
 		if missing_params:
-			return {"data": f"Missing required parameters: {missing_params}", "status": False}
+			return {"data": f"${function.__name__} is missing required parameters: {missing_params}", "status": False}
         else:
             return function(data)
     return return_result
