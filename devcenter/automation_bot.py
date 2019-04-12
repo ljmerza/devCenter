@@ -6,11 +6,14 @@ import sys
 import time
 import threading
 
+from .chat.chat import Chat
 from .jira.fields import *
 from .jira.jira import Jira
-from .sql.sql import DevCenterSQL
-from .chat.chat import Chat
 from .server_utils import generate_cred_hash
+from .sql.sql import DevCenterSQL
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class AutomationBot():
@@ -52,8 +55,8 @@ class AutomationBot():
 			# print time to retrieve tickets
 			end_get = time.time()
 			start_bot = time.time()
-			logging.info('Processing '+str(len(jira_tickets['data']))+' Jira tickets')
-			logging.info('Retrieved Tickets: {:.4}'.format(end_get-start_get))
+			_LOGGER.info('Processing '+str(len(jira_tickets['data']))+' Jira tickets')
+			_LOGGER.info('Retrieved Tickets: {:.4}'.format(end_get-start_get))
 
 			# for each jira ticket update DB table
 			for jira_ticket  in jira_tickets['data']:
@@ -64,13 +67,13 @@ class AutomationBot():
 				self.check_for_pings(jira_ticket=jira_ticket)
 
 			end_bot = time.time()
-			logging.info('Check for pings: {:.4}'.format(end_bot-start_bot))
+			_LOGGER.info('Check for pings: {:.4}'.format(end_bot-start_bot))
 			start_commit = time.time()
 
 			# set all inactive tickets and print time it took
 			self.sql_object.set_inactive_tickets(jira_tickets=jira_tickets)
 			end_inactive = time.time()
-			logging.info('Set Inactive Tickets: {:.4}'.format(end_inactive-start_commit))		
+			_LOGGER.info('Set Inactive Tickets: {:.4}'.format(end_inactive-start_commit))		
 			
 			# if we want to add beta stuff then increment counter
 			if self.is_beta_week:
@@ -83,14 +86,14 @@ class AutomationBot():
 
 			# print cron runtime 
 			end_cron = time.time()
-			logging.info('CRON end time: {:.4}'.format(end_cron-start_get))
+			_LOGGER.info('CRON end time: {:.4}'.format(end_cron-start_get))
 
 			return jira_tickets
 
 		except Exception as err:
 			# log error and stack trace
 			message = sys.exc_info()[0]
-			logging.exception(message)
+			_LOGGER.exception(message)
 			return {'status': False, 'data': str(err)}
 
 	def beta_week_stats(self):
