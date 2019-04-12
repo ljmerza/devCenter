@@ -99,12 +99,14 @@ def test_get_username():
     username = get_username({})
     assert username == ''
 
+
 def test_get_display_name():
     name = get_display_name(issue)
     assert name == issue['fields']['assignee']['displayName']
 
     name = get_display_name({})
     assert name == ''
+
 
 def test_get_user_details():
     user_details = get_user_details(issue)
