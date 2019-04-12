@@ -10,9 +10,7 @@ from devcenter.jira.fields import (
 
 
 issue = {
-    'key': 'TEST-1234',
     'fields':{
-        'customfield_10212': 1234,
         'components': [
             {'name':'comp1'},
             {'name':'comp2'}
@@ -21,35 +19,29 @@ issue = {
             'name': 'status',
             'id': 1
         },
-        'summary': 'summary',
         'assignee': {
             'name': 'username',
             'displayName': 'displayName',
             'emailAddress': 'emailAddress'
         },
-        'timeoriginalestimate': 4*60*60*8
     }
     
 }
 
 
 def test_get_key():
-    extracted_key = get_key(issue)
-    assert extracted_key == issue['key']
+    extracted_key = get_key({'key': 'TEST-1234'})
+    assert extracted_key == 'TEST-1234'
 
-    issue_copy = copy.deepcopy(issue)
-    del issue_copy['key']
-    extracted_key = get_key(issue_copy)
+    extracted_key = get_key({})
     assert extracted_key == ''
 
 
 def test_get_msrp():
-    extracted_get_msrp = get_msrp(issue)
-    assert extracted_get_msrp == issue['fields']['customfield_10212']
+    extracted_get_msrp = get_msrp({'fields':{'customfield_10212': 1234}})
+    assert extracted_get_msrp == 1234
 
-    issue_copy = copy.deepcopy(issue)
-    del issue_copy['fields']['customfield_10212']
-    extracted_get_msrp = get_msrp(issue_copy)
+    extracted_get_msrp = get_msrp({'fields': {}})
     assert extracted_get_msrp == 0
 
     extracted_get_msrp = get_msrp({})
@@ -87,8 +79,8 @@ def test_get_status():
 
 
 def test_get_summary():
-    summary = get_summary(issue)
-    assert summary == issue['fields']['summary']
+    summary = get_summary({'fields':{'summary': 'summary'}})
+    assert summary == 'summary'
 
     summary = get_summary({})
     assert summary == ''
@@ -142,10 +134,11 @@ def test_get_component():
 
 
 def test_get_story_point():
-    points = get_story_point(issue)
+    workday = 60*60*8
+    points = get_story_point({'fields':{'timeoriginalestimate':4*workday}})
     assert points == 2
 
-    points = get_story_point({'fields':{'timeoriginalestimate':1*60*60*8}})
+    points = get_story_point({'fields':{'timeoriginalestimate':1*workday}})
     assert points == 1
 
     points = get_story_point({})
