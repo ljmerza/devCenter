@@ -7,15 +7,16 @@ from devcenter.server_utils import (
 )
 
 
-username = username
+username = 'username'
 password = 'password'
 
 
 def test_generate_cred_hash():
     cred_hash = generate_cred_hash()
-    print(cred_hash)
+    assert cred_hash == 'Basic Og=='
+
     cred_hash = generate_cred_hash(username=username, password=password)
-    print(cred_hash)
+    assert cred_hash == 'Basic dXNlcm5hbWU6cGFzc3dvcmQ='
 
 
 def test_get_branch_name():

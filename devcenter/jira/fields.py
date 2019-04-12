@@ -1,16 +1,11 @@
 """"Formats individual Jira ticket fields."""
-
 import re
 import os
 
 qa_regex_begin = re.compile(r"h3\. ==== QA Steps ====")
 qa_regex_end = re.compile(r"h3\. ===============")
 qa_step_regex = re.compile("qa step", flags=re.IGNORECASE)
-
-try:
-	code_cloud_api = os.environ['CODE_CLOUD_URL']
-except KeyError:
-	code_cloud_api = ''
+code_cloud_api = os.environ.get('CODE_CLOUD_URL','')
 
 
 def get_key(issue):
@@ -20,18 +15,16 @@ def get_key(issue):
 
 def get_msrp(issue):
 	"""Gets an issue's msrp."""
-	# if exists then return else return 0
 	return issue.get('fields', {}).get('customfield_10212', 0)
 
 
 def get_full_status(issue):
 	"""Get all statuses/components name and id."""
-	all_components = list(filter(lambda x: x.get('name').upper() != 'BETA',
-							issue.get('fields', {}).get('components', [])))
+	components = issue.get('fields', {}).get('components', [])
 
 	return {
 		'status': issue.get('fields', {}).get('status', {}),
-		'components': all_components
+		'components': [x for x in components if x.get('name').upper() != 'BETA']
 	}
 
 

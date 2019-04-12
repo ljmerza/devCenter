@@ -1,18 +1,18 @@
-import base64
-import re
-import os
+from base64 import b64encode
+from re import sub
+from os import environ
 
 
-DC_USER = os.environ.get('DC_USER', '')
-PASSWORD = os.environ.get('PASSWORD', '')
+DC_USER = environ.get('DC_USER', '')
+PASSWORD = environ.get('PASSWORD', '')
 
 
 def generate_cred_hash(username='', password=''):
 	"""Generates the global cred hash."""
 	username = username if username else DC_USER
-	password = password ifpassword else  PASSWORD
+	password = password if password else PASSWORD
 	encoded_header_value = f'{username}:{password}'.encode()
-	encoded_header = base64.b64encode(encoded_header_value).decode('ascii')
+	encoded_header = b64encode(encoded_header_value).decode('ascii')
 	return f'Basic {encoded_header}'
 
 
@@ -28,11 +28,11 @@ def get_branch_name(username='', msrp='', summary=''):
 	"""Creates a branch name."""
 
 	if summary:
-		branch = re.sub(r'[^\x00-\x7F]+','', summary)
-		branch = re.sub(r" +", '-', branch)
-		branch = re.sub(r"\"", '', branch)
-		branch = re.sub(r"\'", '', branch)
-		branch = re.sub(r"-+", '-', branch)
+		branch = sub(r'[^\x00-\x7F]+','', summary)
+		branch = sub(r" +", '-', branch)
+		branch = sub(r"\"", '', branch)
+		branch = sub(r"\'", '', branch)
+		branch = sub(r"-+", '-', branch)
 
 		# if summary starts/ends with a dash then get rid of it
 		if branch.startswith('-'):
@@ -59,8 +59,8 @@ def build_commit_message(key='', msrp='', summary='', epic_link=''):
 		commit +=f" - {epic_link} -"
 
 	if summary:
-		summary = re.sub(r"\"", '', summary)
-		summary = re.sub(r"\'", '', summary)
+		summary = sub(r"\"", '', summary)
+		summary = sub(r"\'", '', summary)
 		commit += f" {summary}"
 
 	return commit
