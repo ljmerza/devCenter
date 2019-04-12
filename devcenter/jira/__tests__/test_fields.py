@@ -4,7 +4,7 @@ import copy
 from devcenter.jira.fields import (
     get_key, get_msrp, get_full_status, get_status,
     get_summary, get_username, get_display_name,
-    get_user_details, _get_display_name
+    get_user_details, _get_display_name, get_component
 )
 
 
@@ -129,3 +129,11 @@ def test_get_display_name():
 
     name = _get_display_name('test')
     assert name == 'test'
+
+
+def test_get_component():
+    components = get_component(issue)
+    assert components == 'comp1 comp2'
+
+    components = get_component({})
+    assert components == ''
