@@ -2,9 +2,20 @@
 import pytest
 
 from devcenter.server_utils import (
-    row2dict, get_branch_name, 
+    row2dict, get_branch_name, generate_cred_hash,
     build_commit_message, missing_parameters
 )
+
+
+username = username
+password = 'password'
+
+
+def test_generate_cred_hash():
+    cred_hash = generate_cred_hash()
+    print(cred_hash)
+    cred_hash = generate_cred_hash(username=username, password=password)
+    print(cred_hash)
 
 
 def test_get_branch_name():
@@ -12,13 +23,13 @@ def test_get_branch_name():
     branch = get_branch_name(username='', msrp='', summary='')
     assert branch == '-'*30
 
-    branch = get_branch_name(username='username', msrp='', summary='')
+    branch = get_branch_name(username=username, msrp='', summary='')
     assert branch == 'username----------------------'
 
-    branch = get_branch_name(username='username', msrp='msrp', summary='')
+    branch = get_branch_name(username=username, msrp='msrp', summary='')
     assert branch == 'username-msrp--msrp-msrp-msrp-msrp'
 
-    branch = get_branch_name(username='username', msrp='msrp', summary="summary test's the \"date\"")
+    branch = get_branch_name(username=username, msrp='msrp', summary="summary test's the \"date\"")
     assert branch == 'username-msrp-summary-tests-the-date'
 
 
