@@ -66,8 +66,9 @@ def build_commit_message(key='', msrp='', summary='', epic_link=''):
 	return commit
 
 
-def verify_parameters(function, required=[]):
+def verify_parameters(function, required=''):
 	"""Decorator to verifiy passed in arguments."""
+	required = required.split(' ')
     def return_result(data):
 		missing_params = missing_parameters(params=data, required=required)
 		if missing_params:

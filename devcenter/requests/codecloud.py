@@ -5,7 +5,7 @@ from devcenter.requests.jira import set_status
 from devcenter.server_utils import missing_parameters, verify_parameters
 
 
-@verify_parameters(required=['cred_hash', 'msrp', 'key'])
+@verify_parameters('cred_hash msrp key')
 def transition_to_pcr(data):
 	"""Creates a bit bucket review and transitions Jira ticket to PCR Ready."""
 	jira = Jira()
@@ -39,7 +39,7 @@ def get_repos(data):
 	return CodeCloud().get_repos()
 
 
-@verify_parameters(required=['summary','repos','key'.'msrp','cred_hash'])
+@verify_parameters('summary repos key msrp cred_hash')
 def create_pull_requests(data):
 	"""Generate pull requests."""
 	qa_title = Jira().build_qa_title(key=data['key'], msrp=data['msrp'], summary=data['summary'])
@@ -53,19 +53,19 @@ def create_pull_requests(data):
 	)
 
 
-@verify_parameters(required=['cred_hash', 'repo_name'])
+@verify_parameters('cred_hash repo_name')
 def get_branches(data):
 	"""Gets all branches for a given repo."""
 	return CodeCloud().get_branches(cred_hash=data['cred_hash'], repo_name=data['repo_name'])
 
 
-@verify_parameters(required=['cred_hash', 'msrp'])
+@verify_parameters('cred_hash msrp')
 def ticket_branches(data):
 	"""Gets a branches related to a Jira ticket."""
 	return CodeCloud().ticket_branches(cred_hash=data['cred_hash'], msrp=data['msrp'])
 
 
-@verify_parameters(required=['key','repos', 'qa_steps', 'cred_hash'])
+@verify_parameters('key repos qa_steps cred_hash')
 def add_qa_comment(data, pull_response=None):
 	"""Add a QA steps generated Jira comment."""
 	qa_step_comment = CodeCloud().generate_qa_template(
@@ -82,7 +82,7 @@ def add_qa_comment(data, pull_response=None):
 	)
 
 
-@verify_parameters(required=['pull_request_id', 'repo_name', 'username', 'cred_hash'])
+@verify_parameters('pull_request_id repo_name username cred_hash')
 def add_reviewer_to_pull_request(data):
 	"""Adds a reviewer to a pull request."""
 	return CodeCloud().add_reviewer_to_pull_request(
