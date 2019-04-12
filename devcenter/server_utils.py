@@ -3,10 +3,14 @@ import re
 import os
 
 
-def generate_cred_hash():
+DC_USER = os.environ.get('DC_USER', '')
+PASSWORD = os.environ.get('PASSWORD', '')
+
+
+def generate_cred_hash(username='', password=''):
 	"""Generates the global cred hash."""
-	username = os.environ.get('DC_USER', '')
-	password = os.environ.get('PASSWORD', '')
+	username = username if username else DC_USER
+	password = password ifpassword else  PASSWORD
 	encoded_header_value = f'{username}:{password}'.encode()
 	encoded_header = base64.b64encode(encoded_header_value).decode('ascii')
 	return f'Basic {encoded_header}'
