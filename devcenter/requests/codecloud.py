@@ -1,21 +1,13 @@
-from devcenter.server_utils import missing_parameters
+"""Handles CodeCloud requests."""
 from devcenter.codecloud.codecloud import CodeCloud
 from devcenter.jira.jira import Jira
-from .jira import set_status
+from devcenter.requests.jira import set_status
+from devcenter.server_utils import missing_parameters, verify_parameters
 
 
+@verify_parameters(required=['cred_hash', 'msrp', 'key'])
 def transition_to_pcr(data):
-	"""Creates a bit bucket review and transitions Jira ticket to PCR Ready.
-		Possible responses: 
-			pull_response, dev_change_response, qa_comment_response, qa_info_response, log_response
-			from set_status:
-				pr_add_response, status_response, comment_response, new_response
-					commit_ids, commit_comment (from add_commits_table_comment)
-	"""
-	missing_params = missing_parameters(params=data, required=['cred_hash', 'msrp', 'key'])
-	if missing_params:
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
+	"""Creates a bit bucket review and transitions Jira ticket to PCR Ready."""
 	jira = Jira()
 	response = {'status': True, 'data': {}}
 	
@@ -47,15 +39,10 @@ def get_repos(data):
 	return CodeCloud().get_repos()
 
 
+@verify_parameters(required=['summary','repos','key'.'msrp','cred_hash'])
 def create_pull_requests(data):
 	"""Generate pull requests."""
-	missing_params = missing_parameters(params=data, required=['summary','repos'])
-	if missing_params:
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
-	# generate pull request title and then generate all pull requests
 	qa_title = Jira().build_qa_title(key=data['key'], msrp=data['msrp'], summary=data['summary'])
-
 	return CodeCloud().create_pull_requests(
 		repos=data['repos'], 
 		key=data['key'],
@@ -66,30 +53,21 @@ def create_pull_requests(data):
 	)
 
 
+@verify_parameters(required=['cred_hash', 'repo_name'])
 def get_branches(data):
 	"""Gets all branches for a given repo."""
-	missing_params = missing_parameters(params=data, required=['cred_hash', 'repo_name'])
-	if missing_params:
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
 	return CodeCloud().get_branches(cred_hash=data['cred_hash'], repo_name=data['repo_name'])
 
 
+@verify_parameters(required=['cred_hash', 'msrp'])
 def ticket_branches(data):
 	"""Gets a branches related to a Jira ticket."""
-	missing_params = missing_parameters(params=data, required=['cred_hash', 'msrp'])
-	if missing_params:
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
 	return CodeCloud().ticket_branches(cred_hash=data['cred_hash'], msrp=data['msrp'])
 
 
+@verify_parameters(required=['key','repos', 'qa_steps', 'cred_hash'])
 def add_qa_comment(data, pull_response=None):
 	"""Add a QA steps generated Jira comment."""
-	missing_params = missing_parameters(params=data, required=['key','repos', 'qa_steps', 'cred_hash'])
-	if missing_params:
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
 	qa_step_comment = CodeCloud().generate_qa_template(
 		qa_steps=data['qa_steps'], 
 		repos=data['repos'], 
@@ -104,12 +82,9 @@ def add_qa_comment(data, pull_response=None):
 	)
 
 
+@verify_parameters(required=['pull_request_id', 'repo_name', 'username', 'cred_hash'])
 def add_reviewer_to_pull_request(data):
 	"""Adds a reviewer to a pull request."""
-	missing_params = missing_parameters(params=data, required=['pull_request_id', 'repo_name', 'username', 'cred_hash'])
-	if missing_params:
-		return {"data": f"Missing required parameters: {missing_params}", "status": False}
-
 	return CodeCloud().add_reviewer_to_pull_request(
 		username=data['username'], 
 		repo_name=data['repo_name'], 
