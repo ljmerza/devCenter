@@ -55,7 +55,7 @@ def test_verify_parameters():
 
     result = fake_request({})
     assert not result['status']
-    assert result['data'] == 'Missing the following required args: test, testing' 
+    assert result['data'] == '$fake_request is missing required parameters: Missing the following required args: test, testing'
 
 
 def test_missing_parameters_required():

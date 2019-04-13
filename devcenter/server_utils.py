@@ -66,16 +66,18 @@ def build_commit_message(key='', msrp='', summary='', epic_link=''):
 	return commit
 
 
-def verify_parameters(function, required=''):
+def verify_parameters(required):
 	"""Decorator to verifiy passed in arguments."""
 	required = required.split(' ')
-    def return_result(data):
-		missing_params = missing_parameters(params=data, required=required)
-		if missing_params:
-			return {"data": f"${function.__name__} is missing required parameters: {missing_params}", "status": False}
-        else:
-            return function(data)
-    return return_result
+	def decorator(function):
+		def wrapper(params):
+			missing_params = missing_parameters(params=params, required=required)
+			if missing_params:
+				return {"data": f"${function.__name__} is missing required parameters: {missing_params}", "status": False}
+			else:
+				return function(params)
+		return wrapper
+	return decorator
 
 
 def missing_parameters(params=None, required=None):
