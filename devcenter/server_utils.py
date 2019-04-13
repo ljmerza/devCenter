@@ -67,7 +67,7 @@ def build_commit_message(key='', msrp='', summary='', epic_link=''):
 
 
 def verify_parameters(required):
-	"""Decorator to verifiy passed in arguments."""
+	"""Verifies passed in arguments."""
 	required = required.split(' ')
 	def decorator(function):
 		def wrapper(params):
