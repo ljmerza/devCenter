@@ -55,15 +55,13 @@ class JiraApi(AtlassianApi):
 		}
 		data = json.dumps(data)
 		headers = { 'Content-Type': 'application/json' }
-		session_obj = requests.session()
-
-		cert_path = f"{self.dir_path}/allcerts.pem"
-		session_obj.verify = False
+		session = requests.session()
+		session.verify = False
 		
 		try:
-			response = session_obj.post(url=url, data=data, headers=headers)
+			response = session.post(url=url, data=data, headers=headers)
 			if response.status_code in [200,201,204]:
-				return {'status': True, 'data': session_obj}
+				return {'status': True, 'data': session}
 			else:
 				return {'status': False, 'data': response.text}
 		except (ProxyError, SSLError, OSError) as e:
