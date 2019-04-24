@@ -1,7 +1,7 @@
 """Miscellaneous chat actions."""
 import os
 
-from devcenter.server_utils import get_branch_name
+from devcenter.server_utils import get_branch_name, build_commit_message
 
 
 td_style = "border: 1px solid #dddddd;padding: 8px;"
