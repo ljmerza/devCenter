@@ -34,9 +34,8 @@ class ChatMisc():
 				story_point = str(int(story_point)) + ' days'
 		return story_point
 
-	@classmethod
 	def build_message(
-		cls, data, commit_message=False, jira_message=False, 
+		self, data, commit_message=False, jira_message=False, 
 		branch_message=False, sprint_message=False, msrp_message=False, 
 		summary_message=False, crucible_title_message=False, estimate_message=False):
 		"""Builds am essage for the Chat system."""
@@ -85,7 +84,7 @@ class ChatMisc():
 			message += f"\
 			<tr> \
 				<td style='{td_style} {color}'>Jira Link</td> \
-				<td style='{td_style} {color}'><a href='{jira_ticket_base}/{key}'>{jira_ticket_base}/{key}</a></td> \
+				<td style='{td_style} {color}'><a href='{self.chat_api.jira_ticket_base}/{key}'>{self.chat_api.jira_ticket_base}/{key}</a></td> \
 			</tr>"
 
 		# add branch name
