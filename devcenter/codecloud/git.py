@@ -69,7 +69,6 @@ class Git():
                 repo_name=request['repo'], 
                 key=key, 
                 cred_hash=cred_hash, 
-                master_branch=master_branch
             )
 
             commit_ids.append({
@@ -84,11 +83,11 @@ class Git():
 
         return {'status': status, 'data': commit_ids}
 
-    def _get_commit_id(self, repo_name, master_branch, key, cred_hash):
+    def _get_commit_id(self, repo_name, key, cred_hash):
         """Get a commit id for a repo and Jira ticket."""
         commit_id = ''
 
-        url = f'{self.code_cloud_api.branch_api}/{repo_name}/commits?until=refs%2Fheads%2F{master_branch}&limit=50'
+        url = f'{self.code_cloud_api.branch_api}/{repo_name}/commits?limit=50'
         response = self.code_cloud_api.get(url=url, cred_hash=cred_hash)
         
         if not response['status']:
