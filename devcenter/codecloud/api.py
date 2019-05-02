@@ -26,7 +26,7 @@ class CodeCloudApi(AtlassianApi):
 	def get_session(cls, cred_hash=''):
 		"""Create a browser session."""
 		session = requests.session()
-		# session.verify = False
+		session.verify = False
 		session.headers.update({'Authorization': cred_hash})
 		return {
 			'status': True,
