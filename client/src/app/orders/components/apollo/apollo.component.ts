@@ -78,21 +78,73 @@ export class ApolloComponent implements OnInit, OnDestroy {
    * saves order data and configures the UI table
    */
   processOrders(){
-    
-    this.orders = this.apolloService.cachedApolloOrders.map(order => {
-      // if (order.ATX && order.ATX.length && order.ATX[0].atx && order.ATX[0].atx.AtxUniUso){
-      //   const uso = order.ATX[0].atx.AtxUniUso;
-      //   order.ATX[0].atx.AtxUniUso = uso.substring(0, uso.length - 2);
-      // }
-
-      return order
-    });
+    this.orders = this.apolloService.cachedApolloOrders.map(this.processAtxData.bind(this));
 
     this.loading = false;
     this.loadingIcon = false;
 
     // create sorted material table array
     this.sortData({ active: 'UNI CLO', direction: 'desc' }, this.orders);
+  }
+
+  /**
+   * 
+   * @param {Object} order
+   * @return {Object}
+   */
+  processAtxData(order){
+    if (order.ATX && order.ATX.length && order.ATX[0].atx && order.ATX[0].atx.AtxUniUso){
+      let ports = 0;
+      let pvcs = 0;
+      let lecCircuitIds = [];
+      let icoreOrderIds = [];
+
+      order.ATX.forEach(atx => {
+        if(atx.atx_route.PORTS) {
+          ports += atx.atx_route.PORTS.length;
+          atx.atx_route.PORTS.forEach(atxRecord => this.atxRecordProcessing({atxRecord, lecCircuitIds, icoreOrderIds}));
+        }
+
+        if(atx.atx_route.PVCS) {
+          pvcs += atx.atx_route.PVCS.length;
+          atx.atx_route.PVCS.forEach(atxRecord => this.atxRecordProcessing({atxRecord, lecCircuitIds, icoreOrderIds}));
+        }
+
+      });
+
+      order.atxRecord = {ports, pvcs, lecCircuitIds, icoreOrderIds};
+      console.log({ atxRecord2: order.atxRecord });
+      
+    }
+
+    return order
+  }
+
+  /**
+   * 
+   */
+  atxRecordProcessing({atxRecord, lecCircuitIds, icoreOrderIds}){
+    console.log({ atxRecord });
+    
+    if(atxRecord.access_details && atxRecord.access_details.firmOrder){
+      atxRecord.firmOrder.forEach(firm => {
+        lecCircuitIds.push(firm.lecCircuitId);
+      });
+    }
+    
+    const icore_id = atxRecord.efms && 
+      atxRecord.efms.svcOrder && 
+      atxRecord.efms.svcOrder.orderExtension && 
+      atxRecord.efms.svcOrder.orderExtension.icoreOrderId;
+
+    const icore_usrp_id = atxRecord.usrp && 
+      atxRecord.usrp.order && 
+      atxRecord.usrp.order.activity && 
+      atxRecord.usrp.order.activity.icoreOrderNumber;
+
+    if (icore_id || icore_usrp_id) {
+      icoreOrderIds.push(icore_id || icore_usrp_id);
+    }
   }
 
   /**

@@ -66,12 +66,15 @@ export const initialState: SettingsState = {
     { name: 'EVC TO', display: true },
     { name: 'EVC PON', display: false },
     { name: 'ATX Site ID', display: true },
-    { name: 'ATX PON', display: true },
+    { name: 'ATX PON', display: false },
     { name: 'ATX USO', display: true },
     { name: 'ATX iCore', display: true },
     { name: 'ADE CLO', display: true },
     { name: 'ADE Circuit', display: false },
     { name: 'ADE Region', display: false },
+
+    // atx route
+    { name: 'PORTS/PVCS', display: true },
   ],
   atxColumnDefinitions: [
 

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 BEGIN {
-	use lib ( "/opt/@{[ ( getpwuid($<) )[0] ]}/includes", "/opt/includes/DTI", "/opt/includes");
+	use lib ( "/opt/@{[ ( getpwuid($<) )[0] ]}/includes", "/opt/@{[ ( getpwuid($<) )[0] ]}/www/UD_api/lib", "/opt/includes/DTI", "/opt/includes");
 }
 
 binmode STDOUT, ":utf8";
@@ -20,6 +20,8 @@ use OMX;
 use M5::REST::WATSON::ODB;
 use M5::REST::WATSON::ACTS;
 use M5::REST::WATSON::Canopi;
+
+use Order::ATX;
 
 ##############################
 my $number_of_orders = 500;
@@ -126,18 +128,6 @@ sub dump_data {
 open my $fh, ">", $output or die "Cannot open file '$output': $!\n";
 print $fh encode_json(\@deep_order_data);
 close $fh;
-
-
-
-
-
-
-
-
-sub add_order_to_list {
-	
-}
-
 
 sub process_order {
 	my ($odb_records, $type) = @_;
@@ -359,6 +349,17 @@ sub get_atx {
 
 		if($record->{Details}->{AtxUniUso}) {
 			$record->{Details}->{AtxUniUso} =~ s/[^0-9]*//g;
+
+			my $atx = Order::ATX->new(
+				search_string => $record->{Details}->{AtxUniUso},
+				search_type => 'usoNumber',
+				attuid => 'lm240n', 
+				UAT => 0
+			);
+
+			if($atx->get){
+				$data->{atx_route} = $atx->val;
+			}
 		}
 		
 		$data->{atx} = $record->{Details};
