@@ -127,7 +127,7 @@ export class ApolloComponent implements OnInit, OnDestroy {
     console.log({ atxRecord });
     
     if(atxRecord.access_details && atxRecord.access_details.firmOrder){
-      atxRecord.firmOrder.forEach(firm => {
+      atxRecord.access_details.firmOrder.forEach(firm => {
         lecCircuitIds.push(firm.lecCircuitId);
       });
     }
