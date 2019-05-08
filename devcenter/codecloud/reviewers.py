@@ -14,7 +14,7 @@ class Reviewers():
 			},
 			'role': 'REVIEWER'
 		}
-		response = self.code_cloud_api.post(url=url, data=post_data, cred_hash=cred_hash)
+		response = self.code_cloud_api.post_json(url=url, json_data=post_data, cred_hash=cred_hash)
 		if not response['status']: return response
 		response['data']['repo_name'] = repo_name
 		return response

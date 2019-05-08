@@ -28,7 +28,7 @@ def pass_pull_requests(data):
 
 
 def add_reviewer_all_pull_requests(data):
-	"""Adds as reviews to all given pull requests."""
+	"""Adds as reviewer to all given pull requests."""
 	missing_params = missing_parameters(params=data, required=['username'])
 	if missing_params:
 		return {"data": f"Missing required parameters: {missing_params}", "status": False}
@@ -77,25 +77,24 @@ def add_commits_table_comment(data):
 	"""
 	response = {'status': True, 'data': {}}
 
-	if data.get('add_commits', False):
-		missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'pull_requests', 'master_branch'])
-		if missing_params:
-			return {"data": missing_params, "status": False}
+	missing_params = missing_parameters(params=data, required=['key', 'cred_hash', 'pull_requests', 'master_branch'])
+	if missing_params:
+		return {"data": missing_params, "status": False}
 
-		commit_ids = CodeCloud().get_commit_ids(
-			key=data['key'], 
-			pull_requests=data['pull_requests'], 
-			cred_hash=data['cred_hash'],
-			master_branch=data['master_branch']
+	commit_ids = CodeCloud().get_commit_ids(
+		key=data['key'], 
+		pull_requests=data['pull_requests'], 
+		cred_hash=data['cred_hash'],
+		master_branch=data['master_branch']
+	)
+	response['data']['commit_ids'] = commit_ids
+
+	if commit_ids['status']:
+		response['data']['commit_comment'] = _add_commit_comment(
+			commit_ids=commit_ids,
+			key=data['key'],
+			cred_hash=data['cred_hash']
 		)
-		response['data']['commit_ids'] = commit_ids
-
-		if commit_ids['status']:
-			response['data']['commit_comment'] = _add_commit_comment(
-				commit_ids=commit_ids,
-				key=data['key'],
-				cred_hash=data['cred_hash']
-			)
 
 	return response
 

@@ -1,6 +1,6 @@
 from base64 import b64encode
-from re import sub
 from os import environ
+import re
 
 
 DC_USER = environ.get('DC_USER', '')
@@ -28,11 +28,8 @@ def get_branch_name(username='', msrp='', summary=''):
 	"""Creates a branch name."""
 
 	if summary:
-		branch = sub(r'[^\x00-\x7F]+','', summary)
-		branch = sub(r" +", '-', branch)
-		branch = sub(r"\"", '', branch)
-		branch = sub(r"\'", '', branch)
-		branch = sub(r"-+", '-', branch)
+		branch = re.sub('[^a-zA-Z ]+', '', summary)
+		branch = re.sub(r" +", '-', branch)
 
 		# if summary starts/ends with a dash then get rid of it
 		if branch.startswith('-'):
@@ -59,8 +56,8 @@ def build_commit_message(key='', msrp='', summary='', epic_link=''):
 		commit +=f" - {epic_link} -"
 
 	if summary:
-		summary = sub(r"\"", '', summary)
-		summary = sub(r"\'", '', summary)
+		summary = re.sub(r"\"", '', summary)
+		summary = re.sub(r"\'", '', summary)
 		commit += f" {summary}"
 
 	return commit
