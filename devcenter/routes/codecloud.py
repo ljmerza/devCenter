@@ -26,20 +26,23 @@ def define_routes(app, g):
 	@app.route(f'/{APP_NAME}/git/repos')
 	@cross_origin()
 	def repos():
-		data = get_repos(data={"cred_hash": g.cred_hash})
-		return Response(data, mimetype='application/json')
+		data = {"cred_hash": g.cred_hash}
+		response = get_repos(data=data)
+		return Response(response, mimetype='application/json')
 
 	@app.route(f'/{APP_NAME}/git/repo/<repo_name>')
 	@cross_origin()
 	def branches(repo_name):
-		data = get_branches(data={"repo_name": repo_name, "cred_hash": g.cred_hash})
-		return Response(data, mimetype='application/json')
+		data = {"repo_name": repo_name, "cred_hash": g.cred_hash}
+		response = get_branches(data=data)
+		return Response(response, mimetype='application/json')
 
 	@app.route(f'/{APP_NAME}/git/branches/<msrp>')
 	@cross_origin()
 	def ticket_branches(msrp):
-		data = CCRequests_ticket_branches(data={"msrp": msrp,"cred_hash": g.cred_hash})
-		return Response(data, mimetype='application/json')
+		data = {"msrp": msrp,"cred_hash": g.cred_hash}
+		response = CCRequests_ticket_branches(data=data)
+		return Response(response, mimetype='application/json')
 
 	@app.route(f'/{APP_NAME}/codecloud/create', methods=['POST'])
 	@cross_origin()

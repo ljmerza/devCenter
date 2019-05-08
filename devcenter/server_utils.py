@@ -67,12 +67,12 @@ def verify_parameters(required):
 	"""Verifies passed in arguments."""
 	required = required.split(' ')
 	def decorator(function):
-		def wrapper(params):
-			missing_params = missing_parameters(params=params, required=required)
+		def wrapper(data):
+			missing_params = missing_parameters(params=data, required=required)
 			if missing_params:
 				return {"data": f"${function.__name__} is missing required parameters: {missing_params}", "status": False}
 			else:
-				return function(params)
+				return function(data)
 		return wrapper
 	return decorator
 

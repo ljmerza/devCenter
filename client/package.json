@@ -5,7 +5,7 @@
   "scripts": {
     "start": "ng serve",
     "start:aot": "ng serve --aot",
-    "build": "ng build",
+    "build": "npm run clean:prod && ng build --prod --base-href=./",
     "build:prod": "npm run clean:prod && ng build --prod --base-href=./",
     "build:beta": "npm run clean:beta && ng build --configuration=beta --base-href=./ --output-path=./distBeta",
     "test": "npm run lint && ng test --configuration=test",
