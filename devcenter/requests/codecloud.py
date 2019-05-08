@@ -21,7 +21,8 @@ def transition_to_pcr(data):
 			response['data']['dev_change_response'] = jira.add_pr_to_dev_changes(pull_response=response['data']['pull_response'], data=data)
 
 	if data['qa_steps']:
-		response['data']['qa_comment_response'] = add_qa_comment(data=data, pull_response=response['data'].get('pull_response'))
+		data['pull_response'] = response['data'].get('pull_response')
+		response['data']['qa_comment_response'] = add_qa_comment(data=data)
 		response['data']['qa_info_response'] = jira.set_additional_qa(comment=data['qa_steps'], key=data['key'], cred_hash=data['cred_hash'])
 
 	if data['log_time']:
@@ -66,12 +67,12 @@ def ticket_branches(data):
 
 
 @verify_parameters('key repos qa_steps cred_hash')
-def add_qa_comment(data, pull_response=None):
+def add_qa_comment(data):
 	"""Add a QA steps generated Jira comment."""
 	qa_step_comment = CodeCloud().generate_qa_template(
 		qa_steps=data['qa_steps'], 
 		repos=data['repos'], 
-		pull_response=pull_response,
+		pull_response=data['pull_response'],
 	)
 
 	return Jira().add_comment(
